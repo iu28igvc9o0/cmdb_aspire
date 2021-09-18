@@ -1,0 +1,77 @@
+server:
+  port: 8130
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+druid: # 开发环境:10.12.70.38
+  url: jdbc:mysql://10.12.70.38:3306/lts?useSSL=false&useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: root
+  useSSL: false
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+     
+##LTS-->TaskTracker端配置
+lts:
+  tasktracker:
+    cluster-name: mirror_cluster                 	# 开发环境:10.12.70.38
+    registry-address: zookeeper://10.12.70.39:2181 	# 61测试IP地址:10.153.1.61
+    node-group: mirror_taskTracker
+    bind-ip: 10.1.28.54
+    configs:
+      fail.store: mapdb   
+      
+taskExecutor: 
+  inspectionTask: 
+    url: http://127.0.0.1:8128      
+        
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+      
+  mail: # JavaMailSender 邮件发送的配置
+    switch: true # 发送邮件开关,默认值为true
+    host: smtp.qq.com
+    username: 578825720@qq.com
+    password: xxxxx
+    properties:
+      mail:
+        transport: 
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls: # TLS协议
+            enable: true
+            required: true
+#          socketFactory: # SSL协议
+#            port: 465
+#            class: javax.net.ssl.SSLSocketFactory        
+
+sample:
+  zipkin:
+    enabled: true
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: true
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000

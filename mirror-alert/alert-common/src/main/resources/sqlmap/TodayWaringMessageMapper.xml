@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.third.TodayWaringMessageDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.Alerts"
+               id="baseResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="actionId" column="action_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value"
+                jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="operateStatus" column="operate_status" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time"
+                jdbcType="TIMESTAMP"/>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="hostName" column="host_name" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+        <result property="itemKey" column="item_key" jdbcType="VARCHAR"/>
+        <result property="keyComment" column="key_comment" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!-- 获取警报概览数据 根据操作状态去分组 根据资源池-->
+    <select id="getSummaryByIdctype" resultType="map">
+        SELECT
+        (CASE a.operateStatus WHEN '0' THEN 'toBeConfirmed' WHEN '1' THEN 'confirmed'
+        WHEN '2' THEN 'toBeResolved' WHEN '3' THEN 'resolved' END) operateStatus,
+            SUM(a.count) codeCount,
+            SUM(if(a.alertLevel='2', a.count, 0)) lCount,
+            SUM(if(a.alertLevel='3', a.count, 0)) mCount,
+            SUM(if(a.alertLevel='4', a.count, 0)) hCount,
+            SUM(if(a.alertLevel='5', a.count, 0)) sCount
+        FROM (SELECT t.alert_level AS alertLevel,t.operate_status AS operateStatus,t.cur_moni_time,idc_type,source_room, COUNT(*) AS count
+        from alert_alerts t
+           where 1=1
+                <if test="param.idc_type !=null and param.idc_type != ''">
+                    AND t.idc_type=#{param.idc_type}
+                </if>
+                <if test="param.source_room !=null and param.source_room != ''">
+                    AND t.source_room=#{param.source_room}
+                </if>
+                  <if test="param.startTime !=null and param.endTime !=null">
+                      AND t.cur_moni_time BETWEEN #{param.startTime} AND #{param.endTime}
+                  </if>
+        GROUP BY t.alert_level, t.operate_status
+        ) a
+        GROUP BY a.operateStatus
+    </select>
+
+    <!--信息港资源池根据设备品牌进行查询-->
+    <select id="getSummaryByDeviceMfrs" resultType="map">
+        SELECT a.device_mfrs,a.idc_type,a.source_room,
+            SUM(a.count) codeCount,
+            SUM(if(a.alertLevel='2', a.count, 0)) lCount,
+            SUM(if(a.alertLevel='3', a.count, 0)) mCount,
+            SUM(if(a.alertLevel='4', a.count, 0)) hCount,
+            SUM(if(a.alertLevel='5', a.count, 0)) sCount
+        FROM (SELECT t.alert_level alertLevel,t.device_mfrs,t.source_room,t.cur_moni_time,t.idc_type,COUNT(*) AS count
+        from alert_alerts t
+        where 1=1
+        <if test="param.idc_type !=null and param.idc_type != ''">
+            AND t.idc_type=#{param.idc_type}
+        </if>
+        <if test="param.source_room !=null and param.source_room != ''">
+            AND t.source_room=#{param.source_room}
+        </if>
+        <if test="param.startTime !=null and param.endTime !=null">
+            AND t.cur_moni_time BETWEEN #{param.startTime} AND #{param.endTime}
+        </if>
+        GROUP BY t.device_mfrs,t.alert_level
+        ) a
+        GROUP BY a.device_mfrs LIMIT 5
+    </select>
+
+    <!--查询出机房和池设备类型的告警信息-->
+    <select id="getSummaryByDeviceTypeAndSoyrceRoomAndDeviceClass" resultType="map">
+        SELECT
+            a.device_class,a.idc_type,a.cur_moni_time,a.source_room,
+            SUM(a.d_count) codeCount,
+            SUM(if(a.alert_level='2', a.d_count, 0)) lCount,
+            SUM(if(a.alert_level='3', a.d_count, 0)) mCount,
+            SUM(if(a.alert_level='4', a.d_count, 0)) hCount,
+            SUM(if(a.alert_level='5', a.d_count, 0)) sCount
+        FROM (SELECT IF(device_type = 'X86服务器' or device_type = '云主机',device_type,device_class)
+              device_class,cur_moni_time,device_type,idc_type,alert_level,source_room,count(1) d_count
+              from alert_alerts
+        WHERE
+        FIND_IN_SET(device_class,'网络设备,安全设备,存储设备')
+        or
+        (device_class = '服务器' and (FIND_IN_SET(device_type,'X86服务器,云主机')))
+        GROUP BY device_class,device_type,alert_level,idc_type,source_room
+        ) a
+            where 1=1
+                <if test="param.idc_type !=null and param.idc_type != ''">
+                    AND a.idc_type=#{param.idc_type}
+                </if>
+                <if test="param.source_room !=null and param.source_room != ''">
+                    AND a.source_room=#{param.source_room}
+                </if>
+                <if test="param.startTime !=null and param.endTime !=null">
+                    AND a.cur_moni_time BETWEEN #{param.startTime} AND #{param.endTime}
+                </if>
+        GROUP BY device_class
+</select>
+</mapper>

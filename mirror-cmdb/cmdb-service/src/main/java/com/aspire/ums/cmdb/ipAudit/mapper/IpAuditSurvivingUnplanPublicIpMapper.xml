@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipAudit.mapper.IpAuditSurvivingUnplanPublicIpMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.ipAudit.payload.IpAuditCommonResp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="network_ip" property="deviceIp" jdbcType="VARCHAR" />
+        <result column="dc" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="VARCHAR" />
+        <result column="is_notify" property="isNotify" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="VARCHAR" />
+        <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <result column="processingStatusDesc" property="processingStatusDesc" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="reqParam">
+        <if test="checkTimeBegin != null and checkTimeBegin != ''">
+            AND a.check_time <![CDATA[>=]]> #{checkTimeBegin}
+        </if>
+        <if test="checkTimeEnd != null and checkTimeEnd != ''">
+            AND a.check_time <![CDATA[<=]]> #{checkTimeEnd}
+        </if>
+        <if test="ips != null and ips.size() > 0">
+            and
+            <foreach collection="ips" item="ip" index="index" open="(" separator=" or " close=")">
+                a.ip LIKE CONCAT('%', #{ip}, '%')
+            </foreach>
+        </if>
+        <if test="dcList != null and dcList.size() > 0">
+            AND a.dc IN
+            <foreach collection="dcList" item="dc" index="index" open="(" separator="," close=")">
+                #{dc}
+            </foreach>
+        </if>
+        <if test="dc != null and dc != ''">
+            AND a.`dc` LIKE CONCAT('%',#{dc},'%')
+        </if>
+        <if test="isNotify != null and isNotify != ''">
+            AND a.`is_notify` = #{isNotify}
+        </if>
+        <if test="processingStatus != null and processingStatus != ''">
+            AND a.`processing_status` = #{processingStatus}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+            AND a.`order_num` LIKE CONCAT('%',#{orderNum},'%')
+        </if>
+        <if test="deviceIp != null and deviceIp != ''">
+            AND a.`network_ip` LIKE CONCAT('%',#{deviceIp},'%')
+        </if>
+        <if test="operatingTimeBegin != null and operatingTimeBegin != ''">
+            AND a.operating_time <![CDATA[>=]]> #{operatingTimeBegin}
+        </if>
+        <if test="operatingTimeEnd != null and operatingTimeEnd != ''">
+            AND a.operating_time <![CDATA[<=]]> #{operatingTimeEnd}
+        </if>
+        <if test="reason != null and reason != ''">
+            AND a.`reason` LIKE CONCAT('%',#{reason},'%')
+        </if>
+        <if test="operator != null and operator != ''">
+            AND a.`operator` LIKE CONCAT('%',#{operator},'%')
+        </if>
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `network_ip`,
+        `dc`,
+        `check_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_surviving_unplanned_publicip
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditCommonReq">
+        SELECT
+        a.`id`,
+        a.`ip`,
+        a.`network_ip`,
+        IFNULL(d.dict_note, a.dc) AS dc,
+        DATE_FORMAT(a.check_time,'%Y-%m-%d %T') AS check_time,
+        a.`is_notify`,
+        a.`processing_status`,
+        CASE processing_status
+        WHEN '0' THEN '待处理' WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中' WHEN '3' THEN '已处理'
+        ELSE a.processing_status END processingStatusDesc,
+        a.`reason`,
+        a.`operator`,
+        DATE_FORMAT(a.operating_time,'%Y-%m-%d %T') AS `operating_time`,
+        a.`order_num`,
+        a.`check_num`,
+        a.`is_delete`,
+        DATE_FORMAT(update_time,'%Y-%m-%d %T') AS `update_time`,
+        a.`update_person`
+        FROM ip_audit_surviving_unplanned_publicip a
+        LEFT JOIN t_cfg_dict d ON a.dc = d.id AND d.col_name = 'idcType2'
+        <where>
+            <include refid="reqParam" />
+        </where>
+        <if test="pageNo != null and pageSize != null">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getListCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditCommonReq">
+        SELECT
+        COUNT(*)
+        FROM ip_audit_surviving_unplanned_publicip a
+        <where>
+            <include refid="reqParam" />
+        </where>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnplanPublicIp" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `network_ip`,
+        `dc`,
+        `check_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_surviving_unplanned_publicip
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnplanPublicIp">
+        INSERT INTO ip_audit_surviving_unplanned_publicip
+        (
+            `id`,
+            `ip`,
+            `network_ip`,
+            `dc`,
+            `check_time`,
+            `is_notify`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `order_num`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{ip, jdbcType=VARCHAR},
+            #{networkIp, jdbcType=VARCHAR},
+            #{dc, jdbcType=VARCHAR},
+            #{checkTime, jdbcType=DATE},
+            #{isNotify, jdbcType=VARCHAR},
+            #{processingStatus, jdbcType=VARCHAR},
+            #{reason, jdbcType=VARCHAR},
+            #{operator, jdbcType=VARCHAR},
+            #{operatingTime, jdbcType=DATE},
+            #{orderNum, jdbcType=VARCHAR},
+            #{checkNum, jdbcType=BIGINT},
+            #{isDelete, jdbcType=TINYINT},
+            #{updateTime, jdbcType=DATE},
+            #{updatePerson, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnplanPublicIp">
+        UPDATE ip_audit_surviving_unplanned_publicip SET
+        `ip` = #{ip},
+        `network_ip` = #{networkIp},
+        `dc` = #{dc},
+        `check_time` = #{checkTime},
+        `is_notify` = #{isNotify},
+        `processing_status` = #{processingStatus},
+        `reason` = #{reason},
+        `operator` = #{operator},
+        `operating_time` = #{operatingTime},
+        `order_num` = #{orderNum},
+        `check_num` = #{checkNum},
+        `is_delete` = #{isDelete},
+        `update_time` = #{updateTime},
+        `update_person` = #{updatePerson}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnplanPublicIp">
+        DELETE FROM ip_audit_surviving_unplanned_publicip WHERE `id` = #{id}
+    </delete>
+
+    <!-- 获取最大检查次数 -->
+    <select id="getMaxCheckNum" resultType="java.lang.Long">
+        SELECT MAX(check_num) FROM ip_audit_surviving_unplanned_publicip
+    </select>
+
+    <!-- 批量新增记录 -->
+    <insert id="batchInsertIp" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnplanPublicIp">
+        INSERT INTO ip_audit_surviving_unplanned_publicip
+        (
+            `id`,
+            `ip`,
+            `network_ip`,
+            `dc`,
+            `check_time`,
+            `is_notify`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `order_num`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.ip, jdbcType=VARCHAR},
+            #{item.networkIp, jdbcType=VARCHAR},
+            #{item.dc, jdbcType=VARCHAR},
+            NOW(),
+            #{item.isNotify, jdbcType=VARCHAR},
+            #{item.processingStatus, jdbcType=VARCHAR},
+            #{item.reason, jdbcType=VARCHAR},
+            #{item.operator, jdbcType=VARCHAR},
+            NOW(),
+            #{item.orderNum, jdbcType=VARCHAR},
+            #{item.checkNum, jdbcType=BIGINT},
+            #{item.isDelete, jdbcType=TINYINT},
+            #{item.updateTime, jdbcType=DATE},
+            #{item.updatePerson, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!--列表顶部总数查询逻辑-->
+    <select id="getStatisticsData" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditCommonReq" resultType="java.util.HashMap">
+        SELECT
+		COUNT(IF(a.processing_status = '0', TRUE, NULL)) AS numOfToBeProcessedIp,
+        COUNT(IF(a.processing_status = '1', TRUE, NULL)) AS numOfNotProcessIp,
+        COUNT(a.ip) AS numOfUnPlanIp
+        FROM ip_audit_surviving_unplanned_publicip a
+        <where>
+            <include refid="reqParam" />
+        </where>
+    </select>
+
+    <!-- 查询公网IP地址库获取录入IP管理的IP 新增 fanwenhui 20200527 -->
+    <select id="getIpRepositoryPublicIps" resultType="java.lang.String">
+        SELECT DISTINCT a.ip AS ip
+        FROM cmdb_ip_repository_public_ip a
+        INNER JOIN cmdb_ip_repository_public_segment b ON b.public_segment_address = a.public_segment_owner
+--         INNER JOIN config_dict c ON c.`VALUE` = b.idcType
+        WHERE a.is_delete = 0 AND b.is_delete = 0
+--         AND c.TYPE = 'idcType' AND c.DELETE_FLAG = 0
+    </select>
+
+    <!-- 获取最新的暂不处理的IP-资源池数据 新增 fanwenhui 20200610 -->
+    <select id="getUnPublicIpsByUnStreated" parameterType="java.lang.Long" resultType="java.util.Map">
+        SELECT CONCAT(ip,'-', dc) AS ipIdc,reason,operator,ip
+        FROM ip_audit_surviving_unplanned_publicip
+        WHERE processing_status = '1' AND check_num = #{checkNum}
+    </select>
+
+</mapper>

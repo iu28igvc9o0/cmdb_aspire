@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenExportLogoMapper">
+
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.index.payload.ScreenExportLogo">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="file_unqiue" jdbcType="VARCHAR" property="fileUnqiue"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+    </resultMap>
+
+    <select id="getOneByFileUnique" resultMap="resultMap">
+        select path,status,remark
+        from  screen_export_logo
+        where file_unqiue = #{fileUnqiue}
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenExportLogo">
+        insert into screen_export_logo(file_unqiue, path, status, remark, insert_time)
+        values (
+            #{fileUnqiue, jdbcType=VARCHAR},
+            #{path, jdbcType=VARCHAR},
+            #{status, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR},
+            NOW()
+        )
+    </insert>
+
+    <update id="update">
+        update screen_export_logo
+        set
+          path = #{path, jdbcType=VARCHAR},
+          status = #{status, jdbcType=VARCHAR},
+          remark = #{remark, jdbcType=VARCHAR}
+        where file_unqiue = #{fileUnqiue}
+    </update>
+
+    <delete id="delete">
+        delete from  screen_export_logo
+        where file_unqiue = #{fileUnqiue}
+    </delete>
+</mapper>

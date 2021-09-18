@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.log.server.dao.ConfigCompareDao">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.log.server.dao.po.ConfigCompare">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="idc_type" property="idcType" jdbcType="VARCHAR"/>
+        <result column="master_ip" property="masterIp" jdbcType="VARCHAR"/>
+        <result column="backup_ip" property="backupIp" jdbcType="VARCHAR"/>
+        <result column="brand" property="brand" jdbcType="VARCHAR"/>
+        <result column="add_count" property="addCount" jdbcType="INTEGER"/>
+        <result column="modify_count" property="modifyCount" jdbcType="INTEGER"/>
+        <result column="del_count" property="delCount" jdbcType="INTEGER"/>
+        <result column="add_datas" property="addDatas" jdbcType="VARCHAR"/>
+        <result column="modify_datas" property="modifyDatas" jdbcType="VARCHAR"/>
+        <result column="del_datas" property="delDatas" jdbcType="VARCHAR"/>
+        <result column="compare_time" property="compareTime" jdbcType="TIMESTAMP"/>
+        <result column="master_config_file" property="masterConfigFile" jdbcType="VARCHAR"/>
+        <result column="backup_config_file" property="backupConfigFile" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, idc_type, master_ip, backup_ip, brand, add_count, modify_count, del_count, add_datas, modify_datas, del_datas,compare_time,
+        master_config_file, backup_config_file, create_time, create_user
+    </sql>
+    <!-- list查询 -->
+    <select id="listAll" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM config_compare
+    </select>
+    <sql id="findPageWithWhere">
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="idcType != null and idcType != ''">
+                and idc_type = #{idcType,jdbcType=VARCHAR}
+            </if>
+            <if test="masterIp != null and masterIp != ''">
+                and master_ip LIKE CONCAT('%',#{masterIp,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="backupIp != null and backupIp != ''">
+                and backup_ip LIKE CONCAT('%',#{backupIp,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="compareTimeFrom != null and compareTimeTo != null and compareTimeFrom != '' and compareTimeTo != ''">
+                and compare_time between #{compareTimeFrom} and #{compareTimeTo}
+            </if>
+            <choose>
+                <when test="compareType == 1">
+                    and add_count > 0
+                </when>
+                <when test="compareType == 2">
+                    and modify_count > 0
+                </when>
+                <when test="compareType == 3">
+                    and del_count > 0
+                </when>
+            </choose>
+        </where>
+    </sql>
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM config_compare
+        <include refid="findPageWithWhere"/> order by compare_time desc
+    </select>
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="java.lang.Integer" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM config_compare
+        WHERE id = #{id}
+    </select>
+    <select id="findPageWithResult" parameterType="java.util.Map"
+            resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM config_compare
+        <include refid="findPageWithWhere"/> order by compare_time desc
+        limit #{begin},#{pageSize}
+    </select>
+    <select id="findPageWithCount" parameterType="java.util.Map"
+            resultType="Integer">
+        select count(1)
+        from config_compare
+        <include refid="findPageWithWhere"/>
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.mirror.log.server.dao.po.ConfigCompare" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO config_compare
+        (
+            `idc_type`,
+            `master_ip`,
+            `backup_ip`,
+            `brand`,
+            `create_time`,
+            `create_user`
+        ) VALUES (
+            #{idcType, jdbcType=VARCHAR},
+            #{masterIp, jdbcType=VARCHAR},
+            #{backupIp, jdbcType=VARCHAR},
+            #{brand, jdbcType=VARCHAR},
+            #{createTime, jdbcType=TIMESTAMP},
+            #{createUser, jdbcType=VARCHAR}
+        )
+        on duplicate key update
+        brand = values(brand), create_time = values(create_time), create_user = values(create_user)
+    </insert>
+    <!-- 新增记录 -->
+    <insert id="insertBatch" parameterType="com.aspire.mirror.log.server.dao.po.ConfigCompare" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO config_compare
+        (
+        `idc_type`,
+        `master_ip`,
+        `backup_ip`,
+        `brand`,
+        `create_time`,
+        `create_user`
+        ) VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+        (
+        #{item.idcType, jdbcType=VARCHAR},
+        #{item.masterIp, jdbcType=VARCHAR},
+        #{item.backupIp, jdbcType=VARCHAR},
+        #{item.brand, jdbcType=VARCHAR},
+        #{item.createTime, jdbcType=TIMESTAMP},
+        #{item.createUser, jdbcType=VARCHAR}
+        )
+        </foreach>
+        on duplicate key update
+        brand = values(brand), create_time = values(create_time), create_user = values(create_user)
+    </insert>
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.mirror.log.server.dao.po.ConfigCompare">
+        UPDATE config_compare SET
+        `idc_type` = #{idcType},
+        `master_ip` = #{masterIp},
+        `backup_ip` = #{backupIp},
+        `brand` = #{brand},
+        `add_count` = #{addCount},
+        `modify_count` = #{modifyCount},
+        `del_count` = #{delCount},
+        `add_datas` = #{addDatas},
+        `modify_datas` = #{modifyDatas},
+        `del_datas` = #{delDatas},
+        `compare_time` = #{compareTime},
+        `master_config_file` = #{masterConfigFile},
+        `backup_config_file` = #{backupConfigFile}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from config_compare
+        WHERE
+        `id` = #{id}
+    </delete>
+
+    <select id="getByIds" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM config_compare
+        where id in
+        <foreach collection="ids" index="index" item="id"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

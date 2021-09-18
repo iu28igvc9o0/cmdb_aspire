@@ -1,0 +1,902 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenOverviewMapper">
+
+    <!-- 统计的数据中不包含二级部门 -->
+    <sql id="exclude_where_sql">
+        <if test="excludeDep != null and excludeDep != ''">
+            and ifnull(department2,'') != #{excludeDep}
+        </if>
+    </sql>
+
+    <sql id="where_sql">
+        <if test="monthlyTime != null and monthlyTime != ''">
+          and monthly_time = #{monthlyTime}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+          and device_type = #{deviceType}
+        </if>
+        <if test="deviceTypeList != null and deviceTypeList.size > 0">
+            and device_type in
+            <foreach collection="deviceTypeList" item="typeStr" open="(" separator="," close=")">
+                #{typeStr}
+            </foreach>
+        </if>
+    </sql>
+
+    <!-- 内部租户和外部租户统计的部门不同 -->
+    <sql id="group_by_sql">
+        <if test="depType != null and depType == '内部租户'">
+            group by t.department2
+        </if>
+        <if test="depType != null and depType == '外部租户'">
+            group by t.department1
+        </if>
+    </sql>
+    <!-- 内部租户按照二级部门统计、外部租户按照一级部门统计 -->
+    <sql id="select_department_sql">
+        <if test="depType != null and depType == '内部租户'">
+            t.department2 department
+        </if>
+        <if test="depType != null and depType == '外部租户'">
+            t.department1 department
+        </if>
+    </sql>
+
+    <!-- 依据资源类型，获取设备类型 -->
+    <select id="getDeviceTypeList" resultType="java.lang.String">
+        SELECT
+            *
+        FROM
+            (
+                SELECT DISTINCT
+                    device_type deviceType
+                FROM
+                    screen_resource_allocation
+                WHERE
+                    module_type = #{moduleType}
+            ) t
+        ORDER BY
+            (
+                CASE
+                WHEN deviceType = "物理机" THEN 1
+                WHEN deviceType = "虚拟机" THEN 2
+                ELSE 3
+                END
+            ),t.deviceType
+    </select>
+
+    <!-- 依据租户，获取租户、业务系统总数 -->
+    <select id="getTenantAndBzNumByDep" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          t.depType,
+          COUNT(DISTINCT t.biz_system) bzCount,
+          COUNT(DISTINCT t.department1) dep1Count,
+          COUNT(DISTINCT t.department2) dep2Count
+        FROM (
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                biz_system,department1,department2
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        WHERE t.depType = #{depType}
+        GROUP BY t.depType
+    </select>
+
+    <!-- 依据资源池，获取租户、业务系统总数 -->
+    <select id="getTenantAndBzNumByRp" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          t.resource_pool resourcePool,
+          COUNT(DISTINCT t.biz_system) bzCount,
+          COUNT(DISTINCT t.department1) dep1Count,
+          COUNT(DISTINCT t.department2) dep2Count
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                        ELSE '外部租户' END) depType,
+                biz_system,
+                department1,
+                department2,
+                resource_pool
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        WHERE t.depType = #{depType}
+        GROUP BY t.resource_pool
+        ORDER BY t.resource_pool
+    </select>
+
+    <!-- 依据设备类型，获取租户资源的分配量和使用量 -->
+    <select id="getHasAndUseAltNumByDt" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          depType,
+          Round(SUM(amount),2) hasAlt,
+          Round(SUM(use_allocation),2) useAlt
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                amount,use_allocation
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        GROUP BY t.depType
+    </select>
+
+    <!-- 依据设备类型和业务系统，获取业务系统的资源分配量和使用量 -->
+    <select id="getHasAndUseAltNumByDevtAndDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          Round(SUM(amount),2) hasAlt,
+          Round(SUM(use_allocation),2) useAlt,
+          <include refid="select_department_sql"/>
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,department2,amount, use_allocation
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        where t.depType = #{depType}
+        <include refid="group_by_sql"/>
+        HAVING SUM(amount) <![CDATA[ > ]]> 0
+        ORDER BY hasAlt desc,useAlt desc
+    </select>
+
+    <!-- 获取月度的Agent部署的数量 -->
+    <select id="getAgentNum" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            t.depType,
+            SUM(t2.pmTotalCount) pmTotalCount,
+            SUM(t2.pmCount) pmCount,
+            SUM(t3.vmTotalCount) vmTotalCount,
+            SUM(t3.vmCount) vmCount
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,department2
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t
+        LEFT JOIN (
+            SELECT
+                department1,department2,
+                SUM(amount) pmTotalCount,
+                SUM(amount) - SUM(undeploy_point) pmCount
+            FROM screen_resource_allocation
+            where is_delete = '0' and device_type = '物理机' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t2 ON (t.department1 = t2.department1 and t.department2 = t2.department2)
+        LEFT JOIN (
+            SELECT
+                department1,department2,
+                SUM(amount) vmTotalCount,
+                SUM(amount) - SUM(undeploy_point) vmCount
+            FROM screen_resource_allocation
+            where is_delete = '0' and device_type = '虚拟机' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t3 ON (t.department1 = t3.department1 and t.department2 = t3.department2)
+        GROUP BY t.depType
+    </select>
+
+    <!-- 获取业务系统Agent部署的数量 -->
+    <select id="getAgentNumWithDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            t.depType,
+            t2.pmTotalCount,
+            t2.pmCount,
+            t3.vmTotalCount,
+            t3.vmCount,
+            <include refid="select_department_sql"/>
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,department2
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t
+        LEFT JOIN (
+            SELECT
+                department1,department2,
+                SUM(amount) pmTotalCount,
+                SUM(amount) - SUM(undeploy_point) pmCount
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/> and device_type = '物理机'
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t2 ON (t.department1 = t2.department1 and t.department2 = t2.department2)
+        LEFT JOIN (
+            SELECT
+                department1,department2,
+                SUM(amount) vmTotalCount,
+                SUM(amount) - SUM(undeploy_point) vmCount
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/> and device_type = '虚拟机'
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t3 ON (t.department1 = t3.department1 and t.department2 = t3.department2)
+        where 1=1 and t.depType = #{depType} and (pmTotalCount > 0 or vmTotalCount > 0)
+        <include refid="group_by_sql"/>
+        order by t2.pmCount desc,t3.vmCount desc
+    </select>
+
+    <!-- 依据设备类型，获取月度的存储资源利用率 -->
+    <select id="getStoreUtzByDt" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            t.depType,
+            Round(SUM(t.amount),2) hasAlt,
+            Round(SUM(t.use_allocation),2) useAlt,
+            IFNULL(Round((SUM(t.use_allocation)*100)/SUM(t.amount),2),0) alt
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                amount,use_allocation
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        GROUP BY t.depType
+    </select>
+
+    <!-- 依据设备类型和租户部门，获取月度租户的存储资源利用率 -->
+    <select id="getStoreUtzByDtAndDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            Round(SUM(t.amount),2) hasAlt,
+            Round(SUM(t.use_allocation),2) useAlt,
+            IFNULL(Round((SUM(t.use_allocation)*100)/SUM(t.amount),2),0) alt,
+            <include refid="select_department_sql"/>
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,department2,amount,use_allocation
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        where t.depType = #{depType}
+        <include refid="group_by_sql"/>
+        order by alt desc
+    </select>
+
+    <!-- 获取物理机和GPU的资源回收总数量 -->
+    <select id="getRecycleNumWithPmAndGpu" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            t.depType,
+            SUM(t2.pmReCnt) pmReCnt,
+            SUM(t3.gpuReCnt) gpuReCnt
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,department2
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t
+        LEFT JOIN (
+            SELECT
+                department1,department2,SUM(recycle_count) pmReCnt
+            FROM screen_resource_allocation
+            where is_delete = '0' and device_type = '物理机' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t2 ON (t.department1 = t2.department1 and t.department2 = t2.department2)
+        LEFT JOIN (
+            SELECT
+                department1,department2,SUM(recycle_count) gpuReCnt
+            FROM screen_resource_allocation
+            where is_delete = '0' and device_type = 'GPU' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+            GROUP BY department1,department2
+        ) t3 ON (t.department1 = t3.department1 and t.department2 = t3.department2)
+        GROUP BY t.depType
+    </select>
+
+    <!-- 获取虚拟机CPU核数和内存的资源回收总数量 -->
+    <select id="getRecycleNumWithVm" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            t.depType,
+            SUM(t.cpu_num) cpuNum,
+            ROUND(SUM(t.memory_size),2) memorySize
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,cpu_num,memory_size
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' and device_type = '虚拟机' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        GROUP BY t.depType
+    </select>
+
+    <!-- 获取各个租户物理机和GPU的资源回收的数量 -->
+    <select id="getPmAndGpuRecycleNumWithDevt" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            SUM(t.recycle_count) recycleCount,
+            <include refid="select_department_sql"/>
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,department2,recycle_count
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' and recycle_count <![CDATA[ > ]]> 0
+            <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        where t.depType = #{depType}
+        <include refid="group_by_sql"/>
+        order by recycleCount desc
+    </select>
+
+    <!-- 获取各个租户虚拟机CPU核数的资源回收的数量 -->
+    <select id="getVmRecycleNumWithDevt" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            SUM(t.cpu_num) recycleCount,
+            <include refid="select_department_sql"/>
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                department1,
+                department2,
+                cpu_num
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' and cpu_num <![CDATA[ > ]]> 0
+            <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        where t.depType = #{depType}
+        <include refid="group_by_sql"/>
+        order by recycleCount desc
+    </select>
+
+    <!-- 获取业务系统总数 -->
+    <select id="getBizSystemTotalCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          t.depType,
+          COUNT(DISTINCT t.biz_system) cnt
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,
+                biz_system
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/>
+            <include refid="exclude_where_sql"/>
+        ) t
+        GROUP BY t.depType
+    </select>
+
+    <!-- 获取均峰值利用率低于30%的利用率（不包括云存储） -->
+    <select id="getLowUtlCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT tt1.depType,COUNT(DISTINCT tt1.biz_system) bzCnt
+        FROM(
+            SELECT r2.depType,r2.biz_system
+            FROM(
+                SELECT t1.depType,t1.biz_system,t2.statist_date,IFNULL(ROUND(SUM(t1.cnt1*t2.max_utilization)/SUM(t1.cnt1),2),0) mx
+                FROM(
+                    SELECT
+                        (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                              ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt1
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = #{hardwareType} <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod
+                and t1.department1 = t2.department1 and t1.department2 = t2.department2)
+                GROUP BY t1.depType,t1.biz_system,t2.statist_date
+            ) r2
+            GROUP BY r2.depType,r2.biz_system
+            HAVING MAX(r2.mx) <![CDATA[ < ]]> 30
+        ) tt1
+        GROUP BY tt1.depType
+    </select>
+
+    <!-- 获取均峰值利用率低于30%的租户业务系统数量（不包括云存储） -->
+    <select id="getLowUltListWithDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            parent.department,
+            parent.total,
+            IFNULL(child.part,0) part,
+            IFNULL(Round((child.part*100)/parent.total,2),0) percent
+        FROM(
+            SELECT
+                <include refid="select_department_sql"/>,COUNT(DISTINCT t.biz_system) total
+            FROM(
+                SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,department1,department2,biz_system
+                FROM screen_resource_allocation
+                where is_delete = '0' <include refid="where_sql"/>
+                <include refid="exclude_where_sql"/>
+            ) t
+            where depType = #{depType}
+            <include refid="group_by_sql"/>
+        ) parent
+        LEFT JOIN (
+            SELECT
+                <include refid="select_department_sql"/>,COUNT(DISTINCT t.biz_system) part
+            FROM(
+                SELECT r2.department1,r2.department2,r2.biz_system
+                FROM(
+                    SELECT t1.depType,t1.department1,t1.department2,t1.biz_system,t2.statist_date,ROUND(IFNULL(SUM(t1.cnt1*t2.max_utilization)/SUM(t1.cnt1),0),2) mx
+                    FROM(
+                        SELECT
+                            (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                                  ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt1
+                        FROM screen_resource_allocation
+                        where is_delete = '0' <include refid="where_sql"/>
+                        <include refid="exclude_where_sql"/>
+                        GROUP BY department1,department2,biz_system,resource_pool,pod
+                    ) t1
+                    LEFT JOIN(
+                        SELECT department1,department2,biz_system,resource_pool,pod,max_utilization,statist_date
+                        FROM screen_max_utilization
+                        where is_delete = '0' and hardware_type = #{hardwareType} <include refid="where_sql"/>
+                        <include refid="exclude_where_sql"/>
+                    ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod
+                              and t1.department1 = t2.department1 and t1.department2 = t2.department2)
+                    GROUP BY t1.depType,t1.biz_system,t2.statist_date
+                ) r2
+                where r2.depType = #{depType}
+                GROUP BY r2.department1,r2.department2,r2.biz_system
+                HAVING MAX(r2.mx) <![CDATA[ < ]]> 30
+            ) t
+            <include refid="group_by_sql"/>
+        ) child ON parent.department = child.department
+        WHERE child.part <![CDATA[ > ]]> 0
+        order by part desc
+    </select>
+
+    <!-- 各租户设备的CPU和内存的均峰值 -->
+    <select id="getCpuAndStoreMaxWithDept-OLD" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          rr1.department,
+          rr2.cpuMax cpu,
+          rr3.storeMax store
+        FROM(
+            SELECT <include refid="select_department_sql"/>
+            FROM(
+                SELECT
+                    (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                          ELSE '外部租户' END) depType,department1,department2,SUM(amount) cnt
+                FROM screen_resource_allocation
+                where is_delete = '0' <include refid="where_sql"/>
+                <include refid="exclude_where_sql"/>
+                GROUP BY department1,department2
+                HAVING cnt > 0
+            ) t
+            where t.depType = #{depType}
+            <include refid="group_by_sql"/>
+        ) rr1
+        LEFT JOIN(
+            SELECT r.department,MAX(r.cpuMax) cpuMax
+            FROM(
+                SELECT <include refid="select_department_sql"/>,t1.statist_date,IFNULL(ROUND(SUM(t.cnt1*t1.max_utilization)/SUM(t.cnt1),2),0) cpuMax
+                FROM(
+                    SELECT (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                                 ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt1
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                    HAVING SUM(amount) > 0
+                ) t
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                    and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t.depType = #{depType} and t1.statist_date is not null
+                <include refid="group_by_sql"/>,t1.statist_date
+            ) r
+            GROUP BY r.department
+        ) rr2 ON rr1.department = rr2.department
+        LEFT JOIN(
+            SELECT r.department,MAX(r.storeMax) storeMax
+            FROM(
+                SELECT <include refid="select_department_sql"/>,t1.statist_date,IFNULL(ROUND(SUM(t.cnt1*t1.max_utilization)/SUM(t.cnt1),2),0) storeMax
+                FROM(
+                    SELECT (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                                 ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt1
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                    HAVING SUM(amount) > 0
+                ) t
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                    and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t.depType = #{depType} and t1.statist_date is not null
+                <include refid="group_by_sql"/>,t1.statist_date
+            ) r
+            GROUP BY r.department
+        ) rr3 ON rr1.department = rr3.department
+        where rr2.cpuMax is not null and rr3.storeMax is not null
+        ORDER BY cpu desc,store desc
+    </select>
+
+    <select id="getCpuAndStoreMaxWithDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+        rr1.department,
+        rr2.cpuMax cpu,
+        rr3.storeMax store,
+        rr4.subStandard subStandard
+        FROM(
+        SELECT <include refid="select_department_sql"/>
+        FROM(
+        SELECT
+        (CASE WHEN department1 = '信息技术中心' THEN '内部租户'
+        ELSE '外部租户' END) depType,department1,department2,SUM(amount) cnt
+        FROM screen_resource_allocation
+        WHERE is_delete = '0' <include refid="where_sql"/>
+        <include refid="exclude_where_sql"/>
+        GROUP BY department1,department2
+        HAVING cnt > 0
+        ) t
+        WHERE t.depType = #{depType}
+        <include refid="group_by_sql"/>
+        ) rr1
+        LEFT JOIN(
+        SELECT r.department,MAX(r.cpuMax) cpuMax
+        FROM(
+        SELECT <include refid="select_department_sql"/>,t1.statist_date,IFNULL(ROUND(SUM(t.cnt1*t1.max_utilization)/SUM(t.cnt1),2),0) cpuMax
+        FROM(
+        SELECT (CASE WHEN department1 = '信息技术中心' THEN '内部租户'
+        ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt1
+        FROM screen_resource_allocation
+        WHERE is_delete = '0' <include refid="where_sql"/>
+        <include refid="exclude_where_sql"/>
+        GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+        HAVING SUM(amount) > 0
+        ) t
+        LEFT JOIN(
+        SELECT department1,department2,biz_system,resource_pool,pod,device_type,max_utilization,statist_date
+        FROM screen_max_utilization
+        WHERE is_delete = '0' AND hardware_type = 'CPU' <include refid="where_sql"/>
+        <include refid="exclude_where_sql"/>
+        ) t1 ON (t1.biz_system = t.biz_system AND t1.resource_pool = t.resource_pool AND t1.pod = t.pod AND t1.device_type = t.device_type
+        AND t1.department1 = t.department1 AND t1.department2 = t.department2)
+        WHERE t.depType = #{depType} and t1.statist_date is not null
+        <include refid="group_by_sql"/>,t1.statist_date
+        ) r
+        GROUP BY r.department
+        ) rr2 ON rr1.department = rr2.department
+        LEFT JOIN(
+        SELECT r.department,MAX(r.storeMax) storeMax
+        FROM(
+        SELECT <include refid="select_department_sql"/>,t1.statist_date,IFNULL(ROUND(SUM(t.cnt1*t1.max_utilization)/SUM(t.cnt1),2),0) storeMax
+        FROM(
+        SELECT (CASE WHEN department1 = '信息技术中心' THEN '内部租户'
+        ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt1
+        FROM screen_resource_allocation
+        WHERE is_delete = '0' <include refid="where_sql"/>
+        <include refid="exclude_where_sql"/>
+        GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+        HAVING SUM(amount) > 0
+        ) t
+        LEFT JOIN(
+        SELECT department1,department2,biz_system,resource_pool,pod,device_type,max_utilization,statist_date
+        FROM screen_max_utilization
+        WHERE is_delete = '0' AND hardware_type = '内存' <include refid="where_sql"/>
+        <include refid="exclude_where_sql"/>
+        ) t1 ON (t1.biz_system = t.biz_system AND t1.resource_pool = t.resource_pool AND t1.pod = t.pod AND t1.device_type = t.device_type
+        AND t1.department1 = t.department1 AND t1.department2 = t.department2)
+        WHERE t.depType = #{depType} and t1.statist_date is not null
+        <include refid="group_by_sql"/>,t1.statist_date
+        ) r
+        GROUP BY r.department
+        ) rr3 ON rr1.department = rr3.department
+        LEFT JOIN(
+        select *,
+               (case when max(c) <![CDATA[>=]]> 3 then max(c) else 0 end ) subStandard from
+        ( SELECT
+        department,
+        standard_value,assessed_value,monthly_time,
+        (CASE WHEN @r!=department THEN @i:=0 AND @j:=0 ELSE @r END) d,
+        (CASE WHEN assessed_value+0 <![CDATA[<]]> standard_value+0 AND monthly_time=#{monthlyTime} AND @r!=department THEN @j:=1 AND @i:=@i+1
+        WHEN assessed_value+0 <![CDATA[<]]> standard_value+0 AND @j=1 AND @i!=0 THEN @i:=@i+1
+        ELSE @i:=0 END
+        ) a, @i `c`,@r:=department
+        FROM (
+        SELECT * FROM (
+        SELECT (CASE WHEN #{depType}='内部租户' AND department1 = '信息技术中心'  THEN department2
+        ELSE department1 END) department,standard_value,assessed_value,monthly_time FROM `screen_check_score`
+        WHERE score_type='cpuMax'
+        <if test="depType == '内部租户'" >
+           and  department1 = '信息技术中心'
+        </if>
+        <if test="depType == '外部租户'" >
+            and department1 != '信息技术中心'
+        </if>
+        <include refid="exclude_where_sql"/>
+
+        ) source
+        WHERE monthly_time <![CDATA[<=]]> #{monthlyTime}
+        GROUP BY department,monthly_time
+        ORDER BY department,monthly_time DESC
+        ) base
+        ,
+        (SELECT @i:=0, @j:=0,@r:='') s) res
+          group by department
+
+        ) rr4 ON rr1.department = rr4.department
+        WHERE rr2.cpuMax IS NOT NULL AND rr3.storeMax IS NOT NULL
+        ORDER BY cpu DESC,store DESC
+    </select>
+
+    <!-- 租户月报总览，所有部门的均值和均峰值 -->
+    <sql id="all_dep_where">
+        <if test="depType != null and depType == '内部租户'">
+            and department1 = '信息技术中心'
+        </if>
+        <if test="depType != null and depType == '外部租户'">
+            and department1 != '信息技术中心'
+        </if>
+    </sql>
+
+    <!-- 租户设备的CPU和内存均峰值的最大值 -->
+    <select id="getCpuAndStoreMax" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT (
+            SELECT MAX(r1.cpuMax) cpuMax
+            FROM (
+                SELECT t1.statist_date,ROUND(SUM(t.cnt*t1.max_utilization)/SUM(t.cnt),2) cpuMax
+                FROM(
+                        SELECT department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        where is_delete = '0' <include refid="where_sql"/>
+                        <include refid="all_dep_where"/>
+                        <include refid="exclude_where_sql"/>
+                        GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                        HAVING SUM(use_allocation) > 0
+                ) t
+                LEFT JOIN(
+                        SELECT department1,department2,biz_system,resource_pool,pod,device_type,max_utilization,statist_date
+                        FROM screen_max_utilization
+                        where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                        <include refid="all_dep_where"/>
+                        <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                                 and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t1.statist_date is not null
+                GROUP BY t1.statist_date
+            ) r1 ) cpu,(
+            SELECT MAX(r1.storeMax) storeMax
+            FROM (
+                SELECT t1.statist_date,ROUND(SUM(t.cnt*t1.max_utilization)/SUM(t.cnt),2) storeMax
+                FROM(
+                        SELECT department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        where is_delete = '0' <include refid="where_sql"/>
+                        <include refid="all_dep_where"/>
+                        <include refid="exclude_where_sql"/>
+                        GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                        HAVING SUM(use_allocation) > 0
+                ) t
+                LEFT JOIN(
+                        SELECT department1,department2,biz_system,resource_pool,pod,device_type,max_utilization,statist_date
+                        FROM screen_max_utilization
+                        where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                        <include refid="all_dep_where"/>
+                        <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                                 and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t1.statist_date is not null
+                GROUP BY t1.statist_date
+            ) r1 ) store
+    </select>
+
+    <!-- 各租户设备的CPU和内存的均值 -->
+    <select id="getCpuAndStoreAvgWithDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+            rr1.department,
+            rr2.cpuAvg cpu,
+            rr3.storeAvg store
+        FROM(
+            SELECT <include refid="select_department_sql"/>
+            FROM(
+                SELECT
+                    (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                          ELSE '外部租户' END) depType,department1,department2
+                FROM screen_resource_allocation
+                where is_delete = '0' <include refid="where_sql"/>
+                <include refid="exclude_where_sql"/>
+                GROUP BY department1,department2
+                HAVING SUM(amount) > 0
+            ) t
+            where t.depType = #{depType}
+            <include refid="group_by_sql"/>
+        ) rr1
+        LEFT JOIN(
+            SELECT <include refid="select_department_sql"/>,IFNULL(ROUND(SUM(t.cnt1*t1.avg_utilization)/SUM(t.cnt1),2),0) cpuAvg
+                FROM(
+                    SELECT (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                                             ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt1
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                    HAVING SUM(amount) > 0
+                ) t
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                    and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t.depType = #{depType} and t1.statist_date is not null
+                <include refid="group_by_sql"/>
+        ) rr2 ON rr1.department = rr2.department
+        LEFT JOIN(
+            SELECT <include refid="select_department_sql"/>,IFNULL(ROUND(SUM(t.cnt1*t1.avg_utilization)/SUM(t.cnt1),2),0) storeAvg
+                FROM(
+                    SELECT (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                                 ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt1
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                    HAVING SUM(amount) > 0
+                ) t
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                    <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                    and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t.depType = #{depType} and t1.statist_date is not null
+                <include refid="group_by_sql"/>
+        ) rr3 ON rr1.department = rr3.department
+        where rr2.cpuAvg is not null and rr3.storeAvg is not null
+        ORDER BY cpu desc,store desc
+    </select>
+
+    <!-- 租户设备的CPU和内存均值的平均值 -->
+    <select id="getCpuAndStoreAvg" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT (
+            SELECT ROUND(AVG(r1.cpuAvg),2) cpuAvg
+            FROM (
+                SELECT t1.statist_date,SUM(t.cnt*t1.avg_utilization)/SUM(t.cnt) cpuAvg
+                FROM(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="all_dep_where"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                    HAVING SUM(use_allocation) > 0
+                ) t
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                    <include refid="all_dep_where"/>
+                    <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                                 and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t1.statist_date is not null
+                GROUP BY t1.statist_date
+            ) r1
+        ) cpu,(
+            SELECT ROUND(AVG(r1.storeAvg),2) storeAvg
+            FROM (
+                SELECT t1.statist_date,SUM(t.cnt*t1.avg_utilization)/SUM(t.cnt) storeAvg
+                FROM(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    <include refid="all_dep_where"/>
+                    <include refid="exclude_where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod,device_type
+                    HAVING SUM(use_allocation) > 0
+                ) t
+                LEFT JOIN(
+                    SELECT department1,department2,biz_system,resource_pool,pod,device_type,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                    <include refid="all_dep_where"/>
+                    <include refid="exclude_where_sql"/>
+                ) t1 ON (t1.biz_system = t.biz_system and t1.resource_pool = t.resource_pool and t1.pod = t.pod and t1.device_type = t.device_type
+                          and t1.department1 = t.department1 and t1.department2 = t.department2)
+                WHERE t1.statist_date is not null
+                GROUP BY t1.statist_date
+            ) r1
+        ) store
+    </select>
+
+    <select id="getScoreWithDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenOverviewRequest" resultType="java.util.HashMap">
+        SELECT
+          t1.department,
+          t2.score_type scoreType,
+          t2.assessed_value assessValue,
+          t2.score,
+          t2.description title
+        FROM(
+            SELECT <include refid="select_department_sql"/>
+            FROM screen_resource_allocation t
+            where is_delete = '0' and module_type = '计算资源' and monthly_time = #{monthlyTime}
+            <include refid="all_dep_where"/>
+            <include refid="exclude_where_sql"/>
+            <include refid="group_by_sql"/>
+            HAVING SUM(amount) > 0
+        ) t1
+        LEFT JOIN (
+            SELECT  <include refid="select_department_sql"/>,score_type,assessed_value,ROUND(SUM(score),1) score,description
+            FROM screen_check_score t
+            where is_delete = '0' and monthly_time = #{monthlyTime}
+            <include refid="all_dep_where"/>
+            <include refid="exclude_where_sql"/>
+            <include refid="group_by_sql"/>,score_type
+        ) t2 ON t1.department = t2.department
+        ORDER BY t1.department,t2.score_type
+    </select>
+
+    <select id="getTotalMonthCheckScoreList" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+            t1.department,
+            t2.monthly_time monthlyTime,
+            t2.assessed_value assessValue,
+            t2.score_type scoreType,
+            t2.score,
+            t2.description title
+        FROM(
+            SELECT <include refid="select_department_sql"/>
+            FROM screen_resource_allocation t
+            where is_delete = '0' and module_type = '计算资源'
+            and monthly_time in
+            <foreach collection="monthArray" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <include refid="all_dep_where"/>
+            <include refid="exclude_where_sql"/>
+            <include refid="group_by_sql"/>
+            HAVING SUM(amount) > 0
+        ) t1
+        LEFT JOIN (
+            SELECT <include refid="select_department_sql"/>,monthly_time,score_type,ROUND(SUM(score),1) score,description,assessed_value
+            FROM screen_check_score t
+            where is_delete = '0'
+            and monthly_time in
+            <foreach collection="monthArray" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <include refid="all_dep_where"/>
+            <include refid="exclude_where_sql"/>
+            <include refid="group_by_sql"/>,monthly_time,score_type
+        ) t2 ON t1.department = t2.department
+        ORDER BY t1.department,t2.monthly_time,t2.score_type
+    </select>
+</mapper>

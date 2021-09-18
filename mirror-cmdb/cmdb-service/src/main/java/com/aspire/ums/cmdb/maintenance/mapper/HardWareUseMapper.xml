@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.HardWareUseMapper">
+	    
+	<resultMap id="hardWareUseMap" type="com.aspire.ums.cmdb.maintenance.payload.HardwareUse" >
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="resource_pool" property="resourcePool" jdbcType="VARCHAR" />
+	    <result column="system_name" property="systemName" jdbcType="VARCHAR" />
+	    <result column="device_classify" property="deviceClassify" jdbcType="VARCHAR" />
+	    <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+		<result column="device_model" property="deviceModel" jdbcType="VARCHAR" />
+		<result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+		<result column="device_serial_number" property="deviceSerialNumber" jdbcType="VARCHAR" />
+		<result column="assets_number" property="assetsNumber" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="produce_name" property="serverProduce" jdbcType="VARCHAR" />
+		<result column="server_person" property="serverPerson" jdbcType="VARCHAR" />
+		<result column="warranty_date" property="warrantyDate" jdbcType="DATE" />
+		<result column="hardware_id" property="hardWareId" jdbcType="VARCHAR" />
+		<result column="project_instance_id" property="projectInstanceId" jdbcType="VARCHAR" />
+		<result column="server_level" property="serverLevel" jdbcType="VARCHAR" />
+		<result column="start_date" property="startDate" jdbcType="VARCHAR" />
+		<result column="end_date" property="endDate" jdbcType="VARCHAR" />
+		<result column="process_time" property="processTime" jdbcType="VARCHAR" />
+		<result column="actual_man_day" property="actualManDay" jdbcType="VARCHAR" />
+		<result column="mobile_approver" property="mobileApprover" jdbcType="VARCHAR" />
+		<result column="operate_approver" property="operateApprover" jdbcType="VARCHAR" />
+	    <result column="creater" property="creater" jdbcType="VARCHAR" />
+	    
+	 </resultMap>
+	
+	 
+	 <sql id="baseColumnList">
+		id,resource_pool,department1,department2,system_name,device_classify,device_type,device_model,device_name,device_serial_number,
+		assets_number,warranty_date,project_id,project_name,produce_name,server_person,server_level,start_date,end_date,process_time,actual_man_day,mobile_approver,operate_approver,creater
+		 
+	 </sql>
+
+     <!-- 动态sql -->
+    <sql id="where_sql"> 
+        <if test="systemName != null and  systemName != '' ">
+    		and system_name = #{systemName}
+    	</if>
+    	<if test="deviceName != null and  deviceName != '' ">
+    		and device_name like  CONCAT('%',#{deviceName},'%')
+    	</if>
+		<if test="deviceType != null and  deviceType != '' ">
+			and device_type like  CONCAT('%',#{deviceType},'%')
+		</if>
+		<if test="deviceModel != null and  deviceModel != '' ">
+			and device_model like  CONCAT('%',#{deviceModel},'%')
+		</if>
+	    <if test="warrantyDateBefore != null and warrantyDateBefore!= ''">
+			 and start_date &gt;= '${warrantyDateBefore}'
+		</if>
+		<if test="warrantyDateAfter != null and warrantyDateAfter != ''">
+			and end_date &lt;= '${warrantyDateAfter}'
+		</if>
+		<if test="deviceSerialNumber != null and  deviceSerialNumber != '' ">
+    		and device_serial_number like  CONCAT('%',#{deviceSerialNumber},'%')
+    	</if>
+    	<if test="assetsNumber != null and  assetsNumber != '' ">
+    		and assets_number like  CONCAT('%',#{assetsNumber},'%')
+    	</if>
+    	<if test="serverProduce != null and  serverProduce != '' ">
+    		and produce_name = #{serverProduce}
+    	</if>
+    </sql>
+
+	<insert id="insertHardWareUse" >
+		insert into cmdb_mainten_hardware_use (id,hardware_id,project_instance_id,server_person,server_level,start_date,end_date,process_time,actual_man_day,mobile_approver,operate_approver,creater,create_time,isdel)
+		values (
+			#{id},#{hardWareId},#{projectInstanceId},#{serverPerson},
+			#{serverLevel},#{startDate},#{endDate},
+			#{processTime},#{actualManDay},
+			#{mobileApprover},#{operateApprover},
+			#{creater},now(),0)
+	</insert>
+
+	<insert id="batchInsertHardWareUse" >
+		insert into cmdb_mainten_hardware_use (id,hardware_id,project_instance_id,server_person,server_level,start_date,end_date,process_time,actual_man_day,mobile_approver,operate_approver,creater,create_time,isdel)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.id, jdbcType=VARCHAR},
+			#{item.hardWareId, jdbcType=VARCHAR},
+			#{item.projectInstanceId, jdbcType=VARCHAR},
+			#{item.serverPerson, jdbcType=VARCHAR},
+			#{item.serverLevel, jdbcType=VARCHAR},
+			#{item.startDate, jdbcType=VARCHAR},
+			#{item.endDate, jdbcType=VARCHAR},
+			#{item.processTime, jdbcType=VARCHAR},
+			#{item.actualManDay, jdbcType=VARCHAR},
+			#{item.mobileApprover, jdbcType=VARCHAR},
+			#{item.operateApprover, jdbcType=VARCHAR},
+			#{item.creater, jdbcType=VARCHAR},
+			now(),0
+			)
+		</foreach>
+	</insert>
+
+	<update id="updateHardWareUse" >
+	    UPDATE cmdb_mainten_hardware_use
+	     <set>
+			 server_person=#{serverPerson},
+			 server_level=#{serverLevel},
+			 start_date=#{startDate},
+			 end_date=#{endDate},
+			 process_time=#{processTime},
+			 actual_man_day=#{actualManDay},
+			 mobile_approver=#{mobileApprover},
+			 operate_approver=#{operateApprover}
+		  </set>
+		  where id = #{id}
+	 </update>
+	   
+	<update id="batchUpdateHardWareUse" >
+	    update cmdb_mainten_hardware_use
+	     <set>
+			 server_person=#{serverPerson},
+			 server_level=#{serverLevel},
+			 start_date=#{startDate},
+			 end_date=#{endDate},
+			 process_time=#{processTime},
+			 actual_man_day=#{actualManDay},
+			 mobile_approver=#{mobileApprover},
+			 operate_approver=#{operateApprover}
+		  </set>
+		  where id in
+		  <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+          </foreach>
+	     
+	 </update>
+
+	<update id="delete">
+		update cmdb_mainten_hardware_use set isdel=1
+		where id in
+		<foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<!-- 分页数据个数 -->
+	<select id="getHardwareUseCount" resultType="java.lang.Integer">
+		select count(*) FROM
+		(
+		select tt.*,
+		h.id,h.server_person,h.server_level,h.start_date,
+		h.end_date,
+		h.process_time,h.actual_man_day,h.mobile_approver,
+		h.operate_approver,h.creater
+		from  (
+				SELECT
+				t.id project_instance_id,
+				t.device_sn device_serial_number,
+				i.idcType resource_pool,
+				i.department1 department1,
+				i.department2 department2,
+				i.bizSystem system_name,
+				i.device_class device_classify,
+				i.device_type device_type,
+				i.device_model device_model,
+				i.device_name device_name,
+				i.ip,
+				i.id assets_number,
+				p.service_end_time warranty_date,
+				p.id project_id,
+				p.project_no project_no,
+				p.project_name project_name,
+				p.mainten_produce produce_name
+				FROM
+				cmdb_maintenance_project_instance t
+				LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+				LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+				WHERE t.is_delete = '0'
+			) tt, cmdb_mainten_hardware_use h where h.project_instance_id=tt.project_instance_id and h.isdel=0
+		) mainten  where 1=1
+		<include refid="where_sql" />
+	</select>
+
+	<!-- 分页数据 -->
+	<select id="getHardwareUseByPage" resultMap="hardWareUseMap">
+		select <include refid="baseColumnList" /> FROM
+		(
+		select tt.*,
+		h.id,h.server_person,h.server_level,h.start_date,
+		h.end_date,
+		h.process_time,h.actual_man_day,h.mobile_approver,
+		h.operate_approver,h.creater
+		from  (
+		SELECT
+		t.id project_instance_id,
+		t.device_sn device_serial_number,
+		i.idcType resource_pool,
+		i.department1 department1,
+		i.department2 department2,
+		i.bizSystem system_name,
+		i.device_class device_classify,
+		i.device_type device_type,
+		i.device_model device_model,
+		i.device_name device_name,
+		i.ip,
+		i.id assets_number,
+		p.service_end_time warranty_date,
+		p.id project_id,
+		p.project_no project_no,
+		p.project_name project_name,
+		p.mainten_produce produce_name,
+		p.service_end_time
+		FROM
+		cmdb_maintenance_project_instance t
+		LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+		LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+		WHERE t.is_delete = '0'
+		) tt, cmdb_mainten_hardware_use h where h.project_instance_id=tt.project_instance_id and h.isdel=0
+		ORDER BY tt.service_end_time <![CDATA[ <= ]]> NOW(), tt.service_end_time
+		) mainten  where 1=1
+		<include refid="where_sql" />
+		<if test="pageSize != 0">
+			limit ${(pageNum -1) * pageSize}, ${pageSize}
+		</if>
+	</select>
+
+	
+	<!-- 导出数据 -->
+    <select id="queryExportData" resultType="java.util.LinkedHashMap">
+		select <include refid="baseColumnList" /> FROM
+		(
+		select tt.*,
+		h.id,h.server_person,h.server_level,h.start_date,
+		h.end_date,
+		h.process_time,h.actual_man_day,h.mobile_approver,
+		h.operate_approver,h.creater
+		from  (
+		SELECT
+		t.id project_instance_id,
+		t.device_sn device_serial_number,
+		i.idcType resource_pool,
+		i.department1 department1,
+		i.department2 department2,
+		i.bizSystem system_name,
+		i.device_class device_classify,
+		i.device_type device_type,
+		i.device_model device_model,
+		i.device_name device_name,
+		i.ip,
+		i.id assets_number,
+		p.service_end_time warranty_date,
+		p.id project_id,
+		p.project_no project_no,
+		p.project_name project_name,
+		p.mainten_produce produce_name
+		FROM
+		cmdb_maintenance_project_instance t
+		LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+		LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+		WHERE t.is_delete = '0'
+		) tt, cmdb_mainten_hardware_use h where h.project_instance_id=tt.project_instance_id and h.isdel=0
+		) mainten  where 1=1
+		<include refid="where_sql" />
+	</select>
+
+	<select id="getHardwareTableList" resultType="java.util.Map">
+		select tt.*,h.id from
+		(
+			SELECT
+			t.id project_instance_id,
+			t.device_sn device_serial_number,
+			DATE_FORMAT(p.service_end_time,'%Y-%m-%d') warranty_date
+			FROM
+			cmdb_maintenance_project_instance t
+			LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+			LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+			WHERE t.is_delete = '0'
+		) tt, cmdb_mainten_hardware h where h.project_instance_id = tt.project_instance_id
+	</select>
+
+	<select id="queryByProjectId" resultType="java.util.LinkedHashMap">
+		SELECT hs.* from cmdb_mainten_hardware_use hs where
+			EXISTS (SELECT 1 from cmdb_maintenance_project_instance mpi
+						where mpi.id = hs.project_instance_id
+						and mpi.project_id = #{projectId} and mpi.is_delete='0')
+			and hs.isdel='0'
+	</select>
+
+	<select id="getHardWareUseByProjectInstanceId" resultMap="hardWareUseMap">
+		SELECT u.* FROM cmdb_mainten_hardware_use u
+		inner join cmdb_mainten_hardware h on h.id = u.hardware_id
+		where u.isdel = '0' and u.project_instance_id = #{projectInstanceId}
+	</select>
+</mapper>

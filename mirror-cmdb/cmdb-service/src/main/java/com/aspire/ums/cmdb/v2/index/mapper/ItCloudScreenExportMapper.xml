@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenExportMapper">
+    
+    <!-- 大屏数据导出信息实体 -->
+    <resultMap id="screenExport" type="com.aspire.ums.cmdb.index.payload.ScreenExport">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="port" jdbcType="VARCHAR" property="port"/>
+        <result column="req_method" jdbcType="VARCHAR" property="reqMethod"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="req_header" jdbcType="INTEGER" property="reqHeader"/>
+        <result column="param" jdbcType="VARCHAR" property="param"/>
+        <result column="sheet_name" jdbcType="VARCHAR" property="sheetName"/>
+        <result column="excel_header" jdbcType="VARCHAR" property="excelHeader"/>
+        <result column="page_type" jdbcType="VARCHAR" property="pageType"/>
+        <result column="rsp_flag" jdbcType="VARCHAR" property="rspFlag"/>
+        <result column="rsp_type" jdbcType="VARCHAR" property="rspType"/>
+        <result column="rsp_key" jdbcType="VARCHAR" property="rspKey"/>
+        <result column="is_sort" jdbcType="VARCHAR" property="isSort"/>
+    </resultMap>
+
+    <select id="listByType" resultMap="screenExport">
+        select ip,port,req_method,url,req_header,param,sheet_name,excel_header,rsp_flag,rsp_type,rsp_key
+        from  screen_export
+        where page_type = #{type}
+        order by url,is_sort
+    </select>
+</mapper>

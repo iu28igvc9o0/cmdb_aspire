@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.collect.mapper.CollectChangeLogMapper" >
+    <resultMap id="changeLogEntity" type="com.aspire.ums.cmdb.collect.entity.CollectChangeLogEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+        <result column="formId" property="formId" jdbcType="VARCHAR" />
+        <result column="batchId" property="batchId" jdbcType="VARCHAR"/>
+        <result column="oldValue" property="oldValue" jdbcType="VARCHAR" />
+        <result column="currValue" property="currValue" jdbcType="VARCHAR" />
+        <result column="operaterType" property="operaterType" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operatorTime" property="operatorTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="getChangeLogsByModuleId" resultType="java.util.LinkedHashMap">
+        select t.* from (
+        select temp.*
+              <choose>
+                  <when test="queryFields != null and queryFields.size > 0">
+                      ,CONCAT_WS(";",
+                      <foreach collection="queryFields" item="item" index="index" separator=",">
+                          (CASE
+                              CONCAT_WS( ':', '${item.name}', CONCAT_WS( '->', `${item.code}_oldValue`,`${item.code}`)) WHEN '${item.name}:->'
+                           THEN
+                              null
+                           ELSE
+                              CONCAT_WS( ':', '${item.name}', CONCAT_WS( '->', `${item.code}_oldValue`,`${item.code}`))
+                           END)
+                      </foreach>
+                      ) changeContent
+                  </when>
+                  <otherwise>
+                      ,'' changeContent
+                  </otherwise>
+              </choose>
+            from (
+                select ccl.instanceId, ci.name instanceName, ccl.batchId, DATE_FORMAT(ccl.operatorTime, '%Y-%m-%d') operatorTime,
+                <foreach collection="queryFields" item="item" index="index">
+                    max(case formId when '${item.id}' then oldValue else '' end) '${item.code}_oldValue',
+                    max(case formId when '${item.id}' then currValue else '' end) '${item.code}',
+                </foreach>
+                max(operaterType) operaterType,
+                max(operator) operator
+                from cmdb_collect_change_log ccl
+                inner join cmdb_instance ci on ccl.instanceId = ci.id
+                WHERE ci.moduleId = '${moduleId}'
+                group by ccl.instanceId, ccl.batchId, DATE_FORMAT(ccl.operatorTime, '%Y-%m-%d'), ci.name
+                order by operatorTime desc
+            ) temp
+            where 1=1
+            ${queryWhere}
+        ) t where 1=1 ${innerQueryWhere}
+    </select>
+
+    <select id="getChangeLogByBatchId" resultType="java.util.LinkedHashMap">
+        SELECT
+            temp.*
+            <choose>
+                <when test="instanceForms != null and instanceForms.size > 0">
+                    ,CONCAT_WS(";",
+                    <foreach collection="instanceForms" item="item" index="index" separator=",">
+                        <if test="item.type != 'groupLine'">
+                            (CASE
+                            CONCAT_WS( ':', '${item.name}', CONCAT_WS( '->', `${item.code}_oldValue`,`${item.code}`)) WHEN '${item.name}:->'
+                            THEN
+                            null
+                            ELSE
+                            CONCAT_WS( ':', '${item.name}', CONCAT_WS( '->', `${item.code}_oldValue`,`${item.code}`))
+                            END)
+                        </if>
+                    </foreach>
+                    ) changeContent
+                </when>
+                <otherwise>
+                    ,'' changeContent
+                </otherwise>
+            </choose>
+        FROM
+            (
+                SELECT
+                    ccl.instanceId,
+                    ccl.batchId,
+                    ccl.operatorTime,
+                    <foreach collection="instanceForms" item="item" index="index">
+                        <if test="item.type != 'groupLine'">
+                          max(case formId when '${item.id}' then oldValue else '' end) '${item.code}_oldValue',
+                          max(case formId when '${item.id}' then currValue else '' end) '${item.code}',
+                        </if>
+                    </foreach>
+                    max(operaterType) operaterType,
+                    max(operator) operator
+                FROM
+                    cmdb_collect_change_log ccl
+                WHERE
+                    ccl.instanceId = #{instanceId} and ccl.batchId = #{batchId}
+                GROUP BY
+                    ccl.instanceId,
+                    ccl.batchId,
+                    ccl.operatorTime
+            ) temp
+    </select>
+
+    <select id="getChangeLogsByBatchId" resultMap="changeLogEntity">
+        select * from cmdb_collect_change_log where batchId = #{batchId}
+    </select>
+
+    <insert id="insertVO" parameterType="com.aspire.ums.cmdb.collect.entity.CollectChangeLogEntity">
+        INSERT INTO `cmdb_collect_change_log` (`id`, `instanceId`, `formId`, `batchId`, `oldValue`, `currValue`, `operaterType`,
+         `operator`, `operatorTime`)
+         VALUES (#{id,jdbcType=VARCHAR}, #{instanceId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, #{batchId,jdbcType=VARCHAR},
+         #{oldValue,jdbcType=VARCHAR},#{currValue,jdbcType=VARCHAR}, #{operaterType,jdbcType=VARCHAR}, #{operator,jdbcType=VARCHAR},
+         #{operatorTime,jdbcType=TIMESTAMP})
+    </insert>
+</mapper>

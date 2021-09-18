@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.IpResource.mapper.CmdbAddressLibraryMapper">
+
+    <resultMap id="segmentResultMap" type="com.aspire.ums.cmdb.IpResource.entity.CmdbNetworkSegmentEntity">
+        <result column="id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR"/>
+        <result column="network_segment_address" property="segmentAddress" jdbcType="VARCHAR"/>
+        <result column="vlan_number" property="vlanNumber" jdbcType="VARCHAR"/>
+        <result column="first_business_system" property="firstBusinessSystem" jdbcType="VARCHAR"/>
+        <result column="alone_business_system" property="aloneBusinessSystem" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcVal" jdbcType="VARCHAR"/>
+        <result column="is_pool" property="isPool" jdbcType="VARCHAR"/>
+        <result column="inner_segment_type" property="innerSegmentType" jdbcType="VARCHAR"/>
+        <result column="inner_segment_sub_type" property="innerSegmentSubType" jdbcType="VARCHAR"/>
+        <result column="is_vc" property="isVc" jdbcType="VARCHAR"/>
+        <result column="free_ip_count" property="freeIpCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="ipAddressResultMap" type="com.aspire.ums.cmdb.IpResource.entity.CmdbIpAddressEntity">
+        <result column="id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="inner_ip_use" property="innerIpUse" jdbcType="VARCHAR"/>
+        <result column="inner_ip_sub_use" property="innerIpSubUse" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--    网段-IP查询回参实体-->
+    <resultMap id="segmentIpResultMap" type="com.aspire.ums.cmdb.ipResource.payload.SegmentIpInfoResp">
+        <result column="id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="segment_address" property="segmentAddress" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcVal" jdbcType="VARCHAR"/>
+        <result column="first_business_system" property="firstBusinessName" jdbcType="VARCHAR"/>
+        <result column="alone_business_system" property="aloneBusinessName" jdbcType="VARCHAR"/>
+        <result column="segment_type" property="segmentType" jdbcType="VARCHAR"/>
+        <result column="segment_sub_use" property="segmentSubClass" jdbcType="VARCHAR"/>
+        <result column="ip_use" property="ipUseClass" jdbcType="VARCHAR"/>
+        <result column="ip_sub_use" property="ipUseSubClass" jdbcType="VARCHAR"/>
+        <result column="ip_type" property="ipType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--    内网网段字段-->
+    <sql id="segmentColumn">
+        <bind name="pageNo" value="(pageNo -1) * pageSize"/>
+        s.id,
+        s.network_segment_address,
+        s.vlan_number,
+        cos.orgName AS first_business_system,
+        cbl.business_name AS alone_business_system,
+        tcd.dict_note AS idcType,
+        ( CASE WHEN tcd3.dict_note IS NULL THEN s.is_pool ELSE tcd3.dict_note END ) AS is_pool,
+        tcd1.dict_note AS inner_segment_type,
+        tcd2.dict_note AS inner_segment_sub_type
+    </sql>
+    <!--    内网IP字段-->
+    <sql id="ipAddressColumn">
+        <bind name="pageNo" value="(pageNo -1) * pageSize"/>
+        cip.id,
+        cip.ip,
+        cip.inner_ip_use,
+        cip.inner_ip_sub_use
+    </sql>
+    <!--    网段-IP字段（变更IP）-->
+    <sql id="segmentIpColumn">
+        ri.module_id,cip.id,tcd.dict_note AS idcType,cos.orgName AS first_business_system,cbl.business_name AS alone_business_system
+    </sql>
+
+    <!--    内网网段查询条件-->
+    <sql id="segmentQueryWhere">
+        <if test="idcVal != null and idcVal != ''">
+            AND tcd.dict_note = #{idcVal}
+        </if>
+        <if test="segmentType != null and segmentType != ''">
+            AND s.inner_segment_type = #{segmentType}
+        </if>
+        <if test="segmentSubType != null and segmentSubType != ''">
+            AND s.inner_segment_sub_type = #{segmentSubType}
+        </if>
+        <if test="firstBusiness != null and firstBusiness != ''">
+            AND s.first_business_system = #{firstBusiness}
+        </if>
+        <if test="aloneBusiness != null and aloneBusiness != ''">
+            AND s.alone_business_system = #{aloneBusiness}
+        </if>
+        <if test="segmentAddress != null and segmentAddress != ''">
+            AND s.network_segment_address LIKE concat('%',#{segmentAddress},'%')
+        </if>
+    </sql>
+    <!--    内网IP查询条件-->
+    <sql id="ipAddressQueryWhere">
+        <if test="ip != null and ip != ''">
+            AND cip.ip = #{ip}
+        </if>
+        <if test="innerIpUse != null and innerIpUse != ''">
+            AND cip.inner_ip_use = #{innerIpUse}
+            <!-- AND cip.inner_ip_use LIKE concat ('',#{innerIpUse},'') -->
+        </if>
+        <if test="innerIpSubUse != null and innerIpSubUse != ''">
+            AND cip.inner_ip_sub_use = #{innerIpSubUse}
+        </if>
+        <if test="assignStatus != null and assignStatus != ''">
+            AND tcd.dict_note = #{assignStatus}
+        </if>
+        <if test="segmentAddress != null and segmentAddress != ''">
+            AND cip.network_segment_owner = #{segmentAddress}
+        </if>
+        <if test="idcVal != null and idcVal != ''">
+            AND s.idcType = #{idcVal}
+        </if>
+        <if test="segmentId != null and segmentId != ''">
+            AND s.id = #{segmentId}
+        </if>
+    </sql>
+    <!--    网段-IP查询（变更IP）-->
+    <sql id="segmentIpQueryWhere">
+        <if test="assignStatus != null and assignStatus != ''">
+            AND tcd3.dict_note = #{assignStatus}
+        </if>
+        <if test="idcVal != null and idcVal != ''">
+            AND s.idcType = #{idcVal}
+        </if>
+        <if test="firstBusiness != null and firstBusiness != ''">
+            AND s.first_business_system = #{firstBusiness}
+        </if>
+        <if test="aloneBusiness != null and aloneBusiness != ''">
+            AND s.alone_business_system = #{aloneBusiness}
+        </if>
+    </sql>
+
+    <sql id="innerTableSql">
+        cmdb_ip_repository_inner_ip cip
+            INNER JOIN cmdb_ip_repository_inner_segment s ON cip.network_segment_owner = s.network_segment_address
+            INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id
+                                                                FROM cmdb_module
+                                                                WHERE `code` =
+                                                                      'ip_repository_inner_segment')
+            AND rs.is_delete = 0 AND rs.id = s.id
+            INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id
+                                                                FROM cmdb_module
+                                                                WHERE `code` =
+                                                                      'ip_repository_inner_ip')
+            AND ri.is_delete = 0 AND ri.id = cip.id
+            LEFT JOIN cmdb_org_system cos ON ( s.first_business_system = cos.id AND cos.parent_id != '0' AND cos.is_delete = '0' )
+            LEFT JOIN cmdb_business_line cbl ON (s.alone_business_system = cbl.id AND cbl.is_delete = '0' AND parentBusiness is null)
+            LEFT JOIN t_cfg_dict tcd ON (s.idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd1 ON (s.inner_segment_type = tcd1.id AND tcd1.col_name = 'inner_segment_type' AND tcd1.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd2 ON (s.inner_segment_sub_type = tcd2.id AND tcd2.col_name = 'inner_sub_segment_type' AND tcd2.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd3 ON (cip.assign_status = tcd3.id AND tcd3.col_name = 'ipAllocationStatusType' AND tcd3.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd4 ON (cip.inner_ip_use = tcd4.id AND tcd4.col_name = 'inner_segment_use' AND tcd4.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd5 ON (cip.inner_ip_sub_use = tcd5.id AND tcd5.col_name = 'inner_segment_sub_use' AND tcd5.is_delete = '0')
+    </sql>
+    <sql id="getInnerSql">
+        SELECT
+        <include refid="segmentIpColumn"/>,
+        s.network_segment_address AS segment_address,
+        cip.ip,
+        tcd1.dict_note AS segment_type,
+        tcd2.dict_note AS segment_sub_type,
+        tcd4.dict_note AS ip_use,
+        tcd5.dict_note AS ip_sub_use,
+        '1' AS ip_type
+        FROM
+        <include refid="innerTableSql"/>
+        WHERE 1 = 1
+        AND cip.is_delete = 0
+        <include refid="segmentIpQueryWhere"/>
+        <if test="ipArr != null and ipArr.length > 0">
+            AND cip.ip IN
+            <foreach collection="ipArr" index="index" item="ip" open="(" separator="," close=")">
+                #{ip}
+            </foreach>
+        </if>
+        <if test="segmentType != null and segmentType != ''">
+            AND s.inner_segment_type = #{segmentType}
+        </if>
+        <if test="segmentSubType != null and segmentSubType != ''">
+            AND s.inner_segment_sub_type = #{segmentSubType}
+        </if>
+        <if test="ipUseClass != null and ipUseClass != ''">
+            AND cip.inner_ip_use = #{ipUseClass}
+        </if>
+        <if test="ipUseSubClass != null and ipUseSubClass != ''">
+            AND cip.inner_ip_sub_use = #{ipUseSubClass}
+        </if>
+    </sql>
+    <sql id="publicTableSql">
+        cmdb_ip_repository_public_ip cip
+            INNER JOIN cmdb_ip_repository_public_segment s ON cip.public_segment_owner = s.public_segment_address
+            INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id
+                                                                FROM cmdb_module
+                                                                WHERE `code` =
+                                                                      'ip_repository_public_segment')
+            AND rs.is_delete = 0 AND rs.id = s.id
+            INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id
+                                                                FROM cmdb_module
+                                                                WHERE `code` =
+                                                                      'ip_repository_public_ip')
+            AND ri.is_delete = 0 AND ri.id = cip.id
+            LEFT JOIN cmdb_org_system cos ON ( s.first_business_system = cos.id AND cos.parent_id != '0' AND cos.is_delete = '0' )
+            LEFT JOIN cmdb_business_line cbl ON (s.alone_business_system = cbl.id AND cbl.is_delete = '0' AND parentBusiness is null)
+            LEFT JOIN t_cfg_dict tcd ON (s.idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd3 ON (cip.assign_status = tcd3.id AND tcd3.col_name = 'ipAllocationStatusType' AND tcd3.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd4 ON (cip.public_segment_use = tcd4.id AND tcd4.col_name = 'public_segment_use' AND tcd4.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd5 ON (cip.public_segment_sub_use = tcd5.id AND tcd5.col_name = 'public_segment_sub_use' AND tcd5.is_delete = '0')
+    </sql>
+    <sql id="getPublicSql">
+        SELECT
+        <include refid="segmentIpColumn"/>,
+        s.public_segment_address AS segment_address,
+        cip.ip,
+        '' AS segment_type,
+        '' AS segment_sub_type,
+        tcd4.dict_note AS ip_use,
+        tcd5.dict_note AS ip_sub_use,
+        '2' AS ip_type
+        FROM
+        <include refid="publicTableSql"/>
+        WHERE 1 = 1
+        AND cip.is_delete = 0
+        <include refid="segmentIpQueryWhere"/>
+        <if test="ipArr != null and ipArr.length > 0">
+            AND cip.ip IN
+            <foreach collection="ipArr" index="index" item="ip" open="(" separator="," close=")">
+                #{ip}
+            </foreach>
+        </if>
+        <if test="segmentType != null and segmentType != '' or segmentSubType != null and segmentSubType != ''">
+            AND cip.id IS NULL
+        </if>
+    </sql>
+    <sql id="ipv6TableSql">
+        cmdb_ip_repository_ipv6_ip cip
+            INNER JOIN cmdb_ip_repository_ipv6_segment s ON cip.ipv6_segment_owner = s.ipv6_segment_address
+            INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id
+                                                                FROM cmdb_module
+                                                                WHERE `code` =
+                                                                      'ip_repository_ipv6_segment')
+            AND rs.is_delete = 0 AND rs.id = s.id
+            INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id
+                                                                FROM cmdb_module
+                                                                WHERE `code` =
+                                                                      'ip_repository_ipv6_ip')
+            AND ri.is_delete = 0 AND ri.id = cip.id
+            LEFT JOIN cmdb_org_system cos ON ( s.first_business_system = cos.id AND cos.parent_id != '0' AND cos.is_delete = '0' )
+            LEFT JOIN cmdb_business_line cbl ON (s.alone_business_system = cbl.id AND cbl.is_delete = '0' AND parentBusiness is null)
+            LEFT JOIN t_cfg_dict tcd ON (s.idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd1 ON (s.ipv6_segment_type = tcd1.id AND tcd1.col_name = 'ipv6_segment_type' AND tcd1.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd2 ON (s.ipv6_segment_sub_type = tcd2.id AND tcd2.col_name = 'ipv6_sub_segment_type' AND tcd2.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd3 ON (cip.assign_status = tcd3.id AND tcd3.col_name = 'ipAllocationStatusType' AND tcd3.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd4 ON (cip.ipv6_segment_use = tcd4.id AND tcd4.col_name = 'ipv6_segment_use' AND tcd4.is_delete = '0')
+            LEFT JOIN t_cfg_dict tcd5 ON (cip.ipv6_segment_sub_use = tcd5.id AND tcd5.col_name = 'ipv6_segment_sub_use' AND tcd5.is_delete = '0')
+    </sql>
+    <sql id="getIpv6Sql">
+        SELECT
+        <include refid="segmentIpColumn"/>,
+        s.ipv6_segment_address AS segment_address,
+        cip.ipv6 AS ip,
+        tcd1.dict_note AS segment_type,
+        tcd2.dict_note AS segment_sub_type,
+        tcd4.dict_note AS ip_use,
+        tcd5.dict_note AS ip_sub_use,
+        '3' AS ip_type
+        FROM
+        <include refid="ipv6TableSql"/>
+        WHERE 1 = 1
+        AND cip.is_delete = 0
+        <include refid="segmentIpQueryWhere"/>
+        <if test="ipArr != null and ipArr.length > 0">
+            AND cip.ipv6 IN
+            <foreach collection="ipArr" index="index" item="ip" open="(" separator="," close=")">
+                #{ip}
+            </foreach>
+        </if>
+        <if test="segmentType != null and segmentType != ''">
+            AND s.ipv6_segment_type = #{segmentType}
+        </if>
+        <if test="segmentSubType != null and segmentSubType != ''">
+            AND s.ipv6_segment_sub_type = #{segmentSubType}
+        </if>
+        <if test="ipUseClass != null and ipUseClass != ''">
+            AND cip.ipv6_segment_use = #{ipUseClass}
+        </if>
+        <if test="ipUseSubClass != null and ipUseSubClass != ''">
+            AND cip.ipv6_segment_sub_use = #{ipUseSubClass}
+        </if>
+    </sql>
+
+    <!-- 字典表，业务线等关联sql-->
+    <sql id="refJoinSql">
+        LEFT JOIN cmdb_org_system cos ON ( s.first_business_system = cos.id AND cos.parent_id != '0' AND cos.is_delete = '0' )
+        LEFT JOIN cmdb_business_line cbl ON (s.alone_business_system = cbl.id AND cbl.is_delete = '0' AND parentBusiness is null)
+        LEFT JOIN t_cfg_dict tcd ON (s.idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+        LEFT JOIN t_cfg_dict tcd1 ON ( s.inner_segment_type = tcd1.id AND tcd1.col_name = 'inner_segment_type' AND tcd1.is_delete = '0' )
+        LEFT JOIN t_cfg_dict tcd2 ON ( s.inner_segment_sub_type = tcd2.id AND tcd2.col_name = 'inner_sub_segment_type' AND tcd2.is_delete = '0' )
+        LEFT JOIN t_cfg_dict tcd3 ON ( s.is_pool = tcd3.id AND tcd3.col_name = 'whether' AND tcd3.is_delete = '0' )
+    </sql>
+
+    <!-- IP列表查询关联字典表-->
+    <sql id="refJoin4IpList">
+        INNER JOIN t_cfg_dict tcd ON (cip.assign_status = tcd.id AND tcd.col_name = 'ipAllocationStatusType' AND tcd.is_delete = '0')
+        INNER JOIN t_cfg_dict tcd1 ON ( s.inner_segment_type = tcd1.id AND tcd1.col_name = 'inner_segment_type' AND tcd1.is_delete = '0' )
+        INNER JOIN t_cfg_dict tcd2 ON ( s.inner_segment_sub_type = tcd2.id AND tcd2.col_name = 'inner_sub_segment_type' AND tcd2.is_delete = '0' )
+    </sql>
+
+    <!--    内网网段查询-->
+    <select id="findNetworkSegment" resultMap="segmentResultMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbNetworkSegmentQuery">
+        SELECT * FROM
+        (SELECT
+        <include refid="segmentColumn"/>,
+        ( CASE
+        WHEN vs.id IS NOT NULL THEN 'VMware'
+        WHEN cosubnet.id IS NOT NULL AND (tcd.dict_note = '萝岗数据中心' OR tcd.dict_note = '呼和浩特资源池') THEN 'KVM'
+        ELSE '否' END ) AS is_vc,
+        s.free_ip_count AS free_ip_count,
+        r.module_id
+        FROM
+        cmdb_ip_repository_inner_segment s
+        INNER JOIN cmdb_ip_repository r ON r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = ( SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_inner_segment' )
+        LEFT JOIN cmdb_vmware_network_port_group vs ON s.network_segment_address = vs.name
+        LEFT JOIN cmdb_openstack_subnet cosubnet ON s.network_segment_address = cosubnet.cidr
+        <include refid="refJoinSql"/>
+        WHERE 1=1
+        <include refid="segmentQueryWhere"/>
+        )a
+        WHERE 1=1
+        <if test="deviceCount != null and deviceCount != ''">
+            AND a.free_ip_count &gt;= #{deviceCount}
+        </if>
+        <if test="pageNo >= 0 and pageSize > 0">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="findNetworkSegmentCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbNetworkSegmentQuery">
+        SELECT
+        count(*) AS total
+        FROM
+        (
+        SELECT * FROM
+        (SELECT
+        <include refid="segmentColumn"/>,
+        ( CASE
+        WHEN vs.id IS NOT NULL THEN 'VMware'
+        WHEN cosubnet.id IS NOT NULL AND (tcd.dict_note = '萝岗数据中心' OR tcd.dict_note = '呼和浩特资源池') THEN 'KVM'
+        ELSE '否' END ) AS is_vc,
+        s.free_ip_count AS free_ip_count,
+        r.module_id
+        FROM
+        cmdb_ip_repository_inner_segment s
+        INNER JOIN cmdb_ip_repository r ON r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = ( SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_inner_segment' )
+        LEFT JOIN cmdb_vm_subnet vs ON s.network_segment_address = vs.cidr
+        LEFT JOIN cmdb_openstack_subnet cosubnet ON s.network_segment_address = cosubnet.cidr
+        <include refid="refJoinSql"/>
+        WHERE 1=1
+        <include refid="segmentQueryWhere"/>
+        )a
+        WHERE 1=1
+        <if test="deviceCount != null and deviceCount != ''">
+           AND a.free_ip_count &gt;= #{deviceCount}
+        </if>
+        ) b
+    </select>
+
+    <!--    根据资源池、网段地址获取IP列表-->
+    <select id="findIpAddress" resultMap="ipAddressResultMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbIpAddressQuery">
+        SELECT
+        <include refid="ipAddressColumn"/>,ri.module_id
+        FROM
+        cmdb_ip_repository_inner_ip cip
+        INNER JOIN cmdb_ip_repository_inner_segment s ON cip.network_segment_owner = s.network_segment_address
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = ( SELECT id FROM cmdb_module WHERE `code` =
+        'ip_repository_inner_segment' )
+        AND rs.is_delete = 0 AND rs.id = s.id
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = ( SELECT id FROM cmdb_module WHERE `code` =
+        'ip_repository_inner_ip' )
+        AND ri.is_delete = 0 AND ri.id = cip.id
+        <include refid="refJoin4IpList"/>
+        WHERE 1=1
+        <include refid="ipAddressQueryWhere"/>
+        ORDER BY inet_aton(cip.ip) ASC
+        <if test="pageNo >= 0 and pageSize > 0">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="findIpAddressCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbIpAddressQuery">
+        SELECT
+        count(*) AS total
+        FROM
+        cmdb_ip_repository_inner_ip cip
+        INNER JOIN cmdb_ip_repository_inner_segment s ON cip.network_segment_owner = s.network_segment_address
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = ( SELECT id FROM cmdb_module WHERE `code` =
+        'ip_repository_inner_segment' )
+        AND rs.is_delete = 0 AND rs.id = s.id
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = ( SELECT id FROM cmdb_module WHERE `code` =
+        'ip_repository_inner_ip' )
+        AND ri.is_delete = 0 AND ri.id = cip.id
+        <include refid="refJoin4IpList"/>
+        WHERE 1=1
+        <include refid="ipAddressQueryWhere"/>
+    </select>
+
+    <!--    内网IP、IPV6、公网IP查询-->
+    <select id="getSegmentIpList" resultMap="segmentIpResultMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.SegmentIpInfoQuery">
+        <bind name="pageNo" value="(pageNo -1) * pageSize"/>
+        SELECT
+        module_id,
+        id,
+        idcType,
+        first_business_system,
+        alone_business_system,
+        ip,
+        segment_address,
+        segment_type,
+        segment_sub_type,
+        ip_use,
+        ip_sub_use,
+        (CASE WHEN ip_type = '1' THEN '内网IP'
+        WHEN ip_type = '2' THEN '公网IP'
+        ELSE 'IPV6' END) AS ip_type
+        FROM (
+        <if test='ipType == "1"'>
+            <include refid="getInnerSql"/>
+        </if>
+        <if test='ipType == "2"'>
+            <include refid="getPublicSql"/>
+        </if>
+        <if test='ipType == "3"'>
+            <include refid="getIpv6Sql"/>
+        </if>
+        ) a
+        <where>
+            <if test="ipType != null and ipType != ''">
+                AND a.ip_type = #{ipType}
+            </if>
+            <if test="segmentAddress != null and segmentAddress != ''">
+                AND a.segment_address LIKE CONCAT('%',#{segmentAddress},'%')
+            </if>
+        </where>
+        ORDER BY INET_ATON(a.ip)
+        <if test="pageNo >= 0 and pageSize > 0">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getSegmentIpListCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.SegmentIpInfoQuery">
+        SELECT count(*) AS total FROM (
+        <if test='ipType == "1"'>
+            <include refid="getInnerSql"/>
+        </if>
+        <if test='ipType == "2"'>
+            <include refid="getPublicSql"/>
+        </if>
+        <if test='ipType == "3"'>
+            <include refid="getIpv6Sql"/>
+        </if>
+        ) a
+        <where>
+            <if test="ipType != null and ipType != ''">
+                AND a.ip_type = #{ipType}
+            </if>
+            <if test="segmentAddress != null and segmentAddress != ''">
+                AND a.segment_address LIKE CONCAT('%',#{segmentAddress},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--    内网IP地址库更新-->
+    <update id="updateInnerIp" parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbIpAddressUpdate">
+        UPDATE
+        <include refid="innerTableSql"/>
+        <set>
+            assign_status = #{assignStatus},
+            <if test="assignUser != null and assignUser != ''">
+                assign_user = #{assignUser},
+                assign_time = #{assignTime},
+                request_person = #{applicater},
+                request_process_id = #{applicatOrder},
+                request_time = #{applicatTime},
+                useful_life = #{useLife},
+            </if>
+            <if test="survivalStatus != null and survivalStatus != ''">
+                survival_status = #{survivalStatus},
+            </if>
+            <if test="ipUpdateFlag != null and ipUpdateFlag == 2">
+                first_survival_time = #{firstSurvivalTime},
+                latest_survival_time = #{latestSurvivalTime},
+                is_cmdb_manager = #{isCmdbManager},
+                online_business = #{onlineBusiness},
+                sub_business_module = #{subBusinessModule}
+            </if>
+        </set>
+        WHERE tcd.dict_note = #{idcVal} AND cip.ip IN
+        <foreach collection="ips" item="ip" index="index" open="(" separator="," close=")">
+            #{ip}
+        </foreach>
+    </update>
+
+    <!--    公网IP地址库更新-->
+    <update id="updatePublicIp" parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbIpAddressUpdate">
+        UPDATE
+        <include refid="publicTableSql"/>
+        <set>
+            assign_status = #{assignStatus},
+            <if test="assignUser != null and assignUser != ''">
+                assign_user = #{assignUser},
+                assign_time = #{assignTime},
+                request_person = #{applicater},
+                request_process_id = #{applicatOrder},
+                request_time = #{applicatTime},
+                useful_life = #{useLife},
+            </if>
+            <if test="survivalStatus != null and survivalStatus != ''">
+                survival_status = #{survivalStatus},
+            </if>
+            <if test="ipUpdateFlag != null and ipUpdateFlag == 2">
+                first_survival_time = #{firstSurvivalTime},
+                latest_survival_time = #{latestSurvivalTime},
+                is_cmdb_manager = #{isCmdbManager},
+                online_business = #{onlineBusiness},
+                sub_business_module = #{subBusinessModule}
+            </if>
+        </set>
+        WHERE cip.ip IN
+        <foreach collection="ips" item="ip" index="index" open="(" separator="," close=")">
+            #{ip}
+        </foreach>
+        <if test="idcVal != null and idcVal != ''">
+            AND tcd.dict_note = #{idcVal}
+        </if>
+    </update>
+
+    <!--    ipv6 地址库更新-->
+    <update id="updateIpv6Ip" parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbIpAddressUpdate">
+        UPDATE
+        <include refid="ipv6TableSql"/>
+        <set>
+            assign_status = #{assignStatus},
+            <if test="assignUser != null and assignUser != ''">
+                assign_user = #{assignUser},
+                /*assign_time = #{assignTime},*/
+                request_person = #{applicater},
+                request_process_id = #{applicatOrder},
+                request_time = #{applicatTime},
+                useful_life = #{useLife},
+            </if>
+            <if test="survivalStatus != null and survivalStatus != ''">
+                survival_status = #{survivalStatus},
+            </if>
+            <if test="ipUpdateFlag != null and ipUpdateFlag == 2">
+                first_survival_time = #{firstSurvivalTime},
+                latest_survival_time = #{latestSurvivalTime},
+                is_cmdb_manager = #{isCmdbManager},
+                online_business = #{onlineBusiness},
+                sub_business_module = #{subBusinessModule}
+            </if>
+        </set>
+        WHERE tcd.dict_note = #{idcVal} AND cip.ip IN
+        <foreach collection="ips" item="ip" index="index" open="(" separator="," close=")">
+            #{ip}
+        </foreach>
+    </update>
+
+    <!--    内网网段更新-->
+    <update id="updateInnerSegment" parameterType="HashMap">
+        UPDATE cmdb_ip_repository_inner_segment
+        INNER JOIN t_cfg_dict tcd ON (idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+        <set>
+            <if test="_parameter.containsKey('network_gataway')">
+                network_gataway = #{network_gataway},
+            </if>
+            <if test="_parameter.containsKey('network_segment_address')">
+                network_segment_address = #{network_segment_address},
+            </if>
+            <if test="_parameter.containsKey('ip_type')">
+                ip_type = #{ip_type},
+            </if>
+            <if test="_parameter.containsKey('free_ip_count')">
+                free_ip_count = #{free_ip_count},
+            </if>
+            <if test="_parameter.containsKey('vlan_number')">
+                vlan_number = #{vlan_number},
+            </if>
+            <if test="_parameter.containsKey('safe_region')">
+                safe_region = #{safe_region},
+            </if>
+            <if test="_parameter.containsKey('first_business_system')">
+                first_business_system = #{first_business_system},
+            </if>
+            <if test="_parameter.containsKey('active_ip_count')">
+                active_ip_count = #{active_ip_count},
+            </if>
+            <if test="_parameter.containsKey('assign_ip_count')">
+                assign_ip_count = #{assign_ip_count},
+            </if>
+            <if test="_parameter.containsKey('idcType')">
+                `idcType` = #{idcType},
+            </if>
+            <if test="_parameter.containsKey('alone_business_system')">
+                alone_business_system = #{alone_business_system},
+            </if>
+            <if test="_parameter.containsKey('inner_segment_type')">
+                inner_segment_type = #{inner_segment_type},
+            </if>
+            <if test="_parameter.containsKey('inner_segment_sub_type')">
+                inner_segment_sub_type = #{inner_segment_sub_type},
+            </if>
+            <if test="_parameter.containsKey('inner_segment_ip_type')">
+                inner_segment_ip_type = #{inner_segment_ip_type},
+            </if>
+            <if test="_parameter.containsKey('is_pool')">
+                is_pool = #{is_pool},
+            </if>
+        </set>
+        WHERE
+        network_segment_address = #{network_segment_address}
+        AND tcd.dict_note = #{idcType}
+    </update>
+
+    <!--    IPV6网段更新-->
+    <update id="updateIPV6Segment" parameterType="HashMap">
+        UPDATE cmdb_ip_repository_ipv6_segment
+        INNER JOIN t_cfg_dict tcd ON (idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+        <set>
+            <if test="_parameter.containsKey('free_ip_count')">
+                free_ip_count = #{free_ip_count},
+            </if>
+            <if test="_parameter.containsKey('first_business_system')">
+                first_business_system = #{first_business_system},
+            </if>
+            <if test="_parameter.containsKey('active_ip_count')">
+                active_ip_count = #{active_ip_count},
+            </if>
+            <if test="_parameter.containsKey('assign_ip_count')">
+                assign_ip_count = #{assign_ip_count},
+            </if>
+            <if test="_parameter.containsKey('network_segment_name')">
+                network_segment_name = #{network_segment_name},
+            </if>
+            <if test="_parameter.containsKey('idcType')">
+                `idcType` = #{idcType},
+            </if>
+            <if test="_parameter.containsKey('alone_business_system')">
+                alone_business_system = #{alone_business_system},
+            </if>
+            <if test="_parameter.containsKey('ipv6_segment_type')">
+                ipv6_segment_type = #{ipv6_segment_type},
+            </if>
+            <if test="_parameter.containsKey('ipv6_segment_sub_type')">
+                ipv6_segment_sub_type = #{ipv6_segment_sub_type},
+            </if>
+            <if test="_parameter.containsKey('ipv6_region')">
+                ipv6_region = #{ipv6_region},
+            </if>
+            <if test="_parameter.containsKey('ipv6_ip_type')">
+                ipv6_ip_type = #{ipv6_ip_type},
+            </if>
+            <if test="_parameter.containsKey('ipv6_segment_address')">
+                ipv6_segment_address = #{ipv6_segment_address},
+            </if>
+            <if test="_parameter.containsKey('ipv6_network_gataway')">
+                ipv6_network_gataway = #{ipv6_network_gataway},
+            </if>
+        </set>
+        WHERE
+        ipv6_segment_address = #{ipv6_segment_address}
+        AND tcd.dict_note = #{idcType}
+    </update>
+
+    <!--    公网网段更新-->
+    <update id="updatePublicSegment" parameterType="HashMap">
+        UPDATE cmdb_ip_repository_public_segment
+        INNER JOIN t_cfg_dict tcd ON (idcType = tcd.id AND tcd.col_name = 'idcType2' AND tcd.is_delete = '0')
+        <set>
+            <if test="_parameter.containsKey('network_gataway')">
+                network_gataway = #{network_gataway},
+            </if>
+            <if test="_parameter.containsKey('first_business_system')">
+                first_business_system = #{first_business_system},
+            </if>
+            <if test="_parameter.containsKey('network_segment_name')">
+                network_segment_name = #{network_segment_name},
+            </if>
+            <if test="_parameter.containsKey('idcType')">
+                `idcType` = #{idcType},
+            </if>
+            <if test="_parameter.containsKey('alone_business_system')">
+                alone_business_system = #{alone_business_system},
+            </if>
+            <if test="_parameter.containsKey('is_pool')">
+                is_pool = #{is_pool},
+            </if>
+            <if test="_parameter.containsKey('public_segment_type')">
+                public_segment_type = #{public_segment_type},
+            </if>
+            <if test="_parameter.containsKey('public_ip_type')">
+                public_ip_type = #{public_ip_type},
+            </if>
+            <if test="_parameter.containsKey('public_segment_address')">
+                public_segment_address = #{public_segment_address},
+            </if>
+        </set>
+        WHERE
+        public_segment_address = #{public_segment_address}
+        AND tcd.dict_note = #{idcType}
+    </update>
+
+    <!--内网IP地址库逻辑删除，根据资源池和网段-->
+    <delete id="delInnerIp" parameterType="java.util.Map">
+        UPDATE cmdb_ip_repository_inner_ip cip
+        INNER JOIN cmdb_ip_repository_inner_segment s ON cip.id = s.id
+        INNER JOIN cmdb_ip_repository cir ON cip.id = cir.id
+        INNER JOIN cmdb_ip_repository_inner ciri ON ciri.id = cir.id
+        <set>
+            cip.is_delete = 1,
+            s.is_delete = 1,
+            cir.is_delete = 1,
+            ciri.is_delete = 1
+        </set>
+        WHERE s.idcType = #{idcVal} AND s.network_segment_address = #{segmentAddress}
+    </delete>
+
+    <!--公网IP地址库逻辑删除，根据资源池和网段-->
+    <delete id="delPublicIp" parameterType="java.util.Map">
+        UPDATE
+        cmdb_ip_repository_public_ip cip
+        INNER JOIN cmdb_ip_repository_public_segment s ON cip.id = s.id
+        INNER JOIN cmdb_ip_repository cir ON cip.id = cir.id
+        <set>
+            cip.is_delete = 1,
+            s.is_delete = 1,
+            cir.is_delete = 1
+        </set>
+        WHERE 1=1
+        <if test="idcVal != null and idcVal != ''">
+            AND s.idcType = #{idcVal}
+        </if>
+        AND s.public_segment_address = #{segmentAddress}
+    </delete>
+
+    <!-- ipv6 地址库逻辑删除，根据资源池和网段-->
+    <delete id="delIpv6Ip" parameterType="java.util.Map">
+        UPDATE
+        cmdb_ip_repository_ipv6_ip cip
+        INNER JOIN cmdb_ip_repository_ipv6_segment s ON cip.id = s.id
+        INNER JOIN cmdb_ip_repository cir ON cip.id = cir.id
+        <set>
+            cip.is_delete = 1,
+            s.is_delete = 1,
+            cir.is_delete = 1
+        </set>
+        WHERE 1=1
+        <if test="idcVal != null and idcVal != ''">
+            AND s.idcType = #{idcVal}
+        </if>
+        AND s.ipv6_segment_address = #{segmentAddress}
+    </delete>
+
+</mapper>

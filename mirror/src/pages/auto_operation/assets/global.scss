@@ -1,0 +1,540 @@
+.f12 {
+    font-size: rem(12) !important;
+}
+.iconfont.f14 {
+    font-size: 14px;
+}
+.f14 {
+    font-size: rem(14);
+}
+.f16 {
+    font-size: rem(16);
+}
+.f18 {
+    font-size: rem(18);
+}
+.f24 {
+    font-size: rem(24);
+}
+.underline {
+    text-decoration: underline;
+}
+.mleft5 {
+    margin-left: 5px;
+}
+.mleft10 {
+    margin-left: 10px !important;
+}
+.mleft20 {
+    margin-left: 20px !important;
+}
+.mright10 {
+    margin-right: 10px;
+}
+.mright20 {
+    margin-right: 20px;
+}
+.mtop2 {
+    margin-top: 2px;
+}
+.mtop5 {
+    margin-top: 5px;
+}
+.mtop10 {
+    margin-top: 10px !important;
+}
+.mtop20 {
+    margin-top: 20px;
+}
+.mtop30 {
+    margin-top: 30px;
+}
+.mbottom0 {
+    margin-bottom: 0;
+}
+.pt10 {
+    padding-top: 10px;
+}
+.ptb10 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.pt13 {
+    padding-top: 13px;
+}
+.p10 {
+    padding: 10px;
+}
+.p20 {
+    padding: 20px;
+}
+.p1020 {
+    padding: 10px 20px !important;
+}
+.p010 {
+    padding: 0 10px;
+}
+.p020 {
+    padding: 0 20px;
+}
+.pbottom {
+    padding-bottom: 100px !important;
+}
+.pbottom10 {
+    padding-bottom: 10px;
+}
+.pbottom30 {
+    padding-bottom: 30px;
+}
+.pbottom100 {
+    padding-bottom: 100px;
+}
+.pright10 {
+    padding-right: 10px;
+}
+.pright20 {
+    padding-right: 20px;
+}
+.pleft10 {
+    padding-left: 10px;
+}
+.pleft20 {
+    padding-left: 20px;
+}
+
+.relative {
+    position: relative;
+}
+.absolute {
+    position: absolute;
+}
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.wp100 {
+    width: 100%;
+}
+.hide {
+    display: none;
+}
+.t-center {
+    text-align: center;
+}
+.align-middle {
+    vertical-align: middle;
+}
+.align-bottom {
+    vertical-align: bottom;
+}
+.pointer {
+    cursor: pointer;
+}
+
+.status-marking {
+    padding: 1px 8px;
+    background: $color-common;
+    color: $color-base;
+    border-radius: 16px;
+    font-size: $font-12;
+}
+.bgwhite {
+    background: #ffffff;
+}
+.bggreen {
+    background: $color-tip-green-light;
+}
+.bgyellow {
+    background: #efc311;
+}
+.bgred {
+    background: $color-tip-red;
+}
+.row-bgred {
+    background: #ffc4d2 !important;
+    td {
+        background: #ffc4d2 !important;
+    }
+}
+.row-bggreen {
+    background: #7FFFD4 !important;
+    td {
+        background: #7FFFD4 !important;
+    }
+}
+.row-bgyellow {
+    background: #efc311 !important;
+    td {
+        background: #efc311 !important;
+    }
+}
+.row-word {
+    color: #606266 !important;
+}
+.bgblue {
+    background: $color-link;
+}
+.bglightblue {
+    background: #51befe;
+}
+.bgorange {
+    background: $color-tip-orange;
+}
+.row-bgorange {
+    background: #ffe3b6 !important;
+    td {
+        background: #ffe3b6 !important;
+    }
+}
+.white {
+    color: #ffffff;
+}
+.blue {
+    color: $color-link;
+}
+.red {
+    color: $color-tip-red;
+}
+.light-blue {
+    color: #b5ceff;
+}
+.dark-blue {
+    color: $color-blue-bright-xs;
+}
+.orange {
+    color: $color-tip-orange;
+}
+.grey {
+    color: $color-common;
+}
+.light-grey {
+    color: $color-remarks;
+}
+.bold {
+    font-weight: bold;
+}
+
+.bggrey-linear {
+    background: linear-gradient(to bottom, #868686, #696969);
+}
+
+.bgred-linear {
+    background: linear-gradient(to bottom, #ff3790, #ff0528);
+}
+
+.bggreen-linear {
+    background: linear-gradient(to bottom, #0cc574, #2ae77e);
+}
+
+// 科管监控首页告警预览
+
+.bg-darkred-linear {
+    background: linear-gradient(to bottom, #ff0528, #a7001f);
+}
+
+.bg-orange-linear {
+    background: linear-gradient(to bottom, #ff9d37, #da6a03);
+}
+
+.bg-yellow-linear {
+    background: linear-gradient(to bottom, #ecd112, #d2a901);
+}
+
+.t-right {
+    text-align: right;
+}
+
+.f-right {
+    float: right;
+}
+.position-right {
+    position: absolute;
+    right: 0;
+}
+
+.displaybox {
+    position: relative;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    -moz-align-items: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.boxflex01 {
+    -moz-box-flex: 1;
+    -webkit-box-flex: 1;
+    box-flex: 1;
+    -moz-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    display: block;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.boxalign {
+    -webkit-box-align: center;
+    box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.boxalignstart {
+    -webkit-box-align: start;
+    box-align: start;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+}
+
+.boxalignend {
+    -webkit-box-align: end;
+    box-align: end;
+    -webkit-align-items: flex-end;
+    align-items: flex-end;
+}
+
+.boxalignstretch {
+    -webkit-align-items: stretch;
+    align-items: stretch;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.flex-around {
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+.border-top {
+    border-top: 1px solid $color-border;
+}
+.border-bottom {
+    border-bottom: 1px solid $color-border;
+}
+table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+.bordered {
+    border: solid $color-border 1px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+.bordered tr:hover {
+    background: $color-bg;
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+.bordered td,
+.bordered th {
+    border-left: 1px solid $color-border;
+    border-top: 1px solid $color-border;
+    padding: 10px;
+    text-align: left;
+}
+.bordered tr:first-child td {
+    border-top: 0;
+}
+.bordered th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        from(#ebf3fc),
+        to(#dce9f9)
+    );
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: linear-gradient(top, #ebf3fc, #dce9f9);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.bordered td:first-child,
+.bordered th:first-child {
+    border-left: none;
+}
+.bordered th:first-child {
+    -moz-border-radius: 6px 0 0 0;
+    -webkit-border-radius: 6px 0 0 0;
+    border-radius: 6px 0 0 0;
+}
+.bordered th:last-child {
+    -moz-border-radius: 0 6px 0 0;
+    -webkit-border-radius: 0 6px 0 0;
+    border-radius: 0 6px 0 0;
+}
+.bordered th:only-child {
+    -moz-border-radius: 6px 6px 0 0;
+    -webkit-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+.bordered tr:last-child td:first-child {
+    -moz-border-radius: 0 0 0 6px;
+    -webkit-border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 6px;
+}
+.bordered tr:last-child td:last-child {
+    -moz-border-radius: 0 0 6px 0;
+    -webkit-border-radius: 0 0 6px 0;
+    border-radius: 0 0 6px 0;
+}
+
+.content-left {
+    flex: none;
+    width: 250px;
+    height: calc(100vh - 110px);
+    overflow-y: scroll;
+    padding: 10px 8px;
+    background: #fff;
+    .sidebar-btn {
+        padding: 5px 10px;
+    }
+}
+.content-right {
+    height: calc(100vh - 110px) !important;
+    overflow: hidden;
+}
+.shadow-box {
+    background: #fff;
+    box-shadow: 0px 0px 8px 0px rgba(4, 0, 0, 0.13);
+    border-radius: 6px;
+    padding: 10px 10px 0 10px;
+}
+
+/* 步骤 */
+
+.split-num {
+    text-align: center;
+    width: 0.2rem;
+    height: 0.2rem;
+    line-height: 0.2rem;
+    background: $color-link-dark;
+    color: $color-base;
+    font-size: $font-20;
+    border-radius: $font-24;
+    outline: none;
+}
+.split-line {
+    width: 2px;
+    height: 100%;
+    margin: 5px 0 5px 0.1rem;
+    background: $color-link-dark;
+}
+.split-line.last-child {
+    height: calc(100% - 30px);
+}
+.step-block {
+    border: 1px solid $color-border;
+    padding: 20px;
+    .block-type {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0.2rem;
+        height: 0.2rem;
+        color: $color-base;
+        border-top: 26px solid #67c23a;
+        border-right: 26px solid rgba(0, 0, 0, 0);
+        border-bottom: 26px solid rgba(0, 0, 0, 0);
+        border-left: 26px solid #67c23a;
+        div {
+            position: absolute;
+            width: 0.5rem;
+            height: 0.2rem;
+            text-align: center;
+            transform: translate(-55%, -62%) rotate(-45deg);
+        }
+    }
+    .file {
+        border-top: 26px solid #ecad1e;
+        border-right: 26px solid rgba(0, 0, 0, 0);
+        border-bottom: 26px solid rgba(0, 0, 0, 0);
+        border-left: 26px solid #ecad1e;
+    }
+    .download {
+        border-top: 26px solid #22aaf8;
+        border-right: 26px solid rgba(0, 0, 0, 0);
+        border-bottom: 26px solid rgba(0, 0, 0, 0);
+        border-left: 26px solid #22aaf8;
+    }
+}
+.step-title-box {
+    .title {
+        display: inline-block;
+        margin-left: 30px;
+        padding: 5px 20px;
+        border-left: 1px solid $color-border;
+    }
+}
+.border01 {
+    border: 1px solid $color-border;
+}
+.required-option::before {
+    content: "*";
+    color: #f56c6c;
+    margin-right: 4px;
+}
+
+.fixed-bottom-box {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    margin-bottom: 0;
+    border-top: 1px solid $color-border;
+    background: $color-bg;
+    box-shadow: 0px 0px 5px 4px rgba(0, 0, 0, 0.1);
+    padding: 5px 0;
+}
+.drawer-close-btn {
+    float: right;
+    margin: -20px 10px 12px 0 !important;
+}
+.heightp100-box {
+    height: 80vh;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.heightp100 {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.scroll {
+    overflow: scroll;
+}
+.hp100 {
+    height: 100%;
+}
+.minheightp100 {
+    min-height: 100%;
+}
+.run-code-box {
+    width: 70%;
+    margin: 0 auto;
+}
+.opacity0 {
+    opacity: 0;
+}

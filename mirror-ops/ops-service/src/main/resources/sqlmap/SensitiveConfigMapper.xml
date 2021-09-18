@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.SensitiveConfigDao">
+    <resultMap type="com.aspire.mirror.ops.api.domain.SensitiveConfig" id="sensitiveConfig">
+        <result property="sensitiveConfigId" column="sensitive_config_id" jdbcType="BIGINT"/>
+        <result property="command" column="command" jdbcType="VARCHAR"/>
+        <result property="params" column="params" jdbcType="VARCHAR"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="label" column="label" jdbcType="VARCHAR"/>
+        <result property="osType" column="os_type" jdbcType="VARCHAR"/>
+        <result property="opsUser" column="ops_user" jdbcType="VARCHAR"/>
+        <result property="opsTargetHosts" column="ops_target_hosts" jdbcType="VARCHAR"/>
+        <result property="sensitiveRange" column="sensitive_range" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="contentType" column="content_type" jdbcType="INTEGER"/>
+        <result property="dealType" column="deal_type" jdbcType="INTEGER"/>
+        <result property="matchType" column="match_type" jdbcType="INTEGER"/>
+        <result property="ruleNum" column="rule_num" jdbcType="INTEGER"/>
+        <result property="reviewNum" column="review_num" jdbcType="INTEGER"/>
+        <result property="levelId" column="level_id" jdbcType="BIGINT"/>
+        <result property="levelName" column="level_name" jdbcType="VARCHAR"/>
+        <result property="execRoleList" column="exec_role_list" jdbcType="VARCHAR"/>
+        <result property="auditRoleList" column="audit_role_list" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="querySensitiveConfigListTotalSize" resultType="java.lang.Integer"
+            parameterType="com.aspire.mirror.ops.api.domain.SensitiveConfigQueryModel">
+        select count(s.sensitive_config_id)
+        from ops_sensitive_config s
+        where 1 = 1
+        <if test="commandLike != null and commandLike != ''">
+            and s.command like CONCAT('%', #{commandLike}, '%')
+        </if>
+        <if test="label != null and label != ''">
+            and s.label = #{label}
+        </if>
+        <if test="osType != null and osType != ''">
+            and s.os_type = #{osType}
+        </if>
+        <if test="opsUser != null and opsUser != ''">
+            and s.ops_user = #{opsUser}
+        </if>
+        <if test="creater != null and creater != ''">
+            and s.creater = #{creater}
+        </if>
+        <if test="createTimeStart != null">
+            and s.create_time &gt;= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null">
+            and s.create_time &lt;= #{createTimeEnd}
+        </if>
+        <if test="updater != null and updater != ''">
+            and s.updater = #{updater}
+        </if>
+        <if test="contentType != null and contentType != ''">
+            and s.content_type = #{contentType}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and s.deal_type = #{dealType}
+        </if>
+        <if test="matchType != null and matchType != ''">
+            and s.match_type = #{matchType}
+        </if>
+        <if test="levelId != null">
+            and s.level_id = #{levelId}
+        </if>
+    </select>
+    <sql id="sensitiveConfigAllColumns">
+		s.sensitive_config_id, s.command, s.params, s.label, s.os_type,
+		s.ops_user, s.ops_target_hosts, s.sensitive_range, s.creater, s.create_time, s.updater, s.update_time, s.content_type, s.deal_type, s.match_type, s.path, s.level_id, l.name level_name
+	</sql>
+    <sql id="sensitiveConfigPageColumns">
+		s.sensitive_config_id, s.command, s.params, s.label, s.os_type,
+		s.ops_user, s.ops_target_hosts, s.sensitive_range, s.creater, s.create_time, s.updater, s.update_time, s.content_type, s.deal_type, s.match_type, s.path, s.level_id,
+        l.name level_name,
+        l.exec_role_list exec_role_list,
+        l.audit_role_list audit_role_list,
+		(select count(*) from ops_sensitive_rule where sensitive_config_id = s.sensitive_config_id) rule_num,
+		(select count(*) from ops_sensitive_review where sensitive_config_id = s.sensitive_config_id) review_num
+	</sql>
+    <select id="querySensitiveConfigList" parameterType="com.aspire.mirror.ops.api.domain.SensitiveConfigQueryModel" resultMap="sensitiveConfig">
+        select <include refid="sensitiveConfigPageColumns"/>
+        from ops_sensitive_config s
+        left join ops_sensitive_level l on s.level_id = l.id
+        where 1 = 1
+        <if test="sensitiveConfigId != null">
+            and s.sensitive_config_id = #{sensitiveConfigId}
+        </if>
+        <if test="commandLike != null and commandLike != ''">
+            and s.command like CONCAT('%', #{commandLike}, '%')
+        </if>
+        <if test="label != null and label != ''">
+            and s.label = #{label}
+        </if>
+        <if test="osType != null and osType != ''">
+            and s.os_type = #{osType}
+        </if>
+        <if test="opsUser != null and opsUser != ''">
+            and s.ops_user = #{opsUser}
+        </if>
+        <if test="creater != null and creater != ''">
+            and s.creater = #{creater}
+        </if>
+        <if test="createTimeStart != null">
+            and s.create_time &gt;= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null">
+            and s.create_time &lt;= #{createTimeEnd}
+        </if>
+        <if test="updater != null and updater != ''">
+            and s.updater = #{updater}
+        </if>
+        <if test="updateTimeStart != null">
+            and s.update_time &gt;= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            and s.update_time &lt;= #{updateTimeEnd}
+        </if>
+        <if test="contentType != null and contentType != ''">
+            and s.content_type = #{contentType}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            and s.deal_type = #{dealType}
+        </if>
+        <if test="matchType != null and matchType != ''">
+            and s.match_type = #{matchType}
+        </if>
+        <if test="path != null and path != ''">
+            and s.path = #{path}
+        </if>
+        <if test="levelId != null">
+            and s.level_id = #{levelId}
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by `${orderColumn}` ${orderType}
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+    <select id="querySensitiveConfigById" parameterType="java.lang.Long" resultMap="sensitiveConfig">
+        select <include refid="sensitiveConfigAllColumns"/>
+        from ops_sensitive_config s
+        left join ops_sensitive_level l on s.level_id = l.id
+        where s.sensitive_config_id = #{sensitiveConfigId}
+    </select>
+    <insert id="insertSensitiveConfig" useGeneratedKeys="true" keyColumn="sensitive_config_id" keyProperty="sensitiveConfigId"
+            parameterType="com.aspire.mirror.ops.api.domain.SensitiveConfig">
+		insert into ops_sensitive_config (
+			command,
+			params,
+			label,
+			os_type,
+			ops_user,
+			ops_target_hosts,
+			sensitive_range,
+			creater,
+			create_time,
+			updater,
+			update_time,
+			content_type,
+			deal_type,
+			match_type,
+			path,
+            level_id
+		) values (
+			#{command},
+			#{params},
+			#{label},
+			#{osType},
+			#{opsUser},
+			#{opsTargetHosts},
+			#{sensitiveRange},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime},
+			#{contentType},
+			#{dealType},
+			#{matchType},
+			#{path},
+            #{levelId}
+		)
+	</insert>
+    <update id="updateSensitiveConfig" parameterType="com.aspire.mirror.ops.api.domain.SensitiveConfig">
+        update ops_sensitive_config
+        set sensitive_config_id = #{sensitiveConfigId}
+        <if test="command != null and command != ''">
+            , command = #{command}
+        </if>
+        <if test="params != null">
+            , params = #{params}
+        </if>
+        <if test="label != null and label != ''">
+            , label = #{label}
+        </if>
+        <if test="osType != null and osType != ''">
+            , os_type = #{osType}
+        </if>
+        <if test="opsUser != null and opsUser != ''">
+            , ops_user = #{opsUser}
+        </if>
+        <if test="opsTargetHosts != null and opsTargetHosts != ''">
+            , ops_target_hosts = #{opsTargetHosts}
+        </if>
+        <if test="sensitiveRange != null and sensitiveRange != ''">
+            , sensitive_range = #{sensitiveRange}
+        </if>
+        <if test="updater != null">
+            , updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            , update_time = #{updateTime}
+        </if>
+        <if test="contentType != null and contentType != ''">
+            , content_type = #{contentType}
+        </if>
+        <if test="dealType != null and dealType != ''">
+            , deal_type = #{dealType}
+        </if>
+        <if test="matchType != null and matchType != ''">
+            , match_type = #{matchType}
+        </if>
+        <if test="path != null and path != ''">
+            , path = #{path}
+        </if>
+        <if test="levelId != null">
+            , level_id = #{levelId}
+        </if>
+        where sensitive_config_id = #{sensitiveConfigId}
+    </update>
+    <delete id="removeSensitiveConfig" parameterType="java.lang.Long">
+      delete from ops_sensitive_config where sensitive_config_id = #{sensitiveConfigId}
+    </delete>
+</mapper>

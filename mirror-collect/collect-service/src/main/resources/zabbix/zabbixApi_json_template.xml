@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbixApiJson>
+	
+	<template id="hostinterface.get.byDeviceIp">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "hostinterface.get", 
+		    "auth": "%s", 
+		    "id": "%d", 
+		    "params": {
+		        "output": [
+		            "hostid", 
+		            "ip"
+		        ],
+		        "filter": {
+		        	"ip": ["%s"]
+		        }
+		    }
+		}
+	</template>
+	
+	<template id="item.get.bykeysAndHostIds">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "item.get", 
+		    "auth": "%s", 
+		    "id": "%d", 
+		    "params": {
+		        "output": [
+		            "hostid", 
+		            "key_", 
+		            "lastclock",
+		            "lastns",
+		            "prevvalue",
+		            "lastvalue",
+		            "units"
+		        ], 
+		        "hostids": [%s],
+		        "filter": {
+		            "key_": ["%s"]
+		        }
+		    }
+		}
+	</template>
+	
+	<template id="item.get.bykeys">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "item.get", 
+		    "auth": "%s", 
+		    "id": "%d", 
+		    "params": {
+		        "output": [
+		            "hostid", 
+		            "key_", 
+		            "lastclock",
+		            "lastns",
+		            "prevvalue",
+		            "lastvalue",
+		            "units"
+		        ], 
+		        "filter": {
+		            "key_": ["%s"]
+		        }
+		    }
+		}
+	</template>
+	
+	<template id="template.listall">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "template.get", 
+		    "auth": "%s", 
+		    "id": "%d", 
+		    "params": {
+		        "output": [
+		            "templateid",
+		            "name"
+		        ]
+		    }
+		}
+	</template>
+	
+	<template id="template.list.searchByVagueName">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "template.get", 
+		    "auth": "%s", 
+		    "id": "%d", 
+		    "params": {
+		        "output": [
+		            "templateid",
+		            "name"
+		        ], 
+		        "search": {
+		            "name": "%s"
+		        }
+		    }
+		}
+	</template>
+	
+	<template id="item.listByParams">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "item.get", 
+		    "auth": "%s", 
+		    "id": "%d", 
+		    "params": {
+		        "output": [
+		            "itemid",
+		            "delay",
+		            "key_" ,
+		            "name",
+		            "type",
+		            "value_type", 
+		            "data_type",
+		            "description",
+		            "units"
+		        ],
+		        "search": {
+		            "key_": "$$",
+		        	"name": "$$"
+		        },
+		    	"templateids": "$$"
+		    }
+		}
+	</template>
+</zabbixApiJson>

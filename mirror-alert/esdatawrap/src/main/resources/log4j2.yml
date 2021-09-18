@@ -1,0 +1,39 @@
+configutation:
+  name: Default
+  Properties:
+    Property:
+      - name: log-path
+        value: "./logs"
+  Appenders:
+    #输出到控制台
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %X{X-B3-TraceId} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx"
+    # 输出到文件
+    RollingFile:
+      - name: FILE_MAIN
+        fileName: ${log-path}/cdn-esdatawrap.log
+        filePattern: "${log-path}/esdatawrap.log.%d{yyyy-MM-dd}.%i.gz"
+        PatternLayout:
+          pattern: "%d{yyyyMMddHHmmss}|%-level|%X{X-B3-TraceId}|%d{yyyy-MM-dd HH:mm:ss.SSS} %t %c{1} %L - %m%throwable{separator(##)}%n"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 30MB
+        DefaultRollOverStrategy:
+          Delete:
+            basePath: ${log-path}
+            IfFileName:
+              glob: "*.log.*.gz"
+            IfLastModified:
+              age: 2d
+          max: 2
+          
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: FILE_MAIN
+          

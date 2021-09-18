@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.monthReport.mapper.CmdbMonthReportMapper" >
+
+    <!-- 统计计算资源 -->
+    <select id="countCompResource" resultType="java.util.LinkedHashMap">
+            SELECT IFNULL(SUM(a.m_phy_comp_count) + SUM(a.unm_phy_comp_count), 0) `裸金属总量(台)`,
+        IFNULL(SUM(a.m_phy_comp_count), 0) `已建(台)`,
+        IFNULL(SUM(a.unm_phy_comp_count), 0) `在建(台)`,
+        IFNULL(SUM(b.m_dist_count), 0) `已分配(台)`,
+        IFNULL(SUM(b.use_comp_count), 0) `已创建(台)`,
+        IFNULL(SUM(a.m_phy_manage_count), 0) `管理节点(台)`
+        FROM (
+          SELECT *
+          FROM  cmdb_month_report_phy WHERE `month` = #{month} ) a
+          LEFT JOIN (SELECT *  FROM  cmdb_month_report_comp WHERE `month` = #{month}) b
+                           ON a.`idcType`=b.`idcType`
+        WHERE 1=1
+              <if test="idcType != null and idcType != ''">
+                and a.`idcType` = #{idcType}
+              </if>
+
+    </select>
+
+    <select id="countDistRateCompare" resultType="java.util.LinkedHashMap">
+
+        SELECT  rate1 `裸金属分配率`, ROUND(rate1-rate2,2) `同比上月份` FROM
+        (
+        SELECT
+        m.month ,
+        ( SELECT
+        <if test="idcType == null or idcType == ''">
+            CONCAT(ROUND(IFNULL(SUM(comp1.m_dist_count)/(SUM(phy1.m_phy_comp_count) + SUM(phy1.unm_phy_comp_count)), 0) * 100, 2), '')
+            FROM (SELECT #{month} `month`) m1
+            LEFT JOIN cmdb_month_report_comp comp1 ON m1.month = comp1.month
+            LEFT JOIN cmdb_month_report_phy phy1 ON  m1.month = phy1.month
+        </if>
+        <if test="idcType != null and idcType != ''">
+            CONCAT(ROUND(IFNULL(distribute_rate, 0), 2), '')
+            FROM (SELECT #{month} `month`) m1
+            LEFT JOIN cmdb_month_report_comp comp1 ON m1.month = comp1.month
+            and comp1.`idcType` = #{idcType}
+        </if>) `rate1`,( SELECT
+        <if test="idcType == null or idcType == ''">
+            CONCAT(ROUND(IFNULL(SUM(comp1.m_dist_count)/(SUM(phy1.m_phy_comp_count) + SUM(phy1.unm_phy_comp_count)), 0) * 100, 2), '')
+            FROM (SELECT  DATE_FORMAT((SELECT DATE_SUB(CONCAT(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m') `month`) m2
+            LEFT JOIN cmdb_month_report_comp comp1 ON m2.month = comp1.month
+            LEFT JOIN cmdb_month_report_phy phy1 ON  m2.month = phy1.month
+        </if>
+        <if test="idcType != null and idcType != ''">
+            CONCAT(ROUND(IFNULL(distribute_rate, 0), 2), '')
+            FROM (SELECT  DATE_FORMAT((SELECT DATE_SUB(CONCAT(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m') `month`) m2
+            LEFT JOIN cmdb_month_report_comp comp1 ON m2.month = comp1.month
+            and comp1.`idcType` = #{idcType}
+        </if>
+
+       )`rate2`
+        FROM (SELECT #{month} `month`) m
+        )res
+
+
+    </select>
+    <select id="countUseRateCompare" resultType="java.util.LinkedHashMap">
+
+
+
+
+        SELECT  rate1 `裸金属使用率`, ROUND(rate1-rate2,2) `同比上月份` FROM
+        (
+        SELECT
+        m.month ,
+        ( SELECT
+        <if test="idcType == null || idcType == ''">
+            CONCAT(ROUND(IFNULL(SUM(comp1.use_comp_count)/(SUM(phy1.m_phy_comp_count) + SUM(phy1.unm_phy_comp_count)), 0) * 100, 2), '')
+            FROM (SELECT #{month} `month`) m1
+            LEFT JOIN cmdb_month_report_comp comp1 ON m1.month = comp1.month
+            LEFT JOIN cmdb_month_report_phy phy1 ON  m1.month = phy1.month
+        </if>
+
+        <if test="idcType != null and idcType != ''">
+            CONCAT(ROUND(IFNULL(comp1.use_rate, 0), 2), '')
+            FROM (SELECT #{month} `month`) m1
+            LEFT JOIN cmdb_month_report_comp comp1 ON m1.month = comp1.month
+            and comp1.`idcType` = #{idcType}
+        </if>
+        ) `rate1`,
+        ( SELECT
+        <if test="idcType == null || idcType == ''">
+            CONCAT(ROUND(IFNULL(SUM(comp1.use_comp_count)/(SUM(phy1.m_phy_comp_count) + SUM(phy1.unm_phy_comp_count)), 0) * 100, 2), '')
+            FROM (SELECT  DATE_FORMAT((SELECT DATE_SUB(CONCAT(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m') `month`) m2
+            LEFT JOIN cmdb_month_report_comp comp1 ON m2.month = comp1.month
+            LEFT JOIN cmdb_month_report_phy phy1 ON  m2.month = phy1.month
+        </if>
+        <if test="idcType != null and idcType != ''">
+            CONCAT(ROUND(IFNULL(comp1.use_rate, 0), 2), '')
+            FROM (SELECT  DATE_FORMAT((SELECT DATE_SUB(CONCAT(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m') `month`) m2
+            LEFT JOIN cmdb_month_report_comp comp1 ON m2.month = comp1.month
+            and comp1.`idcType` = #{idcType}
+        </if>
+
+       )`rate2`
+        FROM (SELECT #{month} `month`) m
+        )res
+
+
+    </select>
+    <!-- 创建率和配额分配率比上月 -->
+    <!--<select id="countDistRateCompare" resultType="java.util.LinkedHashMap">-->
+        <!--SELECT-->
+        <!--concat(CASE WHEN MONTH = #{month} THEN ifnull(dist_rate, 0) else 0 END, '') `裸金属分配率`,-->
+        <!--concat(CASE WHEN MONTH = #{month} AND dist_rate <![CDATA[>=]]> AVG(dist_rate) THEN concat(truncate(IFNULL(MAX(dist_rate + 0) - MIN(dist_rate + 0),0) , 2), '')-->
+        <!--WHEN MONTH = #{month} AND dist_rate <![CDATA[<]]> AVG(dist_rate) THEN     concat(truncate(IFNULL(MIN(dist_rate + 0) - MAX(dist_rate + 0), 0) , 2), '') else 0 END, '')  `同比上月份`-->
+        <!--FROM  (-->
+        <!--SELECT-->
+        <!--a.month,-->
+        <!--concat(truncate(IFNULL(SUM(b.m_dist_count)/SUM(b.m_phy_comp_count) * 100, 0) , 2) , '') `dist_rate`-->
+        <!--FROM (-->
+        <!--<foreach collection="months" item="m" separator="union">-->
+            <!--SELECT #{m} `month`-->
+        <!--</foreach>-->
+        <!--) a-->
+        <!--LEFT JOIN cmdb_month_report_comp b ON a.month = b.month-->
+        <!--<if test="idcType != null and idcType != ''">-->
+            <!--and b.`idcType` = #{idcType}-->
+        <!--</if>-->
+        <!--GROUP BY month-->
+        <!--ORDER BY month DESC) res-->
+    <!--</select>-->
+    <!--<select id="countUseRateCompare" resultType="java.util.LinkedHashMap">-->
+        <!--SELECT-->
+        <!--concat(CASE WHEN MONTH = #{month} THEN ifnull(use_rate, 0) else 0 END, '') `裸金属使用率`,-->
+        <!--concat(CASE WHEN MONTH = #{month} AND use_rate <![CDATA[>=]]> AVG(use_rate) THEN  truncate(IFNULL(MAX(use_rate + 0) - MIN(use_rate + 0), 0) ,2)-->
+        <!--WHEN MONTH = #{month} AND use_rate <![CDATA[<]]> AVG(use_rate) THEN      truncate(IFNULL(MIN(use_rate + 0) - MAX(use_rate + 0), 0) ,2) else 0 END, '') `同比上月份`-->
+        <!--FROM  (-->
+        <!--SELECT-->
+        <!--a.month,-->
+        <!--concat(truncate(IFNULL(SUM(b.use_comp_count)/SUM(b.m_phy_comp_count) * 100, 0) ,2), '') `use_rate`-->
+        <!--FROM (-->
+        <!--<foreach collection="months" item="m" separator="union">-->
+            <!--SELECT #{m} `month`-->
+        <!--</foreach>-->
+        <!--) a-->
+        <!--LEFT JOIN cmdb_month_report_comp b ON a.month = b.month-->
+        <!--<if test="idcType != null and idcType != ''">-->
+            <!--and b.`idcType` = #{idcType}-->
+        <!--</if>-->
+        <!--GROUP BY month-->
+        <!--ORDER BY month DESC) res-->
+    <!--</select>-->
+
+     <!--统计裸金属创建率/分配率-->
+    <select id="countRate" resultType="java.util.LinkedHashMap">
+        SELECT
+        a.month `月份`,
+        concat(ROUND(IFNULL(SUM(ifnull(b.m_dist_count, 0))/(SUM(IFNULL(c.m_phy_comp_count, 0)) + SUM(ifnull(c.unm_phy_comp_count,0))) * 100, 0), 2), '') `分配率` ,
+        concat(ROUND(IFNULL(SUM(ifnull(b.use_comp_count, 0))/(SUM(IFNULL(c.m_phy_comp_count,0)) + SUM(IFNULL(c.unm_phy_comp_count,0))) * 100,0), 2) , '') `使用率`
+        FROM (SELECT #{month} `month`) a
+        LEFT JOIN cmdb_month_report_comp b ON a.month = b.month
+        LEFT JOIN cmdb_month_report_phy c ON  a.month = c.month
+        <if test="idcType != null and idcType != ''">
+            and b.`idcType` = #{idcType}
+        </if>
+    </select>
+    <select id="countRateIdc" resultType="java.util.LinkedHashMap">
+        SELECT
+        a.month `月份`,
+        concat(ROUND(IFNULL(b.distribute_rate, 0), 2), '') `分配率` ,
+        concat(ROUND(IFNULL(b.use_rate, 0), 2) , '') `使用率`
+        FROM (SELECT #{month} `month`) a
+        LEFT JOIN cmdb_month_report_comp b ON a.month = b.month
+        <if test="idcType != null and idcType != ''">
+            and b.`idcType` = #{idcType}
+        </if>
+    </select>
+    <!-- 统计网络资源 -->
+    <select id="countNetworkResource" resultType="java.util.LinkedHashMap">
+        SELECT IFNULL(SUM(m_network_count) + SUM(unm_network_count), 0) `网络设备总量(台)`,
+        IFNULL(SUM(m_network_count), 0) `已建设备(台)`,
+        IFNULL(SUM(unm_network_count), 0) `在建设备(台)`
+        FROM `cmdb_month_report_network`
+        WHERE `month` = #{month}
+        <if test="idcType != null and idcType != ''">
+            and `idcType` = #{idcType}
+        </if>
+    </select>
+
+    <!-- 统计存储资源 -->
+    <select id="countStorageResource" resultType="java.util.LinkedHashMap">
+        SELECT IFNULL(SUM(m_storage_count) + SUM(unm_storage_count), 0) `${storageType}总量(T)`,
+        IFNULL(SUM(m_storage_count), 0) `已建(T)`,
+        IFNULL(SUM(unm_storage_count), 0) `在建(T)`,
+        IFNULL(SUM(dist_storage_count), 0) `已分配(T)`,
+        IFNULL(SUM(use_storage_count), 0) `已创建(T)`,
+        <if test="idcType != null and idcType != ''">
+            concat(truncate(IFNULL(distribute_rate, 0), 2),'') `${storageType}分配率`,
+            concat(IFNULL(truncate(IFNULL(distribute_rate, 0), 2) -
+
+            (SELECT truncate(IFNULL(distribute_rate, 0), 2)
+            FROM cmdb_month_report_storage WHERE MONTH=DATE_FORMAT((SELECT DATE_SUB(concat(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m')
+            AND storage_type = #{storageType} ), 0),'')
+            `同比上月份`
+        </if>
+        <if test="idcType == null || idcType == ''">
+            concat(truncate(IFNULL(SUM(dist_storage_count)/(SUM(m_storage_count)  + SUM(unm_storage_count)) * 100, 0), 2),'') `${storageType}分配率`,
+            concat(truncate(IFNULL(SUM(dist_storage_count)/(SUM(m_storage_count)  + SUM(unm_storage_count)) * 100, 0), 2) -
+
+            (SELECT truncate(IFNULL(SUM(dist_storage_count)/(SUM(m_storage_count)  + SUM(unm_storage_count)) * 100, 0), 2)
+            FROM cmdb_month_report_storage WHERE MONTH=DATE_FORMAT((SELECT DATE_SUB(concat(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m')
+            AND storage_type = #{storageType} ),'')
+            `同比上月份`
+        </if>
+
+        FROM `cmdb_month_report_storage`
+        WHERE `month` = #{month} and storage_type = #{storageType}
+        <if test="idcType != null and idcType != ''">
+            and `idcType` = #{idcType}
+        </if>
+    </select>
+
+
+
+
+
+    <select id="getIdcTypeStoreUseRate" resultType="java.util.LinkedHashMap">
+        SELECT
+        <if test="idcType != null and idcType != ''">
+            concat(truncate(IFNULL(use_rate, 0), 2),'') `${storageType}利用率`,
+            concat(ifnull(truncate(IFNULL(use_rate, 0), 2) -
+
+            (SELECT truncate(IFNULL(use_rate, 0), 2)
+            FROM cmdb_month_report_storage WHERE MONTH=DATE_FORMAT((SELECT DATE_SUB(concat(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m')
+            AND storage_type = #{storageType} ),0),'')
+            `同比上月份`
+        </if>
+        <if test="idcType == null or idcType == ''">
+            concat(truncate(IFNULL(SUM(use_storage_count)/(SUM(m_storage_count)  + SUM(unm_storage_count)) * 100, 0), 2),'') `${storageType}利用率`,
+            concat(truncate(IFNULL(SUM(use_storage_count)/(SUM(m_storage_count)  + SUM(unm_storage_count)) * 100, 0), 2) -
+
+            (SELECT truncate(IFNULL(SUM(use_storage_count)/(SUM(m_storage_count)  + SUM(unm_storage_count)) * 100, 0), 2)
+            FROM cmdb_month_report_storage WHERE MONTH=DATE_FORMAT((SELECT DATE_SUB(concat(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m')
+            AND storage_type = #{storageType} ),'')
+            `同比上月份`
+        </if>
+        from (SELECT #{month} MONTH) a
+        left join `cmdb_month_report_storage` b on a.month = b.month
+         and storage_type = #{storageType}
+        <if test="idcType != null and idcType != ''">
+            and `idcType` = #{idcType}
+        </if>
+    </select>
+    <!-- 统计存储资源利用率月度趋势 -->
+    <select id="countStorageSixMonthTrend" resultType="java.util.LinkedHashMap">
+        SELECT
+        a.month `月份`,
+               <if test="type == '分配率'">
+                   concat(truncate(IFNULL(SUM(dist_storage_count)/(SUM(m_storage_count) + SUM(unm_storage_count)) * 100, 0), 2),'') `分配率`
+               </if>
+        <if test="type == '使用率'">
+            concat(truncate(IFNULL(SUM(use_storage_count)/(SUM(m_storage_count) + SUM(unm_storage_count))* 100, 0), 2),'') `使用率`
+        </if>
+
+        FROM (
+          <foreach collection="months" item="m" separator="union">
+          SELECT #{m}  `month`
+          </foreach>
+        ) a
+        LEFT JOIN cmdb_month_report_storage b on a.month = b.month
+        and storage_type = #{storageType}
+        <if test="idcType != null and idcType != ''">
+            and b.`idcType` = #{idcType}
+        </if>
+        GROUP BY a.month
+        ORDER BY a.month
+    </select>
+    <select id="countStorageSixMonthTrendIdc" resultType="java.util.LinkedHashMap">
+        SELECT
+        a.month `月份`,
+        <if test="type == '分配率'">
+            concat(truncate(IFNULL(distribute_rate, 0), 2),'') `分配率`
+        </if>
+        <if test="type == '使用率'">
+            concat(truncate(IFNULL(use_rate, 0), 2),'') `使用率`
+        </if>
+
+        FROM (
+        <foreach collection="months" item="m" separator="union">
+            SELECT #{m}  `month`
+        </foreach>
+        ) a
+        LEFT JOIN cmdb_month_report_storage b on a.month = b.month
+        and storage_type = #{storageType}
+        <if test="idcType != null and idcType != ''">
+            and b.`idcType` = #{idcType}
+        </if>
+        GROUP BY a.month
+        ORDER BY a.month
+    </select>
+    <!-- 资源回收清理 -->
+    <select id="countRecycleResource" resultType="java.util.LinkedHashMap">
+        SELECT
+        <if test="idcType != null and idcType != ''">
+            bizSystem  `租户应用系统名称`,
+            <if test="recycleType == '资源回收'" >
+                DATE_FORMAT(recycle_time, '%Y-%m-%d') `回收时间`,
+            </if>
+            <if test="recycleType == '资源清理'" >
+                DATE_FORMAT(recycle_time, '%Y-%m-%d') `清理时间`,
+            </if>
+        </if>
+
+        <if test="countType == '计算'" >
+            IFNULL(SUM(phy_count), 0) `裸金属(台)`,
+            <if test="idcType == null or idcType == ''">
+                IFNULL(SUM(gpu_count), 0) `GPU(台)`,
+            </if>
+
+            IFNULL(SUM(vm_count), 0) `云主机(台)`,
+            CONCAT(IFNULL(SUM(vm_cpu_count), 0), '个')  `VCPU`,
+            CONCAT(truncate(IFNULL(SUM(vm_memory_count), 0),2), 'G')  `内存`
+        </if>
+        <if test="countType == '存储'" >
+            concat(truncate(IFNULL(SUM(vm_storage_count), 0),2),'')  `存储(T)`
+        </if>
+
+        FROM `cmdb_month_report_recycle`
+        WHERE MONTH= #{month}
+        <if test="recycleType != null and recycleType != ''">
+            AND recycle_type=#{recycleType}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            and `idcType` = #{idcType}
+            GROUP BY bizSystem
+        </if>
+    </select>
+
+    <select id="countPhyAvgMaxUtz" resultType="java.util.LinkedHashMap">
+
+        SELECT
+            IFNULL(cpuMax, 0) cpuMax, IFNULL(cpuMax, 0)-IFNULL(cpuMax2, 0) `cpuMaxCompare`,
+            IFNULL(memoryMax , 0) memoryMax ,IFNULL(memoryMax , 0)-IFNULL(memoryMax2 , 0) `memoryMaxCompare`,
+            IFNULL(cpuAvg, 0) cpuAvg, IFNULL(cpuAvg, 0)-IFNULL(cpuAvg2, 0) `cpuAvgCompare`,
+            IFNULL(memoryAvg, 0) memoryAvg, IFNULL(memoryAvg, 0)-IFNULL(memoryAvg2, 0) `memoryAvgCompare`
+         FROM
+        (SELECT #{month} `month`) m
+        LEFT JOIN
+        (
+            SELECT
+                a.month,
+                ROUND(IFNULL(SUM(cpu_max *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) cpuMax,
+                ROUND(IFNULL(SUM(memory_max *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) memoryMax,
+                ROUND(IFNULL(SUM(cpu_avg *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) cpuAvg,
+                ROUND(IFNULL(SUM(memory_avg *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) memoryAvg
+            FROM `alert_month_idctype_sync` a
+            LEFT JOIN `cmdb_month_report_phy` b ON a.month = b.month AND a.idcType = b.idcType
+            WHERE a.MONTH =#{month}
+            <if test="deviceType != null and deviceType !=''">
+                and a.deviceType = #{deviceType}
+            </if>
+        ) cur on cur.month = m.month
+        LEFT JOIN
+        (
+        SELECT
+            #{month} `month`,
+            ROUND(IFNULL(SUM(cpu_max *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) cpuMax2,
+            ROUND(IFNULL(SUM(memory_max *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) memoryMax2,
+            ROUND(IFNULL(SUM(cpu_avg *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) cpuAvg2,
+            ROUND(IFNULL(SUM(memory_avg *( b.m_phy_comp_count + b.unm_phy_comp_count))/SUM( b.m_phy_comp_count + b.unm_phy_comp_count), 0), 2) memoryAvg2
+        FROM `alert_month_idctype_sync` a
+        LEFT JOIN `cmdb_month_report_phy` b ON a.month = b.month AND a.idcType = b.idcType
+        WHERE a.MONTH = DATE_FORMAT((SELECT DATE_SUB(CONCAT(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m')
+        <if test="deviceType != null and deviceType !=''">
+            and a.deviceType = #{deviceType}
+        </if>
+        ) LAST
+        ON m.month = last.month
+
+
+    </select>
+
+
+
+    <select id="countPhyAvgMaxUtzIdc" resultType="java.util.LinkedHashMap">
+
+        SELECT
+            IFNULL(cpuMax, 0) cpuMax, IFNULL(cpuMax, 0)-IFNULL(cpuMax2, 0) `cpuMaxCompare`,
+            IFNULL(memoryMax , 0) memoryMax ,IFNULL(memoryMax , 0)-IFNULL(memoryMax2 , 0) `memoryMaxCompare`,
+            IFNULL(cpuAvg, 0) cpuAvg, IFNULL(cpuAvg, 0)-IFNULL(cpuAvg2, 0) `cpuAvgCompare`,
+            IFNULL(memoryAvg, 0) memoryAvg, IFNULL(memoryAvg, 0)-IFNULL(memoryAvg2, 0) `memoryAvgCompare`
+         FROM
+                 (SELECT #{month} `month`) m
+                   left join
+        (
+        SELECT
+            a.month,
+            ROUND(IFNULL(cpu_max, 0),2) cpuMax,
+            ROUND(IFNULL(memory_max , 0), 2) memoryMax,
+            ROUND(IFNULL(cpu_avg, 0), 2) cpuAvg,
+            ROUND(IFNULL(memory_avg, 0), 2) memoryAvg
+        FROM `alert_month_idctype_sync` a
+        LEFT JOIN `cmdb_month_report_phy` b ON a.month = b.month AND a.idcType = b.idcType
+        WHERE a.MONTH =#{month}
+            and a.idcType = #{idcType}
+            and a.deviceType = #{deviceType}
+        ) cur on m.month = cur.month
+        LEFT JOIN
+        (
+        SELECT
+            #{month} `month`,
+            ROUND(IFNULL(cpu_max, 0),2) cpuMax2,
+            ROUND(IFNULL(memory_max , 0), 2) memoryMax2,
+            ROUND(IFNULL(cpu_avg, 0), 2) cpuAvg2,
+            ROUND(IFNULL(memory_avg, 0), 2) memoryAvg2
+        FROM `alert_month_idctype_sync` a
+        LEFT JOIN `cmdb_month_report_phy` b ON a.month = b.month AND a.idcType = b.idcType
+        WHERE a.MONTH = DATE_FORMAT((SELECT DATE_SUB(CONCAT(#{month}, '-01') ,INTERVAL 1 MONTH)), '%Y-%m')
+            and a.idcType = #{idcType}
+            and a.deviceType = #{deviceType}
+        ) LAST
+        ON m.month = last.month
+
+
+    </select>
+
+    <select id="countAlert" resultType="java.util.LinkedHashMap">
+        SELECT
+            IFNULL(SUM(serious_sum), 0) '严重告警',
+        IFNULL(SUM(high_sum), 0) '重要告警',
+        IFNULL(SUM(middle_sum), 0) '次要告警',
+        IFNULL( SUM(low_sum), 0) '提醒告警',
+        IFNULL(SUM(alert_sum), 0) '告警总量'
+        FROM `alert_month_report_alert_sum`
+        WHERE 1=1
+        <if test="month != null and month !=''">
+            and month = #{month}
+        </if>
+        <if test="idcType != null and idcType !=''">
+            and idcType = #{idcType}
+        </if>
+    </select>
+
+    <select id="countTroubleIdc" resultType="java.util.LinkedHashMap">
+        SELECT
+        IFNULL(SUM(significant_trouble_state), 0) '重大故障',
+        IFNULL(SUM(extraordinary_accident),0) '异常事件',
+        IFNULL(SUM(soft_hardware_problem),0) '常规软件硬故障',
+        IFNULL(SUM(pool_total),0) '故障总数',
+        IFNULL(Round(SUM(fault_promptness_rate), 2),0) '故障处理及时率'
+        FROM `bpm_month_report_trouble_all`
+        WHERE 1=1
+        <if test="month != null and month !=''">
+            and month = #{month}
+        </if>
+            and idcType = #{idcType}
+    </select>
+    <select id="countTrouble" resultType="java.util.LinkedHashMap">
+        SELECT
+        IFNULL(SUM(significant_trouble_state), 0) '重大故障',
+        IFNULL(SUM(extraordinary_accident),0) '异常事件',
+        IFNULL(SUM(soft_hardware_problem),0) '常规软件硬故障',
+        IFNULL(SUM(pool_total),0) '故障总数',
+        IFNULL(Round(IFNULL(SUM(fault_promptness_rate * pool_total), 0)/ifnull(SUM(pool_total), 0), 2),0) '故障处理及时率'
+        FROM `bpm_month_report_trouble_all`
+        WHERE 1=1
+        <if test="month != null and month !=''">
+            and month = #{month}
+        </if>
+    </select>
+
+    <select id="countOrder" resultType="java.util.LinkedHashMap">
+        SELECT
+        resource_apply_order '资源申请工单',
+        network_strategy_order '网络策略工单',
+        change_order '变更请求工单',
+        alert_order '告警工单',
+        error_order '故障工单',
+        maintaince_order '维保工单',
+        resource_apply_order+network_strategy_order+change_order+alert_order+ error_order+maintaince_order  '工单总数'
+        FROM (
+            SELECT IFNULL(SUM(resource_apply_order),0) 'resource_apply_order',
+            IFNULL(SUM(network_strategy_order),0) 'network_strategy_order',
+            IFNULL(SUM(change_order),0) 'change_order',
+            IFNULL(SUM(alert_order),0) 'alert_order',
+            IFNULL(SUM(error_order),0) 'error_order',
+            IFNULL(SUM(maintaince_order),0) 'maintaince_order'
+            FROM `bpm_month_report_order`
+                 where 1=1
+            <if test="month != null and month !=''">
+                and month = #{month}
+            </if>
+            <if test="idcType != null and idcType !=''">
+                and idcType = #{idcType}
+            </if>
+        )res
+
+    </select>
+</mapper>

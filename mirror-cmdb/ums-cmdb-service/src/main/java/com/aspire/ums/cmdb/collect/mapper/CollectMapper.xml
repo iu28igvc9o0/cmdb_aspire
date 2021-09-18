@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.collect.mapper.CollectMapper" >
+    <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.collect.entity.CollectEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+        <result column="formId" property="formId" jdbcType="VARCHAR" />
+        <result column="frequency" property="frequency" jdbcType="VARCHAR"/>
+        <result column="needAlarm" property="needAlarm" jdbcType="VARCHAR" />
+        <result column="alermLevel" property="alermLevel" jdbcType="VARCHAR" />
+        <result column="needNotice" property="needNotice" jdbcType="VARCHAR" />
+        <result column="visitType" property="visitType" jdbcType="VARCHAR" />
+        <result column="visitRequest" property="visitRequest" jdbcType="VARCHAR" />
+        <result column="disabled" property="disabled" jdbcType="VARCHAR" />
+        <association property="employeeList" column="id"
+                     select="com.aspire.ums.cmdb.collect.mapper.CollectEmployeeMapper.getCollectNoticeEmployee"></association>
+    </resultMap>
+
+    <select id="getCollectsByModuleId" resultMap="BaseResultMap" parameterType="java.lang.String">
+       select * from cmdb_collect where moduleId=#{moduleId}
+    </select>
+
+    <select id="getCollectListMapByModuleId" resultType="java.util.LinkedHashMap" parameterType="java.lang.String">
+       select c.id, c.moduleId, m.`name` moduleName, c.formId, f.`name` formName, cd1.`name` frequency,
+        cd2.`name` needAlarm, cd3.`name` alermLevel, cd4.`name` needNotice, c.disabled, c.visitType, c.visitRequest,
+        (select GROUP_CONCAT(em.employeeName) from cmdb_collect_employee_manager em where em.collectId=c.id ) noticeEmployee from cmdb_collect c
+        LEFT JOIN cmdb_module m on c.moduleId = m.id
+        LEFT JOIN cmdb_form f on c.formId = f.id
+        LEFT JOIN cmdb_dict cd1 on cd1.`value` = c.frequency and cd1.`code`='frequency'
+        LEFT JOIN cmdb_dict cd2 on cd2.`value` = c.needAlarm and cd2.`code`='whether'
+        LEFT JOIN cmdb_dict cd3 on cd3.`value` = c.alermLevel and cd3.`code`='alerm_level'
+        LEFT JOIN cmdb_dict cd4 on cd4.`value` = c.needNotice and cd4.`code`='whether'
+        where c.moduleId=#{moduleId};
+    </select>
+
+    <insert id="insertVO" parameterType="com.aspire.ums.cmdb.collect.entity.CollectEntity">
+        INSERT INTO `cmdb_collect` (`id`, `moduleId`, `formId`, `frequency`, `needAlarm`, `alermLevel`, `needNotice`, `visitType`, `visitRequest`, `disabled`)
+        VALUES (#{id,jdbcType=VARCHAR}, #{moduleId,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR}, #{frequency,jdbcType=VARCHAR},
+        #{needAlarm,jdbcType=VARCHAR}, #{alermLevel,jdbcType=VARCHAR}, #{needNotice,jdbcType=VARCHAR}, #{visitType,jdbcType=VARCHAR},
+        #{visitRequest,jdbcType=VARCHAR}, #{disabled,jdbcType=VARCHAR});
+    </insert>
+
+    <delete id="deleteVO" parameterType="com.aspire.ums.cmdb.collect.entity.CollectEntity">
+        delete from cmdb_collect where id = #{id}
+    </delete>
+
+    <select id="getCollectByFrequency" resultMap="BaseResultMap">
+        select * from cmdb_collect where frequency = #{frequency}
+        order by moduleId
+    </select>
+
+    <select id="getCollectByCollectId" resultMap="BaseResultMap">
+        select * from cmdb_collect where id = #{collectId}
+    </select>
+</mapper>

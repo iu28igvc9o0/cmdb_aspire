@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: code-generator
+#  cloud:
+#    config:
+#      name: ms-cmdb-agent
+#      #label: l
+#      profile: ${ENV_TYPE:dev}
+#      uri:  http://${ENV_CONFIG_IP:10.1.5.120}:${ENV_CONFIG_PORT:18888}

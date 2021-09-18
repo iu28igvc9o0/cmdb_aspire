@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.AlertNotifyConfigDao">
+
+    <resultMap id="AlertNotifyConfigDetail" type="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigDetail">
+        <id column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="is_open" property="isOpen" jdbcType="INTEGER"/>
+        <result column="alert_filter_id" property="alertFilterId" jdbcType="INTEGER"/>
+        <result column="notify_alert_type" property="notifyAlertType" jdbcType="VARCHAR"/>
+        <result column="is_recurrence_interval" property="isRecurrenceInterval" jdbcType="INTEGER"/>
+        <result column="recurrence_interval" property="recurrenceInterval" jdbcType="VARCHAR"/>
+        <result column="recurrence_interval_util" property="recurrenceIntervalUtil" jdbcType="VARCHAR"/>
+        <result column="email_type" property="emailType" jdbcType="INTEGER"/>
+        <result column="send_operation" property="sendOperation" jdbcType="VARCHAR"/>
+        <result column="cur_send_time" property="curSendTime" jdbcType="TIMESTAMP"/>
+        <collection property="notifyObjInfo" select="com.aspire.mirror.alert.server.dao.notify.AlertNotifyConfigDao.getAlertNotifyConfigReceiverDetail" column="uuid"/>
+    </resultMap>
+    <resultMap id="AlertNotifyConfigReceiverDetail" type="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigReceiverDetail">
+        <id column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="alert_notify_config_id" property="alertNotifyConfigId" jdbcType="VARCHAR"/>
+        <result column="notify_obj_type" property="notifyObjType" jdbcType="VARCHAR"/>
+        <result column="notify_obj_info" property="notifyObjInfo" jdbcType="VARCHAR"/>
+        <result column="notify_type" property="notifyType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <insert id="createAlertNotifyConfig" parameterType="com.aspire.mirror.alert.api.dto.AlertNotifyConfigReq" >
+        INSERT INTO alert_notify_config (
+            uuid,
+            name,
+            is_open,
+            alert_filter_id,
+            notify_alert_type,
+            notify_type,
+            is_recurrence_interval,
+            recurrence_interval,
+            recurrence_interval_util,
+            email_type,
+            create_time
+        )
+        VALUES
+            (#{uuid,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{isOpen,jdbcType=INTEGER},
+            #{alertFilterId,jdbcType=INTEGER},
+            #{notifyAlertType,jdbcType=VARCHAR},
+            #{notifyType,jdbcType=VARCHAR},
+            #{isRecurrenceInterval,jdbcType=INTEGER},
+            #{recurrenceInterval,jdbcType=VARCHAR},
+            #{recurrenceIntervalUtil,jdbcType=VARCHAR},
+            #{emailType,jdbcType=INTEGER},
+            SYSDATE)
+    </insert>
+
+
+    <insert id="createAlertNotifyConfigReceiver" parameterType="map" >
+        INSERT INTO alert_notify_config_receiver (
+            uuid,
+            alert_notify_config_id,
+            notify_obj_type,
+            notify_obj_info,
+            notify_type
+        )
+        (
+        <foreach collection="list" item="item" separator="union all">
+            #{item.uuid,jdbcType=INTEGER},
+            #{item.alertNotifyConfigId,jdbcType=VARCHAR},
+            #{item.notifyObjType,jdbcType=VARCHAR},
+            #{item.notifyObjInfo,jdbcType=VARCHAR},
+            #{item.notifyType,jdbcType=VARCHAR}
+        </foreach>
+        )
+    </insert>
+
+    <select id="getAlertNotifyConfigList" parameterType="map" resultType="map">
+        SELECT
+            anc.uuid,
+            anc.name,
+            CASE anc.is_open WHEN 0 THEN '关闭' WHEN 1 THEN '启用' END isOpen,
+            anc.alert_filter_id alertFilterId,
+            af.name alertFilterName,
+            anc.notify_type notifyType,
+            anc.is_recurrence_interval isRecurrenceInterval,
+            anc.recurrence_interval recurrenceInterval,
+            anc.recurrence_interval_util recurrenceIntervalUtil,
+            anc.send_operation sendOperation,
+            anc.cur_send_time curSendTime
+        FROM
+            alert_notify_config anc
+        INNER JOIN alert_filter af on af.id = anc.alert_filter_id
+        INNER JOIN (
+            SELECT DISTINCT
+              alert_notify_config_id
+            FROM
+              alert_notify_config_receiver ancr
+            WHERE
+              1 = 1
+              <if test="notifyObj != null and notifyObj != ''">
+                  AND ancr.notify_obj_info LIKE CONCAT(CONCAT('%',#{notifyObj}),'%')
+              </if>
+              <if test="notifyType != null and notifyType != ''">
+                 AND ancr.notify_type = #{notifyType}
+              </if>
+            ) ar on ar.alert_notify_config_id = anc.uuid
+        WHERE
+            1 = 1
+            <if test="uuid != null and uuid != ''">
+                AND anc.alert_filter_id = #{uuid}
+            </if>
+            <if test="name != null and name != ''">
+                AND anc.name LIKE CONCAT(CONCAT('%',#{name}),'%')
+            </if>
+            <if test="isOpen != -1">
+                AND anc.is_open = #{isOpen}
+            </if>
+            <if test="alertFilter != 0">
+                AND anc.alert_filter_id = #{alertFilter}
+            </if>
+            <if test="isRecurrenceInterval != -1">
+                AND anc.is_recurrence_interval = #{isRecurrenceInterval}
+            </if>
+            <if test="sendTime != -1">
+                AND anc.cur_send_time BETWEEN to_date(#{sendTimeStart},'yyyy-mm-dd hh24:mi:ss') and to_date(#{sendTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+        ORDER BY anc.create_time DESC
+        <if test="isPage != -1">
+            LIMIT #{begin},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getAlertNotifyConfigDetail" resultMap="AlertNotifyConfigDetail" parameterType="java.lang.String">
+        SELECT
+            uuid,
+            name,
+            is_open,
+            alert_filter_id,
+            notify_alert_type,
+            is_recurrence_interval,
+            recurrence_interval,
+            recurrence_interval_util,
+            email_type,
+            send_operation,
+            cur_send_time
+        FROM
+            alert_notify_config
+        WHERE
+            uuid = #{uuid}
+    </select>
+    <select id="getAlertNotifyConfigRule" resultType="map">
+        SELECT
+            id,
+            rule_name ruleName,
+            rule_cron ruleCron
+        FROM
+            alert_notify_config_rule
+    </select>
+    <select id="getAlertNotifyConfigReceiverDetail" resultMap="AlertNotifyConfigReceiverDetail" parameterType="map">
+        SELECT
+            uuid,
+            alert_notify_config_id,
+            CASE notify_obj_type WHEN '1' THEN '团队' WHEN '2' THEN '个人' END notify_obj_type,
+            notify_obj_info,
+            CASE notify_type WHEN '0' THEN '邮件/短信' WHEN '1' THEN '邮件' WHEN '2' THEN '短信' END notify_type
+        FROM
+            alert_notify_config_receiver
+        WHERE
+            alert_notify_config_id = #{alertNotifyConfigId}
+    </select>
+
+    <delete id="deleteAlertNotifyConfig" parameterType="java.util.List">
+        DELETE FROM alert_notify_config WHERE uuid IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAlertNotifyConfigReceiver" parameterType="java.util.List">
+        DELETE FROM alert_notify_config_receiver WHERE alert_notify_config_id IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <update id="updateAlertNotifyConfigForOpen" parameterType="map" >
+        UPDATE alert_notify_config SET is_open = #{isOpen,jdbcType="INTEGER"} WHERE uuid IN
+        <foreach collection="uuidList" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </update>
+
+
+</mapper>
+
+   
+
+ 

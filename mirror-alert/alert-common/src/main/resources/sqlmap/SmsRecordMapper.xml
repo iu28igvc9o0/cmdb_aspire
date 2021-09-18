@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.SmsRecordDao" >
+  <resultMap id="BaseResultMap" type="com.aspire.mirror.alert.server.dao.notify.po.SmsRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="receiver_mobile" property="receiverMobile" jdbcType="VARCHAR" />
+    <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+    <result column="receiver_uuid" property="receiverUuid" jdbcType="VARCHAR" />
+    <result column="sender_uuid" property="senderUuid" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="error_log" property="errorLog" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sms_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.notify.po.SmsRecord" >
+    insert into sms_record (id, receiver_mobile, receiver_name, receiver_uuid,
+      sender_uuid, create_time, status, 
+      is_delete, content,error_log)
+    values (#{id,jdbcType=VARCHAR}, #{receiverMobile,jdbcType=VARCHAR},
+      #{receiverName,jdbcType=VARCHAR},#{receiverUuid,jdbcType=VARCHAR},
+      #{senderUuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{isDelete,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR},#{errorLog,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.alert.server.dao.notify.po.SmsRecord" >
+    update sms_record
+    set receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      receiver_name = #{receiverName,jdbcType=VARCHAR},
+      receiver_uuid = #{receiverUuid,jdbcType=VARCHAR},
+      sender_uuid = #{senderUuid,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      is_delete = #{isDelete,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR},
+      error_log =#{errorLog,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, receiver_mobile,receiver_name, receiver_uuid, sender_uuid, create_time, status, is_delete,
+    content,error_log
+    from sms_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, receiver_mobile,receiver_name, receiver_uuid, sender_uuid, create_time, status, is_delete,
+    content,error_log
+    from sms_record
+  </select>
+  <select id="findSmsList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, receiver_mobile,receiver_name, receiver_uuid, sender_uuid, create_time, status, is_delete,
+    content,error_log
+    from sms_record
+    where 1 = 1
+    and is_delete = 0
+    <if test="startDateTime != null and endDateTime != null">
+      AND create_time BETWEEN #{startDateTime} and #{endDateTime}
+    </if>
+    <if test="receiver != null and receiver != ''">
+      and (receiver_mobile LIKE CONCAT(CONCAT('%', #{receiver}), '%') or receiver_name LIKE CONCAT(CONCAT('%', #{receiver}), '%'))
+    </if>
+    <if test="content != null and content != ''">
+      AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
+    </if>
+    <if test="content != null and content != ''">
+      AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
+    </if>
+    <if test="status != null and status != '' or status==0">
+      AND status =#{status}
+    </if>
+    order by create_time desc
+    <if test="startNo != null and pageSize != null">
+    limit #{startNo},#{pageSize}
+    </if>
+  </select>
+  <select id="countFindSmsList" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select count(1)
+    from sms_record
+    where 1 = 1
+    and is_delete = 0
+    <if test="startDateTime != null and endDateTime != null">
+      AND create_time BETWEEN #{startDateTime} and #{endDateTime}
+    </if>
+    <if test="receiver != null and receiver != ''">
+      and (receiver_mobile LIKE CONCAT(CONCAT('%', #{receiver}), '%') or receiver_name LIKE CONCAT(CONCAT('%', #{receiver}), '%'))
+    </if>
+    <if test="content != null and content != ''">
+      AND content LIKE CONCAT(CONCAT('%', #{content}), '%')
+    </if>
+    <if test="status != null and status != '' or status==0">
+      AND status =#{status}
+    </if>
+    order by create_time desc
+  </select>
+  <update id="updateIsDelete" parameterType="java.lang.String" >
+    update sms_record
+    set  is_delete = 1
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

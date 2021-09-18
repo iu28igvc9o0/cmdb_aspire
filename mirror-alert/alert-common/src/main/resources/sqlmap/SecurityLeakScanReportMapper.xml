@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     SecurityLeakScanReport
+	描述:     数据访问语句
+	作者:     梁峻
+	时间:     2019-07-09 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.leakScan.SecurityLeakScanReportDao">
+    <resultMap id="baseResultMap" type="com.aspire.mirror.alert.server.dao.leakScan.po.SecurityLeakScanReport">
+        <result property="id" column="id" jdbcType="VARCHAR"></result>
+        <result property="scanId" column="scan_id" jdbcType="VARCHAR"></result>
+        <result property="ip" column="ip" jdbcType="VARCHAR"></result>
+        <result property="reportPath" column="report_path" jdbcType="VARCHAR"></result>
+        <result property="highLeaks" column="high_leaks" jdbcType="INTEGER"></result>
+        <result property="mediumLeaks" column="medium_leaks" jdbcType="INTEGER"></result>
+        <result property="lowLeaks" column="low_leaks" jdbcType="INTEGER"></result>
+        <result property="riskVal" column="risk_val" jdbcType="FLOAT"></result>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.leakScan.po.SecurityLeakScanReport">
+      INSERT INTO security_leak_scan_reports
+      (
+        id,
+        scan_id,
+        ip,
+        high_leaks,
+        medium_leaks,
+        low_leaks,
+        risk_val,
+        idc_type
+      ) VALUES
+      (
+        #{id},
+        #{scanId},
+        #{ip},
+        #{highLeaks},
+        #{mediumLeaks},
+        #{lowLeaks},
+        #{riskVal},
+        #{idcType}
+      )
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+      INSERT INTO security_leak_scan_reports
+      (
+        id,
+        scan_id,
+        ip,
+        report_path,
+        high_leaks,
+        medium_leaks,
+        low_leaks,
+        risk_val,
+        idc_type
+      ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+      (
+        #{item.id},
+        #{item.scanId},
+        #{item.ip},
+        #{item.reportPath},
+        #{item.highLeaks},
+        #{item.mediumLeaks},
+        #{item.lowLeaks},
+        #{item.riskVal},
+        #{item.idcType}
+      )
+        </foreach>
+    </insert>
+
+    <update id="batchUpateReportHtmlPath" parameterType="string">
+        UPDATE security_leak_scan_reports
+        SET report_path = CONCAT(CONCAT(#{prefix}, ip), '.html')
+        WHERE scan_id = #{scanId}
+    </update>
+
+    <delete id="delete" parameterType="object">
+        DELETE FROM security_leak_scan_reports
+        WHERE scan_id IN (
+           SELECT id
+           FROM security_leak_scan_records
+           WHERE biz_line = #{bizLine} AND scan_date = #{scanDate}
+        )
+    </delete>
+
+    <sql id="baseList">
+        SELECT
+        id,
+        scan_id,
+        ip,
+        report_path,
+        high_leaks,
+        medium_leaks,
+        low_leaks,
+        risk_val,
+        idc_type
+        FROM security_leak_scan_reports
+        WHERE 1 = 1
+    </sql>
+
+    <select id="getReportListByScanId" parameterType="string" resultMap="baseResultMap">
+        <include refid="baseList"></include>
+        AND scan_id = #{scanId}
+    </select>
+
+    <select id="reportList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        <include refid="baseList"></include>
+        <if test="params['scanId'] != null and params['scanId'] != ''">
+            AND scan_id = #{params.scanId}
+        </if>
+        limit #{begin},#{pageSize}
+    </select>
+
+    <select id="reportListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="int">
+    SELECT COUNT(1)
+    FROM security_leak_scan_reports
+    WHERE 1 = 1
+    <if test="params['scanId'] != null and params['scanId'] != ''">
+        AND scan_id = #{params.scanId}
+    </if>
+    </select>
+</mapper>

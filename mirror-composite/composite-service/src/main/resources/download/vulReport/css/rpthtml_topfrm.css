@@ -1,0 +1,88 @@
+html,body{
+	margin:0;
+	padding:0;
+	width:100%;
+}
+
+body#topbanner {
+	background:url(../images/top_bg_r.gif) top right no-repeat;
+}
+
+.top_button_group{
+	position:absolute;
+	right:128px;
+	top:0;
+	width:233px;
+	height:82px;
+	background:url(../images/icongroup_bg.gif) top left no-repeat;
+}
+
+.leftside_nomenu{
+	height:81px;
+	background:url(../images/top_bg.gif) top left no-repeat;
+}
+
+.leftside_hasmenu{
+	height:81px;
+	background:url(../images/top_bg.gif) top left no-repeat;
+}
+
+.print_show{
+	position:absolute;
+	width:89px;
+	height:27px;
+	top:42px;
+	left:26px;
+	background:url(../images/top_print_a.gif) center bottom no-repeat;
+	cursor:pointer;
+}
+
+.print_show:hover{
+	position:absolute;
+	width:89px;
+	height:27px;
+	top:42px;
+	left:26px;
+	background:url(../images/top_print_b.gif) center bottom no-repeat;
+	cursor:pointer;
+}
+
+.menu_show{
+	position:absolute;
+	width:89px;
+	height:27px;
+	top:42px;
+	right:23px;
+	background:url(../images/show_menu_a.gif) center bottom no-repeat;
+	cursor:pointer;
+}
+
+.menu_show:hover{
+	position:absolute;
+	width:89px;
+	height:27px;
+	top:42px;
+	right:23px;
+	background:url(../images/show_menu_b.gif) center bottom no-repeat;
+	cursor:pointer;
+}
+
+.menu_hide{
+	position:absolute;
+	width:89px;
+	height:27px;
+	top:42px;
+	right:23px;
+	background:url(../images/hide_menu_a.gif) center bottom no-repeat;
+	cursor:pointer;
+}
+
+.menu_hide:hover{
+	position:absolute;
+	width:89px;
+	height:27px;
+	top:42px;
+	right:23px;
+	background:url(../images/hide_menu_b.gif) center bottom no-repeat;
+	cursor:pointer;
+}

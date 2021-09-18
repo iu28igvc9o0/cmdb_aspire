@@ -1,0 +1,174 @@
+server:
+  port: 28128
+middleware.configuration.switch.kafka: true
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+druid: # 开发环境:10.12.70.38   # 本地:127.0.0.1
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useSSL: false
+  
+# 对接的cmdb标识, 如果未配置, 默认对接微服务cmdb
+# cmdb: 微服务内部cmdb
+# osa:  osa系统的cmdb服务  
+cmdb.service: 
+  #identity: cmdb 
+  identity: osa 
+  url: http://10.153.1.61:8080/osa_web   
+
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+##LTS-->Client端配置
+lts:
+  jobclient:
+#    cluster-name: mirror_cluster_zs                   # 开发环境:10.12.70.38
+#    registry-address: zookeeper://10.153.1.61:2181   # 61测试IP地址:10.153.1.61
+    cluster-name: mirror_cluster                   # 开发环境:10.12.70.38
+    registry-address: zookeeper://10.12.70.40:2181,10.12.70.40:2182,10.12.70.40:2183   # 61测试IP地址:10.153.1.61
+    node-group: mirror_jobclient
+    use-retry-client: true
+    bind-ip: 10.12.70.39
+    configs:
+      job:
+        fail:
+          store: mapdb
+
+     
+spring:
+  ####---  kafka配置, 部署时调整
+  kafka:
+    bootstrap-servers: 10.12.70.40:9092
+    producer:
+      retries: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: consumer_inspection_service
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 2000
+      session.timeout.ms: 20000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区至少1个消费线程
+    properties:
+      session.timeout.ms: 60000
+  zipkin:
+    enabled: false
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+      
+      
+#  mail: # JavaMailSender 邮件发送的配置
+#    switch: true # 是否发送邮件,默认值为fasle
+#    host: szmail.aspire-tech.com
+#    port: 25
+#    username: pengguihua@aspirecn.com
+#    password: 'peng!234'
+#    properties:
+#      mail:
+#        transport:
+#          protocol: smtp
+#        smtp:
+#          auth: false
+#          starttls: # TLS协议
+#            enable: false
+#            required: false
+#          port: 465
+#          socketFactory: # SSL协议
+#            class: javax.net.ssl.SSLSocketFactory
+spring.mail.host: smtp.qq.com
+spring.mail.username: 3160652993@qq.com
+spring.mail.password: jessica9192
+spring.mail.default-encoding: UTF-8
+spring.mail.port: 465
+spring.mail.properties.mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+spring.mail.properties.mail.debug: true
+
+###-----redisson配置
+redisson: 
+  alert.clear.count.interval: 48      # 告警清除缓存redis超时时间，单位为小时
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    password: foo
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://10.12.70.40:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: foo
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+      - redis://10.12.70.40:6379
+#      - redis://127.0.0.1:7001
+#      - redis://127.0.0.1:7000
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false  
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"
+    
+reportData:
+  timeout: 300        # 报表数据抓取和处理超时时间，单位s，默认为5分钟
+  checkInterval: 10   # 报表数据超时检测周期    默认为10s     
+
+sample:
+  zipkin:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: true
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000

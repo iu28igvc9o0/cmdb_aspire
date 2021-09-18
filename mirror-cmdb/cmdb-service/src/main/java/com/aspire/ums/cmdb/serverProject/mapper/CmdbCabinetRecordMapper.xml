@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.serverProject.mapper.CmdbCabinetRecordMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetRecord">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="opt_type" property="optType" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcType" jdbcType="VARCHAR"/>
+        <result column="server_room_location" property="serverRoomLocation" jdbcType="VARCHAR"/>
+        <result column="server_cabinet_code" property="serverCabinetCode" jdbcType="VARCHAR"/>
+        <result column="server_cabinet_standard" property="serverCabinetStandard" jdbcType="VARCHAR"/>
+        <result column="server_device_count" property="serverDeviceCount" jdbcType="VARCHAR"/>
+        <result column="first_online_date" property="firstOnlineDate" jdbcType="VARCHAR"/>
+        <result column="bill_start_date" property="billStartDate" jdbcType="VARCHAR"/>
+        <result column="offline_date" property="offlineDate" jdbcType="VARCHAR"/>
+        <result column="project_belong_to" property="projectBelongTo" jdbcType="VARCHAR"/>
+        <result column="business_belong_to" property="businessBelongTo" jdbcType="VARCHAR"/>
+        <result column="owner_person" property="ownerPerson" jdbcType="VARCHAR"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `opt_type`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_code`,
+        `server_cabinet_standard`,
+        `server_device_count`,
+        `first_online_date`,
+        `bill_start_date`,
+        `offline_date`,
+        `project_belong_to`,
+        `business_belong_to`,
+        `owner_person`,
+        `order_no`
+        FROM cmdb_cabinet_record
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetRecord">
+        SELECT
+        `id`,
+        `is_delete`,
+        `opt_type`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_code`,
+        `server_cabinet_standard`,
+        `server_device_count`,
+        `first_online_date`,
+        `bill_start_date`,
+        `offline_date`,
+        `project_belong_to`,
+        `business_belong_to`,
+        `owner_person`,
+        `order_no`
+        FROM cmdb_cabinet_record
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="optType != null and optType != ''">
+            AND `opt_type` = #{optType}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND `idcType` = #{idcType}
+        </if>
+        <if test="serverRoomLocation != null and serverRoomLocation != ''">
+            AND `server_room_location` = #{serverRoomLocation}
+        </if>
+        <if test="serverCabinetCode != null and serverCabinetCode != ''">
+            AND `server_cabinet_code` = #{serverCabinetCode}
+        </if>
+        <if test="serverCabinetStandard != null and serverCabinetStandard != ''">
+            AND `server_cabinet_standard` = #{serverCabinetStandard}
+        </if>
+        <if test="serverDeviceCount != null and serverDeviceCount != ''">
+            AND `server_device_count` = #{serverDeviceCount}
+        </if>
+        <if test="firstOnlineDate != null and firstOnlineDate != ''">
+            AND `first_online_date` = #{firstOnlineDate}
+        </if>
+        <if test="billStartDate != null and billStartDate != ''">
+            AND `bill_start_date` = #{billStartDate}
+        </if>
+        <if test="offlineDate != null and offlineDate != ''">
+            AND `offline_date` = #{offlineDate}
+        </if>
+        <if test="projectBelongTo != null and projectBelongTo != ''">
+            AND `project_belong_to` = #{projectBelongTo}
+        </if>
+        <if test="businessBelongTo != null and businessBelongTo != ''">
+            AND `business_belong_to` = #{businessBelongTo}
+        </if>
+        <if test="ownerPerson != null and ownerPerson != ''">
+            AND `owner_person` = #{ownerPerson}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            AND `order_no` = #{orderNo}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetRecord" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `opt_type`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_code`,
+        `server_cabinet_standard`,
+        `server_device_count`,
+        `first_online_date`,
+        `bill_start_date`,
+        `offline_date`,
+        `project_belong_to`,
+        `business_belong_to`,
+        `owner_person`,
+        `order_no`
+        FROM cmdb_cabinet_record
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetRecord">
+        INSERT INTO cmdb_cabinet_record
+        (
+            `id`,
+            `is_delete`,
+            `opt_type`,
+            `idcType`,
+            `server_room_location`,
+            `server_cabinet_code`,
+            `server_cabinet_standard`,
+            `server_device_count`,
+            `first_online_date`,
+            `bill_start_date`,
+            `offline_date`,
+            `project_belong_to`,
+            `business_belong_to`,
+            `owner_person`,
+            `order_no`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT},
+            #{optType, jdbcType=VARCHAR},
+            #{idcType, jdbcType=VARCHAR},
+            #{serverRoomLocation, jdbcType=VARCHAR},
+            #{serverCabinetCode, jdbcType=VARCHAR},
+            #{serverCabinetStandard, jdbcType=VARCHAR},
+            #{serverDeviceCount, jdbcType=VARCHAR},
+            #{firstOnlineDate, jdbcType=VARCHAR},
+            #{billStartDate, jdbcType=VARCHAR},
+            #{offlineDate, jdbcType=VARCHAR},
+            #{projectBelongTo, jdbcType=VARCHAR},
+            #{businessBelongTo, jdbcType=VARCHAR},
+            #{ownerPerson, jdbcType=VARCHAR},
+            #{orderNo, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetRecord">
+        UPDATE cmdb_cabinet_record SET
+        `is_delete` = #{isDelete},
+        `opt_type` = #{optType},
+        `idcType` = #{idcType},
+        `server_room_location` = #{serverRoomLocation},
+        `server_cabinet_code` = #{serverCabinetCode},
+        `server_cabinet_standard` = #{serverCabinetStandard},
+        `server_device_count` = #{serverDeviceCount},
+        `first_online_date` = #{firstOnlineDate},
+        `bill_start_date` = #{billStartDate},
+        `offline_date` = #{offlineDate},
+        `project_belong_to` = #{projectBelongTo},
+        `business_belong_to` = #{businessBelongTo},
+        `owner_person` = #{ownerPerson},
+        `order_no` = #{orderNo}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetRecord">
+        DELETE FROM cmdb_cabinet_record
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

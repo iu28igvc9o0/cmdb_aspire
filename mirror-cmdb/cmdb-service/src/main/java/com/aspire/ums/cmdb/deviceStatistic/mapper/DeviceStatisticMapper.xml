@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.deviceStatistic.mapper.DeviceStatisticMapper">
+	  
+
+	
+	<!-- 各类型设备的数量统计 -->
+	<select id="selectDeviceBydeviceType" parameterType="map" resultType="map" >
+		SELECT  idc.idc_name idcType, pod.`pod_name` podName ,COUNT(*) number ,
+		SUM(CASE dict.`dict_note` WHEN '服务器' THEN 1 ELSE 0 END ) serverNumber,
+		SUM(CASE WHEN dict.`dict_note` = '网络设备' AND dict4.dict_note = '是' THEN  2 WHEN dict.`dict_note` = '网络设备' AND IFNULL(dict4.dict_note,'否') = '否' THEN 1 ELSE 0  END ) networkNumber,
+		SUM(CASE dict.`dict_note` WHEN '存储设备' THEN 1 ELSE 0 END ) storageNumber,
+		SUM(CASE dict.`dict_note` WHEN '安全设备' THEN 1 ELSE 0 END ) safetyNumber,
+		SUM(CASE  WHEN  dict.`dict_note` NOT IN ( '服务器','网络设备','存储设备','安全设备' ) OR dict.`dict_note` IS NULL  THEN 1 ELSE 0 END ) otherNumber
+		FROM `cmdb_instance` cin
+		LEFT JOIN cmdb_idc_manager idc ON (cin.idcType = idc.id AND idc.is_delete = '0' )
+		LEFT JOIN cmdb_pod_manager pod ON (cin.pod_name = pod.id AND pod.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+
+		LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+		WHERE 1=1 AND cin.`is_delete`=0
+	    <if test="idcType != null and  idcType != '' ">
+    		and cin.idcType = #{idcType}
+    	</if>
+    	<if test="podName != null and  podName != '' ">
+    		and cin.pod_name = #{podName}
+    	</if>
+
+		GROUP BY  cin.idcType,cin.pod_name,idc.sort_index, pod.sort_index
+		ORDER BY cin.idcType IS NULL OR cin.idcType = '', idc.sort_index,
+		cin.pod_name IS NULL OR cin.pod_name = '', pod.sort_index
+	</select>
+
+	<!-- 各类型的各品牌设备数量统计-->
+	<select id="selectDeviceBydeviceTypeDeviceMfrs" parameterType="map" resultType="map" >
+		SELECT  idc.`idc_name` idcType,pod.pod_name podName,dict.`dict_note`  deviceClass,dict2.`dict_note`  deviceType,
+		pro.`produce_name`  deviceMfrs,COUNT(*) number
+		FROM  cmdb_instance cin
+		LEFT JOIN cmdb_idc_manager idc ON (cin.idcType = idc.id AND idc.is_delete = '0' )
+		LEFT JOIN cmdb_pod_manager pod ON (cin.pod_name = pod.id AND pod.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+		LEFT JOIN cmdb_dict_produce pro ON (cin.device_mfrs = pro.id AND pro.is_delete = '0' )
+
+		WHERE 1=1 AND cin.`is_delete`=0
+	    <if test="idcType != null and  idcType != '' ">
+    		and cin.idcType = #{idcType}
+    	</if>
+    	<if test="podName != null and  podName != '' ">
+    		and cin.pod_name = #{podName}
+    	</if>
+    	<if test="deviceClass != null and  deviceClass != '' ">
+    		and cin.device_class = #{deviceClass}
+    	</if>
+    	<if test="deviceType != null and  deviceType != '' ">
+    		and cin.device_type = #{deviceType}
+    	</if>
+    	<if test="deviceMfrs != null and  deviceMfrs != '' ">
+    		and cin.device_mfrs = #{deviceMfrs}
+    	</if>
+		GROUP BY idc.idc_name,idc.sort_index,pod.sort_index,pod.pod_name,cin.device_class,cin.device_type,pro.produce_name
+		ORDER BY idc.idc_name IS NULL OR idc.idc_name = '', idc.sort_index,
+		pod.pod_name IS NULL OR pod.pod_name = '', pod.sort_index,
+		cin.device_type IS NULL OR cin.device_type = '', cin.device_type
+	</select>
+
+	<!-- 各资源池各类型的数量统计-->
+	<select id="selectDeviceByidcTypeDeviceType" parameterType="map" resultType="map" >
+		SELECT
+		idc.`idc_name` idcType,pod.pod_name podName,dict.`dict_note`  deviceClass,
+		pro.`produce_name`  deviceMfrs,COUNT(*) number
+
+		FROM cmdb_instance cin
+		LEFT JOIN cmdb_idc_manager idc ON (cin.idcType = idc.idc_name AND idc.is_delete = '0' )
+		LEFT JOIN cmdb_pod_manager pod ON (cin.pod_name = pod.pod_name AND pod.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+		LEFT JOIN cmdb_dict_produce pro ON (cin.device_mfrs = pro.id AND pro.is_delete = '0' )
+
+		WHERE 1=1 AND cin.`is_delete`=0
+	    <if test="idcType != null and  idcType != '' ">
+    		and cin.idcType = #{idcType}
+    	</if>
+    	<if test="podName != null and  podName != '' ">
+    		and cin.pod_name = #{podName}
+    	</if>
+    	<if test="deviceClass != null and  deviceClass != '' ">
+    		and cin.device_class = #{deviceClass}
+    	</if>
+    	<if test="deviceType != null and  deviceType != '' ">
+    		and cin.device_type = #{deviceType}
+    	</if>
+    	<if test="deviceMfrs != null and  deviceMfrs != '' ">
+    		and cin.device_mfrs = #{deviceMfrs}
+    	</if>
+
+		GROUP BY idc.idc_name,idc.sort_index,pod.sort_index,pod.pod_name,cin.device_class,pro.produce_name
+		ORDER BY idc.idc_name IS NULL OR idc.idc_name = '', idc.sort_index,
+		pod.pod_name IS NULL OR pod.pod_name = '', pod.sort_index,
+		pro.produce_name IS NULL OR pro.produce_name = '', cin.device_mfrs
+	</select>
+
+	<!-- 各业务系统各分类数量统计-->
+	<select id="selectDeviceBybizSystem" parameterType="map" resultType="map" >
+		SELECT  cbs.bizSystem  bizSystem,idc.idc_name idcType ,pod.pod_name podName ,COUNT(*) number ,
+		SUM(CASE dict.`dict_note` WHEN '服务器' THEN 1 ELSE 0 END ) serverNumber,
+		SUM(CASE WHEN dict.`dict_note` = '网络设备' AND dict2.`dict_note` = '是' THEN  2 WHEN dict.`dict_note` = '网络设备' AND IFNULL(dict2.`dict_note`,'否') = '否' THEN 1 ELSE 0  END ) networkNumber,
+		SUM(CASE dict.`dict_note` WHEN '存储设备' THEN 1 ELSE 0 END ) storageNumber,
+		SUM(CASE dict.`dict_note` WHEN '安全设备' THEN 1 ELSE 0 END ) safetyNumber,
+		SUM(CASE  WHEN  dict.`dict_note` NOT IN ( '服务器','网络设备','存储设备','安全设备' ) OR dict.`dict_note` IS NULL  THEN 1 ELSE 0 END ) otherNumber
+		FROM `cmdb_instance` cin
+		LEFT JOIN cmdb_business_system cbs ON (cin.bizSystem = cbs.id AND cbs.is_delete = '0' )
+		LEFT JOIN cmdb_idc_manager idc ON (cin.idcType = idc.id AND idc.is_delete = '0' )
+		LEFT JOIN cmdb_pod_manager pod ON (cin.pod_name = pod.id AND pod.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict ON cin.`device_class` = dict.id
+		LEFT JOIN t_cfg_dict dict2 ON cin.`is_stack` = dict2.id
+		WHERE 1=1 AND cin.`is_delete`='0'
+        <if test="bizSystem != null and  bizSystem != '' ">
+    		and cin.bizSystem = #{bizSystem}
+    	</if>
+	    <if test="idcType != null and  idcType != '' ">
+    		and cin.idcType = #{idcType}
+    	</if>
+    	<if test="podName != null and  podName != '' ">
+    		and cin.pod_name = #{podName}
+    	</if>
+		GROUP BY  cin.bizSystem,cin.idcType,idc.sort_index,cin.pod_name,pod.sort_index
+		order by cbs.bizSystem is null or cbs.bizSystem = '', cbs.bizSystem,
+		idc.idc_name is null or idc.idc_name = '', idc.sort_index,
+		pod.pod_name is null or pod.pod_name = '', pod.sort_index
+	</select>
+
+	<!-- 各归属部门各分类数量统计-->
+	<select id="selectDeviceByDepartment" parameterType="map" resultType="map" >
+		SELECT
+			idc.idc_name idcType,
+			org1.`orgName` department1,
+			org2.`orgName` department2,
+			biz.`bizSystem` bizSystem,
+			dict.`dict_note` deviceClass,
+			dict2.`dict_note` deviceType ,
+			pro.`produce_name` deviceMfrs,
+			COUNT(*) number
+		FROM  cmdb_instance cin
+		LEFT JOIN cmdb_idc_manager idc ON (cin.idcType = idc.id AND idc.is_delete = '0' )
+		LEFT JOIN cmdb_org_system org1 ON (cin.department1 = org1.id AND org1.is_delete = '0' )
+		LEFT JOIN cmdb_org_system org2 ON (cin.department2 = org2.id AND org2.is_delete = '0' )
+		LEFT JOIN cmdb_business_system biz ON (cin.bizSystem = biz.id AND biz.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+		LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+		LEFT JOIN cmdb_dict_produce pro ON (cin.device_mfrs = pro.id AND pro.is_delete = '0' )
+		WHERE 1=1 AND cin.is_delete='0'
+
+		<if test="idcType != null and  idcType != '' ">
+    		and cin.idcType = #{idcType}
+    	</if>
+    	<if test="department1 != null and  department1 != '' ">
+    		and cin.department1 = #{department1}
+    	</if>
+    	<if test="department2 != null and  department2 != '' ">
+    		and cin.department2 = #{department2}
+    	</if>
+    	<if test="bizSystem != null and  bizSystem != '' ">
+    		and cin.bizSystem = #{bizSystem}
+    	</if>
+    	<if test="deviceClass != null and  deviceClass != '' ">
+    		and cin.device_class = #{deviceClass}
+    	</if>
+    	<if test="deviceType != null and  deviceType != '' ">
+    		and cin.device_type = #{deviceType}
+    	</if>
+    	<if test="deviceMfrs != null and  deviceMfrs != '' ">
+    		and cin.device_mfrs = #{deviceMfrs}
+    	</if>
+    	GROUP BY  cin.idcType,idc.sort_index,cin.department1, cin.department2,cin.bizSystem,cin.device_class,cin.device_type,cin.device_mfrs
+		order by cin.idcType is null or cin.idcType = '', idc.sort_index,
+		cin.department1 is null or cin.department1 = '', cin.department1,
+		cin.department2 is null or cin.department2 = '', cin.department2
+	</select>
+
+	<!-- 各资源池业务统计-->
+	<select id="selectIdcTypeStatistic" resultType="java.util.LinkedHashMap" >
+		select
+			t.idcType idcTypeId,
+			idc.idc_name idcType,
+			SUM(phyNumber) phyNumber,
+			SUM(vmNumber) vmNumber,
+			SUM(networkNumber) networkNumber,
+			SUM(safeNumber) safeNumber
+		from (
+				 SELECT
+					 (CASE WHEN IFNULL(idcType,'') = '' THEN '' ELSE idcType END) idcType,
+					 (CASE dict3.dict_note WHEN 'X86服务器' THEN 1 ELSE 0 END ) phyNumber,
+					 (CASE dict2.dict_note WHEN '云主机' THEN 1 ELSE 0 END ) vmNumber,
+					 (CASE WHEN dict.dict_note = '网络设备' AND dict4.dict_note = '是' THEN  2
+						   WHEN dict.dict_note = '网络设备' AND IFNULL(dict4.dict_note,'否') = '否' THEN 1
+						   ELSE 0  END )  networkNumber,
+					 (CASE dict.dict_note WHEN '安全设备' THEN 1 ELSE 0 END ) safeNumber
+				 FROM `cmdb_instance` cin
+						  LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+				 WHERE 1=1 AND cin.is_delete='0' AND IFNULL(idcType,'') != ''
+		) t
+		LEFT JOIN cmdb_idc_manager idc on (t.idcType = idc.id and idc.is_delete = '0' )
+		GROUP BY idcType,idc.sort_index
+		order by idcType is null or idcType = '', idc.sort_index
+	</select>
+
+	<select id="selectProjectStatistic" parameterType="java.lang.String" resultType="java.util.LinkedHashMap" >
+		SELECT
+			t.projectName projectNameId,
+			pro.`project_name` projectName,
+			SUM(phyNumber) phyNumber,
+			SUM(vmNumber) vmNumber,
+			SUM(networkNumber) networkNumber,
+			SUM(safeNumber) safeNumber
+		FROM (
+				 SELECT
+					 (CASE WHEN IFNULL(project_name,'') = '' THEN '' ELSE project_name END) projectName,
+					 (CASE dict3.`dict_note` WHEN 'X86服务器' THEN 1 ELSE 0 END ) phyNumber,
+					 (CASE dict2.`dict_note` WHEN '云主机' THEN 1 ELSE 0 END ) vmNumber,
+					 (CASE WHEN dict.`dict_note` = '网络设备' AND dict4.`dict_note` = '是' THEN  2
+						   WHEN dict.`dict_note` = '网络设备' AND IFNULL(dict4.`dict_note`,'否') = '否' THEN 1
+						   ELSE 0  END ) networkNumber,
+					 (CASE dict.`dict_note` WHEN '安全设备' THEN 1 ELSE 0 END ) safeNumber
+				 FROM `cmdb_instance` cin
+						  LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+
+				 WHERE 1=1 AND cin.is_delete='0' AND cin.idcType=#{idcType}
+			 ) t
+				 LEFT JOIN cmdb_project_manager pro ON (t.projectName = pro.id AND pro.is_delete = '0' )
+
+		GROUP BY t.projectName
+		ORDER BY t.projectName IS NULL OR t.projectName = '', t.projectName
+	</select>
+
+	<!-- 多选资源池，导出工期统计信息 -->
+	<select id="selectMultiProjectStatistic" parameterType="java.lang.String" resultType="java.util.LinkedHashMap" >
+		SELECT
+			idc.`idc_name` idcType,
+			pro.`project_name` projectName,
+			SUM(phyNumber) phyNumber,
+			SUM(vmNumber) vmNumber,
+			SUM(networkNumber) networkNumber,
+			SUM(safeNumber) safeNumber
+		FROM (
+			SELECT
+			(CASE WHEN IFNULL(project_name,'') = '' THEN '' ELSE project_name END) projectName,
+			(CASE dict3.`dict_note` WHEN 'X86服务器' THEN 1 ELSE 0 END ) phyNumber,
+			(CASE dict2.`dict_note` WHEN '云主机' THEN 1 ELSE 0 END ) vmNumber,
+			(CASE WHEN dict.`dict_note` = '网络设备' AND dict4.`dict_note` = '是' THEN  2
+			WHEN dict.`dict_note` = '网络设备' AND IFNULL(dict4.`dict_note`,'否') = '否' THEN 1
+			ELSE 0  END ) networkNumber,
+			(CASE dict.`dict_note` WHEN '安全设备' THEN 1 ELSE 0 END ) safeNumber,
+		cin.idcType
+			FROM `cmdb_instance` cin
+			LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+			LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+			LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+			LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+
+			WHERE 1=1 AND cin.is_delete='0'
+		   and cin.idcType in
+		<foreach collection="list" item="idcType" open="(" close=")" separator=",">
+			#{idcType}
+		</foreach>
+		) t
+		LEFT JOIN cmdb_project_manager pro ON (t.projectName = pro.id AND pro.is_delete = '0' )
+		LEFT JOIN cmdb_idc_manager idc ON (t.idcType = idc.id AND idc.is_delete = '0' )
+		GROUP BY t.idcType,t.projectName
+		ORDER BY t.idcType,t.projectName IS NULL OR t.projectName = '', t.projectName
+	</select>
+
+	<select id="selectPodStatistic" parameterType="java.lang.String" resultType="java.util.LinkedHashMap" >
+		SELECT
+			pod.`pod_name` podName,
+			SUM(phyNumber) phyNumber,
+			SUM(vmNumber) vmNumber,
+			SUM(networkNumber) networkNumber,
+			SUM(safeNumber) safeNumber
+		FROM (
+				 SELECT
+					 (CASE WHEN IFNULL(cin.pod_name,'') = '' THEN '' ELSE cin.pod_name END) podName,
+					 (CASE dict3.`dict_note` WHEN 'X86服务器' THEN 1 ELSE 0 END ) phyNumber,
+					 (CASE dict2.`dict_note` WHEN '云主机' THEN 1 ELSE 0 END ) vmNumber,
+					 (CASE WHEN dict.`dict_note` = '网络设备' AND dict4.`dict_note` = '是' THEN  2
+						   WHEN dict.`dict_note` = '网络设备' AND IFNULL(dict4.`dict_note`,'否') = '否' THEN 1
+						   ELSE 0  END ) networkNumber,
+					 (CASE dict.`dict_note` WHEN '安全设备' THEN 1 ELSE 0 END ) safeNumber
+				 FROM `cmdb_instance` cin
+						  LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+						  LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+				 WHERE 1=1 AND cin.is_delete='0' AND idcType=#{idcType} and project_name=#{projectName}
+			 ) t
+				 LEFT JOIN cmdb_pod_manager pod ON (t.podName = pod.id AND pod.is_delete = '0' )
+		GROUP BY podName, pod.sort_index
+		ORDER BY podName IS NULL OR podName = '', pod.sort_index
+	</select>
+</mapper>

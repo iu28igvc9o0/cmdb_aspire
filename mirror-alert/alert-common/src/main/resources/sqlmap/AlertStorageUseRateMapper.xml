@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper
+	namespace="com.aspire.mirror.alert.server.dao.third.AlertStorageUseRateDao">
+	<select id="getStorageUserate" resultType="java.util.Map">
+		SELECT
+		MAX(a.block_useRate) blockMax,
+		MAX(a.san_useRate) sanMax,
+		CAST(AVG(a.block_useRate) AS DECIMAL(10,2)) blockAvg,
+		CAST(AVG(a.san_useRate) AS DECIMAL(10,2)) sanAvg
+		FROM
+		alert_storage_userate a
+	</select>
+
+</mapper>

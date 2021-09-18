@@ -1,0 +1,1108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsStatisticDao">
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.Alerts" id="baseResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR" />
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR" />
+        <result property="eventId" column="event_id" jdbcType="VARCHAR" />
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR" />
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR" />
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR" />
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR" />
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR" />
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR" />
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP" />
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+        <result property="itemId" column="item_id" jdbcType="VARCHAR" />
+        <result property="remark" column="remark" jdbcType="VARCHAR" />
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR" />
+        <result property="operateStatus" column="operate_status" jdbcType="INTEGER" />
+        <result property="source" column="source" jdbcType="VARCHAR" />
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR" />
+        <result property="objectId" column="object_id" jdbcType="VARCHAR" />
+        <result property="objectType" column="object_type" jdbcType="VARCHAR" />
+        <result property="region" column="region" jdbcType="VARCHAR" />
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+        <result property="orderId" column="order_id" jdbcType="VARCHAR" />
+        <result property="orderType" column="order_type" jdbcType="VARCHAR" />
+        <result property="alertStartTime" column="alert_start_time" jdbcType="TIMESTAMP" />
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR" />
+        <result property="messageSend" column="message_send" jdbcType="VARCHAR" />
+        <result property="messageOpen" column="message_open" jdbcType="VARCHAR" />
+        <result property="mailSend" column="mail_send" jdbcType="VARCHAR" />
+        <result property="mailOpen" column="mail_open" jdbcType="VARCHAR" />
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR" />
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR" />
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR" />
+        <result property="hostName" column="host_name" jdbcType="VARCHAR" />
+        <result property="podName" column="pod_name" jdbcType="VARCHAR" />
+        <result property="projectName" column="project_name" jdbcType="VARCHAR" />
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsHis" id="baseHisResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR" />
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="alertEndTime" column="alert_end_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="clearTime" column="clear_time" jdbcType="TIMESTAMP"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time" jdbcType="TIMESTAMP"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="clearUser" column="clear_user" jdbcType="VARCHAR"></result>
+        <result property="clearTime" column="clear_time" jdbcType="TIMESTAMP"></result>
+        <result property="clearContent" column="clear_content" jdbcType="VARCHAR"></result>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR" />
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR" />
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR" />
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR" />
+        <result property="hostName" column="host_name" jdbcType="VARCHAR" />
+        <result property="podName" column="pod_name" jdbcType="VARCHAR" />
+        <result property="projectName" column="project_name" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsExport" id="baseAlertsExportMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR" />
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="VARCHAR"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="alertEndTime" column="alert_end_time" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="clearTime" column="clear_time" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time" jdbcType="VARCHAR"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="clearUser" column="clear_user" jdbcType="VARCHAR"></result>
+        <result property="clearTime" column="clear_time" jdbcType="VARCHAR"></result>
+        <result property="clearContent" column="clear_content" jdbcType="VARCHAR"></result>
+        <result property="messageSend" column="message_send" jdbcType="VARCHAR" />
+        <result property="messageOpen" column="message_open" jdbcType="VARCHAR" />
+        <result property="mailSend" column="mail_send" jdbcType="VARCHAR" />
+        <result property="mailOpen" column="mail_open" jdbcType="VARCHAR" />
+        <result property="prefix" column="prefix" jdbcType="VARCHAR" />
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR" />
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR" />
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR" />
+        <result property="hostName" column="host_name" jdbcType="VARCHAR" />
+        <result property="podName" column="pod_name" jdbcType="VARCHAR" />
+        <result property="projectName" column="project_name" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="selectHisSummary" resultType="map">
+        select COUNT(1) codeCount,
+        SUM(IF(alert_level='2',1,0)) lCount,
+        SUM(IF(alert_level='3',1,0)) mCount,
+        SUM(IF(alert_level='4',1,0)) hCount,
+        SUM(IF(alert_level='5',1,0)) sCount
+        from alert_alerts_his t
+        WHERE t.alert_level in ('2','3','4','5')
+        <if test="param.idcType != null">
+            AND t.idc_type = #{param.idcType}
+        </if>
+        <if test="param.clearTime != null">
+            <choose>
+                <when test="param.startTime !=null and param.endTime !=null">
+                    AND t.alert_end_time BETWEEN #{param.startTime} AND #{param.endTime}
+                </when>
+                <otherwise>
+                    AND t.alert_end_time IS NOT NULL
+                </otherwise>
+            </choose>
+            AND t.clear_user IS NOT NULL
+            AND t.clear_content IS NOT NULL
+        </if>
+        <if test="param.alertEndTime != null">
+            <choose>
+                <when test="param.startTime !=null and param.endTime !=null">
+                    AND t.alert_end_time BETWEEN #{param.startTime} AND #{param.endTime}
+                </when>
+                <otherwise>
+                    AND t.alert_end_time IS NOT NULL
+                </otherwise>
+            </choose>
+            AND t.clear_user IS NULL
+            AND t.clear_content IS NULL
+        </if>
+        <if test="resFilterMap != null and resFilterMap.device_name != null and resFilterMap.device_name.size > 0" >
+            and t.device_ip in (
+            <foreach collection="resFilterMap.device_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.idcType_name != null and resFilterMap.idcType_name.size > 0" >
+            and t.idc_type in (
+            <foreach collection="resFilterMap.idcType_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.room_name != null and resFilterMap.room_name.size > 0" >
+            and t.source_room in (
+            <foreach collection="resFilterMap.room_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.device_type_name != null and resFilterMap.device_type_name.size > 0">
+            and t.device_type in (
+            <foreach collection="resFilterMap.device_type_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.bizSystem_name != null and resFilterMap.bizSystem_name.size > 0">
+            and t.biz_sys in (
+            <foreach collection="resFilterMap.bizSystem_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="selectHisSummaryOrder" resultType="map">
+        select COUNT(1) codeCount,
+        SUM(IF(alert_level='2',1,0)) lCount,
+        SUM(IF(alert_level='3',1,0)) mCount,
+        SUM(IF(alert_level='4',1,0)) hCount,
+        SUM(IF(alert_level='5',1,0)) sCount
+        from alert_alerts_his t
+        WHERE t.alert_level in ('2','3','4','5') and t.order_id is not null
+        and t.operate_status in ('0', '1')
+        <if test="param.idcType != null">
+            AND t.idc_type = #{param.idcType}
+        </if>
+        <choose>
+            <when test="param.alertEndTime != null">
+                AND t.clear_user is null
+            </when>
+            <when test="param.clearTime != null">
+                AND t.clear_user is not null
+            </when>
+        </choose>
+        <choose>
+            <when test="param.startTime !=null and param.endTime !=null">
+                AND t.alert_end_time BETWEEN #{param.startTime} AND #{param.endTime}
+            </when>
+            <otherwise>
+                AND t.alert_end_time IS NOT NULL
+            </otherwise>
+        </choose>
+        <if test="resFilterMap != null and resFilterMap.device_name != null and resFilterMap.device_name.size > 0" >
+            and t.device_ip in (
+            <foreach collection="resFilterMap.device_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.idcType_name != null and resFilterMap.idcType_name.size > 0" >
+            and t.idc_type in (
+            <foreach collection="resFilterMap.idcType_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.room_name != null and resFilterMap.room_name.size > 0" >
+            and t.source_room in (
+            <foreach collection="resFilterMap.room_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.device_type_name != null and resFilterMap.device_type_name.size > 0">
+            and t.device_type in (
+            <foreach collection="resFilterMap.device_type_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.bizSystem_name != null and resFilterMap.bizSystem_name.size > 0">
+            and t.biz_sys in (
+            <foreach collection="resFilterMap.bizSystem_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="selectTrendBySection" parameterType="Map"
+            resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticTrend">
+        SELECT a.alert_level AS level, section, COUNT(1) AS alertNum
+        FROM
+        (
+          SELECT alert_id, alert_level,
+        <choose>
+            <when test="interval == 'day'">
+                DATE_FORMAT(alert_start_time,'%Y%m%d') section
+            </when>
+            <when test="interval == 'week'">
+                DATE_FORMAT(alert_start_time,'%Y%u') section
+            </when>
+            <when test="interval == 'month'">
+                DATE_FORMAT(alert_start_time,'%Y%m') section
+            </when>
+            <when test="interval == 'season'">
+                CONCAT(DATE_FORMAT(alert_start_time, '%Y'),FLOOR((DATE_FORMAT(alert_start_time, '%m')+2)/3)) section
+            </when>
+            <when test="interval == 'year'">
+                DATE_FORMAT(alert_start_time,'%Y') section
+            </when>
+        </choose>
+          FROM alert_alerts
+          WHERE alert_start_time >= #{beginDate} and alert_start_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+        ) a
+        GROUP BY a.alert_level, section
+        ORDER BY section ASC
+    </select>
+
+    <select id="selectAlertsClassify" parameterType="java.util.HashMap" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticClassify">
+          SELECT a.device_class AS deviceType, COUNT(a.alert_id) AS alertNum
+          FROM alert_alerts a
+          WHERE a.alert_start_time >= #{beginDate} and a.alert_start_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+          GROUP BY a.device_class
+    </select>
+
+    <resultMap id="alertsStaticSourceClassify" type="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticSourceClassify">
+        <result property="idcType" column="idc_type" />
+        <result property="sourceRoom" column="source_room" />
+        <result property="alertNum" column="alert_num" />
+    </resultMap>
+
+    <select id="selectAlertsSourceClassify" parameterType="java.util.HashMap" resultMap="alertsStaticSourceClassify">
+        SELECT IFNULL(a.idc_type,'') idc_type, a.source_room, COUNT(a.alert_id) as alert_num
+        FROM alert_alerts a
+        WHERE a.alert_start_time >= #{beginDate} and a.alert_start_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+        GROUP BY a.idc_type, a.source_room
+    </select>
+    <sql id="baseQueryClause_new">
+        from alert_alerts a
+        <if test="params != null">
+            <if test="(params['notifyStatus'] != null and params['notifyStatus'] != '')
+            or (params['notifyTypeList'] != null and params['notifyTypeList'].size() > 0)
+            or (params['notifyStartTime'] != null and params['notifyEndTime'] != null)">
+                INNER join alert_report_operate_record r on a.alert_id = r.alert_id
+                <if test="params['notifyTypeList'] != null and params['notifyTypeList'].size() > 0">
+                    and r.report_type in
+                    <foreach collection="params.notifyTypeList" index="index" item="nft"
+                             open="(" separator="," close=")">
+                        #{nft}
+                    </foreach>
+                </if>
+                <if test="params['notifyStartTime'] != null and params['notifyEndTime'] != null">
+                    and r.create_time >= #{params.notifyStartTime}
+                    and r.create_time <![CDATA[<]]> date_add(#{params.notifyEndTime}, interval 0 day)
+                </if>
+                <if test="params['notifyStatus'] != null and params['notifyStatus'] != ''">
+                    and r.status = #{params.notifyStatus}
+                </if>
+            </if>
+            <if test="(params['transferStartTime'] != null and params['transferEndTime'] != null)
+            or (params['transferStaff'] != null and params['transferStaff'] != '')
+            or (params['toConfirmStaff'] != null and params['toConfirmStaff'] != '')">
+                INNER join alert_transfer t on a.alert_id = t.alert_id
+                <if test="params['transferStartTime'] != null and params['transferEndTime'] != null">
+                    and t.operation_time >= #{params.transferStartTime}
+                    and t.operation_time <![CDATA[<]]> date_add(#{params.transferEndTime}, interval 0 day)
+                </if>
+                <if test="params['transferStaff'] != null and params['transferStaff'] != ''">
+                    and t.user_name like concat(concat('%',#{params.transferStaff}),'%')
+                </if>
+                <if test="params['toConfirmStaff'] != null and params['toConfirmStaff'] != ''">
+                    and t.confirm_user_name like concat(concat('%',#{params.toConfirmStaff}),'%')
+                </if>
+            </if>
+            <where>
+                1=1
+                <if test="params['queryType'] != null and params['queryType'] != ''">
+                    and a.operate_status = #{params.queryType}
+                </if>
+                <if test="params['deviceIp'] != null and params['deviceIp'] != ''">
+                    and a.device_ip like concat(concat('%',#{params.deviceIp}),'%')
+                </if>
+                <if test="params['monitItemList'] != null">
+                    and a.moni_object in
+                    <foreach collection="params['monitItemList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+                <if test="params['alertLevel'] != null and params['alertLevel'] != ''">
+                    and a.alert_level = #{params.alertLevel}
+                </if>
+                <if test="params['alertCreateStartTime'] != null and params['alertCreateEndTime'] != null">
+                    and a.alert_start_time >= #{params.alertCreateStartTime}
+                    and a.alert_start_time <![CDATA[<]]> date_add(#{params.alertCreateEndTime}, interval 0 day)
+                </if>
+                <if test="params['curMoniTimeStart'] != null and params['curMoniTimeEnd'] != null">
+                    and a.cur_moni_time >= #{params.curMoniTimeStart}
+                    and a.cur_moni_time <![CDATA[<]]> date_add(#{params.curMoniTimeEnd}, interval 0 day)
+                </if>
+                <if test="params['objectType'] != null and params['objectType'] != ''">
+                    and a.object_type = #{params.objectType}
+                </if>
+                <choose>
+                    <when test="params['deviceClass'] == '未知类型'">
+                        and a.device_class is null
+                    </when>
+                    <when test="params['deviceClass'] != null and params['deviceClass'] != ''">
+                        and a.device_class = #{params.deviceClass}
+                    </when>
+                </choose>
+                <if test="params['bizSysList'] != null">
+                    and a.biz_sys in
+                    <foreach collection="params['bizSysList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+                <if test="params['operateStatus'] != null and params['operateStatus'] != ''">
+                    and a.operate_status = #{params.operateStatus}
+                </if>
+                <if test="params['monitDesc'] != null and params['monitDesc'] != ''">
+                    and a.moni_index like concat(concat('%',#{params.monitDesc}),'%')
+                </if>
+                <choose>
+                    <when test="params['idcType'] == '其他'">
+                        and a.idc_type is null
+                    </when>
+                    <when test="params['idcType'] != null and params['idcType'] != ''">
+                        and a.idc_type = #{params.idcType}
+                    </when>
+                </choose>
+                <choose>
+                    <when test="params['sourceRoom'] != null and params['sourceRoom'] != ''">
+                        and a.source_room = #{params.sourceRoom}
+                    </when>
+                </choose>
+                <if test="params['deviceMfrs'] != null and params['deviceMfrs'] != ''">
+                    and a.device_mfrs = #{params.deviceMfrs}
+                </if>
+                <if test="params['deviceModel'] != null and params['deviceModel'] != ''">
+                    and a.device_model like concat('%',#{params.deviceModel},'%')
+                </if>
+                <if test="params['hostName'] != null and params['hostName'] != ''">
+                    and a.host_name like concat('%',#{params.hostName},'%')
+                </if>
+                <if test="params['deviceType'] != null and params['deviceType'] != ''">
+                    and a.device_type = #{params.deviceType}
+                </if>
+                <if test="params['instanceId'] != null and params['instanceId'] != ''">
+                    and a.device_id = #{params.instanceId}
+                </if>
+                <if test="params['sourceList'] != null">
+                    and a.source in
+                    <foreach collection="params['sourceList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+            </where>
+        </if>
+    </sql>
+    <select id="pageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select count(1)
+        <include refid="baseQueryClause_new"></include>
+    </select>
+
+    <select id="selectOverview" parameterType="Map" resultType="map">
+        SELECT
+        (CASE a.operateStatus
+            WHEN '0' THEN 'toBeConfirmed' WHEN '1' THEN 'confirmed'
+            WHEN '2' THEN 'toBeResolved' WHEN '3' THEN 'resolved'
+            WHEN '4' THEN 'observed'
+         END) operateStatus,
+        SUM(a.count) codeCount,
+        SUM(if(a.alertLevel='2', a.count, 0)) lCount,
+        SUM(if(a.alertLevel='3', a.count, 0)) mCount,
+        SUM(if(a.alertLevel='4', a.count, 0)) hCount,
+        SUM(if(a.alertLevel='5', a.count, 0)) sCount
+        FROM (SELECT t.alert_level AS alertLevel,t.operate_status AS operateStatus, COUNT(*) AS count
+                from alert_alerts t
+                WHERE 1=1
+                <if test="codes !=null">
+                    AND t.operate_status = #{codes}
+                </if>
+                GROUP BY t.alert_level, t.operate_status) a
+        GROUP BY a.operateStatus
+    </select>
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        select a.alert_id,
+        a.r_alert_id,
+        a.event_id,
+        a.action_id,
+        a.device_id,
+        a.device_class,
+        a.biz_sys,
+        a.moni_index,
+        a.moni_object,
+        a.cur_moni_value,
+        a.cur_moni_time,
+        a.alert_level,
+        a.item_id,
+        a.remark,
+        a.order_status,
+        a.operate_status,
+        a.source,
+        a.idc_type,
+        a.source_room,
+        a.object_type,
+        a.object_id,
+        a.region,
+        a.device_ip,
+        a.order_id,
+        a.order_type,
+        a.alert_start_time,
+        a.prefix,
+        a.alert_count,
+        a.message_open,
+        a.message_send,
+        a.mail_open,
+        a.mail_send,
+        a.device_type,
+        a.device_mfrs,
+        a.device_model,
+        a.host_name,
+        a.pod_name,
+        a.project_name
+        <include refid="baseQueryClause_new" />
+        ORDER by a.cur_moni_time DESC
+        <if test="begin != null and pageSize != null">
+            limit #{begin},#{pageSize}
+        </if>
+    </select>
+    <sql id="filterBaseQueryClause_new">
+         from alert_alerts a
+         <if test="params != null">
+            <where>
+                1=1
+                <if test="params['operationStatus'] != null and params['operationStatus'] != ''">
+                    and  operate_status = #{params.operationStatus}
+                </if>
+                <if test="params['condition'] != null and params['condition'] != ''">
+                    and  ${params.condition}
+                </if>
+                <if test="params['startTime'] != null and params['endTime'] != null and params['startTime'] != '' and params['endTime'] != ''">
+                    and  create_time  <![CDATA[>=]]> #{params.startTime} and create_time  <![CDATA[<]]> #{params.endTime}
+                </if>
+            </where>
+        </if>
+    </sql>
+    <select id="filterPageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        select a.alert_id,
+        a.r_alert_id,
+        a.event_id,
+        a.action_id,
+        a.device_id,
+        a.device_class,
+        a.biz_sys,
+        a.moni_index,
+        a.moni_object,
+        a.cur_moni_value,
+        a.cur_moni_time,
+        a.alert_level,
+        a.item_id,
+        a.remark,
+        a.order_status,
+        a.operate_status,
+        a.source,
+        a.idc_type,
+        a.source_room,
+        a.object_type,
+        a.object_id,
+        a.region,
+        a.device_ip,
+        a.order_id,
+        a.order_type,
+        a.alert_start_time,
+        a.prefix,
+        a.alert_count,
+        a.device_type,
+        a.device_mfrs,
+        a.device_model,
+        a.host_name,
+        a.pod_name,
+        a.project_name,
+        a.create_time
+        <include refid="filterBaseQueryClause_new" />
+        ORDER by a.cur_moni_time DESC
+        <if test="begin != null and pageSize != null">
+            limit #{begin},#{pageSize}
+        </if>
+    </select>
+    <select id="filterMapList" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.util.Map">
+        select a.*
+        <include refid="filterBaseQueryClause_new" />
+        ORDER by a.cur_moni_time DESC
+        <if test="begin != null and pageSize != null">
+            limit #{begin},#{pageSize}
+        </if>
+    </select>
+    <select id="filterPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select count(1)
+            <include refid="filterBaseQueryClause_new"></include>
+    </select>
+    <select id="exportList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseAlertsExportMap">
+        select a.alert_id,
+        a.r_alert_id,
+        a.event_id,
+        a.action_id,
+        a.device_id,
+        a.device_class,
+        a.biz_sys,
+        a.moni_index,
+        a.moni_object,
+        a.cur_moni_value,
+        a.cur_moni_time,
+        CASE a.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else a.alert_level end alert_level,
+        a.item_id,
+        a.remark,
+        CASE a.order_status when '1' then '未派单' when '2' then '处理中' when '3' then '已完成' else a.order_status end order_status,
+        a.operate_status,
+        a.source,
+        a.idc_type,
+        a.source_room,
+        CASE a.object_type when '1' then '设备' when '2' then '业务系统'  else a.object_type end object_type,
+        a.object_id,
+        a.region,
+        a.device_ip,
+        a.order_id,
+        CASE a.order_type when '1' then '告警工单' when '2' then '故障工单'  else a.order_type end order_type,
+        a.alert_start_time,
+        a.prefix,
+        a.alert_count,
+        a.device_type,
+        a.device_mfrs,
+        a.device_model,
+        a.host_name,
+        a.pod_name,
+        a.project_name
+        <include refid="baseQueryClause_new" />
+        ORDER by a.cur_moni_time DESC
+        limit 100000
+    </select>
+    <sql id="baseHisQueryClause_new">
+      from alert_alerts_his a
+        <if test="params != null">
+            <if test="(params['transferStartTime'] != null and params['transferEndTime'] != null)
+            or (params['transferStaff'] != null and params['transferStaff'] != '')
+            or (params['toConfirmStaff'] != null and params['toConfirmStaff'] != '')">
+                INNER join alert_transfer t on a.alert_id = t.alert_id
+                <if test="params['transferStartTime'] != null and params['transferEndTime'] != null">
+                    and t.operation_time >= #{params.transferStartTime}
+                    and t.operation_time <![CDATA[<]]> date_add(#{params.transferEndTime}, interval 0 day)
+                </if>
+                <if test="params['transferStaff'] != null and params['transferStaff'] != ''">
+                    and t.user_name like concat(concat('%',#{params.transferStaff}),'%')
+                </if>
+                <if test="params['toConfirmStaff'] != null and params['toConfirmStaff'] != ''">
+                    and t.confirm_user_name like concat(concat('%',#{params.toConfirmStaff}),'%')
+                </if>
+            </if>
+            <if test="(params['notifyTypeList'] != null and params['notifyTypeList'].size() > 0)
+            or (params['notifyStatus'] != null and params['notifyStatus'] != '')
+            or (params['notifyStartTime'] != null and params['notifyEndTime'] != null)">
+                INNER join alert_report_operate_record r on a.alert_id = r.alert_id
+                <if test="params['notifyTypeList'] != null and params['notifyTypeList'].size() > 0">
+                    and r.report_type in
+                    <foreach collection="params.notifyTypeList" index="index" item="nft"
+                             open="(" separator="," close=")">
+                        #{nft}
+                    </foreach>
+                </if>
+                <if test="params['notifyStartTime'] != null and params['notifyEndTime'] != null">
+                    and r.create_time >= #{params.notifyStartTime}
+                    and r.create_time <![CDATA[<]]> date_add(#{params.notifyEndTime}, interval 0 day)
+                </if>
+                <if test="params['notifyStatus'] != null and params['notifyStatus'] != ''">
+                    and r.status = #{params.notifyStatus}
+                </if>
+            </if>
+            <if test="(params['deliver'] != '' and params['deliver'] != null)
+                     or (params['deliverStartTime'] != null and params['deliverEndTime'] != null)">
+                INNER join alert_operation_record e on a.alert_id = e.alert_id and e.operation_type = 2
+                <if test="params['deliver'] != '' and params['deliver'] != null" >
+                    AND e.user_name LIKE CONCAT (CONCAT('%',#{params.deliver}),'%')
+                </if>
+                <if test="params['deliverStartTime'] != null and params['deliverEndTime'] != null" >
+                    AND e.operation_time >= #{params.deliverStartTime}
+                    and e.operation_time <![CDATA[<]]> date_add(#{params.deliverEndTime}, interval 0 day)
+                </if>
+            </if>
+            <if test="params['isFiltered'] == '1' and params['filterStartTime'] != null and params['filterEndTime'] != null">
+                INNER join alert_operation_record e on a.alert_id = e.alert_id and e.operation_type = 5
+                and e.operation_time >= #{params.filterStartTime}
+                and e.operation_time <![CDATA[<]]> date_add(#{params.filterEndTime}, interval 0 day)
+            </if>
+            <if test="params['isProject'] == 1 and params['projectStartTime'] != null and params['projectEndTime'] != null">
+                INNER join alert_operation_record f on a.alert_id = f.alert_id and f.operation_type = 6
+                and f.operation_time >= #{params.projectStartTime}
+                and f.operation_time <![CDATA[<]]> date_add(#{params.projectEndTime}, interval 0 day)
+            </if>
+            <if test="params['isMaintain'] == 1 and params['maintainStartTime'] != null and params['maintainEndTime']">
+                INNER join alert_operation_record g on a.alert_id = g.alert_id and g.operation_type = 7
+                and g.operation_time >= #{params.maintainStartTime}
+                and g.operation_time <![CDATA[<]]> date_add(#{params.maintainEndTime}, interval 0 day)
+            </if>
+            <where>
+                1=1
+                <if test="params['deviceIp'] != null and params['deviceIp'] != ''">
+                    and a.device_ip like concat(concat('%',#{params.deviceIp}),'%')
+                </if>
+                <if test="params['monitItemList'] != null">
+                    and a.moni_object in
+                    <foreach collection="params['monitItemList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+                <if test="params['alertLevel'] != null and params['alertLevel'] != ''">
+                    and a.alert_level = #{params.alertLevel}
+                </if>
+                <if test="params['alertCreateStartTime'] != null and params['alertCreateEndTime'] != null">
+                    and a.alert_start_time BETWEEN #{params.alertCreateStartTime}
+                    and date_add(#{params.alertCreateEndTime}, interval 0 day)
+                </if>
+                <if test="params['objectType'] != null and params['objectType'] != ''">
+                    and a.object_type = #{params.objectType}
+                </if>
+                <if test="params['deviceClass'] != null and params['deviceClass'] != ''">
+                    and a.device_class = #{params.deviceClass}
+                </if>
+                <if test="params['bizSysList'] != null">
+                    and a.biz_sys in
+                    <foreach collection="params['bizSysList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+                <if test="params['monitDesc'] != null and params['monitDesc'] != ''">
+                    and a.moni_index like concat(concat('%',#{params.monitDesc}),'%')
+                </if>
+                <if test="params['idcType'] != null and params['idcType'] != ''">
+                    and a.idc_type = #{params.idcType}
+                </if>
+                <if test="params['sourceRoom'] != null and params['sourceRoom'] != ''">
+                    and a.source_room = #{params.sourceRoom}
+                </if>
+                <if test="params['deviceMfrs'] != null and params['deviceMfrs'] != ''">
+                    and a.device_mfrs = #{params.deviceMfrs}
+                </if>
+                <if test="params['deviceModel'] != null and params['deviceModel'] != ''">
+                    and a.device_model = #{params.deviceModel}
+                </if>
+                <if test="params['hostName'] != null and params['hostName'] != ''">
+                    and a.host_name like concat('%',#{params.hostName},'%')
+                </if>
+                <if test="params['deviceType'] != null and params['deviceType'] != ''">
+                    and a.device_type = #{params.deviceType}
+                </if>
+                <if test="params['instanceId'] != null and params['instanceId'] != ''">
+                    and a.device_id = #{params.instanceId}
+                </if>
+                <if test="params['isClear'] == 'clearTime'">
+                    <choose>
+                        <when test="params['clearStartTime'] != null and params['clearEndTime'] != null">
+                            and a.alert_end_time BETWEEN #{params.clearStartTime} and  date_add(#{params.clearEndTime}, interval 0 day)
+                            and a.clear_user is not null
+                            and a.clear_content is not null
+                        </when>
+                        <otherwise>
+                            and a.alert_end_time is not null
+                            and a.clear_user is not null
+                            and a.clear_content is not null
+                        </otherwise>
+                    </choose>
+                </if>
+                <if test="params['isClear'] == 'alertTime'">
+                    <choose>
+                        <when test="params['clearStartTime'] != null and params['clearEndTime'] != null">
+                            and a.alert_end_time BETWEEN #{params.clearStartTime} and  date_add(#{params.clearEndTime}, interval 0 day)
+                            and a.clear_user is null
+                            and a.clear_content is null
+                        </when>
+                        <otherwise>
+                            and a.alert_end_time is not null
+                            and a.clear_user is null
+                            and a.clear_content is null
+                        </otherwise>
+                    </choose>
+                </if>
+                <if test="params['sourceList'] != null">
+                    and a.source in
+                    <foreach collection="params['sourceList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+            </where>
+        </if>
+    </sql>
+    <select id="pageHisListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select count(1)
+        <include refid="baseHisQueryClause_new"/>
+    </select>
+    <select id="pageHisList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseHisResultMap">
+        select a.alert_id,
+        a.r_alert_id,
+        a.event_id,
+        a.action_id,
+        a.device_id,
+        a.device_class,
+        a.biz_sys,
+        a.moni_index,
+        a.moni_object,
+        a.cur_moni_value,
+        a.cur_moni_time,
+        a.alert_level,
+        a.item_id,
+        a.alert_end_time,
+        a.remark,
+        a.order_status,
+        a.clear_user,
+        a.clear_time,
+        a.clear_content,
+        a.source,
+        a.idc_type,
+        a.source_room,
+        a.object_type,
+        a.object_id,
+        a.region,
+        a.device_ip,
+        a.order_type,
+        a.order_id,
+        a.alert_start_time,
+        a.prefix,
+        a.alert_count,
+        a.device_type,
+        a.device_mfrs,
+        a.device_model,
+        a.host_name,
+        a.pod_name,
+        a.project_name
+        <include refid="baseHisQueryClause_new"/>
+        ORDER by a.cur_moni_time DESC
+        <if test="begin != null and pageSize != null">
+            limit #{begin},#{pageSize}
+        </if>
+    </select>
+    <select id="exportHisList" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.util.Map">
+        select
+        a.alert_id alertId,
+        a.r_alert_id rAlertId,
+        a.event_id eventId,
+        a.action_id actionId,
+        a.device_id deviceId,
+        a.device_class deviceClass,
+        a.biz_sys bizSys,
+        a.moni_index moniIndex,
+        a.moni_object moniObject,
+        a.cur_moni_value curMoniValue,
+        a.cur_moni_time curMoniTime,
+        CASE a.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else a.alert_level end alertLevel,
+        a.item_id itemId,
+        a.alert_end_time alertEndTime,
+        a.remark remark,
+        CASE a.order_status when '1' then '未派单' when '2' then '处理中' when '3' then '已完成' else a.order_status end orderStatus,
+        a.clear_user clearUser,
+        a.clear_time clearTime,
+        a.clear_content clearContent,
+        a.source source,
+        a.idc_type idcType,
+        a.source_room sourceRoom,
+        CASE a.object_type when '1' then '设备' when '2' then '业务系统'  else a.object_type end objectType,
+        a.object_id objectId,
+        a.region region,
+        a.device_ip deviceIp,
+        CASE a.order_type when '1' then '告警工单' when '2' then '故障工单' when '3' then '维保工单'  else a.order_type end orderType,
+        a.order_id orderId,
+        a.alert_start_time alertStartTime,
+        a.prefix prefix,
+        a.alert_count alertCount,
+        a.device_type deviceType,
+        a.device_mfrs deviceMfrs,
+        a.device_model deviceModel,
+        a.host_name hostName,
+        a.pod_name podName,
+        a.project_name projectName
+        <include refid="baseHisQueryClause_new"/>
+        ORDER by a.cur_moni_time DESC
+        limit 200000
+    </select>
+
+    <select id="getAlertSummaryByDeviceClass" parameterType="map" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticOverview">
+        SELECT
+        t.device_class AS deviceClass,
+        t.alert_level AS alertLevel,
+        t.operate_status AS operateStatus,
+        COUNT(*) AS count
+        FROM
+        alert_alerts t
+        WHERE
+        t.operate_status IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY
+        t.device_class,
+        t.alert_level,
+        t.operate_status
+    </select>
+    <select id="getAlertHisSummaryByDeviceClass" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticOverview">
+        SELECT
+        t.device_class AS deviceClass,
+        t.alert_level AS alertLevel,
+        COUNT(*) AS count
+        FROM
+        alert_alerts_his t
+        GROUP BY
+        t.device_class,
+        t.alert_level
+    </select>
+
+    <select id="getAlertCountByAlertTarget" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.alert.AlertTargetCountVo">
+        SELECT
+            device_ip deviceIp,
+            idc_type idcType,
+            biz_sys bizSystem,
+            COUNT(1) count
+        FROM
+            alert_alerts
+        WHERE
+          1=1
+          <if test="alertLevel != '' and alertLevel != null ">
+             AND alert_level = #{alertLevel}
+          </if>
+        GROUP BY
+            device_ip,
+            idc_type,
+            biz_sys
+        ORDER BY count DESC, deviceIp ASC
+        LIMIT 10
+    </select>
+    <select id="getAlertCountByMoniTarget" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.alert.AlertTargetCountVo">
+        SELECT
+        moni_index moniIndex,
+        moni_object moniObject,
+        COUNT(1) count
+        FROM
+        alert_alerts
+        WHERE
+        1=1
+        <if test="alertLevel != '' and alertLevel != null ">
+            AND alert_level = #{alertLevel}
+        </if>
+        GROUP BY
+        moni_index,
+        moni_object
+        ORDER BY count DESC
+        LIMIT 10
+    </select>
+
+    <select id="getSummaryByAuthContent" parameterType="map" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticOverview">
+        SELECT t.alert_level AS alertLevel,t.operate_status AS operateStatus, COUNT(*) AS count
+        from alert_alerts t
+        WHERE
+        t.operate_status = #{code}
+        <if test="authDeviceIdList != null and authDeviceIdList.size > 0" >
+            and t.device_ip in (
+            <foreach collection="authDeviceIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="authIdcIdList != null and authIdcIdList.size > 0" >
+            and t.idc_type in (
+            <foreach collection="authIdcIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="authPrecinctList != null and authPrecinctList.size > 0" >
+            and t.source_room in (
+            <foreach collection="authPrecinctList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">
+            and t.device_type in (
+            <foreach collection="authDeviceTypeList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+            and t.biz_sys in (
+            <foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        GROUP BY t.alert_level, t.operate_status
+    </select>
+
+    <select id="getSummaryActivityByAuthContent" parameterType="map" resultType="java.lang.String">
+        SELECT a.alert_id
+        FROM alert_alerts a
+        INNER JOIN alert_transfer att ON a.alert_id = att.alert_id and att.confirm_user_name like concat(concat('%',#{authContent.userName}),'%')
+        WHERE
+        a.operate_status = #{authContent.code}
+        <include refid="baseWhereSql" />
+    </select>
+    <select id="getSummaryConfirmByAuthContent" parameterType="map" resultType="java.lang.String">
+        SELECT a.alert_id
+        FROM alert_alerts a
+        INNER JOIN alert_operation_record aor ON a.alert_id = aor.alert_id AND aor.operation_type = 1 AND aor.user_name like concat(concat('%',#{authContent.userName}),'%')
+        WHERE
+        a.operate_status = #{authContent.code}
+        <include refid="baseWhereSql" />
+    </select>
+
+    <sql id="baseWhereSql">
+        UNION
+        SELECT t.alert_id
+        from alert_alerts t
+        WHERE
+        t.operate_status = #{authContent.code}
+        <if test="resFilterMap != null and resFilterMap.device_name != null and resFilterMap.device_name.size > 0" >
+            and t.device_ip in (
+            <foreach collection="resFilterMap.device_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.idcType_name != null and resFilterMap.idcType_name.size > 0" >
+            and t.idc_type in (
+            <foreach collection="resFilterMap.idcType_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.room_name != null and resFilterMap.room_name.size > 0" >
+            and t.source_room in (
+            <foreach collection="resFilterMap.room_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.device_type_name != null and resFilterMap.device_type_name.size > 0">
+            and t.device_type in (
+            <foreach collection="resFilterMap.device_type_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="resFilterMap != null and resFilterMap.bizSystem_name != null and resFilterMap.bizSystem_name.size > 0">
+            and t.biz_sys in (
+            <foreach collection="resFilterMap.bizSystem_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </sql>
+
+    <select id="selectAlert" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select count(1)
+        from alert_alerts a
+        <if test="params != null">
+            <where>
+                1=1
+                <if test="params['deviceIp'] != null and params['deviceIp'] != ''">
+                    and a.device_ip like concat(concat('%',#{params.deviceIp}),'%')
+                </if>
+                <if test="params['alertLevel'] != null and params['alertLevel'] != ''">
+                    and a.alert_level = #{params.alertLevel}
+                </if>
+
+                <if test="params['bizSysList'] != null">
+                    and a.biz_sys in
+                    <foreach collection="params['bizSysList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+                <if test="params['monitDesc'] != null and params['monitDesc'] != ''">
+                    and a.moni_index like concat(concat('%',#{params.monitDesc}),'%')
+                </if>
+                <choose>
+                    <when test="params['idcType'] == '其他'">
+                        and a.idc_type is null
+                    </when>
+                    <when test="params['idcType'] != null and params['idcType'] != ''">
+                        and a.idc_type = #{params.idcType}
+                    </when>
+                </choose>
+                <if test="params['sourceList'] != null">
+                    and a.source in
+                    <foreach collection="params['sourceList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+            </where>
+        </if>
+    </select>
+
+    <select id="getAlertCountByIpAndIdc" resultType="map">
+        SELECT device_ip ip,idc_type idcType,COUNT(1) count
+        FROM alert_alerts
+        WHERE device_ip=#{ip} AND idc_type=#{idcType}
+        <!--<if test="ip != null and ip.size > 0">-->
+            <!--AND device_ip IN-->
+            <!--<foreach collection="list" item="item" open="(" separator="," close=")">-->
+                <!--#{item}-->
+            <!--</foreach>-->
+        <!--</if>-->
+        <!--<if test="idcType != null and idcType.size > 0">-->
+            <!--AND idc_type IN-->
+            <!--<foreach collection="list" item="item" open="(" separator="," close=")">-->
+                <!--#{item}-->
+            <!--</foreach>-->
+        <!--</if>-->
+        GROUP BY device_ip,idc_type
+
+    </select>
+
+
+</mapper>

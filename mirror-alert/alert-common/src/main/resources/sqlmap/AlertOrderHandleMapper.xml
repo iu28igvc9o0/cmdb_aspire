@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.bpm.AlertOrderHandleMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.bpm.po.AlertOrderHandle">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="exec_user" property="execUser" jdbcType="VARCHAR"/>
+        <result column="exec_time" property="execTime" jdbcType="TIMESTAMP"/>
+        <result column="expire_status" property="expireStatus" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_id, status, account, exec_user, exec_time, expire_status
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_order_handle
+    </select>
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="java.lang.Integer" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_order_handle
+        WHERE id = #{id}
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.bpm.po.AlertOrderHandle" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO alert_order_handle
+        (
+            `order_id`,
+            `status`,
+            `account`,
+            `exec_user`,
+            `exec_time`,
+            `expire_status`
+        ) VALUES (
+            #{orderId, jdbcType=VARCHAR},
+            #{status, jdbcType=VARCHAR},
+            #{account, jdbcType=VARCHAR},
+            #{execUser, jdbcType=VARCHAR},
+            #{execTime, jdbcType=TIMESTAMP},
+            #{expireStatus, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.mirror.alert.server.dao.bpm.po.AlertOrderHandle">
+        UPDATE alert_order_handle SET
+        `order_id` = #{orderId},
+        `status` = #{status},
+        `account` = #{account},
+        `exec_user` = #{execUser},
+        `exec_time` = #{execTime, jdbcType=TIMESTAMP},
+        `expire_status` = #{expireStatus}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from alert_order_handle 
+        WHERE
+        `id` in
+        <foreach collection="ids" index="index" item="id"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteByOrderId" parameterType="java.lang.String">
+        delete from alert_order_handle
+        WHERE order_id = #{orderId}
+    </delete>
+    <select id="getByOrderId" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_order_handle
+        where order_id = #{orderId}
+    </select>
+    <delete id="deleteNotExist">
+        select id from alert_order_handle where id not in (
+        select t.id from (select o.id from alert_order_handle o JOIN alert_alerts a on o.order_id=a.order_id) t)
+    </delete>
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.zabbixintegrate.dao.ZabbixItemDao">
+    
+    <resultMap type="com.aspire.mirror.zabbixintegrate.domain.ZabbixItem" id="zabbixItemResult">
+    	<result property="itemId" column="itemid" jdbcType="VARCHAR"/>
+    	<result property="ip" column="ip" jdbcType="VARCHAR"/>
+    	<result property="proxyName" column="proxy" jdbcType="VARCHAR"/>
+    	<result property="moniObject" column="moniObject" jdbcType="VARCHAR"/>
+    	<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="key" column="key" jdbcType="VARCHAR"/>
+		<result property="delay" column="delay" jdbcType="VARCHAR"/>
+		<result property="value" column="value" jdbcType="VARCHAR"/>
+		<result property="units" column="units" jdbcType="VARCHAR"/>
+		<result property="description" column="description" jdbcType="VARCHAR"/>
+		<result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.zabbixintegrate.domain.ZabbixTrends" id="zabbixTrendsResult">
+		<result property="itemId" column="itemid" jdbcType="VARCHAR"/>
+		<result property="clock" column="clock" jdbcType="VARCHAR"/>
+		<result property="num" column="num" jdbcType="VARCHAR"/>
+		<result property="valueMin" column="value_min" jdbcType="VARCHAR"/>
+		<result property="valueAvg" column="value_avg" jdbcType="VARCHAR"/>
+		<result property="valueMax" column="value_max" jdbcType="VARCHAR"/>
+    </resultMap>
+
+	<resultMap type="com.aspire.mirror.zabbixintegrate.domain.ZabbixTrigger" id="zabbixTriggerResult">
+		<result property="itemId" column="itemid" jdbcType="VARCHAR"/>
+		<result property="proxyName" column="proxy" jdbcType="VARCHAR"/>
+		<result property="triggerId" column="triggerid" jdbcType="VARCHAR"/>
+		<result property="expression" column="expression" jdbcType="VARCHAR"/>
+		<result property="description" column="description" jdbcType="VARCHAR"/>
+		<result property="priority" column="priority" jdbcType="VARCHAR"/>
+	</resultMap>
+	<!--history→0、history_str→1、history_log→2、history_uint→3、history_text→4-->
+	<select id="fetchItemList" resultMap="zabbixItemResult" parameterType="java.util.Map" databaseId="mysql">
+		select i.itemid, h.name ip, hh.host as proxy, a.name moniObject, i.name, i.key_ as `key`, i.delay, i.units, i.description, i.value_type, i.status
+		 from items i
+		INNER JOIN items_applications ia on ia.itemid = i.itemid INNER JOIN applications a on a.applicationid=ia.applicationid
+		INNER JOIN hosts h on h.hostid=i.hostid and h.status!='3' LEFT JOIN hosts hh on h.proxy_hostid=hh.hostid
+		where i.itemid <![CDATA[>]]> #{startScanIndex} order by i.itemid asc
+		limit  #{batchCount}
+	</select>
+	
+	<select id="fetchTriggerList" resultMap="zabbixTriggerResult" parameterType="java.util.Map" databaseId="mysql">
+		select i.itemid, hh.host as proxy, t.triggerid, t.expression, t.description, t.priority from triggers t INNER JOIN functions f on t.triggerid=f.triggerid
+	INNER JOIN items i on f.itemid=i.itemid INNER JOIN hosts h  on h.hostid=i.hostid  and h.status!='3'  LEFT JOIN hosts hh on h.proxy_hostid=hh.hostid
+	where t.triggerid <![CDATA[>]]> #{startScanIndex} order by t.triggerid asc limit  #{batchCount}
+</select>
+
+	<select id="fetchItemList" resultMap="zabbixItemResult" parameterType="java.util.Map" databaseId="oracle">
+		select * from (select i.itemid, h.name ip, hh.host as proxy, a.name moniObject, i.name, i.key_ as key, i.delay, i.units, i.description, i.value_type, i.status
+		from items i
+		INNER JOIN items_applications ia on ia.itemid = i.itemid INNER JOIN applications a on a.applicationid=ia.applicationid
+		INNER JOIN hosts h on h.hostid=i.hostid and h.status <![CDATA[<>]]> '3' LEFT JOIN hosts hh on h.proxy_hostid=hh.hostid
+		where i.itemid <![CDATA[>]]> #{startScanIndex} order by i.itemid asc
+		) where rownum <![CDATA[<=]]> #{batchCount}
+	</select>
+
+	<select id="fetchTriggerList" resultMap="zabbixTriggerResult" parameterType="java.util.Map" databaseId="oracle">
+		select * from (select i.itemid, hh.host as proxy, t.triggerid, t.expression, t.description, t.priority from triggers t INNER JOIN functions f on t.triggerid=f.triggerid
+		INNER JOIN items i on f.itemid=i.itemid INNER JOIN hosts h  on h.hostid=i.hostid  and h.status <![CDATA[<>]]> '3'  LEFT JOIN hosts hh on h.proxy_hostid=hh.hostid
+		where t.triggerid <![CDATA[>]]> #{startScanIndex} order by t.triggerid asc ) where rownum <![CDATA[<=]]> #{batchCount}
+	</select>
+
+<select id="fetchTrendList" parameterType="java.util.Map" resultMap="zabbixTrendsResult">
+select itemid, clock, num, value_min, value_avg, value_max from trends_uint where clock = #{startScanIndex}
+</select>
+<select id="fetchMinClock" parameterType="java.util.Map" resultType="java.lang.Long">
+select min(clock) from trends_uint where clock > #{startScanIndex}
+</select>
+</mapper>

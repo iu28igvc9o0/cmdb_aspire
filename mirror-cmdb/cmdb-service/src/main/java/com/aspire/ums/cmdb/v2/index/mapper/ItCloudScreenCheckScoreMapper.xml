@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenCheckScoreMapper">
+
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.index.payload.ScreenCheckScore">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="system_title_id" jdbcType="INTEGER" property="systemTitleId"/>
+        <result column="department1" jdbcType="VARCHAR" property="department1"/>
+        <result column="department2" jdbcType="VARCHAR" property="department2"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="score_type" jdbcType="VARCHAR" property="scoreType"/>
+        <result column="standard_value" jdbcType="VARCHAR" property="standardValue"/>
+        <result column="assessed_value" jdbcType="VARCHAR" property="assessedValue"/>
+        <result column="score" jdbcType="VARCHAR" property="score"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="monthly_time" jdbcType="VARCHAR" property="monthlyTime"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+    </resultMap>
+
+    <!-- 租户扣分实体基本字段 -->
+    <sql id="base_sql">
+        id, system_title_id, department1, department2, biz_system, score_type, standard_value, assessed_value, score, description, monthly_time, insert_time, is_delete
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenCheckScore">
+    insert into screen_check_score(<include refid="base_sql"/>)
+    values(
+        #{id, jdbcType=VARCHAR},
+        #{systemTitleId, jdbcType=INTEGER},
+        #{department1, jdbcType=VARCHAR},
+        #{department2, jdbcType=VARCHAR},
+        #{bizSystem, jdbcType=VARCHAR},
+        #{scoreType, jdbcType=VARCHAR},
+        #{standardValue, jdbcType=VARCHAR},
+        #{assessedValue, jdbcType=VARCHAR},
+        #{score, jdbcType=VARCHAR},
+        #{description, jdbcType=VARCHAR},
+        #{monthlyTime, jdbcType=VARCHAR},
+        #{insertTime, jdbcType=TIMESTAMP},
+        #{isDelete, jdbcType=VARCHAR})
+    </insert>
+
+    <select id="batchInsert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenCheckScore">
+        insert into screen_check_score(<include refid="base_sql"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.systemTitleId, jdbcType=INTEGER},
+            #{item.department1, jdbcType=VARCHAR},
+            #{item.department2, jdbcType=VARCHAR},
+            #{item.bizSystem, jdbcType=VARCHAR},
+            #{item.scoreType, jdbcType=VARCHAR},
+            #{item.standardValue, jdbcType=VARCHAR},
+            #{item.assessedValue, jdbcType=VARCHAR},
+            #{item.score, jdbcType=VARCHAR},
+            #{item.description, jdbcType=VARCHAR},
+            #{item.monthlyTime, jdbcType=VARCHAR},
+            #{item.insertTime, jdbcType=TIMESTAMP},
+            #{item.isDelete, jdbcType=VARCHAR})
+        </foreach>
+    </select>
+
+    <select id="getOne" resultMap="resultMap">
+    </select>
+
+    <select id="getCheckScoreByDepDetail" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+          monthly_time monthTime,
+          assessed_value percent,
+          score_type scoreType,
+          score,
+          description name
+        FROM screen_check_score
+        where is_delete = '0'
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        and monthly_time in
+        <foreach collection="monthArray" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by monthly_time
+    </select>
+
+
+    <update id="delete" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest">
+        delete from screen_check_score
+        where is_delete = '0' <include refid="where_sql"/>
+    </update>
+
+    <select id="getCpuMaxByCal" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+          rs.department1,
+          rs.department2,
+          rs.biz_system bizSystem,
+          MAX(rs.mx) mxNumber
+        FROM(
+            SELECT t.department1,t.department2,t.biz_system,t.statist_date,IFNULL(ROUND(SUM(t.cnt*t.max_utilization)/SUM(t.cnt),2),0) mx
+            FROM(
+                SELECT t1.department1,t1.department2,t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.max_utilization,t2.statist_date
+                FROM(
+                    SELECT department1,department2,biz_system,resource_pool,pod,SUM(amount) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY department1,department2,biz_system,resource_pool,pod
+                    HAVING SUM(amount) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT department1,department2,biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = 'CPU'
+                    <include refid="where_sql"/>
+                ) t2 ON (t1.department1 = t2.department1 and t1.department2 = t2.department2 and t1.biz_system = t2.biz_system
+                         and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                ) t
+            GROUP BY t.department1,t.department2,t.biz_system,t.statist_date
+            having t.statist_date is not null
+        ) rs
+        GROUP BY rs.department1,rs.department2,rs.biz_system
+        having MAX(rs.mx) <![CDATA[ < ]]> 30
+    </select>
+
+    <sql id="where_sql">
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="monthlyTime!=null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        <if test="deviceType!=null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="bizSystem!=null and bizSystem != ''">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="scoreType!=null and scoreType != ''">
+            and score_type = #{scoreType}
+        </if>
+    </sql>
+
+    <select id="getAssessStartMonth" parameterType="string" resultType="HashMap">
+        SELECT
+            child.assess_start_month assessMonth
+        FROM cmdb_org_system child
+        LEFT JOIN cmdb_org_system parent ON child.parent_id = parent.id
+        WHERE child.orgName = #{department2}
+        <if test="department1 != null and department1 != '' ">
+            and parent.orgName = #{department1}
+        </if>
+        limit 1
+    </select>
+</mapper>

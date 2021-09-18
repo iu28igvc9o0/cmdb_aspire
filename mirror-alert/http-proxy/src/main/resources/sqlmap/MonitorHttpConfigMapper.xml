@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     longfeng
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.httpMonitor.dao.MonitorHttpConfigDao">
+
+    <resultMap type="com.aspire.mirror.httpMonitor.dao.po.MonitorHttpConfig" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="monitor_name" column="monitor_name" jdbcType="VARCHAR"/>
+        <result property="biz_system_id" column="biz_system_id" jdbcType="VARCHAR"/>
+        <result property="alert_level" column="alert_level" jdbcType="INTEGER"/>
+        <result property="test_period" column="test_period" jdbcType="INTEGER"/>
+        <result property="idcType" column="idcType" jdbcType="VARCHAR"/>
+        <result property="isIntranet" column="isIntranet" jdbcType="INTEGER"/>
+        <result property="intranet_idcType" column="intranet_idcType" jdbcType="VARCHAR"/>
+        <result property="extranet" column="extranet" jdbcType="VARCHAR"/>
+        <result property="create_staff" column="create_staff" jdbcType="VARCHAR"/>
+        <result property="update_staff" column="update_staff" jdbcType="VARCHAR"/>
+         <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="request_http_addr" column="request_http_addr" jdbcType="VARCHAR"/>
+        <result property="request_method" column="request_method" jdbcType="VARCHAR"/>
+        <result property="response_type" column="response_type" jdbcType="VARCHAR"/>
+        <result property="regular_check" column="regular_check" jdbcType="VARCHAR"/>
+         <result property="response_code" column="response_code" jdbcType="INTEGER"/>
+        <result property="request_parm" column="request_parm" jdbcType="VARCHAR"/>
+        <result property="json_attribute" column="json_attribute" jdbcType="VARCHAR"/>
+        <result property="json_value" column="json_value" jdbcType="VARCHAR"/>
+        <result property="json_operator" column="json_operator" jdbcType="VARCHAR"/>
+        <result property="time_out" column="time_out" jdbcType="INTEGER"/>
+        <result property="html_format" column="html_format" jdbcType="VARCHAR"/>
+        <result property="http_content_type" column="http_content_type" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="idcTypeUrl" column="idcTypeUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseWhereClause">
+        <where>
+            1=1
+             <if test="biz_system_id != null and  biz_system_id != ''">
+                and biz_system_id = #{biz_system_id}
+            </if>
+            <if test="idcType != null and  idcType != ''">
+                and idcType = #{idcType}
+            </if>
+            <if test="monitor_name != null and  monitor_name != ''">
+                and monitor_name = like concat(concat('%',#{monitor_name}),'%')
+            </if>
+            <if test="request_http_addr != null and  request_http_addr != ''">
+                and request_http_addr like concat(concat('%',#{request_http_addr}),'%')
+            </if>
+            <if test="status != null ">
+                and status = #{status}
+            </if>
+            <if test="isIntranet != null ">
+                and isIntranet = #{isIntranet}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="baseColumnList">
+    	id,monitor_name,biz_system_id,alert_level,test_period,idcType,isIntranet,intranet_idcType,
+    	extranet,create_staff,update_staff,create_time,update_time,request_http_addr,
+    	request_method,response_type,regular_check,response_code,request_parm
+    	,json_attribute,json_value,json_operator,time_out,html_format,http_content_type,status
+	</sql>
+
+	
+	
+    <!-- 列表 -->
+    <select id="pageList" parameterType="com.aspire.mirror.httpMonitor.dao.po.MonitorHttpReq" resultMap="baseResultMap">
+    select <include refid="baseColumnList" />  from monitor_http_config
+        <include refid="baseWhereClause" />
+        order by update_time desc
+        <if test="pageNo != null and  pageSize != null">
+             limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="pageListCount" parameterType="com.aspire.mirror.httpMonitor.dao.po.MonitorHttpReq" resultType="java.lang.Integer">
+        select count(*) from monitor_http_config
+        <include refid="baseWhereClause" />
+    </select>
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from monitor_http_config  where id = #{id}
+    </select>
+    
+    <select id="selectAll"  resultMap="baseResultMap">
+    select <include refid="baseColumnList" />  from monitor_http_config
+        order by update_time desc
+    </select>
+    
+    <insert id="insertHis" parameterType="com.aspire.mirror.httpMonitor.dao.po.MonitorHttpHis" useGeneratedKeys="true" keyProperty="id">
+		insert into
+			monitor_http_his(http_config_id,request_method,http_content_type,request_parm,request_http_addr,
+    	time_out,start_time,end_time,time_con,response_type,response_code,
+    	json_attribute,json_value,json_operator,regular_check,html_format
+    	,request_result,conclusion,normal,head_response,result,response_status_code)
+		values(
+			#{http_config_id,jdbcType=VARCHAR} ,
+			#{request_method,jdbcType=VARCHAR} ,
+			#{http_content_type,jdbcType=VARCHAR} ,
+			#{request_parm,jdbcType=VARCHAR} ,
+			#{request_http_addr,jdbcType=VARCHAR},
+			#{time_out,jdbcType=INTEGER},
+			#{start_time,jdbcType=TIMESTAMP},
+			#{end_time,jdbcType=TIMESTAMP},
+			#{time_con,jdbcType=VARCHAR} ,
+			#{response_type,jdbcType=VARCHAR} ,
+			#{response_code,jdbcType=INTEGER} ,
+			#{json_attribute,jdbcType=VARCHAR},
+			#{json_value,jdbcType=VARCHAR},
+			#{json_operator,jdbcType=VARCHAR},
+			#{regular_check,jdbcType=VARCHAR},
+			#{html_format,jdbcType=INTEGER} ,
+			#{request_result,jdbcType=VARCHAR} ,
+			#{conclusion,jdbcType=VARCHAR} ,
+			#{normal,jdbcType=VARCHAR} ,
+			#{head_response,jdbcType=TIMESTAMP},
+			#{result,jdbcType=INTEGER},
+			#{response_status_code,jdbcType=VARCHAR}
+		)
+	</insert>
+   
+   <resultMap type="com.aspire.mirror.httpMonitor.dao.po.MonitorHttpHis" id="baseResultHisMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="http_config_id" column="http_config_id" jdbcType="VARCHAR"/>
+        <result property="request_method" column="request_method" jdbcType="VARCHAR"/>
+        <result property="http_content_type" column="http_content_type" jdbcType="VARCHAR"/>
+        <result property="request_parm" column="request_parm" jdbcType="VARCHAR"/>
+        <result property="request_http_addr" column="request_http_addr" jdbcType="VARCHAR"/>
+        <result property="time_out" column="time_out" jdbcType="INTEGER"/>
+        <result property="start_time" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="end_time" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="time_con" column="time_con" jdbcType="VARCHAR"/>
+        <result property="response_type" column="response_type" jdbcType="VARCHAR"/>
+         <result property="response_code" column="response_code" jdbcType="INTEGER"/>
+        <result property="json_attribute" column="json_attribute" jdbcType="VARCHAR"/>
+        <result property="json_value" column="json_value" jdbcType="VARCHAR"/>
+        <result property="json_operator" column="json_operator" jdbcType="VARCHAR"/>
+        <result property="regular_check" column="regular_check" jdbcType="VARCHAR"/>
+        <result property="html_format" column="html_format" jdbcType="VARCHAR"/>
+         <result property="request_result" column="request_result" jdbcType="VARCHAR"/>
+        <result property="conclusion" column="conclusion" jdbcType="VARCHAR"/>
+        <result property="normal" column="normal" jdbcType="INTEGER"/>
+        <result property="head_response" column="head_response" jdbcType="VARCHAR"/>
+        <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="result" column="result" jdbcType="INTEGER"/>
+        <result property="response_status_code" column="response_status_code" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="baseHisColumnList">
+    	id,http_config_id,request_method,http_content_type,request_parm,request_http_addr,
+    	time_out,start_time,end_time,time_con,response_type,response_code,
+    	json_attribute,json_value,json_operator,regular_check,html_format
+    	,request_result,conclusion,normal,head_response,create_time,result,response_status_code
+	</sql>
+    
+     <select id="getLatestHis" parameterType="String" resultMap="baseResultHisMap">
+        select
+        <include refid="baseHisColumnList"/>
+        from monitor_http_his  where http_config_id = #{id}
+        order by create_time desc
+        limit 1
+    </select>
+</mapper>

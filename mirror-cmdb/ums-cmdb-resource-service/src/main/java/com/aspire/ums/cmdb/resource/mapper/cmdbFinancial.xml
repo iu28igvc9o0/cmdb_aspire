@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.FinancialBusinessMapper">
+
+      <!-- 通过租户id查询cmdb一级业务线 -->
+    <select id="findCmdbBusiness1Info" resultType="java.util.Map" parameterType="java.lang.String">
+	SELECT
+		c.ID,
+		c.BUSINESS_NAME,
+		c.BUSINESS_CODE
+	FROM
+		cmdb_financial_business_rel cf
+	JOIN cmdb_business_attach c ON c.ID = cf.CMDB_BUSINESS_ID
+	AND cf.FINANCIAL_BUSINESS_ID IN (
+		SELECT
+			fb.ID
+		FROM
+			financial_business fb
+		LEFT JOIN cmdb_business_attach cba ON FINANCIAL_NAME = cba.BUSINESS_NAME
+		AND (
+			cba.DEL_FLAG = '0'
+			AND cba.DISABLED = '0'
+		)
+		AND PARENT_CODE IS NULL
+		WHERE 1=1
+		<if test="depart_id != null and depart_id !='' ">
+			 fb.depart = #{depart_id}
+		</if>
+		)
+		AND (
+			c.DEL_FLAG = '0'
+			AND c.DISABLED = '0'
+		)
+		AND c.PARENT_CODE IS NULL
+		<if test="pool != null and pool !='' ">
+			AND c.id IN (SELECT DISTINCT bussiness_id FROM cmdb_device_assets WHERE come_from=#{pool})
+		</if>
+
+    </select>
+    
+
+    
+    
+</mapper>

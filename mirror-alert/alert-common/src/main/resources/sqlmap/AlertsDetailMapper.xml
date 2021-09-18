@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsDetailDao">
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsDetail" id="alertsDetailMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="actionId" column="action_id" jdbcType="INTEGER"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.alert.po.AlertsDetail">
+        insert into
+        alert_alerts_detail (alert_id,event_id,action_id,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id)
+        values (
+        #{alertId,jdbcType=VARCHAR} ,
+        #{eventId,jdbcType=VARCHAR} ,
+        #{actionId,jdbcType=INTEGER} ,
+        #{moniIndex,jdbcType=VARCHAR} ,
+        #{moniObject,jdbcType=VARCHAR} ,
+        #{curMoniValue,jdbcType=VARCHAR} ,
+        #{curMoniTime,jdbcType=TIMESTAMP} ,
+        #{alertLevel,jdbcType=VARCHAR} ,
+        #{itemId,jdbcType=VARCHAR}
+        )
+    </insert>
+    <select id="selectByAlertId" resultMap="alertsDetailMap" parameterType="map">
+        select id, alert_id,event_id,action_id,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id from alert_alerts_detail
+        where alert_id = #{alertId,jdbcType=VARCHAR} ORDER BY cur_moni_time DESC limit #{pageNo},#{pageSize}
+    </select>
+
+    <select id="countByAlertId" resultType="java.lang.Integer" parameterType="map">
+        select count(1) from alert_alerts_detail
+        where alert_id = #{alertId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByAlertId" parameterType="java.lang.String">
+        delete from alert_alerts_detail where alert_id = #{alertId,jdbcType=VARCHAR}
+    </delete>
+</mapper>

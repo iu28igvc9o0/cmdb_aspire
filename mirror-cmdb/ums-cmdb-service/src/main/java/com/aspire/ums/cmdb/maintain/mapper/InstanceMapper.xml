@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.InstanceMapper" >
+    <resultMap id="InstanceResultMap" type="com.aspire.ums.cmdb.maintain.entity.Instance" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="`name`" property="name" jdbcType="VARCHAR" />
+        <result column="`moduleId`" property="moduleId" jdbcType="VARCHAR" />
+        <result column="insertTime" property="insertTime" jdbcType="DATE" />
+        <result column="updateTime" property="updateTime" jdbcType="DATE" />
+        <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+    </resultMap>
+     <resultMap type="com.aspire.ums.cmdb.module.entity.FormOptions" id="FormOptionsResultMap">  
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="value" property="value" jdbcType="VARCHAR" />
+	    <result column="default" property="isdefault" jdbcType="VARCHAR" />
+	    <result column="color" property="color" jdbcType="VARCHAR" />
+	    <result column="parentId" property="parentid" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <resultMap type="com.aspire.ums.cmdb.module.entity.Form" id="FormResultMap">  
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="moduleId" property="moduleid" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="type" property="type" jdbcType="VARCHAR" />
+	    <result column="defaultValue" property="defaultvalue" jdbcType="VARCHAR" />
+	    <result column="required" property="required" jdbcType="VARCHAR" />
+	    <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+	    <result column="hidden" property="hidden" jdbcType="VARCHAR" />
+	    <result column="keyAttr" property="keyattr" jdbcType="VARCHAR" />
+	    <result column="rate" property="rate" jdbcType="VARCHAR" />
+	    <result column="unit" property="unit" jdbcType="VARCHAR" />
+	    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+	    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+	    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+	    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />  
+    </resultMap>
+    
+    <resultMap id="FormValueResultMap" type="com.aspire.ums.cmdb.maintain.entity.FormValue" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="formId" property="formId" jdbcType="VARCHAR" />
+        <result column="formCode" property="formCode" jdbcType="VARCHAR" />
+        <result column="formValue" property="formValue" jdbcType="VARCHAR"/>
+        <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+        
+       <association property="form" javaType="com.aspire.ums.cmdb.module.entity.Form" column="formId"  select="getFormById"/>  
+       <collection property="formOptions" column="formId" javaType="ArrayList"  ofType="com.aspire.ums.cmdb.module.entity.FormOptions" select="getFormOptionsByFormId"/>
+    </resultMap>
+    
+    <resultMap id="DynamicInstanceColumnResultMap" type="com.aspire.ums.cmdb.maintain.entity.DynamicInstanceColumn" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+        <result column="insertTime" property="insertTime" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="VARCHAR" />
+        <result column="moduleName" property="moduleName" jdbcType="VARCHAR" />
+        <result column="tagName" property="tagName" jdbcType="VARCHAR" />
+        <result column="circleName" property="circleName" jdbcType="VARCHAR" />
+ 
+
+        <collection property="formValues" column="id" javaType="ArrayList"  ofType="com.aspire.ums.cmdb.maintain.entity.FormValue" select="getFormValuesByInstanceId"/>
+
+    </resultMap>
+    
+    <sql id="Instance_Column_List" >
+        id, name, moduleId, insertTime, updateTime, isDelete 
+    </sql>
+
+    <select id="getInstanceByModuleId" parameterType="java.lang.String" resultMap="InstanceResultMap" >
+        SELECT 
+       <include refid="Instance_Column_List" />
+	   FROM cmdb_instance
+	   WHERE moduleId = #{moduleId} AND isDelete = 0
+    </select>
+    
+     <select id="getInstanceById" parameterType="java.lang.String" resultMap="InstanceResultMap" >
+        SELECT 
+       <include refid="Instance_Column_List" />
+	   FROM cmdb_instance
+	   WHERE id = #{id} AND isDelete = 0 limit 0,1
+    </select>
+    <select id="getInstanceByIdArrays" parameterType="java.util.List" resultMap="InstanceResultMap" >
+        SELECT
+        <include refid="Instance_Column_List" />
+        FROM cmdb_instance
+        WHERE id in
+        <foreach collection="array" index="index" item="instanceId"
+                 open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        AND isDelete = 0
+    </select>
+    <select id="getInstanceByName" parameterType="java.lang.String" resultMap="InstanceResultMap" >
+        SELECT 
+       <include refid="Instance_Column_List" />
+	   FROM cmdb_instance
+	   WHERE name = #{name} AND isDelete = 0 limit 0,1
+    </select>
+
+    <select id="getInstanceByNameAndModuleId" parameterType="java.util.Map" resultType="java.lang.String" >
+        SELECT
+        id
+        FROM cmdb_instance
+        WHERE name in
+        <foreach collection="instanceNames" item="name" index="index" open="(" separator="," close=")" >
+        #{name}
+        </foreach>
+         AND moduleId = #{moduleId} AND isDelete = 0
+    </select>
+    
+     <insert id="addInstance" parameterType="com.aspire.ums.cmdb.maintain.entity.Instance" >
+       INSERT INTO 
+       		cmdb_instance
+       		(id, `name`, moduleId, insertTime, updateTime, isDelete) 
+       	VALUES
+       		(#{id}, #{name}, #{moduleId},  NOW(),  NOW(), 0)
+    </insert>
+    
+    <insert id="addInstanceCirlce" parameterType="java.util.HashMap" >
+       INSERT INTO 
+       		cmdb_instance_circle
+       		(instanceId, circleId) 
+       	VALUES
+       		(#{instanceId}, #{circleId})
+    </insert>
+    
+      <delete id="deleteInstanceCirlce" parameterType="java.util.HashMap" >
+       delete from
+       		 cmdb_instance_circle 
+       WHERE 1 = 1 
+             <if test="instanceId!=null and instanceId!=''">  
+       		and instanceId =#{instanceId}
+       		 </if>  
+       		<if test="circleId!=null and circleId!=''">  
+       		and circleId =#{circleId}
+       		 </if> 
+    </delete>
+    
+    <select id="checkInstanceName" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       SELECT *
+	   FROM cmdb_instance 
+	   WHERE  name  =  #{name} and isDelete = 0
+              and moduleId  =  #{moduleId}
+         
+    </select>
+
+     <select id="getDynamicInstanceColumn" parameterType="java.util.HashMap"   resultMap="DynamicInstanceColumnResultMap"  >
+         SELECT DISTINCT ci.id, ci.id instanceId, ci.name , ci.moduleId, date_format(ci.insertTime, '%Y-%c-%d %h:%i:%s' ) insertTime, date_format(ci.updateTime, '%Y-%c-%d %h:%i:%s' ) updateTime, 
+         cm.name moduleName, cit.`name` tagName, cc.name  circleName
+                                               FROM cmdb_instance ci
+                                               inner join cmdb_module cm on ci.moduleId = cm.id and cm.isDelete = 0 and cm.disabled='false' 
+                                               left join (SELECT GROUP_CONCAT(NAME) `name`, instanceId FROM cmdb_instance_tag  GROUP BY instanceId) cit on ci.id = cit.instanceId
+                                               LEFT join cmdb_instance_circle cic on ci.id = cic.instanceId
+                                               LEFT join cmdb_circle cc on cc.id =  cic.circleId and cc.isDelete = 0 
+                                               <if test="columCondition!=null">
+                                               inner join
+                                                   (select distinct instanceId from   ( select instanceId from cmdb_instance_form_value cifv where 1 = 1
+                                              		        <foreach item="item" index="index" collection="columCondition" 
+											                         open=" " separator="" close="">
+                                                                <if test="index == 0">
+                                                                    AND
+                                                                </if>
+                                                                <if test="item.id != null and item.id != ''">
+                                                                    cifv.formId =    #{item.id}
+                                                                </if>
+                                                                AND  cifv.formValue  like concat('%', #{item.value}, '%')
+                                                                <if test="index != columCondition.size-1">
+                                                                    OR
+                                                                </if>
+											                </foreach>
+                                              )BB
+                                                   <if test="columCondition.size > 1">
+                                                       GROUP BY BB.instanceId HAVING COUNT(*) = ${columCondition.size()}
+                                                   </if>
+                                                   ) AA on AA.instanceId = ci.id
+                                              </if> 
+              where 1 = 1   AND ci.isDelete = 0
+        <if test="circleId!=null and circleId!=''">  
+		    AND cic.circleId  =  #{circleId}
+		</if>        
+        <if test="name!=null and name!=''">  
+		    AND ci.name  like concat('%', #{name}, '%')
+		</if>  
+		<if test="moduleId!=null and moduleId!=''">  
+		    AND ci.moduleId  =  #{moduleId}
+		</if>  
+	    <if test="tagName!=null and tagName!=''">  
+		     AND  cit.`name` like concat('%', #{tagName}, '%')
+		</if> 
+		<if test="insertStartTime!=null and insertStartTime!=''">  
+		    AND ci.insertTime >=  str_to_date(#{insertStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="insertEndTime!=null and insertEndTime!=''">  
+		    AND str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s') >= ci.insertTime 
+		</if> 
+		
+		<if test="updateStartTime!=null and updateStartTime!=''">  
+		    AND ci.updateTime >=  str_to_date(#{updateStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="updateEndTime!=null and updateEndTime!=''">  
+		    AND str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s') >= ci.updateTime 
+		</if>
+
+                                   
+    </select>
+    
+     <select id="getDynamicViewInstanceColumn" parameterType="java.util.HashMap"   resultMap="DynamicInstanceColumnResultMap"  >
+         SELECT DISTINCT ci.id, ci.id instanceId, ci.name , ci.moduleId, date_format(ci.insertTime, '%Y-%c-%d %h:%i:%s' ) insertTime, date_format(ci.updateTime, '%Y-%c-%d %h:%i:%s' ) updateTime, 
+         cm.name moduleName,cit.`name` tagName FROM cmdb_instance ci
+                                               inner join cmdb_module cm on ci.moduleId = cm.id  and cm.isDelete = 0 and cm.disabled='false' 
+                                               left join (SELECT GROUP_CONCAT(NAME) `name`, instanceId FROM cmdb_instance_tag GROUP BY instanceId) cit on ci.id = cit.instanceId
+         <if test="defaultView == 'false' or defaultView == '' or defaultView == null">   
+          inner join cmdb_maintain_view_condition cmvc on ci.moduleId = cmvc.moduleId  and cmvc.viewId =  #{viewId}
+          inner join cmdb_maintain_view cmv on cmvc.viewId = cmv.id 
+         </if>
+          inner join cmdb_instance_circle cic on ci.id = cic.instanceId and cic.circleId = #{circleId} 
+
+              where 1 = 1   AND ci.isDelete = 0
+       <if test="name!=null and name!=''">  
+		    AND ci.name  like concat('%', #{name}, '%')
+		</if>  
+		<if test="moduleId!=null and moduleId!=''">  
+		    AND ci.moduleId  =  #{moduleId}
+		</if>  
+	    <if test="tagName!=null and tagName!=''">  
+		   AND cit.`name` like concat('%', #{tagName}, '%')
+		</if> 
+		<if test="insertStartTime!=null and insertStartTime!=''">  
+		    AND ci.insertTime >=  str_to_date(#{insertStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="insertEndTime!=null and insertEndTime!=''">  
+		    AND str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s') >= ci.insertTime 
+		</if> 
+		
+		<if test="updateStartTime!=null and updateStartTime!=''">  
+		    AND ci.updateTime >=  str_to_date(#{updateStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="updateEndTime!=null and updateEndTime!=''">  
+		    AND str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s') >= ci.updateTime 
+		</if> 
+                                   
+    </select>
+    <select id="getInstanceBaseInfoList" parameterType="java.util.HashMap" resultType="com.aspire.ums.cmdb.maintain.entity.InstanceBaseColumn">
+        SELECT ci.name name, ci.moduleId moduleId, ci.isDelete isDelete, date_format(ci.insertTime, '%Y-%c-%d %h:%i:%s' ) insertTime, date_format(ci.updateTime, '%Y-%c-%d %h:%i:%s' ) updateTime, cm.name moduleName, ifv.instanceId instanceId, ifv.bizSystem bizSystem, ifv.ip ip, ifv.roomId roomId, ifv.idcType idcType, ifv.deviceClass deviceClass, ifv.deviceRegion deviceRegion
+        FROM
+        cmdb_instance ci
+        INNER JOIN cmdb_module cm ON ci.moduleId = cm.id AND cm.isDelete = 0 AND cm.disabled='false'
+        INNER JOIN
+        (
+        SELECT instanceId, MAX(CASE WHEN formCode='bizSystem' THEN
+         formValue END
+        ) AS bizSystem, MAX(CASE WHEN formCode='IP' THEN
+         formValue END
+        ) AS ip, MAX(CASE WHEN formCode='roomId' THEN
+         formValue END
+        ) AS roomId, MAX(CASE WHEN formCode='idcType' THEN
+        formValue END
+        ) AS idcType,MAX(CASE WHEN formCode='device_class' THEN
+        formValue END
+        ) AS deviceClass,MAX(CASE WHEN formCode='DEVICE_REGION' THEN
+        formValue END
+        ) AS deviceRegion
+        FROM cmdb_instance_form_value
+        GROUP BY instanceId
+        ) ifv ON ci.id = ifv.instanceId
+        WHERE 1=1
+        <if test="includeDelete == null or includeDelete == 0">
+            AND ci.isDelete = 0
+        </if>
+        <if test="freshTime != null and freshTime != ''">
+            AND ci.updateTime &gt;= str_to_date(#{freshTime}, '%Y%m%d%H%i%s')
+        </if>
+        <if test="name!=null and name!=''">
+            AND ci.name  like concat('%', #{name}, '%')
+        </if>
+        <if test="moduleId!=null and moduleId!=''">
+            AND ci.moduleId  =  #{moduleId}
+        </if>
+        <if test="instanceIds!=null">
+            and ci.id in
+        <foreach collection="instanceIds" index="index" item="instanceId"
+                 open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        </if>
+        <if test="roomId!=null and roomId!=''">
+            AND roomId=#{roomId}
+        </if>
+        <if test="ip!=null and ip!=''">
+            AND ifv.ip like concat('%', #{ip}, '%')
+        </if>
+        <if test="bizSystem!=null and bizSystem!=''">
+            AND bizSystem=#{bizSystem}
+        </if>
+        <if test="sort!=null">
+          order by #{sort} #{order}
+        </if>
+        <if test="pageNumber!=null">
+          limit #{pageNumber},#{pageSize}
+        </if>
+    </select>
+    <select id="getCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+      select count(*) from cmdb_instance ci
+        WHERE 1=1 AND ci.isDelete = 0
+        <if test="name!=null and name!=''">
+            AND ci.name  like concat('%', #{name}, '%')
+        </if>
+        <if test="moduleId!=null and moduleId!=''">
+            AND ci.moduleId  =  #{moduleId}
+        </if>
+        <if test="instanceIds!=null">
+            and ci.id in
+            <foreach collection="instanceIds" index="index" item="instanceId"
+                     open="(" separator="," close=")">
+                #{instanceId}
+            </foreach>
+        </if>
+        <if test="roomId!=null and roomId!=''">
+            AND ci.id in (
+            select instanceId from cmdb_instance_form_value where formCode='roomId' and formValue=#{roomId}
+            )
+        </if>
+        <if test="bizSystem!=null and bizSystem!=''">
+            AND ci.id in (
+            select instanceId from cmdb_instance_form_value where formCode='bizSystem' and formValue=#{bizSystem}
+            )
+        </if>
+    </select>
+   <select id="getFormValuesByInstanceId"  parameterType="java.lang.String"  resultMap="FormValueResultMap" >
+        select cifv.* from cmdb_instance_form_value  cifv inner join cmdb_form cf on cifv.formId =  cf.id
+    where cifv.instanceId = #{id} 
+    order by cf.sortIndex
+    </select>
+    
+    <select id="getFormById"  parameterType="java.lang.String"  resultMap="FormResultMap" >
+        
+         select * from 
+    cmdb_form
+    where id = #{id} and isDelete = 0
+    </select>
+
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.Instance" >
+       UPDATE 
+       		cmdb_instance 
+       SET 
+       	<if test="name != null">name = #{name},</if>
+     	updateTime = NOW()
+       WHERE 
+       		id = #{id}
+    </update>
+    
+    <select id="getInstanceInfoById" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       SELECT ci.*, cm.iconUrl, cm.name moduleName, 
+       (select cir.circleId from cmdb_instance_circle cir where cir.instanceId = ci.id limit 0,1) circleId
+	   FROM cmdb_instance  ci, cmdb_module cm
+	   WHERE  ci.moduleId = cm.id and ci.isDelete = 0 and cm.isDelete = 0 and  cm.disabled='false' 
+              and ci.id  =  #{instanceId}
+    </select>
+    
+    <select id="getInstanceLogInfoById" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       SELECT ci.*, cm.iconUrl, cm.name moduleName, 
+       (select cir.circleId from cmdb_instance_circle cir where cir.instanceId = ci.id limit 0,1) circleId
+	   FROM cmdb_instance  ci, cmdb_module cm
+	   WHERE  ci.moduleId = cm.id 
+              and ci.id  =  #{instanceId}
+    </select>
+    
+     <select id="getFormOptionsByFormId"  parameterType="java.lang.String"  resultMap="FormOptionsResultMap" >
+        
+         select * from 
+    cmdb_form_options
+    where formId = #{formId}
+    </select>
+    
+    <select id="getInstanceIdByModuleId" parameterType="java.lang.String" resultType="java.util.HashMap" >
+        SELECT ci.id instanceId,  cm.name moduleName, ci.name instanceName, cic.circleId FROM cmdb_instance ci inner join cmdb_module cm on ci.moduleId = cm.id and ci.isDelete = 0 and cm.isDelete = 0
+         left join cmdb_instance_circle cic on cic.instanceId=ci.id
+        where    ci.moduleId =  #{moduleId}
+    </select>
+
+    <select id="getInstanceBaseInfoByIp" parameterType="java.util.HashMap" resultType="com.aspire.ums.cmdb.maintain.entity.InstanceBaseColumn">
+        SELECT
+            ci. NAME NAME,
+            ci.moduleId moduleId,
+            ci.isDelete isDelete,
+            date_format(
+                ci.insertTime,
+                '%Y-%c-%d %h:%i:%s'
+            ) insertTime,
+            date_format(
+                ci.updateTime,
+                '%Y-%c-%d %h:%i:%s'
+            ) updateTime,
+            cm. NAME moduleName,
+            ifv.instanceId instanceId,
+            ifv.bizSystem bizSystem,
+            ifv.ip ip,
+            ifv.roomId roomId,
+            ifv.idcType idcType,
+            ifv.deviceClass deviceClass,
+            ifv.deviceRegion deviceRegion
+        FROM
+            cmdb_instance ci
+        INNER JOIN cmdb_module cm ON ci.moduleId = cm.id
+        AND cm.isDelete = 0
+        AND cm.disabled = 'false'
+        INNER JOIN (
+            SELECT instanceId,
+                MAX(CASE WHEN formCode = 'bizSystem' THEN formValue END) AS bizSystem,
+                MAX(CASE WHEN formCode = 'IP' THEN formValue END) AS ip,
+                MAX(CASE WHEN formCode = 'roomId' THEN formValue END) AS roomId,
+                MAX(CASE WHEN formCode = 'idcType' THEN formValue END) AS idcType,
+                MAX(CASE WHEN formCode = 'device_class' THEN formValue END) AS deviceClass,
+                MAX(CASE WHEN formCode = 'DEVICE_REGION' THEN formValue END) AS deviceRegion
+            FROM
+                cmdb_instance_form_value v
+            where v.instanceId = (select instanceId from cmdb_instance_form_value f where f.formCode='ip' and f.formValue=#{ip} limit 0,1)
+            GROUP BY
+                instanceId
+        ) ifv ON ci.id = ifv.instanceId
+        where 1=1
+        <if test="idc != null and idc != ''">
+            and ifv.idcType = #{idc}
+        </if>
+    </select>
+    <select id="getInstanceByAuthParam" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT
+        ci.id id, ci.name name, ci.moduleId moduleId, ci.insertTime insertTime, ci.updateTime updateTime, ci.isDelete isDelete
+        FROM
+        cmdb_instance ci
+        INNER JOIN cmdb_module cm ON ci.moduleId = cm.id AND cm.isDelete = 0 AND cm.disabled='false'
+        INNER JOIN
+        (
+        SELECT instanceId, MAX(CASE WHEN formCode='bizSystem' THEN
+        formValue END
+        ) AS bizSystem, MAX(CASE WHEN formCode='IP' THEN
+        formValue END
+        ) AS ip, MAX(CASE WHEN formCode='roomId' THEN
+        formValue END
+        ) AS roomId, MAX(CASE WHEN formCode='idcType' THEN
+        formValue END
+        ) AS idcType,MAX(CASE WHEN formCode='device_type' THEN
+        formValue END
+        ) AS deviceType,MAX(CASE WHEN formCode='project_name' THEN
+        formValue END
+        ) AS projectName,MAX(CASE WHEN formCode='pod_name' THEN
+        formValue END
+        ) AS podName
+        FROM cmdb_instance_form_value
+        GROUP BY instanceId
+        ) ifv ON ci.id = ifv.instanceId
+        WHERE ci.isDelete = 0
+        <if test="bizSystem!=null and bizSystem.size > 0">
+            and bizSystem in (
+            <foreach collection="bizSystem" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="deviceType!=null and deviceType.size > 0">
+            and deviceType in (
+            <foreach collection="deviceType" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="idcType!=null and idcType.size > 0">
+            and ifv.idcType in (
+            <foreach collection="idcType" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="project_name!=null and project_name.size > 0">
+            and ifv.projectName in (
+            <foreach collection="project_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="pod_name!=null and pod_name.size > 0">
+            and ifv.podName in (
+            <foreach collection="pod_name" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="roomId!=null and roomId.size > 0">
+            and ifv.roomId  in (
+            <foreach collection="roomId" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+</mapper>

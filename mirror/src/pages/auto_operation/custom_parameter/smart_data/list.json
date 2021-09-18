@@ -1,0 +1,614 @@
+{
+    "list": [{
+            "type": "form",
+            "label": "表单容器",
+            "columnName": "form_1608534267068",
+            "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+            "width": "100%",
+            "list": [{
+                    "type": "input",
+                    "label": "参数名称",
+                    "columnName": "param_name_like",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont icondanhangwenben",
+                    "customLabelWidth": false,
+                    "classify": "form",
+                    "class": "",
+                    "props": {
+                        "placeholder": "请输入",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": false,
+                        "disabled": false,
+                        "readonly": false
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "input_1608534270409"
+                },
+                {
+                    "type": "select",
+                    "label": "参数类型",
+                    "columnName": "param_type",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "confont iconxialakuang",
+                    "classify": "form",
+                    "needLabel": true,
+                    "defaultSetLabel": false,
+                    "customLabelWidth": false,
+                    "option-label": "param_type_label",
+                    "option-value": "param_type",
+                    "option-alias": "alias",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "optionProps": {
+                        "optionType": "2",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "/v1/ops-service/opsManage/loadAllParamTypeList",
+                        "apiType": "get",
+                        "apiParam": "",
+                        "separator": ",",
+                        "allLabel": "全选",
+                        "allValue": "000",
+                        "isUserAllValue": false
+                    },
+                    "class": "",
+                    "props": {
+                        "placeholder": "请选择",
+                        "multiple": false,
+                        "clearable": false,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "collapse-tags": false
+                    },
+                    "options": [{
+                            "label": "Option 1",
+                            "value": "1"
+                        },
+                        {
+                            "label": "Option 2",
+                            "value": "2"
+                        }
+                    ],
+                    "hidden": false,
+                    "isAddOption": false,
+                    "showOptions": [{
+                            "label": "Option 1",
+                            "value": "1",
+                            "disabled": false
+                        },
+                        {
+                            "label": "Option 2",
+                            "value": "2",
+                            "disabled": false
+                        }
+                    ],
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "targetName": "label_select_1608534295998",
+                    "filterOptionStatus": [],
+                    "oldColumnName": "select_1608534295998"
+                },
+                {
+                    "label": "创建开始时间",
+                    "type": "datePicker",
+                    "columnName": "createTimeStart",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": false,
+                        "picker-options": {}
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "datePicker_1608773491903"
+                },
+                {
+                    "label": "创建结束时间",
+                    "type": "datePicker",
+                    "columnName": "createTimeEnd",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": false,
+                        "picker-options": {}
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "datePicker_1608773618029"
+                },
+                {
+                    "label": "修改开始时间",
+                    "type": "datePicker",
+                    "columnName": "updateTimeStart",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": false,
+                        "picker-options": {}
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "datePicker_1608773653557"
+                },
+                {
+                    "label": "修改结束时间",
+                    "type": "datePicker",
+                    "columnName": "updateTimeEnd",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": false,
+                        "picker-options": {}
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "datePicker_1608773684898"
+                },
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1608542082398",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [{
+                            "type": "button",
+                            "label": "查询",
+                            "columnName": "button_1608542085487",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "dialogConfig": {
+                                "bindName": "",
+                                "title": "",
+                                "subTitle": "",
+                                "width": "",
+                                "height": "",
+                                "toolList": []
+                            },
+                            "props": {
+                                "type": "primary"
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "submit"
+                        },
+                        {
+                            "type": "button",
+                            "label": "重置",
+                            "columnName": "button_1608542092203",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "dialogConfig": {
+                                "bindName": "",
+                                "title": "",
+                                "subTitle": "",
+                                "width": "",
+                                "height": "",
+                                "toolList": []
+                            },
+                            "props": {},
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "reset-submit"
+                        }
+                    ],
+                    "position": "left",
+                    "class": "",
+                    "isDialogFooterBtns": false,
+                    "classify": "layout",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100
+                }
+            ],
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1608534676960",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [{
+                "type": "button",
+                "label": "+新建",
+                "columnName": "add-row",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                    "bindName": "",
+                    "title": "",
+                    "subTitle": "",
+                    "width": "",
+                    "height": "",
+                    "toolList": []
+                },
+                "props": {
+                    "type": "text"
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": false,
+                "labelWidth": 100,
+                "oldColumnName": "button_1608534680054"
+            }],
+            "position": "left",
+            "class": "",
+            "isDialogFooterBtns": false,
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "table_1608534401189",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": false,
+            "indexFixed": true,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": false,
+            "multipleSelectionFixed": true,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [],
+            "show-operation": true,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [],
+            "list": [{
+                    "timeStamp": 1608534564983,
+                    "label": "表格可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                },
+                {
+                    "label": "参数编码",
+                    "columnName": "param_code",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "参数名称",
+                    "columnName": "param_name",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "参数类型",
+                    "columnName": "param_type",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true,
+                    "canSortConvert": false
+                },
+                {
+                    "label": "参数分组",
+                    "columnName": "param_group_relation_list",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "创建时间",
+                    "columnName": "create_time",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "修改时间",
+                    "columnName": "last_update_time",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                }
+            ],
+            "operation": [],
+            "toolList": [{
+                    "type": "text",
+                    "timestamp": 1608534627615,
+                    "columnName": "edit-row",
+                    "label": "编辑",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": []
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1608534645059,
+                    "columnName": "delete-row",
+                    "label": "删除",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": []
+                }
+            ],
+            "operation-width": "100",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    10,
+                    20,
+                    30
+                ],
+                "currentPage": 1,
+                "pageSize": 10,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/ops-service/opsManage/searchParamList",
+                "httpParam": "{}"
+            },
+            "hidden": false,
+            "tableTipDesc": "",
+            "tableTipClass": "",
+            "showTableTip": false,
+            "show-operation-status": []
+        }
+    ],
+    "model": {
+        "datePicker_1608534341108": "",
+        "AspDateRange_1608534377040": "",
+        "label_AspDateRange_1608534377040": "",
+        "datePicker_1608542191024": "",
+        "param_name_like": "",
+        "param_type": "",
+        "createTimeStart": "",
+        "createTimeEnd": "",
+        "updateTimeStart": "",
+        "updateTimeEnd": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "exportName": "",
+        "project": "webbas",
+        "labelWidth": 100,
+        "labelPosition": "left",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "localProxy": "",
+        "nigxProxy": "",
+        "serverProps": {
+            "statusKey": "",
+            "statusValue": "",
+            "dataKey": "",
+            "requestDataKey": ""
+        }
+    }
+}

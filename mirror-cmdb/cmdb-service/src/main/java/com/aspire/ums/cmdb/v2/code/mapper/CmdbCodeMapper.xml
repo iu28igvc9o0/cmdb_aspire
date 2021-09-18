@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.code.mapper.CmdbCodeMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbCode" >
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="filed_code" property="filedCode" jdbcType="VARCHAR" />
+        <result column="filed_name" property="filedName" jdbcType="VARCHAR" />
+        <result column="module_catalog_id" property="moduleCatalogId" jdbcType="VARCHAR" />
+        <result column="control_type_id" property="controlTypeId" jdbcType="VARCHAR" />
+        <result column="code_length" property="codeLength" jdbcType="TINYINT" />
+        <result column="code_tip" property="codeTip" jdbcType="VARCHAR" />
+        <result column="display_style" property="displayStyle" jdbcType="TINYINT" />
+        <result column="is_bind_source" property="isBindSource" jdbcType="VARCHAR" />
+        <result column="is_validate" property="isValidate" jdbcType="VARCHAR" />
+        <result column="is_approve" property="isApprove" jdbcType="VARCHAR" />
+        <result column="is_collect" property="isCollect" jdbcType="VARCHAR" />
+        <result column="default_value" property="defaultValue" jdbcType="VARCHAR" />
+        <result column="add_read_only" property="addReadOnly" jdbcType="VARCHAR" />
+        <result column="update_read_only" property="updateReadOnly" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <association property="controlType" select="com.aspire.ums.cmdb.v2.code.mapper.CmdbControlTypeMapper.getById" column="control_type_id"></association>
+        <association property="catalog" select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCatalogMapper.getById" column="module_catalog_id"></association>
+        <association property="codeBindSource" select="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeBindSourceMapper.getByCodeId" column="code_id"></association>
+        <association property="approve" select="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeApproveMapper.getByCodeId" column="code_id"></association>
+        <association property="codeCollect" select="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeCollectMapper.getByCodeId" column="code_id"></association>
+        <collection property="codeSetting" ofType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting">
+            <result column="module_id" property="moduleId"/>
+            <result column="owner_module_id" property="ownerModuleId"/>
+            <result column="display" property="display"/>
+        </collection>
+        <collection property="validates" select="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeValidateMapper.getByCodeId" column="code_id"></collection>
+        <collection property="cascadeList" select="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeCascadeMapper.getByCodeId" column="code_id"></collection>
+        <collection property="tableColList" select="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeTableMapper.getByCodeId" column="code_id"></collection>
+    </resultMap>
+
+    <resultMap id="simpleCodeResult" type="com.aspire.ums.cmdb.code.payload.CmdbSimpleCode" >
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="module_catalog_id" property="moduleCatalogId" jdbcType="VARCHAR" />
+        <result column="filed_code" property="filedCode" jdbcType="VARCHAR" />
+        <result column="filed_name" property="filedName" jdbcType="VARCHAR" />
+        <result column="control_type_id" property="controlTypeId" jdbcType="VARCHAR" />
+        <result column="owner_module_id" property="ownerModuleId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="basicSql">
+        SELECT
+            cc.`code_id`,
+            cc.`filed_code`,
+            cc.`filed_name`,
+            cc.`module_catalog_id`,
+            cc.`control_type_id`,
+            cc.`code_length`,
+            cc.`code_tip`,
+            cc.`display_style`,
+            cc.`is_bind_source`,
+            cc.`is_validate`,
+            cc.`is_approve`,
+            cc.`is_collect`,
+            cc.`default_value`,
+               cc.`add_read_only`,
+            cc.`update_read_only`,
+            cc.`sort_index`,
+            cc.`is_delete`
+        FROM cmdb_code cc
+    </sql>
+
+    <select id="simpleCodeListByEntity" resultMap="simpleCodeResult" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode">
+        <include refid="basicSql"></include>
+        where cc.`is_delete` = 0
+        <if test="filedCode !=null and filedCode != ''">
+            and cc.`filed_code` like concat('%',#{filedCode},'%')
+        </if>
+        <if test="filedName !=null and filedName != ''">
+            and cc.`filed_name` like concat('%',#{filedName},'%')
+        </if>
+        <if test="moduleCatalogId !=null and moduleCatalogId != ''">
+            and cc.`module_catalog_id` = #{moduleCatalogId}
+        </if>
+        order by module_catalog_id, sort_index
+    </select>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeQuery">
+        <include refid="basicSql"></include>
+        where cc.`is_delete` = 0
+        <if test="codeCode !=null and codeCode != ''">
+            and cc.`filed_code` like concat('%',#{codeCode},'%')
+        </if>
+        <if test="codeName !=null and codeName != ''">
+            and cc.`filed_name` like concat('%',#{codeName},'%')
+        </if>
+        <if test="moduleCatalogId !=null and moduleCatalogId != ''">
+            and cc.`module_catalog_id` = #{moduleCatalogId}
+        </if>
+        order by module_catalog_id, sort_index
+        <if test="pageSize != null and pageSize != '' and currentPage != null and currentPage != ''">
+            limit ${(currentPage -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeQuery">
+        select count(1) FROM cmdb_code cc
+        where cc.`is_delete` = 0
+        <if test="codeCode !=null and codeCode != ''">
+           and cc.`filed_code` like concat('%',#{codeCode},'%')
+        </if>
+        <if test="codeName !=null and codeName != ''">
+            and cc.`filed_name` like concat('%',#{codeName},'%')
+        </if>
+        <if test="moduleCatalogId !=null and moduleCatalogId != ''">
+            and cc.`module_catalog_id` = #{moduleCatalogId}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode">
+        <include refid="basicSql"></include>
+        WHERE 1=1 and `is_delete` = 0
+        <if test="codeId != null and codeId != ''">
+            AND `code_id` = #{codeId}
+        </if>
+        <if test="filedCode != null and filedCode != ''">
+            AND `filed_code` = #{filedCode}
+        </if>
+        <if test="filedName != null and filedName != ''">
+            AND `filed_name` = #{filedName}
+        </if>
+        <if test="moduleCatalogId !=null and moduleCatalogId != ''">
+            <if test=" moduleCatalogId == '0'.toString()">
+                and IFNULL(cc.`module_catalog_id`, '') =''
+            </if>
+            <if test="moduleCatalogId != '0'.toString()">
+                and cc.`module_catalog_id` = #{moduleCatalogId}
+            </if>
+
+        </if>
+    </select>
+
+    <select id="getById" resultMap="resultMap">
+        <include refid="basicSql"></include>
+        WHERE 1=1
+        AND `code_id` = #{codeId} and `is_delete` = 0
+    </select>
+
+    <select id="getSimpleCodeById" resultMap="simpleCodeResult">
+        select code_id, filed_code, filed_name,control_type_id, module_catalog_id from cmdb_code
+        WHERE `code_id` = #{codeId} and `is_delete` = 0
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode" resultMap="resultMap">
+        <include refid="basicSql"></include>
+        WHERE 1=1
+        AND `is_delete` = 0
+        <if test="codeId != null and codeId != ''">
+            AND `code_id` = #{codeId}
+        </if>
+        <if test="moduleCatalogId !=null and moduleCatalogId != ''">
+            and `module_catalog_id` = #{moduleCatalogId}
+        </if>
+        <if test="filedCode != null and filedCode != ''">
+            AND `filed_code` = #{filedCode}
+        </if>
+        <if test="filedName != null and filedName != ''">
+            AND `filed_name` = #{filedName}
+        </if>
+    </select>
+
+
+    <!-- Get one 查询 -->
+    <select id="getByEntity" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode" resultMap="simpleCodeResult">
+        SELECT  `code_id`,`filed_code`,`filed_name`, `control_type_id`
+               from cmdb_code
+        WHERE 1=1
+        AND `is_delete` = 0
+        <if test="codeId != null and codeId != ''">
+            AND `code_id` = #{codeId}
+        </if>
+        <if test="moduleCatalogId !=null and moduleCatalogId != ''">
+            and `module_catalog_id` = #{moduleCatalogId}
+        </if>
+        <if test="filedCode != null and filedCode != ''">
+            AND `filed_code` = #{filedCode}
+        </if>
+        <if test="filedName != null and filedName != ''">
+            AND `filed_name` = #{filedName}
+        </if>
+    </select>
+
+    <!-- 根据ids获取数据 -->
+    <select id="listByIds" resultMap="resultMap">
+        <include refid="basicSql"></include>
+        WHERE `code_id` in
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+              #{item}
+        </foreach>
+        and `is_delete` = 0
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode">
+        INSERT INTO cmdb_code
+        (
+            `code_id`,
+            `filed_code`,
+            `filed_name`,
+            `module_catalog_id`,
+            `control_type_id`,
+            `code_length`,
+            `code_tip`,
+            `display_style`,
+            `is_bind_source`,
+            `is_validate`,
+            `is_approve`,
+            `is_collect`,
+            `default_value`,
+            `add_read_only`,
+            `update_read_only`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{codeId, jdbcType=VARCHAR},
+            #{filedCode, jdbcType=VARCHAR},
+            #{filedName, jdbcType=VARCHAR},
+            #{moduleCatalogId, jdbcType=VARCHAR},
+            #{controlTypeId, jdbcType=VARCHAR},
+            #{codeLength, jdbcType=TINYINT},
+            #{codeTip, jdbcType=VARCHAR},
+            #{displayStyle, jdbcType=TINYINT},
+            #{isBindSource, jdbcType=VARCHAR},
+            #{isValidate, jdbcType=VARCHAR},
+            #{isApprove, jdbcType=VARCHAR},
+            #{isCollect, jdbcType=VARCHAR},
+            #{defaultValue, jdbcType=VARCHAR},
+            #{addReadOnly, jdbcType=VARCHAR},
+            #{updateReadOnly, jdbcType=VARCHAR},
+            (select sIdx from (select (MAX(IFNULL(sort_index,0)) + 1) sIdx from cmdb_code) c),
+            0
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode">
+        UPDATE cmdb_code SET
+        `filed_name` = #{filedName},
+        `module_catalog_id` = #{moduleCatalogId},
+        `control_type_id` = #{controlTypeId},
+        `code_length` = #{codeLength},
+        `code_tip` = #{codeTip},
+        `display_style` = #{displayStyle},
+        `is_bind_source` = #{isBindSource},
+        `is_validate` = #{isValidate},
+        `is_approve` = #{isApprove},
+        `is_collect` = #{isCollect},
+        `default_value` = #{defaultValue},
+        `add_read_only` = #{addReadOnly},
+        `update_read_only` = #{updateReadOnly},
+        `sort_index` = #{sortIndex}
+        WHERE
+        `code_id` = #{codeId}
+        <if test="filedCode != null and filedCode != ''">
+            AND `filed_code` = #{filedCode}
+        </if>
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCode">
+        UPDATE cmdb_code set `is_delete` = 1
+        WHERE `code_id` = #{codeId}
+    </delete>
+
+    <select id="getCodeListByModuleId" resultMap="resultMap">
+        SELECT cc.* FROM cmdb_code cc
+        LEFT JOIN cmdb_v3_module_code_setting cvmcs
+        ON cc.`code_id` = cvmcs.`code_id`
+        WHERE cc.is_delete=0 and cvmcs.is_delete = 0 and cvmcs.module_id = #{moduleId}
+        order by cvmcs.sort_index
+    </select>
+
+    <select id="getSimpleCodeByCodeAndModuleId" resultMap="simpleCodeResult">
+        SELECT cc.*,cvmcs.* FROM cmdb_code cc
+        LEFT JOIN cmdb_v3_module_code_setting cvmcs
+        ON cc.`code_id` = cvmcs.`code_id`
+        WHERE cc.is_delete=0 and cvmcs.is_delete = 0 and cvmcs.module_id = #{moduleId}
+        AND cc.filed_code = #{filedCode}
+        order by cvmcs.sort_index
+    </select>
+    <select id="getSimpleCodeListByModuleId" resultMap="simpleCodeResult">
+        SELECT  cc.`code_id`,cc.`filed_code`,cc.`filed_name`, cc.`control_type_id` FROM cmdb_code cc
+        LEFT JOIN cmdb_v3_module_code_setting cvmcs ON cc.`code_id` = cvmcs.`code_id`
+        LEFT JOIN `cmdb_module_code_group` cmcg ON cmcg.group_id = cvmcs.`group_id`
+        WHERE cc.is_delete=0 AND cvmcs.is_delete = 0 AND cvmcs.module_id = #{moduleId} AND cmcg.`module_id`=#{moduleId}
+        AND cvmcs.display = '0'
+        GROUP BY cvmcs.`group_id`,cvmcs.id
+        ORDER BY  cmcg.`sort_index`,cvmcs.`sort_index`
+    </select>
+
+    <select id="getSelfCodeListByModuleId" resultMap="resultMap">
+        SELECT * FROM cmdb_code a
+                          LEFT JOIN cmdb_v3_module_code_setting b
+                                     ON a.`code_id` = b.`code_id`
+        WHERE a.is_delete=0 and b.is_delete = 0 and b.module_id = #{moduleId}
+        and b.module_id = b.owner_module_id
+        order by b.sort_index
+
+    </select>
+
+    <select id="getCodeListByGroupId" resultMap="resultMap">
+        SELECT * FROM cmdb_code cc
+                          INNER JOIN cmdb_v3_module_code_setting cvmcs
+                                     ON cc.`code_id` = cvmcs.`code_id`
+        WHERE cc.is_delete=0 AND cvmcs.is_delete = 0 AND cvmcs.group_id =#{groupId} and cvmcs.module_id = #{moduleId}
+        ORDER BY cvmcs.sort_index
+    </select>
+
+    <select id="getDistinctCodeList" resultType="java.util.LinkedHashMap">
+        select cc.code_id codeId, cc.filed_code filedCode, cc.filed_name filedName, c.catalog_name catalogName from cmdb_code cc
+        left join cmdb_v3_module_catalog c on cc.module_catalog_id = c.id
+        where cc.is_delete=0 order by cc.filed_name
+    </select>
+
+    <select id="validateCmdbCodeUnique" resultType="java.lang.Integer">
+        SELECT count(1)
+        from cmdb_code cc
+        where cc.`is_delete` = 0
+        <if test="filedCode != null and filedCode != ''">
+            and cc.filed_code = #{filedCode}
+        </if>
+        <if test="moduleCatalogId != null and moduleCatalogId != ''">
+            and cc.module_catalog_id = #{moduleCatalogId}
+        </if>
+    </select>
+
+    <select id="getCasParentCodes" resultMap="resultMap">
+        SELECT a.* FROM cmdb_code a
+        WHERE code_id IN ( SELECT DISTINCT code_id FROM  `cmdb_v3_code_cascade`b
+                           WHERE `sub_code_id` = #{codeId})
+        ORDER BY sort_index
+    </select>
+
+    <!--通过码表名称和归属的模型ID查询对应的codeId create by fanwenhui 20200930-->
+    <select id="getCodeIdByNameAndModuleId" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT GROUP_CONCAT(DISTINCT a.filed_code) AS filedCode,b.owner_module_id AS ownModuleId FROM cmdb_code a
+        LEFT JOIN cmdb_v3_module_code_setting b ON a.code_id = b.code_id
+        LEFT JOIN cmdb_module cm ON cm.id = b.owner_module_id
+        WHERE 1=1
+        AND a.module_catalog_id = #{moduleId}
+        <if test="list != null and list.size() > 0">
+            AND a.filed_code IN
+            <foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="codeList != null and codeList.size() > 0">
+            AND cm.`code` IN
+            <foreach collection="codeList" index="index" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        AND a.is_delete = 0
+        AND b.is_delete = 0
+        AND cm.is_delete = 0
+        GROUP BY b.owner_module_id
+    </select>
+
+</mapper>

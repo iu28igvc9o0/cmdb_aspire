@@ -1,0 +1,791 @@
+{
+    "list": [{
+            "type": "form",
+            "label": "表单容器",
+            "columnName": "form_1611813672032",
+            "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+            "width": "100%",
+            "list": [{
+                    "type": "input",
+                    "label": "巡检指标：",
+                    "columnName": "item_name_like",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont icondanhangwenben",
+                    "customLabelWidth": false,
+                    "classify": "form",
+                    "class": "",
+                    "props": {
+                        "placeholder": "请输入",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "clearableStatus": []
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "input_1611813680395"
+                },
+                {
+                    "type": "select",
+                    "label": "状态：",
+                    "columnName": "status",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "confont iconxialakuang",
+                    "classify": "form",
+                    "needLabel": true,
+                    "defaultSetLabel": false,
+                    "customLabelWidth": false,
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ",",
+                        "allLabel": "全选",
+                        "allValue": "000",
+                        "isUserAllValue": false
+                    },
+                    "class": "",
+                    "props": {
+                        "placeholder": "请选择",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "collapse-tags": false,
+                        "clearableStatus": []
+                    },
+                    "options": [{
+                            "label": "启用",
+                            "value": "ON"
+                        },
+                        {
+                            "label": "禁用",
+                            "value": "OFF"
+                        }
+                    ],
+                    "hidden": false,
+                    "isAddOption": false,
+                    "showOptions": [{
+                            "label": "启用",
+                            "value": "ON",
+                            "disabled": false
+                        },
+                        {
+                            "label": "禁用",
+                            "value": "OFF",
+                            "disabled": false
+                        }
+                    ],
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "targetName": "label_select_1611813685505",
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": [],
+                    "oldColumnName": "select_1611813685505"
+                },
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1611813732116",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [{
+                            "type": "button",
+                            "label": "查询",
+                            "columnName": "button_1611813734463",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "dialogConfig": {
+                                "bindName": "",
+                                "title": "",
+                                "subTitle": "",
+                                "width": "",
+                                "height": "",
+                                "toolList": []
+                            },
+                            "props": {
+                                "type": "primary"
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "submit"
+                        },
+                        {
+                            "type": "button",
+                            "label": "重置",
+                            "columnName": "button_1611813736932",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "dialogConfig": {
+                                "bindName": "",
+                                "title": "",
+                                "subTitle": "",
+                                "width": "",
+                                "height": "",
+                                "toolList": []
+                            },
+                            "props": {},
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "reset-submit"
+                        }
+                    ],
+                    "position": "left",
+                    "class": "",
+                    "isDialogFooterBtns": false,
+                    "classify": "layout",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100
+                }
+            ],
+            "isBorder": true,
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1611813774740",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [{
+                    "type": "button",
+                    "label": "导出",
+                    "columnName": "exportAction",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {
+                        "type": "primary"
+                    },
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "button_1611813777913"
+                },
+                {
+                    "type": "button",
+                    "label": "创建",
+                    "columnName": "addAction",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "button_1611813779551"
+                },
+                {
+                    "type": "button",
+                    "label": "生成巡检模板",
+                    "columnName": "creat-template",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "button_1611813781120"
+                },
+                {
+                    "type": "button",
+                    "label": "删除",
+                    "columnName": "delete-list",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "isEncrypt": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "button_1612409298033"
+                }
+            ],
+            "position": "left",
+            "class": "",
+            "isDialogFooterBtns": false,
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true
+        },
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "table_1611813834570",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": true,
+            "indexFixed": false,
+            "show-single-selection": false,
+            "singleSelectionFixed": false,
+            "show-multiple-selection": true,
+            "multipleSelectionFixed": false,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [],
+            "show-operation": true,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "fuzzyQuery": false,
+            "fuzzyQueryColumnName": "fuzzyQuery",
+            "fuzzyQueryPlaceholder": "请输入",
+            "fuzzyQueryPostion": "relative",
+            "fuzzyQueryAlign": "right",
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [{
+                    "label": "syn-row",
+                    "columnName": "syn-row",
+                    "authId": "",
+                    "statusList": [],
+                    "state": "show",
+                    "dataLinkage": [{
+                        "columnName": "status",
+                        "compare": "=",
+                        "targetValue": "ON",
+                        "authSwitch": false,
+                        "authId": "",
+                        "if": "&&"
+                    }]
+                },
+                {
+                    "label": "open-row",
+                    "columnName": "open-row",
+                    "authId": "",
+                    "statusList": [],
+                    "state": "show",
+                    "dataLinkage": [{
+                        "columnName": "status",
+                        "compare": "=",
+                        "targetValue": "OFF",
+                        "authSwitch": false,
+                        "authId": "",
+                        "if": "&&"
+                    }]
+                },
+                {
+                    "label": "close-row",
+                    "columnName": "close-row",
+                    "authId": "",
+                    "statusList": [],
+                    "state": "show",
+                    "dataLinkage": [{
+                        "columnName": "status",
+                        "compare": "=",
+                        "targetValue": "ON",
+                        "authSwitch": false,
+                        "authId": "",
+                        "if": "&&"
+                    }]
+                }
+            ],
+            "list": [{
+                    "timeStamp": 1611813878941,
+                    "label": "表格可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                },
+                {
+                    "label": "检查指标分类",
+                    "columnName": "check_classify",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "检查指标分组",
+                    "columnName": "check_group",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "是否基线",
+                    "columnName": "baseline_flag",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "是否多行处理",
+                    "columnName": "multiline_flag",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "巡检指标",
+                    "columnName": "item_name",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "优先级",
+                    "columnName": "priority",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "对应脚本",
+                    "columnName": "script_name",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "指标项运算符",
+                    "columnName": "logic_sign",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "阈值条件",
+                    "columnName": "expression",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "阈值",
+                    "columnName": "default_threshold_val",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "描述",
+                    "columnName": "description",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "状态",
+                    "columnName": "status",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                }
+            ],
+            "operation": [],
+            "toolList": [{
+                    "type": "text",
+                    "timestamp": 1611814055636,
+                    "columnName": "edit-row",
+                    "label": "编辑",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": [],
+                    "_hidden_state": false
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1611814058010,
+                    "columnName": "delete-row",
+                    "label": "删除",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": [],
+                    "_hidden_state": false
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1611814059460,
+                    "columnName": "start-row",
+                    "label": "执行",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": [],
+                    "_hidden_state": false
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1611814079611,
+                    "columnName": "pass-row",
+                    "label": "传参",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": [],
+                    "_hidden_state": false
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1611814080573,
+                    "columnName": "syn-row",
+                    "label": "同步",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "hidden",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": [],
+                    "activeType": "",
+                    "_hidden_state": true
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1614148776726,
+                    "columnName": "open-row",
+                    "label": "启用",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "hidden",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "_hidden_state": true,
+                    "confirmationStatus": []
+                },
+                {
+                    "type": "text",
+                    "timestamp": 1614148777838,
+                    "columnName": "close-row",
+                    "label": "禁用",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "hidden",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "_hidden_state": true,
+                    "confirmationStatus": []
+                }
+            ],
+            "operation-width": "240",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    10,
+                    20,
+                    30
+                ],
+                "currentPage": 1,
+                "pageSize": 10,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/items/monitorItemPrototype/queryList"
+            },
+            "hidden": false,
+            "tableTipDesc": "",
+            "tableTipClass": "",
+            "showTableTip": false,
+            "multipleSelectionStatus": [],
+            "router": {},
+            "show-operation-status": []
+        }
+    ],
+    "model": {
+        "item_name_like": "",
+        "status": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "exportName": "",
+        "project": "webbas",
+        "labelWidth": 100,
+        "labelPosition": "left",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "localProxy": "",
+        "nigxProxy": "",
+        "serverProps": {
+            "statusKey": "",
+            "statusValue": "",
+            "dataKey": "",
+            "requestDataKey": ""
+        }
+    }
+}

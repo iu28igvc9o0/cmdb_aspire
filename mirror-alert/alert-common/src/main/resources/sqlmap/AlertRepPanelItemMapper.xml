@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     龙凤
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.dashboard.AlertRepPanelItemDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.dashboard.po.AlertRepPanelItem" id="baseResultMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="panel_id" column="panel_id" jdbcType="VARCHAR"/>
+        <result property="item_id" column="item_id" jdbcType="VARCHAR"/>
+        <result property="report_type" column="report_type" jdbcType="VARCHAR"/>
+        <result property="report_name" column="report_name" jdbcType="VARCHAR"/>
+        <result property="time_value" column="time_value" jdbcType="INTEGER"/>
+        <result property="time_unit" column="time_unit" jdbcType="VARCHAR"/>
+        <result property="report_unit" column="report_unit" jdbcType="VARCHAR"/>
+        <result property="conversion_type" column="conversion_type" jdbcType="INTEGER"/>
+        <result property="conversion_val" column="conversion_val" jdbcType="INTEGER"/>
+        <collection property="moniterItems"
+                    select="com.aspire.mirror.alert.server.dao.dashboard.AlertRepPanelMoniterItemDao.getMonitersByItemId" column="id" />
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	id,panel_id,item_id,report_type,report_name,time_value,time_unit,report_unit,conversion_type,conversion_val
+	</sql>
+
+    <!-- 新增 -->
+     <insert id="batchInsert" parameterType="com.aspire.mirror.alert.server.dao.dashboard.po.AlertRepPanelItem" useGeneratedKeys="true" keyProperty="id">
+		insert into
+			alert_rep_panel_item(panel_id,item_id,report_type,report_name,time_value,time_unit,report_unit,conversion_type,conversion_val)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+          ( #{item.panel_id,jdbcType=VARCHAR} ,
+			#{item.item_id,jdbcType=VARCHAR} ,
+			#{item.report_type,jdbcType=VARCHAR} ,
+			#{item.report_name,jdbcType=VARCHAR} ,
+			#{item.time_value,jdbcType=INTEGER},
+			#{item.time_unit,jdbcType=VARCHAR},
+			#{item.report_unit,jdbcType=VARCHAR},
+			#{item.conversion_type,jdbcType=INTEGER},
+			#{item.conversion_val,jdbcType=INTEGER}
+			)
+      </foreach> 
+	</insert>
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_rep_panel_item  where id = #{id}
+    </select>
+    
+   
+   <!-- 修改 -->
+	<update id="update" parameterType="com.aspire.mirror.alert.server.dao.dashboard.po.AlertRepPanelItem">
+		update alert_rep_panel_item  
+		<trim prefix="set" suffixOverrides=",">
+		 <if test="report_type != null and report_type != ''">
+              report_type = #{report_type},
+          </if>
+          <if test="report_name != null and report_name != ''">
+              report_name = #{report_name},
+          </if>
+          <if test="time_value != null">
+              time_value = #{time_value},
+          </if>
+          <if test="time_unit != null and time_unit != ''">
+              time_unit = #{time_unit},
+          </if>
+         </trim>
+		where id = #{id}
+	</update>
+   
+    <delete id="deleteByPrimaryKey" parameterType="String">
+		delete from alert_rep_panel_item where id = #{id}
+	</delete>
+	
+	<delete id="deleteByPanelId" parameterType="String">
+		delete from alert_rep_panel_item where panel_id = #{panelId}
+	</delete>
+	
+	 <select id="getItemsByPanelId"  parameterType="String" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_rep_panel_item 
+        where panel_id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.teamwork.mapper.TeamworkMessageReadManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageReadManagerDTO" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="tw_teamwork_id" property="twTeamworkId" jdbcType="VARCHAR" />
+        <result column="tw_message_id" property="twMessageId" jdbcType="VARCHAR" />
+        <result column="tw_receive_account" property="twReceiveAccount" jdbcType="VARCHAR" />
+        <result column="tw_receive_time" property="twReceiveTime" jdbcType="DATE" />
+        <result column="tw_read_status" property="twReadStatus" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_message_id`,
+        `tw_receive_account`,
+        `tw_receive_time`,
+        `tw_read_status`,
+        `is_delete`
+        FROM teamwork_message_read_manager
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageReadManagerDTO">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_message_id`,
+        `tw_receive_account`,
+        `tw_receive_time`,
+        `tw_read_status`,
+        `is_delete`
+        FROM teamwork_message_read_manager
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="twTeamworkId != null and twTeamworkId != ''">
+        AND `tw_teamwork_id` = #{twTeamworkId}
+        </if>
+        <if test="twMessageId != null and twMessageId != ''">
+        AND `tw_message_id` = #{twMessageId}
+        </if>
+        <if test="twReceiveAccount != null and twReceiveAccount != ''">
+        AND `tw_receive_account` = #{twReceiveAccount}
+        </if>
+        <if test="twReceiveTime != null and twReceiveTime != ''">
+        AND `tw_receive_time` = #{twReceiveTime}
+        </if>
+        <if test="twReadStatus != null and twReadStatus != ''">
+        AND `tw_read_status` = #{twReadStatus}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageReadManagerDTO" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_message_id`,
+        `tw_receive_account`,
+        `tw_receive_time`,
+        `tw_read_status`,
+        `is_delete`
+        FROM teamwork_message_read_manager
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageReadManagerDTO">
+        INSERT INTO teamwork_message_read_manager
+        (
+            `id`,
+            `tw_teamwork_id`,
+            `tw_message_id`,
+            `tw_receive_account`,
+            `tw_receive_time`,
+            `tw_read_status`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{twTeamworkId, jdbcType=VARCHAR},
+            #{twMessageId, jdbcType=VARCHAR},
+            #{twReceiveAccount, jdbcType=VARCHAR},
+            #{twReceiveTime, jdbcType=DATE},
+            #{twReadStatus, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageReadManagerDTO">
+        UPDATE teamwork_message_read_manager SET
+        `tw_teamwork_id` = #{twTeamworkId},
+        `tw_message_id` = #{twMessageId},
+        `tw_receive_account` = #{twReceiveAccount},
+        `tw_receive_time` = #{twReceiveTime},
+        `tw_read_status` = #{twReadStatus},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageReadManagerDTO">
+        DELETE FROM teamwork_message_read_manager
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

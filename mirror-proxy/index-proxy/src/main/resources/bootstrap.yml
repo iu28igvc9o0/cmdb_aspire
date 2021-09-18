@@ -1,0 +1,13 @@
+spring: 
+  application:
+    name: index-proxy
+  jmx:
+    default-domain: proxy
+  cloud:
+    config:
+      name: ms-index-proxy
+      enabled: false
+      label: ${GIT_BRANCH:master}
+      profile: ${ENV_TYPE:prod}
+      uri:  http://${ENV_CONFIG_IP:10.12.70.39}:${ENV_CONFIG_PORT:18888}
+      failFast: true

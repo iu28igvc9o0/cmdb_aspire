@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.monthReport.mapper.CmdbPhyReportMapper">
+    <sql id="baseColumn">
+        idcType,
+        m_phy_all_count,
+        m_phy_comp_count,
+        m_phy_gup_comp_count,
+        m_phy_host_comp_count,
+        m_phy_storage_count,
+        m_phy_manage_count,
+        unm_phy_all_count,
+        unm_phy_comp_count,
+        unm_phy_gup_comp_count,
+        unm_phy_host_comp_count,
+        unm_phy_storage_count,
+        unm_phy_manage_count,
+        month
+    </sql>
+
+
+    <select id="save" parameterType="java.util.List">
+        insert into cmdb_month_report_phy
+        (<include refid="baseColumn"/> )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+             #{item.idcType,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m') ,
+            #{item.m_phy_all_count,jdbcType=VARCHAR},
+            #{item.m_phy_comp_count,jdbcType=VARCHAR},
+            #{item.m_phy_gup_comp_count,jdbcType=VARCHAR},
+            #{item.m_phy_host_comp_count,jdbcType=VARCHAR},
+            #{item.m_phy_storage_count,jdbcType=VARCHAR},
+            #{item.m_phy_manage_count,jdbcType=VARCHAR},
+            #{item.unm_phy_all_count,jdbcType=VARCHAR},
+            #{item.unm_phy_comp_count,jdbcType=VARCHAR},
+            #{item.unm_phy_gup_comp_count,jdbcType=VARCHAR},
+            #{item.unm_phy_host_comp_count,jdbcType=VARCHAR},
+            #{item.unm_phy_storage_count,jdbcType=VARCHAR},
+            #{item.unm_phy_manage_count,jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        m_phy_all_count = VALUES( m_phy_all_count ),
+        m_phy_comp_count = VALUES( m_phy_comp_count),
+        m_phy_gup_comp_count = VALUES( m_phy_gup_comp_count),
+        m_phy_host_comp_count = VALUES( m_phy_host_comp_count),
+        m_phy_storage_count = VALUES( m_phy_storage_count),
+        m_phy_manage_count = VALUES( m_phy_manage_count),
+        unm_phy_all_count = VALUES( unm_phy_all_count),
+        unm_phy_comp_count = VALUES( unm_phy_comp_count),
+        unm_phy_gup_comp_count = VALUES( unm_phy_gup_comp_count),
+        unm_phy_host_comp_count = VALUES( unm_phy_host_comp_count),
+        unm_phy_storage_count = VALUES( unm_phy_storage_count),
+        unm_phy_manage_count = VALUES( unm_phy_manage_count)
+    </select>
+
+
+    <!--&lt;!&ndash; 物理设备总量 &ndash;&gt;-->
+    <!--<select id="count" resultType="java.util.Map">-->
+        <!--SELECT idcType,-->
+               <!--SUM(CASE WHEN device_status !='未交维' AND IFNULL(node_type, '') != '' THEN 1 else 0 END) AS m_phy_all_count,-->
+        <!--count(1) AS m_phy_comp_count,-->
+        <!--SUM(CASE WHEN node_type= '宿主机' AND device_class_3 = 'X86服务器' AND device_status!='未交维' THEN 1 else 0 END) AS m_phy_host_comp_count,-->
+        <!--SUM(CASE WHEN node_type= '存储节点' AND device_status != '未交维' THEN 1 else 0 END) AS m_phy_storage_count,-->
+        <!--SUM(CASE WHEN node_type= '管理节点' AND device_status != '未交维'  THEN 1 else 0 END) AS m_phy_manage_count,-->
+        <!--SUM(CASE WHEN device_status = '未交维' THEN 1 else 0 END) AS unm_phy_all_count,-->
+        <!--SUM(CASE WHEN node_type= '计算节点' AND device_status = '未交维' THEN 1 else 0 END) AS unm_phy_comp_count,-->
+        <!--SUM(CASE WHEN node_type= '宿主机' AND device_class_3 = 'X86服务器' AND device_status ='未交维' THEN 1 else 0 END) AS unm_phy_host_comp_count,-->
+        <!--SUM(CASE WHEN node_type= '存储节点' AND device_status = '未交维' THEN 1 else 0 END) AS unm_phy_storage_count,-->
+        <!--SUM(CASE WHEN node_type= '管理节点' AND device_status = '未交维' THEN 1 else 0 END) AS unm_phy_manage_count-->
+        <!--FROM-->
+            <!--(SELECT * FROM cmdb_instance WHERE device_type= 'X86服务器' AND is_delete='0' and IFNULL(idcType, '') != '') res-->
+        <!--GROUP BY idcType-->
+        <!--ORDER BY idcTYPE IS  NULL,COUNT(1) DESC-->
+    <!--</select>-->
+    <!-- 物理设备总量 -->
+    <select id="count" resultType="java.util.Map">
+        SELECT idcType,
+        SUM(CASE WHEN device_status !='未交维' AND IFNULL(node_type, '') != '' THEN 1 else 0 END) AS m_phy_all_count,
+        count(1) AS m_phy_comp_count,
+        SUM(CASE WHEN node_type= '宿主机' AND device_class_3 = 'X86服务器' AND device_status!='未交维' THEN 1 else 0 END) AS m_phy_host_comp_count,
+        SUM(CASE WHEN node_type= '存储节点' AND device_status != '未交维' THEN 1 else 0 END) AS m_phy_storage_count,
+        SUM(CASE WHEN node_type= '管理节点' AND device_status != '未交维'  THEN 1 else 0 END) AS m_phy_manage_count,
+        SUM(CASE WHEN device_status = '未交维' THEN 1 else 0 END) AS unm_phy_all_count,
+        SUM(CASE WHEN node_type= '计算节点' AND device_status = '未交维' THEN 1 else 0 END) AS unm_phy_comp_count,
+        SUM(CASE WHEN node_type= '宿主机' AND device_class_3 = 'X86服务器' AND device_status ='未交维' THEN 1 else 0 END) AS unm_phy_host_comp_count,
+        SUM(CASE WHEN node_type= '存储节点' AND device_status = '未交维' THEN 1 else 0 END) AS unm_phy_storage_count,
+        SUM(CASE WHEN node_type= '管理节点' AND device_status = '未交维' THEN 1 else 0 END) AS unm_phy_manage_count
+        FROM
+            (SELECT * FROM cmdb_instance WHERE device_type= 'X86服务器' AND is_delete='0' and IFNULL(idcType, '') != '') res
+        GROUP BY idcType
+        ORDER BY idcTYPE IS  NULL,COUNT(1) DESC
+    </select>
+</mapper>

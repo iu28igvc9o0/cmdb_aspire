@@ -1,0 +1,861 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipAudit.mapper.IpAuditRegistrationExpiredMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="ip_type" property="ipType" jdbcType="VARCHAR" />
+        <result column="dc" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="DATE" />
+        <result column="is_notify" property="isNotify" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="DATE" />
+        <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
+        <result column="check_num" property="checkNum" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="cmdbIpRepositoryDtoMap" type="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpRepositoryDto" >
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="idcType" property="idcType" jdbcType="VARCHAR" />
+        <result column="ip_type" property="ipType" jdbcType="VARCHAR" />
+        <result column="request_time" property="requestTime" jdbcType="DATE" />
+        <result column="useful_life" property="usefulLife" jdbcType="VARCHAR" />
+        <result column="network_segment_owner" property="networkSegmentOwner" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="respMap" type="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpResp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip_id" property="ipId" jdbcType="VARCHAR" />
+        <result column="segment_id" property="segmentId" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="dc" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="DATE" />
+        <result column="use_status" property="useStatus" jdbcType="VARCHAR" />
+        <result column="device_ip" property="deviceIp" jdbcType="VARCHAR" />
+        <result column="is_notify" property="isNotify" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="processing_status_desc" property="processingStatusDesc" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="DATE" />
+        <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
+        <result column="check_num" property="checkNum" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <result column="inner_segment_type" property="networkSegmentType" jdbcType="VARCHAR" />
+        <result column="inner_segment_sub_type" property="networkSegmentSubType" jdbcType="VARCHAR" />
+        <result column="inner_ip_use" property="ipUse" jdbcType="VARCHAR" />
+        <result column="mgr_by_pool" property="mgrByPool" jdbcType="VARCHAR" />
+        <result column="safe_region" property="safeRegion" jdbcType="VARCHAR" />
+        <result column="is_cmdb_manager" property="isCmdbManager" jdbcType="VARCHAR" />
+        <result column="online_business" property="onlineBusiness" jdbcType="VARCHAR" />
+        <result column="first_business_system" property="firstBusinessSystem" jdbcType="VARCHAR" />
+        <result column="alone_business_system" property="aloneBusinessSystem" jdbcType="VARCHAR" />
+        <result column="request_person" property="requestPerson" jdbcType="VARCHAR" />
+        <result column="request_time" property="requestTime" jdbcType="VARCHAR" />
+        <result column="expiration_date" property="expirationDate" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 公网Ip登记已过期列表返回结果集 -->
+    <resultMap id="resultListMap4PublicIp" type="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredPublicIpResp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="idcType" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="VARCHAR" />
+        <result column="network_segment_name" property="networkName" jdbcType="VARCHAR" />
+        <result column="public_segment_type" property="circuitType" jdbcType="VARCHAR" />
+        <result column="addressUse" property="addressUse" jdbcType="VARCHAR" />
+        <result column="first_business_system" property="businessName1" jdbcType="VARCHAR" />
+        <result column="alone_business_system" property="businessName2" jdbcType="VARCHAR" />
+        <result column="is_pool" property="idcManageFlag" jdbcType="VARCHAR" />
+        <result column="request_person" property="requestPerson" jdbcType="VARCHAR" />
+        <result column="request_time" property="requestTime" jdbcType="VARCHAR" />
+        <result column="useful_life" property="expirationDate" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- ipv6登记已过期列表返回结果集 -->
+    <resultMap id="resultListMap4Ipv6" type="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpv6Resp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="idcType" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="VARCHAR" />
+        <result column="network_segment_name" property="networkName" jdbcType="VARCHAR" />
+        <result column="idcManageFlag" property="idcManageFlag" jdbcType="VARCHAR" />
+        <result column="ipv6_segment_type" property="networkSegmentType" jdbcType="VARCHAR" />
+        <result column="ipv6_segment_sub_type" property="networkSegmentSubType" jdbcType="VARCHAR" />
+        <result column="addressUse" property="addressUse" jdbcType="VARCHAR" />
+        <result column="first_business_system" property="businessName1" jdbcType="VARCHAR" />
+        <result column="alone_business_system" property="businessName2" jdbcType="VARCHAR" />
+        <result column="is_cmdb_manager" property="cmdbManageFlag" jdbcType="VARCHAR" />
+        <result column="request_person" property="requestPerson" jdbcType="VARCHAR" />
+        <result column="request_time" property="requestTime" jdbcType="VARCHAR" />
+        <result column="useful_life" property="expirationDate" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--内网Ip登记已过期-->
+    <sql id="reqParam">
+        <if test="checkTimeBegin != null and checkTimeBegin != ''">
+            AND a.check_time <![CDATA[>=]]> #{checkTimeBegin}
+        </if>
+        <if test="checkTimeEnd != null and checkTimeEnd != ''">
+            AND a.check_time <![CDATA[<=]]> #{checkTimeEnd}
+        </if>
+        <if test="ips != null and ips.size() > 0">
+            and
+            <foreach collection="ips" item="ip" index="index" open="(" separator=" or " close=")">
+                a.ip LIKE CONCAT('%', #{ip}, '%')
+            </foreach>
+        </if>
+        <if test="dcList != null and dcList.size() > 0">
+            and a.dc in
+            <foreach collection="dcList" item="dc" index="index" open="(" separator="," close=")">
+                #{dc}
+            </foreach>
+        </if>
+        <if test="isNotify != null and isNotify != ''">
+            AND a.`is_notify` = #{isNotify}
+        </if>
+        <if test="processingStatus != null and processingStatus != ''">
+            AND a.`processing_status` = #{processingStatus}
+        </if>
+        <if test="reason != null and reason != ''">
+            AND a.`reason` LIKE CONCAT('%', #{reason}, '%')
+        </if>
+        <if test="operator != null and operator != ''">
+            AND a.`operator` LIKE CONCAT('%', #{operator}, '%')
+        </if>
+        <if test="operatingTimeBegin != null and operatingTimeBegin != ''">
+            AND a.`operating_time` <![CDATA[>=]]> #{operatingTimeBegin}
+        </if>
+        <if test="operatingTimeEnd != null and operatingTimeEnd != ''">
+            AND a.`operating_time` <![CDATA[<=]]> #{operatingTimeEnd}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+            AND a.`order_num` LIKE CONCAT('%', #{orderNum}, '%')
+        </if>
+        <if test="networkSegmentType != null and networkSegmentType != ''">
+            and i.inner_segment_type = #{networkSegmentType}
+        </if>
+        <if test="networkSegmentSubType != null and networkSegmentSubType != ''">
+            AND i.inner_segment_sub_type = #{networkSegmentSubType}
+        </if>
+        <if test="firstBusinessSystem != null and firstBusinessSystem != ''">
+            and i.first_business_system = #{firstBusinessSystem}
+        </if>
+        <if test="aloneBusinessSystem != null and aloneBusinessSystem != ''">
+            and i.alone_business_system = #{aloneBusinessSystem}
+        </if>
+        <if test="ipUse != null and ipUse != ''">
+            AND i.inner_ip_use = #{ipUse}
+        </if>
+        <if test="isCmdbManager != null and isCmdbManager != ''">
+            AND i.is_cmdb_manager = #{isCmdbManager}
+        </if>
+        <if test="onlineBusiness != null and onlineBusiness != ''">
+            AND i.online_business = #{onlineBusiness}
+        </if>
+        <if test="safeRegion != null and safeRegion != ''">
+            AND i.safe_region = #{safeRegion}
+        </if>
+        <if test="ipType != null and ipType != ''">
+            AND a.ip_type = #{ipType}
+        </if>
+        <if test="requestPerson != null and requestPerson != ''">
+            AND i.request_person = #{requestPerson}
+        </if>
+        <if test="requestTimeBegin != null and requestTimeBegin != ''">
+            AND i.request_time <![CDATA[>=]]> #{requestTimeBegin}
+        </if>
+        <if test="requestTimeEnd != null and requestTimeEnd != ''">
+            AND i.request_time <![CDATA[<=]]> #{requestTimeEnd}
+        </if>
+        <if test="expirationDateBegin != null and expirationDateBegin != ''">
+            AND DATE_ADD(i.request_time,INTERVAL i.useful_life*365 DAY) <![CDATA[>=]]> #{expirationDateBegin}
+        </if>
+        <if test="expirationDateEnd != null and expirationDateEnd != ''">
+            AND DATE_ADD(i.request_time,INTERVAL i.useful_life*365 DAY) <![CDATA[<=]]> #{expirationDateEnd}
+        </if>
+    </sql>
+
+    <!--公网Ip登记已过期查询条件-->
+    <sql id="reqParam4PublicIp">
+        <if test="checkTimeBegin != null and checkTimeBegin != ''">
+            AND a.check_time <![CDATA[>=]]> #{checkTimeBegin}
+        </if>
+        <if test="checkTimeEnd != null and checkTimeEnd != ''">
+            AND a.check_time <![CDATA[<=]]> #{checkTimeEnd}
+        </if>
+        <if test="ips != null and ips.size() > 0">
+            and
+            <foreach collection="ips" item="ip" index="index" open="(" separator=" or " close=")">
+                a.ip LIKE CONCAT('%', #{ip}, '%')
+            </foreach>
+        </if>
+        <if test="dcList != null and dcList.size() > 0">
+            AND c.`idcType` IN
+            <foreach collection="dcList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="ipType != null and ipType != ''">
+            AND a.ip_type = #{ipType}
+        </if>
+        <if test="networkName != null and networkName != ''">
+            AND c.`network_segment_name` LIKE CONCAT('%',#{networkName},'%')
+        </if>
+        <if test="idcManageFlag != null and idcManageFlag != ''">
+            AND c.`is_pool` = #{idcManageFlag}
+        </if>
+        <if test="circuitType != null and circuitType != ''">
+            AND c.`public_segment_type` LIKE CONCAT('%',#{circuitType},'%')
+        </if>
+        <if test="addressUse != null and addressUse != ''">
+            AND b.`public_segment_use` LIKE CONCAT('%',#{addressUse},'%')
+        </if>
+        <if test="businessName1 != null and businessName1 != ''">
+            AND c.`first_business_system` = #{businessName1}
+        </if>
+        <if test="businessName2 != null and businessName2 != ''">
+            AND c.`alone_business_system` = #{businessName2}
+        </if>
+        <if test="processingStatus != null and processingStatus != ''">
+            AND a.`processing_status` = #{processingStatus}
+        </if>
+        <if test="operatingTimeBegin != null and operatingTimeBegin != ''">
+            AND a.operating_time <![CDATA[>=]]> #{operatingTimeBegin}
+        </if>
+        <if test="operatingTimeEnd != null and operatingTimeEnd != ''">
+            AND a.operating_time <![CDATA[<=]]> #{operatingTimeEnd}
+        </if>
+        <if test="reason != null and reason != ''">
+            AND a.`reason` LIKE CONCAT('%',#{reason},'%')
+        </if>
+        <if test="operator != null and operator != ''">
+            AND a.`operator` LIKE CONCAT('%',#{operator},'%')
+        </if>
+        <if test="requestPerson != null and requestPerson != ''">
+            AND b.request_person = LIKE CONCAT('%',#{requestPerson},'%')
+        </if>
+        <if test="requestTimeBegin != null and requestTimeBegin != ''">
+            AND b.request_time <![CDATA[>=]]> #{requestTimeBegin}
+        </if>
+        <if test="requestTimeEnd != null and requestTimeEnd != ''">
+            AND b.request_time <![CDATA[<=]]> #{requestTimeEnd}
+        </if>
+        <if test="expirationDateBegin != null and expirationDateBegin != ''">
+            AND DATE_ADD(b.request_time,INTERVAL b.useful_life*365 DAY) <![CDATA[>=]]> #{expirationDateBegin}
+        </if>
+        <if test="expirationDateEnd != null and expirationDateEnd != ''">
+            AND DATE_ADD(b.request_time,INTERVAL b.useful_life*365 DAY) <![CDATA[<=]]> #{expirationDateEnd}
+        </if>
+        AND a.is_delete = 0 AND c.`is_delete` = 0
+    </sql>
+
+    <!--ipV6登记已过期查询条件-->
+    <sql id="reqParam4Ipv6">
+        <if test="checkTimeBegin != null and checkTimeBegin != ''">
+            AND a.check_time <![CDATA[>=]]> #{checkTimeBegin}
+        </if>
+        <if test="checkTimeEnd != null and checkTimeEnd != ''">
+            AND a.check_time <![CDATA[<=]]> #{checkTimeEnd}
+        </if>
+        <if test="ips != null and ips.size() > 0">
+            and
+            <foreach collection="ips" item="ip" index="index" open="(" separator=" or " close=")">
+                a.ip LIKE CONCAT('%', #{ip}, '%')
+            </foreach>
+        </if>
+        <if test="dcList != null and dcList.size() > 0">
+            AND c.`idcType` IN
+            <foreach collection="dcList" item="dc" index="index" open="(" separator="," close=")">
+                #{dc}
+            </foreach>
+        </if>
+        <if test="ipType != null and ipType != ''">
+            AND a.ip_type = #{ipType}
+        </if>
+        <if test="networkSegmentType != null and networkSegmentType != ''">
+            AND c.`ipv6_segment_type` = #{networkSegmentType}
+        </if>
+        <if test="networkSegmentSubType != null and networkSegmentSubType != ''">
+            AND c.`ipv6_segment_sub_type` = #{networkSegmentSubType}
+        </if>
+        <!--        <if test="idcManageFlag != null and idcManageFlag != ''">-->
+        <!--            AND b.`is_cmdb_manager` = #{idcManageFlag}-->
+        <!--        </if>-->
+        <if test="businessName1 != null and businessName1 != ''">
+            AND c.`first_business_system` = #{businessName1}
+        </if>
+        <if test="businessName2 != null and businessName2 != ''">
+            AND c.`alone_business_system` = #{businessName2}
+        </if>
+        <if test="addressUse != null and addressUse != ''">
+            AND b.`online_business` LIKE CONCAT('%',#{addressUse},'%')
+        </if>
+        <if test="cmdbManageFlag != null and cmdbManageFlag != ''">
+            AND b.`is_cmdb_manager` = #{cmdbManageFlag}
+        </if>
+        <if test="businessNameUse != null and businessNameUse != ''">
+            AND b.`online_business` LIKE CONCAT('%',#{addressUse},'%')
+        </if>
+        <if test="requestPerson != null and requestPerson != ''">
+            AND b.request_person = LIKE CONCAT('%',#{requestPerson},'%')
+        </if>
+        <if test="requestTimeBegin != null and requestTimeBegin != ''">
+            AND b.request_time <![CDATA[>=]]> #{requestTimeBegin}
+        </if>
+        <if test="requestTimeEnd != null and requestTimeEnd != ''">
+            AND b.request_time <![CDATA[<=]]> #{requestTimeEnd}
+        </if>
+        <if test="expirationDateBegin != null and expirationDateBegin != ''">
+            AND DATE_ADD(b.request_time,INTERVAL b.useful_life*365 DAY) <![CDATA[>=]]> #{expirationDateBegin}
+        </if>
+        <if test="expirationDateEnd != null and expirationDateEnd != ''">
+            AND DATE_ADD(b.request_time,INTERVAL b.useful_life*365 DAY) <![CDATA[<=]]> #{expirationDateEnd}
+        </if>
+        AND a.is_delete = 0 AND c.`is_delete` = 0
+    </sql>
+
+    <!--公网Ip登记已过期的数据表-->
+    <sql id="publicTableSql">
+        ip_audit_registration_expired a
+        LEFT JOIN cmdb_ip_repository_public_ip b ON b.ip = a.ip
+        LEFT JOIN cmdb_ip_repository_public_segment c ON c.public_segment_address = b.public_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = c.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_public_segment')
+        )
+    </sql>
+
+    <!--ipV6登记已过期的数据表-->
+    <sql id="ipv6TableSql">
+        ip_audit_registration_expired a
+        LEFT JOIN cmdb_ip_repository_ipv6_ip b ON b.ipv6 = a.ip
+        LEFT JOIN cmdb_ip_repository_ipv6_segment c ON c.ipv6_segment_address = b.ipv6_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = c.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_ipv6_segment')
+        )
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `ip_type`,
+        `dc`,
+        `check_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_registration_expired
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired">
+        SELECT
+        `id`,
+        `ip`,
+        `ip_type`,
+        `dc`,
+        `check_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_registration_expired
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="ip != null and ip != ''">
+        AND `ip` = #{ip}
+        </if>
+        <if test="ipType != null and ipType != ''">
+        AND `ip_type` = #{ipType}
+        </if>
+        <if test="dc != null and dc != ''">
+        AND `dc` = #{dc}
+        </if>
+        <if test="checkTime != null and checkTime != ''">
+        AND `check_time` = #{checkTime}
+        </if>
+        <if test="isNotify != null and isNotify != ''">
+        AND `is_notify` = #{isNotify}
+        </if>
+        <if test="processingStatus != null and processingStatus != ''">
+        AND `processing_status` = #{processingStatus}
+        </if>
+        <if test="reason != null and reason != ''">
+        AND `reason` = #{reason}
+        </if>
+        <if test="operator != null and operator != ''">
+        AND `operator` = #{operator}
+        </if>
+        <if test="operatingTime != null and operatingTime != ''">
+        AND `operating_time` = #{operatingTime}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+        AND `order_num` = #{orderNum}
+        </if>
+        <if test="checkNum != null and checkNum != ''">
+        AND `check_num` = #{checkNum}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+        <if test="updatePerson != null and updatePerson != ''">
+        AND `update_person` = #{updatePerson}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `ip_type`,
+        `dc`,
+        `check_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_registration_expired
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="getListByIds" resultMap="resultMap" parameterType="java.lang.String">
+        SELECT *
+        FROM ip_audit_registration_expired
+        WHERE id in
+        <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired">
+        INSERT INTO ip_audit_registration_expired
+        (
+            `id`,
+            `ip`,
+            `ip_type`,
+            `dc`,
+            `check_time`,
+            `is_notify`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `order_num`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{ip, jdbcType=VARCHAR},
+            #{ipType, jdbcType=VARCHAR},
+            #{dc, jdbcType=VARCHAR},
+            #{checkTime, jdbcType=TIMESTAMP},
+            #{isNotify, jdbcType=VARCHAR},
+            #{processingStatus, jdbcType=VARCHAR},
+            #{reason, jdbcType=VARCHAR},
+            #{operator, jdbcType=VARCHAR},
+            #{operatingTime, jdbcType=TIMESTAMP},
+            #{orderNum, jdbcType=VARCHAR},
+            #{checkNum, jdbcType=TINYINT},
+            #{isDelete, jdbcType=TINYINT},
+            #{updateTime, jdbcType=TIMESTAMP},
+            #{updatePerson, jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="batchInsertIp" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired">
+        INSERT INTO ip_audit_registration_expired
+        (
+            `id`,
+            `ip`,
+            `ip_type`,
+            `dc`,
+            `check_time`,
+            `is_notify`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `order_num`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.ip, jdbcType=VARCHAR},
+            #{item.ipType, jdbcType=VARCHAR},
+            #{item.dc, jdbcType=VARCHAR},
+            #{item.checkTime, jdbcType=TIMESTAMP},
+            #{item.isNotify, jdbcType=VARCHAR},
+            #{item.processingStatus, jdbcType=VARCHAR},
+            #{item.reason, jdbcType=VARCHAR},
+            #{item.operator, jdbcType=VARCHAR},
+            #{item.operatingTime, jdbcType=TIMESTAMP},
+            #{item.orderNum, jdbcType=VARCHAR},
+            #{item.checkNum, jdbcType=TINYINT},
+            #{item.isDelete, jdbcType=TINYINT},
+            #{item.updateTime, jdbcType=TIMESTAMP},
+            #{item.updatePerson, jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired">
+        UPDATE ip_audit_registration_expired SET
+        `ip` = #{ip},
+        `ip_type` = #{ipType},
+        `dc` = #{dc},
+        `check_time` = #{checkTime},
+        `is_notify` = #{isNotify},
+        `processing_status` = #{processingStatus},
+        `reason` = #{reason},
+        `operator` = #{operator},
+        `operating_time` = #{operatingTime},
+        `order_num` = #{orderNum},
+        `check_num` = #{checkNum},
+        `is_delete` = #{isDelete},
+        `update_time` = #{updateTime},
+        `update_person` = #{updatePerson}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateProcess"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        update `ip_audit_registration_expired`
+        <set>
+            `processing_status` = #{handleStatus},
+            `reason` = #{notHandleReason},
+            <if test="operator != null and operator != ''">
+                `operator` = #{operator},
+                `update_person` = #{operator},
+            </if>
+            `update_time` = NOW(),
+            `operating_time` = NOW()
+        </set>
+        where `id` in
+        <foreach collection="mainId" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRegistrationExpired">
+        DELETE FROM ip_audit_registration_expired
+        WHERE
+         `id` = #{id}
+    </delete>
+    <select id="getMaxCheckNum" resultType="java.lang.Long">
+        SELECT MAX(check_num) FROM ip_audit_registration_expired WHERE ip_type = #{ipType}
+    </select>
+    <select id="getStatisticsData" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpReq"
+            resultType="java.util.HashMap">
+        SELECT
+        COUNT(IF(a.processing_status = '0', TRUE, NULL)) AS numOfToBeProcessedIp
+        FROM ip_audit_registration_expired a
+        LEFT JOIN
+        (
+        SELECT c.ip, s.idcType, s.inner_segment_type, s.inner_segment_sub_type,
+        s.first_business_system, s.alone_business_system, s.safe_region, c.useful_life,
+        c.is_cmdb_manager, c.online_business, c.request_person, c.request_time, c.inner_ip_use
+        FROM cmdb_ip_repository_inner_ip c JOIN cmdb_ip_repository_inner_segment s
+        ON c.network_segment_owner = s.network_segment_address
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        ) i ON
+        a.ip = i.ip AND a.dc = i.idcType
+        <where>
+            <include refid="reqParam" />
+        </where>
+    </select>
+    <select id="getListByPage" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpReq"
+            resultMap="respMap">
+        SELECT
+        a.id,
+        i.ip_id,
+        i.segment_id,
+        DATE_FORMAT(a.check_time,'%Y-%m-%d %T') as check_time,
+        a.ip,
+        a.processing_status,
+        CASE a.processing_status
+        WHEN '0' THEN '待处理' WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中' WHEN '3' THEN '已处理'
+        ELSE a.processing_status END processing_status_desc,
+        a.reason,
+        a.operator,
+        DATE_FORMAT(a.operating_time,'%Y-%m-%d %T') as operating_time,
+        IFNULL(d.dict_note, a.dc) AS dc,
+        a.ip_type,
+        DATE_ADD(DATE_FORMAT(i.request_time,'%Y-%m-%d'),INTERVAL i.useful_life*365 DAY) AS expiration_date,
+        i.request_person,
+        DATE_FORMAT(i.request_time,'%Y-%m-%d') as request_time,
+        IFNULL(d2.dict_note, i.inner_segment_type) AS inner_segment_type,
+        IFNULL(d3.dict_note, i.inner_segment_sub_type) AS inner_segment_sub_type,
+        IFNULL(d4.orgName, i.first_business_system) AS first_business_system,
+        IFNULL(d5.business_name, i.alone_business_system) AS alone_business_system,
+        IFNULL(d6.dict_note, i.is_cmdb_manager) AS is_cmdb_manager,
+        IFNULL(d7.business_name, i.online_business) AS online_business,
+        IFNULL(d8.dict_note, i.safe_region) AS safe_region,
+        IFNULL(d9.dict_note, i.inner_ip_use) AS inner_ip_use
+        FROM ip_audit_registration_expired a
+        LEFT JOIN
+        (
+        SELECT c.id AS ip_id, s.id AS segment_id, c.ip, s.idcType, s.inner_segment_type, s.inner_segment_sub_type,
+        s.first_business_system, s.alone_business_system, s.safe_region, c.useful_life,
+        c.is_cmdb_manager, c.online_business, c.request_person, c.request_time, c.inner_ip_use
+        FROM cmdb_ip_repository_inner_ip c JOIN cmdb_ip_repository_inner_segment s
+        ON c.network_segment_owner = s.network_segment_address
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        ) i ON
+        a.ip = i.ip AND a.dc = i.idcType
+        LEFT JOIN t_cfg_dict d ON a.dc = d.id AND d.col_name = 'idcType2'
+        LEFT JOIN t_cfg_dict d2 ON i.inner_segment_type = d2.id AND d2.col_name = 'inner_segment_type'
+        LEFT JOIN t_cfg_dict d3 ON i.inner_segment_sub_type = d3.id AND d3.col_name = 'inner_sub_segment_type'
+        LEFT JOIN (
+            SELECT id, orgName
+            FROM (
+            SELECT tt.*,`ref_tb_parent_id`.`orgName` `parent_id_orgName_name`
+            FROM (
+            SELECT *
+            FROM (
+            SELECT `org_system`.`remark`,`org_system`.`parent_id`,`org_system`.`orgType`,`org_system`.`orgName`,`dict`.`insert_person`,`dict`.`dict_type`,`dict`.`module_id`,`dict`.`update_person`,`dict`.`insert_time`,`dict`.`id`,`dict`.`update_time`
+            FROM cmdb_org_system `org_system`
+            INNER JOIN cmdb_dict `dict` ON (`dict`.`id` = `org_system`.`id` AND `dict`.`is_delete` = 0)
+            INNER JOIN cmdb_module `cm` ON dict.module_id = cm.id
+            WHERE org_system.`is_delete` = 0 AND cm.`code` = 'org_system') t
+            WHERE 1=1 AND parent_id != '0') tt
+            LEFT JOIN cmdb_org_system ref_tb_parent_id ON (`tt`.`parent_id`=`ref_tb_parent_id`.`id` AND `ref_tb_parent_id`.`is_delete` = '0')) res
+        ) d4 ON i.first_business_system = d4.id
+        LEFT JOIN cmdb_business_line d5 ON i.alone_business_system = d5.id
+        LEFT JOIN t_cfg_dict d6 ON i.is_cmdb_manager = d6.id AND d6.col_name = 'whether'
+        LEFT JOIN cmdb_business_line d7 ON i.online_business = d7.id
+        LEFT JOIN t_cfg_dict d8 ON i.safe_region = d8.id AND d8.col_name = 'safe_region'
+        LEFT JOIN t_cfg_dict d9 ON i.inner_ip_use = d9.id AND d9.col_name = 'inner_segment_use'
+        <where>
+            <include refid="reqParam" />
+        </where>
+        <if test="pageNo != null and pageSize != null">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+    <select id="getListCountByPage" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpReq"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM ip_audit_registration_expired a
+        LEFT JOIN
+        (
+        SELECT c.ip, s.idcType, s.inner_segment_type, s.inner_segment_sub_type,
+        s.first_business_system, s.alone_business_system, s.safe_region, c.useful_life,
+        c.is_cmdb_manager, c.online_business, c.request_person, c.request_time, c.inner_ip_use
+        FROM cmdb_ip_repository_inner_ip c JOIN cmdb_ip_repository_inner_segment s
+        ON c.network_segment_owner = s.network_segment_address
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        ) i ON
+        a.ip = i.ip AND a.dc = i.idcType
+        <where>
+            <include refid="reqParam" />
+        </where>
+    </select>
+
+    <select id="getIpRepositoryInnerIp" resultMap="cmdbIpRepositoryDtoMap">
+        SELECT i.ip, s.idcType, '内网IP' AS ip_type, i.request_time, i.useful_life, i.network_segment_owner
+        FROM cmdb_ip_repository_inner_ip i
+        JOIN cmdb_ip_repository_inner_segment s
+        ON s.network_segment_address = i.network_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        WHERE i.is_delete = 0 AND s.is_delete = 0
+    </select>
+    <select id="getIpRepositoryPublicIp" resultMap="cmdbIpRepositoryDtoMap">
+        SELECT i.ip, s.idcType, '公网IP' AS ip_type, i.request_time, i.useful_life, i.public_segment_owner AS network_segment_owner
+        FROM cmdb_ip_repository_public_ip i
+        JOIN cmdb_ip_repository_public_segment s
+        ON s.public_segment_address = i.public_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_public_segment')
+        )
+        WHERE i.is_delete = 0 AND s.is_delete = 0
+    </select>
+    <select id="getIpRepositoryIpv6" resultMap="cmdbIpRepositoryDtoMap">
+        SELECT i.ipv6 AS ip, s.idcType, 'IPv6' AS ip_type, i.request_time, i.useful_life, i.ipv6_segment_owner AS network_segment_owner
+        FROM cmdb_ip_repository_ipv6_ip i
+        JOIN cmdb_ip_repository_ipv6_segment s
+        ON s.ipv6_segment_address = i.ipv6_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_ipv6_segment')
+        )
+        WHERE i.is_delete = 0 AND s.is_delete = 0
+    </select>
+
+    <!-- 登记已过期公网ip报表页面查询 -->
+    <select id="listByEntity4PublicIp" resultMap="resultListMap4PublicIp"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredPublicIpReq">
+        SELECT a.id,a.ip,DATE_FORMAT(a.check_time,'%Y-%m-%d %T') AS check_time,a.reason,a.operator,
+        DATE_FORMAT(a.operating_time,'%Y-%m-%d %T') AS operating_time,a.processing_status,
+        CASE a.processing_status
+        WHEN '0' THEN '待处理' WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中' WHEN '3' THEN '已处理'
+        ELSE a.processing_status END processingStatusDesc,
+        c.network_segment_name,c.idcType,c.public_segment_type,b.public_segment_use AS addressUse,
+        c.first_business_system,c.alone_business_system,c.is_pool,
+        request_time,request_person,useful_life,b.id AS ipId,c.id AS segmentId
+        FROM
+        <include refid="publicTableSql" />
+        <where>
+            <include refid="reqParam4PublicIp" />
+        </where>
+        <if test="pageNo != null and pageSize != null">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getListCount4PublicIp" resultType="java.lang.Integer"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredPublicIpReq">
+        SELECT
+        COUNT(*) AS totalCount
+        FROM
+        <include refid="publicTableSql" />
+        <where>
+            <include refid="reqParam4PublicIp" />
+        </where>
+    </select>
+
+    <select id="getStatisticsData4PublicIp" resultType="java.util.HashMap"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredPublicIpReq">
+        SELECT
+        COUNT(IF(a.processing_status = '0', TRUE, NULL)) AS numOfToBeProcessedIp,
+        COUNT(IF(a.processing_status = '1', TRUE, NULL)) AS numOfNotProcessIp,
+        COUNT(a.ip) AS numOfUnPlanIp
+        FROM
+        <include refid="publicTableSql" />
+        <where>
+            <include refid="reqParam4PublicIp" />
+        </where>
+    </select>
+
+    <!-- 登记已过期ipv6报表页面查询 -->
+    <select id="listByEntity4Ipv6" resultMap="resultListMap4Ipv6"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpv6Resp">
+        SELECT a.id,a.ip,DATE_FORMAT(a.check_time,'%Y-%m-%d %T') AS check_time,a.processing_status,a.reason,a.operator,
+        DATE_FORMAT(a.operating_time,'%Y-%m-%d %T') AS operating_time,
+        CASE a.processing_status
+        WHEN '0' THEN '待处理' WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中' WHEN '3' THEN '已处理'
+        ELSE a.processing_status END processingStatusDesc,
+        c.network_segment_name,c.idcType,'' AS idcManageFlag,c.ipv6_segment_type,c.ipv6_segment_sub_type,'' AS addressUse,
+        c.first_business_system,c.alone_business_system,b.is_cmdb_manager,b.online_business AS businessNameUse,
+        request_time,request_person,useful_life,b.id AS ipId,c.id AS segmentId
+        FROM
+        <include refid="ipv6TableSql" />
+        <where>
+            <include refid="reqParam4Ipv6" />
+        </where>
+        <if test="pageNo != null and pageSize != null">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getListCount4Ipv6" resultType="java.lang.Integer"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpv6Resp">
+        SELECT
+        COUNT(*) AS totalCount
+        FROM
+        <include refid="ipv6TableSql" />
+        <where>
+            <include refid="reqParam4Ipv6" />
+        </where>
+    </select>
+
+    <select id="getStatisticsData4Ipv6" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RegistrationExpiredIpv6Resp"
+            resultType="java.util.HashMap">
+        SELECT
+        COUNT(IF(a.processing_status = '待处理', TRUE, NULL)) AS numOfToBeProcessedIp,
+        COUNT(IF(a.processing_status = '暂不处理', TRUE, NULL)) AS numOfNotProcessIp,
+        COUNT(a.ip) AS numOfUnPlanIp
+        FROM
+        <include refid="ipv6TableSql" />
+        <where>
+            <include refid="reqParam4Ipv6" />
+        </where>
+    </select>
+
+</mapper>

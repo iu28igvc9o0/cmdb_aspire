@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.search.mapper.SearchMapper" >
+    <resultMap id="ColumnFilterResultMap" type="com.aspire.ums.cmdb.search.payload.ColumnFilter" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="menuType" property="menuType" jdbcType="VARCHAR" />
+        <result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+        <result column="columnInfo" property="columnInfo" jdbcType="VARCHAR"/>
+        <result column="insertTime" property="insertTime" jdbcType="DATE" />
+        <result column="updateTime" property="updateTime" jdbcType="DATE" />
+        <result column="loginName" property="loginName" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="ColumnFilter_Column_List" >
+        id, menuType, moduleId, columnInfo,  insertTime, updateTime, loginName
+    </sql>
+
+
+    <select id="getOne" parameterType="com.aspire.ums.cmdb.search.payload.ColumnFilter" resultMap="ColumnFilterResultMap" >
+        SELECT 
+       <include refid="ColumnFilter_Column_List" />
+	   FROM cmdb_column_filter 
+	   WHERE 1 = 1 
+	   <if test="menuType != null and menuType!=''">
+	   and menuType = #{menuType} 
+	   </if>
+	   <if test="moduleId != null and moduleId!=''">
+	   AND moduleId = #{moduleId}
+	   </if>
+       <if test="loginName != null and loginName!=''">
+       AND loginName = #{loginName}
+       </if>
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.search.payload.ColumnFilter" >
+       INSERT INTO 
+       		cmdb_column_filter
+       		(id, menuType, moduleId, columnInfo,  insertTime, updateTime, loginName)
+       	VALUES
+       		(#{id}, #{menuType}, #{moduleId}, #{columnInfo},  NOW(),  NOW(), #{loginName})
+    </insert>
+    
+    <update id="update" parameterType="com.aspire.ums.cmdb.search.payload.ColumnFilter" >
+       UPDATE 
+       		cmdb_column_filter 
+       SET 
+       	<if test="columnInfo != null and columnInfo!=''">columnInfo = #{columnInfo},</if>
+      
+     	updateTime = NOW()
+       WHERE
+        moduleId = #{moduleId} AND menuType = #{menuType} AND loginName = #{loginName}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_column_filter 
+       WHERE 
+       		 id =#{id}
+    </delete>
+  
+
+</mapper>

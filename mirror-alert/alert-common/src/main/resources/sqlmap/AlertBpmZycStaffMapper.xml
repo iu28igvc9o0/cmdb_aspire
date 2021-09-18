@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.bpm.AlertBpmZycStaffDao">
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.bpm.po.AlertBpmZycStaff">
+        <result column="account" property="account" jdbcType="VARCHAR"></result>
+        <result column="fullname" property="fullname" jdbcType="VARCHAR"></result>
+        <result column="email" property="email" jdbcType="VARCHAR"></result>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"></result>
+        <result column="zyc" property="zyc" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="selectByZyc" resultMap="resultMap">
+        SELECT account,fullname,email,mobile,zyc
+        FROM alert_zyc_maintence_staff
+        WHERE zyc = #{zyc}
+    </select>
+</mapper>

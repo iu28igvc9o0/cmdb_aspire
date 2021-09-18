@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.mailAlert.AlertMailFilterDao">
+    <resultMap id="filterResultMap" type="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailFilter">
+        <result property="id" column="id" jdbcType="VARCHAR"></result>
+        <result property="receiver" column="receiver" jdbcType="VARCHAR"></result>
+        <result property="sender" column="sender" jdbcType="VARCHAR"></result>
+        <result property="titleInclude" column="title_incl" jdbcType="VARCHAR"></result>
+        <result property="contentInclude" column="content_incl" jdbcType="VARCHAR"></result>
+        <result property="active" column="status" jdbcType="INTEGER"></result>
+        <result property="times" column="times" jdbcType="INTEGER"></result>
+        <result property="lastSendTime" column="latest_send_time" jdbcType="TIMESTAMP"></result>
+         <result property="name" column="name" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+
+    <select id="selectFilterByReceiver" resultMap="filterResultMap" parameterType="string">
+        SELECT * FROM alert_mail_resolve_filter WHERE receiver = #{receiver} AND status = 1
+    </select>
+
+
+    <insert id="insertMailFilter" parameterType="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailFilter">
+        INSERT INTO alert_mail_resolve_filter
+        (id, receiver, sender, title_incl, content_incl, status,name)
+        VALUES
+        (#{id,jdbcType=VARCHAR},
+        #{receiver,jdbcType=VARCHAR},
+        #{sender,jdbcType=VARCHAR},
+        #{titleInclude,jdbcType=VARCHAR},
+        #{contentInclude,jdbcType=VARCHAR},
+        #{active,jdbcType=INTEGER}),
+        #{name,jdbcType=VARCHAR}
+    </insert>
+
+
+    <delete id="deleteMailFilter" parameterType="list">
+        DELETE FROM alert_mail_resolve_filter WHERE id IN
+        <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <select id="selectMailFilterById" parameterType="string" resultMap="filterResultMap">
+        SELECT * FROM alert_mail_resolve_filter WHERE id = #{id}
+    </select>
+
+
+    <sql id="baseWhereClause">
+      <where>
+          1 = 1
+          <if test="params != null">
+              <if test="params['receiver'] != null and params['receiver'] != ''">
+                  AND f.receiver LIKE concat(concat('%',#{params.receiver}),'%')
+              </if>
+              <if test="params['sender'] != null and params['sender'] !=''">
+                  AND f.sender LIKE concat(concat('%',#{params.sender}),'%')
+              </if>
+              <if test="params['sendStartTime'] != null and params['sendEndTime'] != null">
+                  AND f.latest_send_time >= #{params.sendStartTime}
+                  AND f.latest_send_time <![CDATA[<]]> date_add(#{params.sendEndTime}, interval 1 day)
+              </if>
+              <if test="params['active'] != -1">
+                  AND f.status = #{params.active}
+              </if>
+          </if>
+      </where>
+    </sql>
+
+
+    <select id="countMailFilterList" parameterType="com.aspire.mirror.common.entity.Page" resultType="int">
+        SELECT COUNT(1) FROM alert_mail_resolve_filter f <include refid="baseWhereClause"></include>
+    </select>
+
+
+    <select id="selectMailFilterList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="filterResultMap">
+        select aa.* from (
+        SELECT f.*,
+        (SELECT COUNT(1) FROM alert_mail_resolve_record WHERE filter_id = f.id) AS times,
+        (SELECT mail_send_time FROM alert_mail_resolve_record WHERE filter_id = f.id ORDER BY resolve_time DESC LIMIT 1) AS latest_send_time,
+        ROWNUM nm
+        FROM alert_mail_resolve_filter f
+        <include refid="baseWhereClause"></include>
+        AND  ROWNUM <![CDATA[<=]]> #{begin}+#{pageSize}
+        ) aa
+        WHERE aa.nm &gt; #{begin}
+    </select>
+     <select id="selectMailFilterByRecipientId"  resultType="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailFilter">
+        select * from alert_mail_resolve_filter 
+        WHERE
+        1=1
+        <if test="id != null and id != ''">
+            id != #{id},
+        </if>
+       <if test="recipientId != null and recipientId != ''">
+            recipient_id = #{recipientId,jdbcType=VARCHAR},
+        </if>
+        <if test="name != null and name != ''">
+            name = #{name,jdbcType=VARCHAR},
+        </if>
+        limit 1
+    </select>
+
+
+    <update id="updateMailFilter" parameterType="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailFilter">
+        UPDATE alert_mail_resolve_filter
+        set
+        <if test="receiver != null and receiver != ''">
+            receiver = #{receiver,jdbcType=VARCHAR},
+        </if>
+        <if test="active != null">
+            status = #{active,jdbcType=INTEGER},
+        </if>
+       <if test="name != null and name != ''">
+            name = #{name,jdbcType=VARCHAR},
+        </if>
+        sender = #{sender,jdbcType=VARCHAR},
+        title_incl = #{titleInclude,jdbcType=VARCHAR},
+        content_incl = #{contentInclude,jdbcType=VARCHAR}
+        WHERE id = #{id}
+    </update>
+</mapper>

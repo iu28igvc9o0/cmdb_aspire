@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.indexadapt.dao.SimpleDbCacheDao">
+	<select id="getCacheValByKey" parameterType="java.lang.String" resultType="java.lang.String">
+		select cache_value from cache_map where cache_key = #{cacheKey}
+	</select>
+	
+	<delete id="removeCacheKey" parameterType="java.lang.String">
+		delete from cache_map where cache_key = #{cacheKey}
+	</delete>
+	
+	<insert id="putCacheEntry" parameterType="java.util.Map">
+		insert into cache_map(cache_key, cache_value) values (#{cacheKey}, #{cacheValue})
+	</insert>
+</mapper>

@@ -1,0 +1,11 @@
+spring: 
+  application:
+    name: composite-mirror
+  cloud:
+    config:
+      enabled: false
+      name: ms-composite
+      profile: ${ENV_TYPE:dev}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}
+      label: ${GIT_BRANCH:master}
+      failFast: true

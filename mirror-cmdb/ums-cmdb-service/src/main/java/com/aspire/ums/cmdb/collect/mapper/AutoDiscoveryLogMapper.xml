@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.collect.mapper.AutoDiscoveryLogMapper" >
+    <resultMap id="AutoDiscoveryLogEntity" type="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryLogEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ruleId" property="ruleId" jdbcType="VARCHAR" />
+        <result column="instanceName" property="instanceName" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="AutoDiscoveryLogListResp" type="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryLogListResp" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ruleId" property="ruleId" jdbcType="VARCHAR" />
+        <result column="ruleName" property="ruleName" jdbcType="VARCHAR" />
+        <result column="instanceName" property="instanceName" jdbcType="VARCHAR" />
+        <result column="discoveryType" property="discoveryType" jdbcType="VARCHAR" />
+        <result column="collectCycle" property="collectCycle" jdbcType="INTEGER" />
+        <result column="cycleUnit" property="cycleUnit" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+        <result column="updateTime" property="updateTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="selectColumn">
+        id,ruleId,instanceName,status,createTime,updateTime
+    </sql>
+    <insert id="insertVO">
+        insert into cmdb_auto_discovery_log(id,ruleId,instanceName,status,createTime,updateTime)
+         VALUES (#{vo.id}, #{vo.ruleId},#{vo.instanceName}, #{vo.status}, #{vo.createTime}, #{vo.updateTime} )
+
+    </insert>
+
+    <select id="getListByRuleIds" resultMap="AutoDiscoveryLogListResp">
+        select log.id,log.ruleId,log.instanceName, log.status, date_format(log.createTime,'%Y-%m-%d %H:%i:%s') createTime, date_format(log.updateTime,'%Y-%m-%d %H:%i:%s') updateTime,
+               rule.ruleName, rule.discoveryType, rule.collectCycle, rule.cycleUnit
+        from cmdb_auto_discovery_log log
+        left join cmdb_auto_discovery_rule rule
+        on log.ruleId = rule.id
+        <if test="ruleIds.size() > 0">
+            where log.ruleId  in
+            <foreach collection="ruleIds" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="queryData.segment != null and queryData.segment != ''">
+            and log.instanceName like '${queryData.segment}%'
+         </if>
+        <if test="queryData.startIp != null and queryData.startIp != ''">
+           and <![CDATA[ SUBSTRING_INDEX(log.instanceName, '.', -1) >= #{queryData.startIp}]]>
+        </if>
+        <if test="queryData.endIp != null and queryData.endIp != ''">
+            and <![CDATA[ SUBSTRING_INDEX(instanceName, '.', -1) <= #{queryData.endIp}]]>
+        </if>
+        <if test="queryData.status != null and queryData.status != ''">
+            and status = #{queryData.status}
+        </if>
+        order by createTime desc
+    </select>
+    
+    <select id="getDetailById" parameterType="java.lang.String" resultMap="AutoDiscoveryLogListResp">
+        select log.*, rule.ruleName, rule.discoveryType, rule.collectCycle, rule.cycleUnit
+        from cmdb_auto_discovery_log log
+        left join cmdb_auto_discovery_rule rule
+        on log.ruleId = rule.id
+        where log.id = #{id}
+
+    </select>
+
+    <select id="getInstanceNameByRuleId" resultType="java.lang.String">
+        select instanceName
+        from cmdb_auto_discovery_log
+        where ruleId = #{ruleId}
+
+    </select>
+
+    <update id="updateVO">
+        update cmdb_auto_discovery_log
+        set updateTime = #{vo.updateTime, jdbcType=TIMESTAMP}
+        <if test="vo.status != null">
+            ,  status = #{vo.status, jdbcType=VARCHAR}
+        </if>
+        where id = #{vo.id}
+    </update>
+
+    <update id="updateByBatch" parameterType="java.util.Map">
+        update cmdb_auto_discovery_log
+          <set>
+              updateTime = #{updateTime, jdbcType=TIMESTAMP}
+          </set>
+        <if test="status != null">
+            ,  status = #{status, jdbcType=VARCHAR}
+        </if>
+        where id in
+        <foreach collection="logIds" item="item" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </update>
+
+
+</mapper>
+

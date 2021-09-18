@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.SensitiveRuleWhiteDao">
+    <resultMap id="sensitiveRuleWhiteMap" type="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite">
+        <result property="sensitiveRuleWhiteId" column="sensitive_rule_white_id" jdbcType="BIGINT"/>
+        <result property="sensitiveRuleId" column="sensitive_rule_id" jdbcType="BIGINT"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+        <result property="objectName" column="object_name" jdbcType="VARCHAR"/>
+        <result property="objectStatus" column="object_status" jdbcType="INTEGER"/>
+        <result property="untieSource" column="untie_source" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="ruleName" column="rule_name" jdbcType="VARCHAR"/>
+        <result property="command" column="command" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryValidWhiteByRuleIdAndObjectId" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite" resultMap="sensitiveRuleWhiteMap">
+        select rw.sensitive_rule_white_id, rw.sensitive_rule_id, rw.object_type, rw.object_id, rw.object_status, rw.untie_source
+        from ops_sensitive_rule_white rw
+        where rw.sensitive_rule_id = #{sensitiveRuleId} and rw.object_id = #{objectId} and rw.object_status = 1
+    </select>
+    <select id="queryByRuleIdAndObjectId" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite" resultMap="sensitiveRuleWhiteMap">
+        select rw.sensitive_rule_white_id, rw.sensitive_rule_id, rw.object_type, rw.object_id, rw.object_status, rw.untie_source
+        from ops_sensitive_rule_white rw
+        where rw.sensitive_rule_id = #{sensitiveRuleId} and rw.object_id = #{objectId}
+    </select>
+    <select id="querySensitiveRuleWhiteList" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhiteQueryModel" resultMap="sensitiveRuleWhiteMap">
+         select  rw.sensitive_rule_white_id, rw.sensitive_rule_id, rw.object_type, rw.object_id, op.name object_name, op.update_time update_time,
+        rw.object_status, rw.untie_source, sr.rule_name,sc.command
+        from ops_sensitive_rule_white rw
+        left join ops_sensitive_rule sr on rw.sensitive_rule_id = sr.sensitive_rule_id
+        left join ops_sensitive_config sc on sr.sensitive_config_id = sc.sensitive_config_id
+        left join ops_pipeline op on op.pipeline_id = rw.object_id
+        where 1=1
+        <if test="sensitiveRuleId != null">
+            and rw.sensitive_rule_id = #{sensitiveRuleId}
+        </if>
+        <if test="objectNameLike != null and objectNameLike != ''">
+            and op.name like CONCAT('%', #{objectNameLike}, '%')
+        </if>
+        <if test="objectName != null and objectName != ''">
+            and op.name = #{objectName}
+        </if>
+        <if test="objectStatus != null and objectStatus != ''">
+            and rw.object_status = #{objectStatus}
+        </if>
+        <if test="objectType != null and objectType != ''">
+            and rw.object_type = #{objectType}
+        </if>
+        <if test="objectId != null and objectId != ''">
+            and rw.object_id = #{objectId}
+        </if>
+        <if test="pageSize != null and pageSize > 0">
+            order by rw.sensitive_rule_white_id desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+    <select id="querySensitiveRuleWhiteListTotalSize" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhiteQueryModel" resultType="java.lang.Integer">
+        select  count(rw.sensitive_rule_white_id)
+        from ops_sensitive_rule_white rw
+        left join ops_pipeline op on op.pipeline_id = rw.object_id
+        where 1=1
+        <if test="sensitiveRuleId != null">
+            and rw.sensitive_rule_id = #{sensitiveRuleId}
+        </if>
+        <if test="objectNameLike != null and objectNameLike != ''">
+            and op.name like CONCAT('%', #{objectNameLike}, '%')
+        </if>
+        <if test="objectName != null and objectName != ''">
+            and op.name = #{objectName}
+        </if>
+        <if test="objectId != null and objectId != ''">
+            and rw.object_id = #{objectId}
+        </if>
+        <if test="objectStatus != null and objectStatus != ''">
+            and rw.object_status = #{objectStatus}
+        </if>
+    </select>
+    <select id="queryRuleWhiteByRuleId" parameterType="java.lang.Long" resultMap="sensitiveRuleWhiteMap">
+        select  rw.sensitive_rule_white_id, rw.sensitive_rule_id, rw.object_type, rw.object_id, op.name object_name, rw.object_status, rw.untie_source
+        from ops_sensitive_rule_white rw
+        left join ops_pipeline op on op.pipeline_id = rw.object_id
+        where sensitive_rule_id = #{sensitiveRuleId}
+    </select>
+
+    <delete id="deleteRuleWhiteByRuleIdArray">
+        delete from ops_sensitive_rule_white where sensitive_rule_id in (
+        <foreach collection="list" item="item"  index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+    <delete id="deleteRuleWhiteByObjectIdAndType">
+        delete from ops_sensitive_rule_white where object_id = #{objectId} and object_type = #{objectType}
+    </delete>
+    <insert id="insertSensitiveRuleWhite" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite">
+        insert into ops_sensitive_rule_white
+        (sensitive_rule_id, object_type, object_id,  object_status, untie_source)
+        values (
+              #{sensitiveRuleId,jdbcType=BIGINT},
+              #{objectType,jdbcType=VARCHAR},
+              #{objectId,jdbcType=BIGINT},
+              #{objectStatus,jdbcType=INTEGER},
+              #{untieSource,jdbcType=INTEGER}
+        )
+    </insert>
+    <update id="updateStatusByObjectIdAndType" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite">
+        update ops_sensitive_rule_white set object_status = #{objectStatus} where object_id = #{objectId} and object_type = #{objectType}
+    </update>
+    <update id="updateStatusByWhiteId" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite">
+        update ops_sensitive_rule_white set object_status = #{objectStatus} where sensitive_rule_white_id = #{sensitiveRuleWhiteId}
+    </update>
+    <update id="updateSensitiveRuleWhite" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleWhite">
+        update ops_sensitive_rule_white set  sensitive_rule_white_id = #{sensitiveRuleWhiteId}
+        <if test="objectType != null and objectType != ''">
+            , object_type = #{objectType}
+        </if>
+        <if test="objectId != null">
+            , object_id = #{objectId}
+        </if>
+        <if test="objectStatus != null">
+            , object_status = #{objectStatus}
+        </if>
+        <if test="untieSource != null">
+            , untie_source = #{untieSource}
+        </if>
+        where sensitive_rule_white_id = #{sensitiveRuleWhiteId}
+    </update>
+</mapper>

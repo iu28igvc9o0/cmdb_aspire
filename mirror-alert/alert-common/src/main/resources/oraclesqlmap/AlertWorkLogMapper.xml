@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.mirror.alert.server.dao.logWork.AlertWorkLogDao">
+
+    <insert id="insertAlertWorkConfig" parameterType="com.aspire.mirror.alert.api.dto.AlertWorkConfig" >
+        INSERT INTO alert_work_config (
+            uuid,
+            day_start_time,
+            day_end_time,
+            night_start_time,
+            night_end_time
+        )
+        VALUES
+            (
+                #{uuid},
+                #{dayStartTme},
+                #{dayEndTme},
+                #{nightStartTme},
+                #{nightEndTme}
+            )
+    </insert>
+
+    <update id="updateAlertWorkConfig" parameterType="com.aspire.mirror.alert.api.dto.AlertWorkConfig">
+        update alert_work_config
+        set
+            day_start_time =  to_date(#{dayStartTme},'yyyy-mm-dd hh24:mi:ss'),
+            day_end_time =  to_date(#{dayEndTme},'yyyy-mm-dd hh24:mi:ss'),
+            night_start_time =  to_date(#{nightStartTme},'yyyy-mm-dd hh24:mi:ss'),
+            night_end_time = to_date(#{nightEndTme},'yyyy-mm-dd hh24:mi:ss'),
+		where uuid = #{uuid}
+    </update>
+
+    <select id="getAlertWorkConfig" resultType="com.aspire.mirror.alert.api.dto.AlertWorkConfig" >
+        SELECT
+            uuid,
+            day_start_time dayStartTme,
+            day_end_time dayEndTme,
+            night_start_time nightStartTme,
+            night_end_time nightEndTme
+        FROM
+            alert_work_config
+    </select>
+
+    <sql id="innerJoinSql" >
+        INNER JOIN (
+        SELECT
+        *
+        FROM
+        alert_operation_record
+        WHERE
+        user_name = #{workName}
+        <if test="isWork = 1">
+            AND operation_time BETWEEN
+            to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
+            AND
+            to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="isWork = -1">
+            AND (
+            operation_time BETWEEN
+            to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
+            AND
+            to_date(#{endTimeTo24},'yyyy-mm-dd hh24:mi:ss')
+            OR operation_time BETWEEN
+            to_date(#{startTimeFrom0},'yyyy-mm-dd hh24:mi:ss')
+            AND
+            to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+            )
+        </if>
+        ) w ON w.alert_id = aa.alert_id
+    </sql>
+
+    <select id="getAlertListByAlerts" parameterType="com.aspire.mirror.alert.server.dao.logWork.po.AlertWorkLogInfo"
+            resultType="com.aspire.mirror.alert.server.vo.logWork.AlertWorkLogInfoVo">
+        SELECT
+            aa.alert_level alertLevel,
+            w.operation_type operationType
+        FROM
+            alert_alerts aa
+        <include refid="innerJoinSql" />
+    </select>
+
+    <select id="getAlertListByAlertsHis" parameterType="com.aspire.mirror.alert.server.dao.logWork.po.AlertWorkLogInfo"
+            resultType="com.aspire.mirror.alert.server.vo.logWork.AlertWorkLogInfoVo">
+        SELECT
+            aa.alert_level alertLevel,
+            w.operation_type operationType
+        FROM
+            alert_alerts_his aa
+        INNER JOIN (
+            SELECT
+            *
+            FROM
+            alert_operation_record
+            WHERE
+            user_name = #{workName}
+            <if test="isWork = 1">
+                AND operation_time BETWEEN
+                to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
+                AND
+                to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="isWork = -1">
+                AND (operation_time BETWEEN
+                to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
+                AND
+                to_date(#{endTimeTo24},'yyyy-mm-dd hh24:mi:ss')
+                OR operation_time BETWEEN
+                to_date(#{startTimeFrom0},'yyyy-mm-dd hh24:mi:ss')
+                AND
+                to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+                )
+            </if>
+            ) w ON w.alert_id = aa.r_alert_id
+    </select>
+
+    <select id="getAlertsFromAlert" parameterType="com.aspire.mirror.alert.server.dao.logWork.po.AlertWorkLogInfo" resultType="map">
+        SELECT
+            aa.alert_id ,
+            aa.order_status,
+            aa.operate_status
+        FROM
+            alert_alerts aa
+        INNER JOIN (
+            SELECT
+                i.device_ip,
+                i.item_id,
+                i.alert_level,
+                MAX(alert_id) alert_id,
+                COUNT(1) alert_count
+            FROM
+                alert_alerts i
+            GROUP BY
+                i.device_ip,
+                i.item_id,
+                i.alert_level
+        ) n ON aa.alert_id = n.alert_id
+        WHERE
+        1 = 1
+        <if test="isWork = 1">
+            AND aa.cur_moni_time BETWEEN
+             to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
+            AND
+            to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="isWork = -1">
+            AND (aa.cur_moni_time BETWEEN
+            to_date(#{startTime},'yyyy-mm-dd hh24:mi:ss')
+            AND
+            to_date(#{endTimeTo24},'yyyy-mm-dd hh24:mi:ss')
+            OR aa.cur_moni_time BETWEEN
+            to_date(#{startTimeFrom0},'yyyy-mm-dd hh24:mi:ss')
+            AND
+            to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss')
+            )
+        </if>
+    </select>
+
+
+</mapper>

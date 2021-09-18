@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.monthReport.mapper.CmdbVmReportMapper">
+    <sql id="baseColumn">
+        idcType,
+        month,
+        m_vm_dist_count,
+        vm_host_count,
+        vm_host_cpu_core_number,
+        vm_host_memory_size,
+        vm_vcpu_core_number,
+        vm_memory_size,
+        vm_host_w_dist_memory_size,
+        vm_rate,
+        bpm_plan_apply_count,
+        bpm_plan_apply_reply_count,
+        bpm_apply_dist_count,
+        bpm_apply_undist_count,
+        bpm_lm_apply_dist_count,
+        bpm_lm_apply_undist_count
+    </sql>
+
+
+    <insert id="save" parameterType="java.util.List">
+        insert into cmdb_month_report_vm
+        (
+        idcType,
+        month,
+        m_vm_dist_count,
+        vm_host_count,
+        vm_host_cpu_core_number,
+        vm_host_memory_size,
+        vm_vcpu_core_number,
+        vm_memory_size,
+        vm_host_w_dist_memory_size,
+        vm_rate
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+             #{item.idcType,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'),
+            #{item.m_vm_dist_count,jdbcType=VARCHAR},
+            #{item.vm_host_count,jdbcType=VARCHAR},
+            #{item.vm_host_cpu_core_number,jdbcType=VARCHAR},
+            #{item.vm_host_memory_size,jdbcType=VARCHAR},
+            #{item.vm_vcpu_core_number,jdbcType=VARCHAR},
+            #{item.vm_memory_size,jdbcType=VARCHAR},
+            #{item.vm_host_w_dist_memory_size,jdbcType=VARCHAR},
+            #{item.vm_rate,jdbcType=VARCHAR}
+            )
+        </foreach>
+
+        ON DUPLICATE KEY UPDATE
+        m_vm_dist_count = VALUES( m_vm_dist_count ),
+        vm_host_count = VALUES( vm_host_count),
+        vm_host_cpu_core_number = VALUES( vm_host_cpu_core_number),
+        vm_host_memory_size = VALUES( vm_host_memory_size),
+        vm_vcpu_core_number = VALUES( vm_vcpu_core_number),
+        vm_memory_size = VALUES( vm_memory_size),
+        vm_host_w_dist_memory_size = VALUES (vm_host_w_dist_memory_size),
+        vm_rate = VALUES( vm_rate)
+    </insert>
+
+    <insert id="saveBpm" parameterType="java.util.List">
+        insert into cmdb_month_report_vm
+        (
+        idcType,
+        month,
+        bpm_plan_apply_count,
+        bpm_plan_apply_reply_count,
+        bpm_apply_dist_count,
+        bpm_apply_undist_count,
+        bpm_lm_apply_dist_count,
+        bpm_lm_apply_undist_count
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+             #{item.resourcePool  ,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'),
+            #{item.resourceApplyTotal ,jdbcType=VARCHAR},
+            #{item.resourceReplyTotal ,jdbcType=VARCHAR},
+            #{item.mApplyAllotTotal,jdbcType=VARCHAR},
+            #{item.mApplyNoAllotTotal,jdbcType=VARCHAR},
+            #{item.lApplyAllotTotal,jdbcType=VARCHAR},
+            #{item.lApplyNoAllotTotal,jdbcType=VARCHAR})
+        </foreach>
+
+        ON DUPLICATE KEY UPDATE
+        bpm_plan_apply_count = VALUES( bpm_plan_apply_count),
+        bpm_plan_apply_reply_count = VALUES( bpm_plan_apply_reply_count),
+        bpm_apply_dist_count = VALUES( bpm_apply_dist_count),
+        bpm_apply_undist_count = VALUES( bpm_apply_undist_count),
+        bpm_lm_apply_dist_count = VALUES( bpm_lm_apply_dist_count),
+        bpm_lm_apply_undist_count = VALUES( bpm_lm_apply_undist_count)
+    </insert>
+
+
+
+    <!-- 云资源总量 -->
+    <select id="count" resultType="java.util.Map">
+        SELECT res.*, `vm_host_memory_size`-`vm_memory_size` AS `vm_host_w_dist_memory_size`,  CONCAT(TRUNCATE(`m_vm_dist_count`/`vm_host_count` * 100,2),'％') AS `vm_rate`  FROM
+        (
+            SELECT a.idcType,
+                SUM(CASE WHEN a.device_type= '云主机' AND a.node_type='计算节点'  AND a.device_status !='未交维' AND a.department2 !='基础平台部' THEN 1 ELSE 0 END) AS `m_vm_dist_count`,
+                SUM(CASE WHEN  a.node_type= '宿主机' THEN 1 ELSE 0  END) AS `vm_host_count`,
+                SUM(CASE WHEN a.node_type='宿主机' THEN b.`cpu_core_number` ELSE 0  END) AS `vm_host_cpu_core_number`,
+                TRUNCATE(SUM(CASE WHEN a.node_type='宿主机' THEN b.`memory_size` ELSE 0 END),2) AS `vm_host_memory_size`,
+                SUM(CASE WHEN a.device_type= '云主机' AND a.node_type='计算节点'  AND a.device_status !='未交维' AND a.department2 !='基础平台部' THEN b.cpu_core_number ELSE 0  END) AS `vm_vcpu_core_number`,
+                TRUNCATE(SUM(CASE WHEN a.device_type= '云主机' AND a.node_type='计算节点'  AND a.device_status !='未交维' AND a.department2 !='基础平台部' THEN b.memory_size ELSE 0  END), 2) AS `vm_memory_size`
+            FROM cmdb_instance a
+            LEFT JOIN `cmdb_instance_server` b ON a.id = b.`id`
+            WHERE  a.is_delete='0' AND b.is_delete='0' AND IFNULL(a.idcType, '') != ''
+            GROUP BY a.idcType
+            ORDER BY a.idcType IS  NULL,COUNT(1) DESC
+                ) res
+    </select>
+</mapper>

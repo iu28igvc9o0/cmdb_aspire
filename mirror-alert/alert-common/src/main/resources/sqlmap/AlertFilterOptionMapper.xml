@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.filter.AlertFilterOptionDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.filter.po.AlertFilterOption" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="operate" column="operate" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="transform" column="transform" jdbcType="VARCHAR"/>
+        <result property="method" column="method" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="jdbcType" column="jdbc_type" jdbcType="VARCHAR"/>
+        <result property="queryType" column="query_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAll" parameterType="Integer" resultMap="baseResultMap">
+        select
+        id,name,type,code,operate,source,content,transform,method,status,jdbc_type,query_type
+        from alert_filter_option 
+        where status = 1
+        order by id
+    </select>
+
+    <select id="select" parameterType="java.lang.String" resultMap="baseResultMap">
+        select
+        id,name,type,code,operate,source,content,transform,method,status,jdbc_type,query_type
+        from alert_filter_option
+        where status = 1
+        <if test="queryType != null and queryType != ''">
+          and query_type like concat('%',#{queryType},'%')
+        </if>
+        order by id
+    </select>
+   
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.ConfigDictMapper">
+
+    <sql id="baseColumnList">
+        dict_id,dict_code,dict_note,col_name,up_dict,description,create_date,update_date
+    </sql>
+
+    <resultMap id="configDict" type="com.aspire.mirror.alert.server.clientservice.payload.ConfigDict">
+        <result column="dict_id" property="id" jdbcType="INTEGER"/>
+        <result column="dict_note" property="value" jdbcType="VARCHAR"/>
+        <result column="col_name" property="type" jdbcType="VARCHAR"/>
+        <result column="up_dict" property="pid" jdbcType="INTEGER"/>
+        <result column="pname" property="pname" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="selectDictsByType" parameterType="java.lang.String"
+            resultMap="configDict">
+        select
+        <include refid="baseColumnList"/>
+        from t_cfg_dict where delete_flag=0 and col_name=#{colName}
+        <if test="pid != null and pid != ''">
+            and up_dict=#{pid}
+        </if>
+    </select>
+
+</mapper>

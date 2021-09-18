@@ -1,0 +1,775 @@
+{
+    "list": [
+      {
+        "type": "form",
+        "label": "表单容器",
+        "columnName": "form_1605082215824",
+        "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+        "width": "100%",
+        "list": [
+          {
+            "type": "select",
+            "label": "资源池：",
+            "columnName": "idcType",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false,
+              "clearableStatus": []
+            },
+            "options": [
+              {
+                "label": "全部",
+                "value": ""
+              }
+            ],
+            "hidden": false,
+            "isAddOption": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1605082241801",
+            "showOptions": [
+              {
+                "label": "全部",
+                "value": "",
+                "disabled": false
+              }
+            ],
+            "oldColumnName": "select_1605082241801"
+          },
+          {
+            "type": "select",
+            "label": "机房：",
+            "columnName": "roomId",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false,
+              "clearableStatus": []
+            },
+            "options": [
+              {
+                "label": "全部",
+                "value": ""
+              }
+            ],
+            "hidden": false,
+            "isAddOption": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1605082269121",
+            "showOptions": [
+              {
+                "label": "全部",
+                "value": "",
+                "disabled": false
+              }
+            ],
+            "oldColumnName": "select_1605082269121"
+          },
+          {
+            "type": "select",
+            "label": "监控告警状态：",
+            "columnName": "alertStatus",
+            "defaultValue": "2",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false,
+              "clearableStatus": []
+            },
+            "options": [
+              {
+                "label": "全部",
+                "value": ""
+              },
+              {
+                "label": "已禁用",
+                "value": "0"
+              },
+              {
+                "label": "正常",
+                "value": "1"
+              },
+              {
+                "label": "列头柜下电告警",
+                "value": "2"
+              },
+              {
+                "label": "机柜下电告警",
+                "value": "3"
+              },
+              {
+                "label": "设备电源告警",
+                "value": "4"
+              }
+            ],
+            "hidden": false,
+            "isAddOption": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1605082334291",
+            "showOptions": [
+              {
+                "label": "全部",
+                "value": "",
+                "disabled": false
+              },
+              {
+                "label": "已禁用",
+                "value": "0",
+                "disabled": false
+              },
+              {
+                "label": "正常",
+                "value": "1",
+                "disabled": false
+              },
+              {
+                "label": "列头柜下电告警",
+                "value": "2",
+                "disabled": false
+              },
+              {
+                "label": "机柜下电告警",
+                "value": "3",
+                "disabled": false
+              },
+              {
+                "label": "设备电源告警",
+                "value": "4",
+                "disabled": false
+              }
+            ],
+            "oldColumnName": "status",
+            "filterOptionStatus": []
+          },
+          {
+            "type": "input",
+            "label": "",
+            "columnName": "idcCabinet",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": true,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "列头柜名称/机柜号/u号",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "clearableStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 0,
+            "oldColumnName": "input_1605082361054"
+          },
+          {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1605082470279",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+              {
+                "type": "button",
+                "label": "查询",
+                "columnName": "button_1605082472257",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "plain": false
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "submit"
+              },
+              {
+                "type": "button",
+                "label": "重置",
+                "columnName": "button_1605082475944",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {},
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "reset-submit"
+              }
+            ],
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          }
+        ],
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "button-group",
+        "label": "按钮容器",
+        "columnName": "button-group_1605082574673",
+        "asideIcon": "iconfont iconanniuzu",
+        "width": "100%",
+        "list": [
+          {
+            "type": "button",
+            "label": "配置",
+            "columnName": "config-cabinet",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "event": "router",
+            "oldColumnName": "config-ca",
+            "routerType": "path",
+            "routerParamType": "",
+            "routerKey": "/mirror_alert/cabinet_fault/collocation_page"
+          },
+          {
+            "type": "button",
+            "label": "启用",
+            "columnName": "open-cabinet",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "config-cabinet"
+          },
+          {
+            "type": "button",
+            "label": "禁用",
+            "columnName": "close-cabinet",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1605082580399"
+          },
+          {
+            "type": "button",
+            "label": "导出",
+            "columnName": "export-cabinet",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "event": "",
+            "oldColumnName": "imp-cabinet",
+            "exportType": "",
+            "apiMethod": "post+arraybuffer"
+          }
+        ],
+        "classify": "layout",
+        "hidden": false,
+        "hasParentForm": true
+      },
+      {
+        "type": "table",
+        "label": "表格",
+        "columnName": "table_1605082659220",
+        "asideIcon": "iconfont icondashujukeshihuaico-",
+        "width": "100%",
+        "classify": "layout",
+        "show-index": false,
+        "indexFixed": true,
+        "show-single-selection": false,
+        "singleSelectionFixed": true,
+        "show-multiple-selection": true,
+        "multipleSelectionFixed": true,
+        "cacheMultipleSelection": false,
+        "multipleSelectionColumnName": [],
+        "show-operation": true,
+        "operationFixed": false,
+        "show-pagination": true,
+        "defaultSelectAll": false,
+        "defaultSort": {
+          "prop": "",
+          "order": "",
+          "ascending": "asc",
+          "descending": "desc"
+        },
+        "props": {
+          "border": true,
+          "stripe": true,
+          "highlight-current-row": false,
+          "show-header": true,
+          "default-sort": ""
+        },
+        "btnGroupDynamic": [
+          {
+            "label": "open-cabinet-row",
+            "columnName": "open-cabinet-row",
+            "authId": "",
+            "statusList": [],
+            "state": "show",
+            "dataLinkage": [
+              {
+                "columnName": "status",
+                "compare": "=",
+                "targetValue": "0",
+                "authSwitch": false,
+                "authId": "",
+                "if": "&&"
+              }
+            ]
+          },
+          {
+            "label": "close-cabinet-row",
+            "columnName": "close-cabinet-row",
+            "authId": "",
+            "statusList": [],
+            "state": "show",
+            "dataLinkage": [
+              {
+                "columnName": "status",
+                "compare": "=",
+                "targetValue": "1",
+                "authSwitch": false,
+                "authId": "",
+                "if": "&&"
+              }
+            ]
+          }
+        ],
+        "list": [
+          {
+            "timeStamp": 1605082670827,
+            "label": "表格可编辑参数",
+            "columnName": "$asp_isEdit",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": false,
+            "tooltip": true,
+            "$_isBuiltInParams": true
+          },
+          {
+            "label": "资源池",
+            "columnName": "idcType",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "120",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "机房",
+            "columnName": "roomId",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "列头柜名称",
+            "columnName": "cabinetColumnName",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "管理机柜数",
+            "columnName": "cabinetCount",
+            "type": "link",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "管理设备数",
+            "columnName": "deviceCount",
+            "type": "link",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "影响业务数",
+            "columnName": "bizSystemCount",
+            "type": "link",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "是否启用",
+            "columnName": "status",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": false,
+            "tooltip": true
+          }
+        ],
+        "operation": [],
+        "toolList": [
+          {
+            "type": "text",
+            "columnName": "open-cabinet-row",
+            "label": "启用",
+            "align": "left",
+            "class": "",
+            "icon": "",
+            "justShowIcon": false,
+            "defaultState": "hidden",
+            "state": "show",
+            "dataLinkage": [],
+            "activeType": "",
+            "statusOn": "show",
+            "statusOff": "hidden"
+          },
+          {
+            "type": "text",
+            "columnName": "close-cabinet-row",
+            "label": "禁用",
+            "align": "left",
+            "class": "",
+            "icon": "",
+            "justShowIcon": false,
+            "defaultState": "hidden",
+            "state": "show",
+            "dataLinkage": [],
+            "statusOn": "hidden",
+            "statusOff": "show"
+          }
+        ],
+        "operation-width": "100",
+        "pagination": {
+          "layout": "total, sizes, prev, pager, next, jumpe",
+          "pageSizes": [
+            10,
+            20,
+            30
+          ],
+          "currentPage": 1,
+          "pageSize": 10,
+          "total": 0,
+          "hide-on-single-page": false
+        },
+        "http": {
+          "initHttp": true,
+          "type": "post",
+          "methods": "/v1/alerts/CabinetColumn/queryCabinetColumnAlertPageList"
+        },
+        "hidden": false,
+        "show-operation-status": []
+      }
+    ],
+    "model": {
+      "select_1605082234499": "",
+      "select_1605082291286": "",
+      "idcType": "",
+      "roomId": "",
+      "idcCabinet": "",
+      "label_select_1605082334291": "列头柜下电告警",
+      "alertStatus": "2"
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+      "exportName": "",
+      "project": "webbas",
+      "labelWidth": 100,
+      "labelPosition": "left",
+      "size": "mini",
+      "class": "",
+      "layoutType": "flex",
+      "statusList": []
+    }
+  }
+        
+  
+      

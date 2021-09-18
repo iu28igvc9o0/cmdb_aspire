@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.collect.mapper.CmdbCollectResourceMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectResource" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="value" property="value" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `code_id`,
+        `value`,
+        `create_time`
+        FROM cmdb_collect_resource
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectResource">
+        SELECT
+        `id`,
+        `instance_id`,
+        `code_id`,
+        `value`,
+        `create_time`
+        FROM cmdb_collect_resource
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="value != null and value != ''">
+        AND `value` = #{value}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectResource" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `code_id`,
+        `value`,
+        `create_time`
+        FROM cmdb_collect_resource
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectResource">
+        INSERT INTO cmdb_collect_resource
+        (
+            `id`,
+            `instance_id`,
+            `code_id`,
+            `value`,
+            `create_time`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{value, jdbcType=VARCHAR},
+            #{createTime, jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectResource">
+        UPDATE cmdb_collect_resource SET
+        `instance_id` = #{instanceId},
+        `code_id` = #{codeId},
+        `value` = #{value},
+        `create_time` = #{createTime}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectResource">
+        DELETE FROM cmdb_collect_resource
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

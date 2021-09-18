@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.log.server.dao.LogFilterRuleDao">
+
+	<resultMap type="com.aspire.mirror.log.server.dao.po.LogFilterRuleDetailDTO" id="LogFilterRuleDetailMap">
+		<result property="uuid" column="uuid" jdbcType="VARCHAR"/>
+		<result property="ruleType" column="rule_type" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="description" column="description" jdbcType="VARCHAR"/>
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+		<result property="ip" column="ip" jdbcType="VARCHAR"/>
+		<result property="param" column="param" jdbcType="VARCHAR"/>
+		<result property="startTime" column="start_time" jdbcType="VARCHAR"/>
+		<result property="endTime" column="end_time" jdbcType="VARCHAR"/>
+		<result property="creator" column="creator" jdbcType="VARCHAR"/>
+		<result property="includeKey" column="include_key" jdbcType="VARCHAR"/>
+		<result property="noIncludeKey" column="no_include_key" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<sql id="baseSelectHand">
+		SELECT
+		uuid,name,description,idc_type,ip,param,start_time,end_time,creator,rule_type,include_key,no_include_key
+	</sql>
+
+	<insert id="createLogFilterRule" parameterType="com.aspire.mirror.log.server.dao.po.CreateLogFilterRuleReqDTO">
+		INSERT INTO log_filter_rule
+		(uuid,name,description,idc_type,ip,param,start_time,end_time,creator,rule_type,include_key,no_include_key)
+		VALUES
+		(#{uuid},#{name},#{description},#{idcType},#{ip},#{param},#{startTime},#{endTime},#{creator},#{ruleType},#{includeKey},#{noIncludeKey})
+	</insert>
+
+	<select id="getLogFilterRuleDetail" parameterType="java.lang.String" resultMap="LogFilterRuleDetailMap">
+        <include refid="baseSelectHand"/>
+		FROM
+		log_filter_rule
+		WHERE
+		uuid = #{uuid}
+	</select>
+
+	<delete id="deleteLogFilterRule" parameterType="java.lang.String">
+		DELETE FROM
+		log_filter_rule
+		WHERE
+		uuid = #{uuid}
+	</delete>
+
+	<select id="getLogFilterRuleList" resultMap="LogFilterRuleDetailMap">
+		<include refid="baseSelectHand"/>
+		FROM
+		log_filter_rule
+		WHERE 1=1
+		<if test="ruleType !=null and ruleType != ''">
+			AND rule_type = #{ruleType}
+		</if>
+	</select>
+
+	<select id="getLogFilterRuleDetailByName" parameterType="java.lang.String" resultMap="LogFilterRuleDetailMap">
+		<include refid="baseSelectHand"/>
+		FROM
+		log_filter_rule
+		WHERE
+		name = #{name}
+	</select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.log.server.dao.ConfigFileDao">
+
+	<insert id="insertConfigFileUploadLog" parameterType="com.aspire.mirror.log.server.dao.po.ConfigFileUploadLogDTO">
+		INSERT INTO config_file_upload_log
+		(uuid,idc_type,device_ip,upload_time,file_content,upload_info,user_name)
+		VALUES
+		<foreach collection="list" index="index" item="item" separator=",">
+			(
+			#{item.uuid},
+			#{item.idcType},
+			#{item.deviceIp},
+			#{item.uploadTime},
+			#{item.uploadContent},
+			#{item.uploadInfo},
+			#{item.userName}
+			)
+		</foreach>
+	</insert>
+
+</mapper>

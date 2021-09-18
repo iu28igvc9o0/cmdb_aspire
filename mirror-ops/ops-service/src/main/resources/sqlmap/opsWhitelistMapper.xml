@@ -1,0 +1,937 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsWhitelistDao">
+	
+	<resultMap type="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistHost" id="whitelistHost">
+    	<id property="id" column="id" jdbcType="VARCHAR"/>
+    	<result property="whitelistType" column="whitelist_type" />
+    	<result property="poolId" column="pool_id" jdbcType="VARCHAR"/>
+    	<result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+    	<result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+    	<result property="department1" column="department1" jdbcType="VARCHAR"/>
+    	<result property="department1Name" column="department1_name" jdbcType="VARCHAR"/>
+    	<result property="department2" column="department2" jdbcType="VARCHAR"/>
+    	<result property="department2Name" column="department2_name" jdbcType="VARCHAR"/>
+    	<result property="bizSystem" column="biz_system" jdbcType="VARCHAR"/>
+    	<result property="bizSystemName" column="biz_system_name" jdbcType="VARCHAR"/>
+    	<result property="hostIp" column="host_ip" jdbcType="VARCHAR"/>
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="remark" column="remark" jdbcType="VARCHAR"/>
+    	<result property="attachmentJson" column="attachment" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+         <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+        <collection property="scriptConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="script_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="script_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="script_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="script_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="pipelineConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="pipeline_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="pipeline_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="pipeline_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="pipeline_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistCruiseCheck" id="whitelistCruiseCheck">
+    	<id property="id" column="id" jdbcType="VARCHAR"/>
+    	<result property="whitelistType" column="whitelist_type" />
+    	<result property="scriptId" column="script_id" jdbcType="VARCHAR"/>
+    	<result property="scriptName" column="script_name" jdbcType="VARCHAR"/>
+    	<result property="scriptContentType" column="script_content_type" jdbcType="VARCHAR"/>
+    	<result property="scriptGroupName" column="script_group_name" jdbcType="VARCHAR"/>
+    	<result property="poolId" column="pool_id" jdbcType="VARCHAR"/>
+    	<result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+    	<result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+    	<result property="itemName" column="item_name" jdbcType="VARCHAR"/>
+    	<result property="templateId" column="template_id" jdbcType="VARCHAR"/>
+    	<result property="templateName" column="template_name" jdbcType="VARCHAR"/>
+    	
+    	
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="remark" column="remark" jdbcType="VARCHAR"/>
+    	<result property="attachment" column="attachment" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+        
+        <collection property="hostConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="host_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="host_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="host_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="host_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="osTypeConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="os_type_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="os_type_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="os_type_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="os_type_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    
+    <!-- 漏洞白名单 -->
+    <resultMap type="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistVulnerability" id="whitelistVulnerability">
+    	<id property="id" column="id" jdbcType="VARCHAR"/>
+    	<result property="whitelistType" column="whitelist_type" />
+    	    	
+    	<result property="poolId" column="pool_id" jdbcType="VARCHAR"/>
+    	<result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+    	<result property="vulName" column="vul_name" jdbcType="VARCHAR"/>
+    	<result property="vulLevel" column="vul_level" jdbcType="VARCHAR"/>
+    	<result property="vulProducer" column="vul_producer" jdbcType="VARCHAR"/>
+    	<result property="vulType" column="vul_type" jdbcType="VARCHAR"/>
+    	<result property="vulId" column="vul_id" jdbcType="VARCHAR"/>
+  	
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="remark" column="remark" jdbcType="VARCHAR"/>
+    	<result property="attachment" column="attachment" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+        
+        <collection property="hostConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="host_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="host_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="host_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="host_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="osTypeConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="os_type_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="os_type_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="os_type_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="os_type_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    
+    <!-- 基线黑名单 -->
+    <resultMap type="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistBaseline" id="whitelistBaseline">
+    	<id property="id" column="id" jdbcType="VARCHAR"/>
+    	<result property="whitelistType" column="whitelist_type" />
+    	    	
+    	<result property="poolId" column="pool_id" jdbcType="VARCHAR"/>
+    	<result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+    	<result property="baselineType" column="baseline_type" jdbcType="VARCHAR"/>
+    	<result property="baselineId" column="baseline_id" jdbcType="VARCHAR"/>
+    	
+  	
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="remark" column="remark" jdbcType="VARCHAR"/>
+    	<result property="attachment" column="attachment" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+        
+        <collection property="hostConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="host_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="host_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="host_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="host_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="osTypeConstraintList" ofType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+            <result property="whitelistType" column="os_type_whitelist_type" jdbcType="VARCHAR"/>
+            <result property="whitelistId" column="os_type_whitelist_id" jdbcType="VARCHAR"/>
+            <result property="constraintType" column="os_type_constraint_type" jdbcType="VARCHAR"/>
+            <result property="constraintValue" column="os_type_constraint_value" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+	
+	<sql id="whitelist_host_cols">
+		h.id, h.whitelist_type, h.pool_id,h.pool_name, h.department1, h.department2, h.biz_system, h.host_ip, h.status, 
+		h.remark, h.attachment, h.creater, h.create_time, h.updater, h.last_update_time 
+	</sql>
+	
+	<select id="queryWhitelistHostList" resultMap="whitelistHost"
+	 		parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistHost$OpsWhitelistHostQueryParam">
+		select <include refid="whitelist_host_cols"/>, e.pool_name, e.department1_name, e.department2_name, e.biz_system_name, 
+			   s.whitelist_type script_whitelist_type, s.whitelist_id script_whitelist_id, 
+			   s.constraint_type script_constraint_type, s.constraint_value script_constraint_value,
+			   p.whitelist_type pipeline_whitelist_type, p.whitelist_id pipeline_whitelist_id, 
+			   p.constraint_type pipeline_constraint_type, p.constraint_value pipeline_constraint_value 
+		  from ops_whitelist_host h
+		  left join ops_whitelist_constraint s on h.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = h.id and s.constraint_type = 'script' 
+		  left join ops_whitelist_constraint p on p.whitelist_type = h.whitelist_type 
+		  		and p.whitelist_id = h.id and p.constraint_type = 'pipeline'	
+		  left join ops_spectre_host_ext e on e.pool = h.pool_id and e.agent_ip = h.host_ip
+		 where 1 = 1
+		   	<if test="poolId != null and poolId != ''">
+		  		and h.pool_id = #{poolId}
+		  	</if>
+		  	
+		  	<if test="poolName != null and poolName != ''">
+		  		and h.pool_name = #{poolName}
+		  	</if>
+		  	<if test="department1 != null and department1 != ''">
+		  		and h.department1 = #{department1}
+		  	</if>
+		  	<if test="department2 != null and department2 != ''">
+		  		and h.department2 = #{department2}
+		  	</if>
+		  	<if test="bizSystem != null and bizSystem != ''">
+		  		and h.biz_system = #{bizSystem}
+		  	</if>
+		  	<if test="hostIp != null and hostIp != ''">
+		  		and h.host_ip like CONCAT('%', #{hostIp}, '%')
+		  	</if>
+		  	<if test="remark != null and remark != ''">
+		  		and h.remark like CONCAT('%', #{remark}, '%')
+		  	</if>
+		  	<if test="status != null and status != ''">
+		  		and h.status = #{status}
+		  	</if>
+		  	<if test="createTimeStart != null">
+		  		and h.create_time &gt;= #{createTimeStart} 
+		  	</if>
+		  	<if test="createTimeEnd != null">
+		  		and h.create_time &gt;= #{createTimeEnd} 
+		  	</if>
+		  	<if test="pageSize != null and pageSize > 0 ">
+	     	 	order by h.last_update_time desc
+	         	limit #{startIdx}, #{pageSize}
+          	</if>		
+	</select>
+	
+	<select id="queryWhitelistHostTotalCount" resultType="java.lang.Integer"
+			parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistHost$OpsWhitelistHostQueryParam">
+		select count(h.id)
+		  from ops_whitelist_host h
+		  where 1 = 1
+		   	<if test="poolId != null and poolId != ''">
+		  		and h.pool_id = #{poolId}
+		  	</if>
+		  	
+		  	<if test="poolName != null and poolName != ''">
+		  		and h.pool_name = #{poolName}
+		  	</if>
+		  	<if test="department1 != null and department1 != ''">
+		  		and h.department1 = #{department1}
+		  	</if>
+		  	<if test="department2 != null and department2 != ''">
+		  		and h.department2 = #{department2}
+		  	</if>
+		  	<if test="bizSystem != null and bizSystem != ''">
+		  		and h.biz_system = #{bizSystem}
+		  	</if>
+		  	<if test="hostIp != null and hostIp != ''">
+		  		and h.host_ip like CONCAT('%', #{hostIp}, '%')
+		  	</if>
+		  	<if test="remark != null and remark != ''">
+		  		and h.remark like CONCAT('%', #{remark}, '%')
+		  	</if>
+		  	<if test="status != null and status != ''">
+		  		and h.status = #{status}
+		  	</if>
+		  	<if test="createTimeStart != null">
+		  		and h.create_time &gt;= #{createTimeStart} 
+		  	</if>
+		  	<if test="createTimeEnd != null">
+		  		and h.create_time &gt;= #{createTimeEnd} 
+		  	</if>
+	</select>
+
+	<insert id="insertOpsWhitelistHost" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistHost">
+		insert into ops_whitelist_host (
+			id, whitelist_type, pool_id,pool_name,department1, department2, biz_system, host_ip, status, remark, attachment, 
+			creater, create_time, updater, last_update_time 
+		) VALUES (
+			#{id}, #{whitelistType}, #{poolId},#{poolName}, #{department1}, #{department2}, #{bizSystem}, #{hostIp}, #{status}, 
+			#{remark}, #{attachmentJson}, #{creater}, #{createTime}, #{updater}, #{lastUpdateTime}
+		)
+	</insert>
+	
+	<update id="updateOpsWhitelistHost" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistHost">
+		update ops_whitelist_host
+		   set id = #{id}
+	   	 	<if test="status != null and status != ''">
+	       		, status = #{status} 
+	   	 	</if>
+		   	<if test="remark != null and remark != ''">
+	       		, remark = #{remark} 
+	   	 	</if>
+		    <if test="attachmentJson != null and attachmentJson != ''">
+	       		, attachment = #{attachmentJson} 
+	   	 	</if>   
+	   	 	<if test="updater != null and updater != ''">
+	       		, updater = #{updater} 
+	   	 	</if>   
+	   	 	<if test="lastUpdateTime != null">
+	       		, last_update_time = #{lastUpdateTime} 
+	   	 	</if>   
+		 where id = #{id}
+	</update>
+
+	<select id="queryWhitelistHostById" resultMap="whitelistHost" parameterType="java.lang.String">
+		select <include refid="whitelist_host_cols"/>, e.pool_name, e.department1_name, e.department2_name, e.biz_system_name, 
+			   s.whitelist_type script_whitelist_type, s.whitelist_id script_whitelist_id, 
+			   s.constraint_type script_constraint_type, s.constraint_value script_constraint_value,
+			   p.whitelist_type pipeline_whitelist_type, p.whitelist_id pipeline_whitelist_id, 
+			   p.constraint_type pipeline_constraint_type, p.constraint_value pipeline_constraint_value 
+		  from ops_whitelist_host h
+		  left join ops_whitelist_constraint s on h.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = h.id and s.constraint_type = 'script' 
+		  left join ops_whitelist_constraint p on p.whitelist_type = h.whitelist_type 
+		  		and p.whitelist_id = h.id and p.constraint_type = 'pipeline'	
+		  left join ops_spectre_host_ext e on e.pool = h.pool_id and e.agent_ip = h.host_ip
+		 where h.id = #{id}
+	</select>
+	
+	<delete id="deleteWhitelistHostById" parameterType="java.lang.String"> 
+		delete from ops_whitelist_host where id = #{id}
+	</delete>
+	
+	<insert id="batchInsertWhitelistConstraint" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+	    insert into ops_whitelist_constraint(
+	    	whitelist_type, whitelist_id, constraint_type, constraint_value
+	    ) values
+	    <foreach collection="list" item="constraint" separator=",">
+	        (#{constraint.whitelistType}, #{constraint.whitelistId}, #{constraint.constraintType}, #{constraint.constraintValue})
+	    </foreach>
+	</insert>
+	
+	<select id="queryWhitelistConstraintListByTypeAndId" parameterType="java.util.Map" 
+					resultType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+		select whitelist_type as whitelistType, whitelist_id as whitelistId,
+			   constraint_type as constraintType, constraint_value as constraintValue
+	      from ops_whitelist_constraint
+	     where whitelist_type = #{whitelistType} and whitelist_id = #{whitelistId}
+	</select>
+	
+	<delete id="deleteWhitelistConstraintsByWhitelistTypeAndId" parameterType="java.util.Map">
+		delete from ops_whitelist_constraint
+		 where whitelist_type = #{whitelistType}
+		   and whitelist_id = #{whitelistId}
+	</delete>
+	
+	<select id="queryActiveWhiteListHostListByConstraintVal" resultMap="whitelistHost" 
+				parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+		select <include refid="whitelist_host_cols"/>
+		  from ops_whitelist_host h inner join ops_whitelist_constraint c 
+		       on h.status = 'ON' and h.whitelist_type = c.whitelist_type 
+		       and h.id = c.whitelist_id and c.whitelist_type = #{whitelistType} 
+		       and c.constraintType = #{constraintType} and c.constraint_value = #{constraintValue}
+	</select>
+	
+	
+	<!--  巡检白名单查询语句 sql for cruisecheck   -->
+	
+	
+	 
+	<sql id="whitelist_cruisecheck_cols">
+		c.id, c.whitelist_type,c.script_id,c.pool_id,c.pool_name, c.script_name, c.script_content_type, c.script_group_name, 
+		c.item_id, c.item_name, c.template_id, c.template_name, c.status, c.remark ,c.attachment ,
+		c.creater ,c.updater ,c.create_time ,c.last_update_time 
+	
+	</sql>
+	
+	<select id="queryWhitelistCruiseCheckList" resultMap="whitelistCruiseCheck"
+	 		parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistCruiseCheck$OpsWhitelistCruiseCheckQueryParam">
+		select <include refid="whitelist_cruisecheck_cols"/>, 
+			   h.whitelist_type host_whitelist_type, h.whitelist_id host_whitelist_id, 
+			   h.constraint_type host_constraint_type, h.constraint_value host_constraint_value,
+			   o.whitelist_type os_type_whitelist_type, o.whitelist_id os_type_whitelist_id, 
+			   o.constraint_type os_type_constraint_type, o.constraint_value os_type_constraint_value 
+		  from ops_whitelist_cruisecheck c
+		  left join ops_whitelist_constraint h on c.whitelist_type = h.whitelist_type 
+		  		and h.whitelist_id = c.id and h.constraint_type = 'host' 
+		  left join ops_whitelist_constraint o on c.whitelist_type = o.whitelist_type 
+		  		and o.whitelist_id = c.id and o.constraint_type = 'os_type'	
+		  		
+		  	
+		  		
+		  		
+		 where 1 = 1
+		 	
+		   	<if test="scriptId != null and scriptId != ''">
+		  		and  c.script_id = #{scriptId}
+		  	</if>
+		  	<if test="scriptName != null and scriptName != ''">
+		  		and c.script_name = #{scriptName}
+		  	</if>
+		  	<if test="scriptContentType != null and scriptContentType != ''">
+		  		and c.script_content_type = #{scriptContentType}
+		  	</if>
+		  	<if test="scriptGroupName != null and scriptGroupName != ''">
+		  		and c.script_group_name = #{scriptGroupName}
+		  	</if>
+		  	<if test="poolId != null and poolId != ''">
+		  		and c.pool_id = #{poolId }
+		  	</if>
+		  	<if test="poolName != null and poolName != ''">
+		  		and c.pool_name = #{poolName }
+		  	</if>
+		  	<if test="itemId != null and itemId != ''">
+		  		and c.item_id = #{itemId}
+		  	</if>
+		  	
+		  	<if test="itemName != null and itemName != ''">
+		  		and c.item_name = #{itemName}
+		  	</if>
+		  	<if test="templateId != null and templateId != ''">
+		  		and c.template_id = #{templateId}
+		  	</if>
+		  	<if test="templateName != null and templateName != ''">
+		  		and c.template_name = #{templateName}
+		  	</if>
+		  	
+		  	
+		  	<if test="status != null and status != ''">
+		  		and c.status = #{status}
+		  	</if>
+		  	<if test="creater != null and creater != ''">
+		  		and c.creater = #{creater}
+		  	</if>
+		  	<if test="createTime != null">
+		  		and c.create_time &gt; #{createTime}  
+		  	</if>
+		  	
+		  	<if test="lastUpdateTime != null">
+		  		and c.last_update_time &lt; #{lastUpdateTime}  
+		  	</if>
+		  	
+		  	<if test="updater != null and updater !=''">
+		  		and c.updater = #{updater}  
+		  	</if>
+		  	
+		  	<if test="pageSize != null and pageSize > 0 ">
+	     	 	order by c.last_update_time desc
+	         	limit #{startIdx}, #{pageSize}
+          	</if>		
+	</select>
+	
+	<select id="queryWhitelistCruiseCheckTotalCount" resultType="java.lang.Integer"
+			parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistCruiseCheck$OpsWhitelistCruiseCheckQueryParam">
+		select count(c.id)
+		  from ops_whitelist_cruisecheck c
+		  where 1 = 1
+		  	
+		   	<if test="scriptId != null and scriptId != ''">
+		  		and  c.script_id = #{scriptId}
+		  	</if>
+		  	<if test="scriptName != null and scriptName != ''">
+		  		and c.script_name = #{scriptName}
+		  	</if>
+		  	<if test="scriptContentType != null and scriptContentType != ''">
+		  		and c.script_content_type = #{scriptContentType}
+		  	</if>
+		  	<if test="scriptGroupName != null and scriptGroupName != ''">
+		  		and c.script_group_name = #{scriptGroupName}
+		  	</if>
+		  	<if test="itemId != null and itemId != ''">
+		  		and c.item_id = #{itemId}
+		  	</if>
+		  	<if test="poolId != null and poolId != ''">
+		  		and c.pool_id = #{poolId }
+		  	</if>
+		  	
+		  	<if test="poolName != null and poolName != ''">
+		  		and c.pool_name = #{poolName }
+		  	</if>
+		  	
+		  	<if test="itemName != null and itemName != ''">
+		  		and c.item_name = #{itemName}
+		  	</if>
+		  	<if test="templateId != null and templateId != ''">
+		  		and c.template_id = #{templateId}
+		  	</if>
+		  	<if test="templateName != null and templateName != ''">
+		  		and c.template_name = #{templateName}
+		  	</if>
+		  	
+		  	
+		  	<if test="status != null and status != ''">
+		  		and c.status = #{status}
+		  	</if>
+		  	<if test="creater != null and creater != ''">
+		  		and c.creater = #{creater}
+		  	</if>
+		  	<if test="createTime != null">
+		  		and c.create_time &gt; #{createTime}  
+		  	</if>
+		  	
+		  	<if test="lastUpdateTime != null">
+		  		and c.last_update_time &lt; #{lastUpdateTime}  
+		  	</if>
+		  	<if test="updater != null and updater !=''">
+		  		and c.updater = #{updater}  
+		  	</if>
+	</select>
+
+
+
+	<insert id="insertOpsWhitelistCruiseCheck" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistCruiseCheck">
+		insert into ops_whitelist_cruisecheck (
+			id, whitelist_type, script_id, script_name, script_content_type, script_group_name, item_id,pool_id,pool_name, item_name, template_id, template_name, 
+			status,remark, attachment, creater, updater ,create_time,last_update_time
+		) VALUES (
+			#{id}, #{whitelistType}, #{scriptId}, #{scriptName}, #{scriptContentType}, #{scriptGroupName}, #{itemId},#{poolId}, #{poolName},#{itemName}, 
+			#{templateId}, #{templateName}, #{status}, #{remark}, #{attachmentJson}, #{creater}, #{updater}, #{createTime}, #{lastUpdateTime}
+		)
+	</insert>
+	
+	<update id="updateOpsWhitelistCruiseCheck" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistCruiseCheck">
+		update ops_whitelist_cruisecheck
+		   set id = #{id}
+		   
+	   	 	<if test="status != null and status != ''">
+	       		, status = #{status} 
+	   	 	</if>
+		   	<if test="remark != null and remark != ''">
+	       		, remark = #{remark} 
+	   	 	</if>
+		    <if test="attachmentJson != null and attachmentJson != ''">
+	       		, attachment = #{attachmentJson} 
+	   	 	</if>   
+	   	 	<if test="updater != null and updater != ''">
+	       		, updater = #{updater} 
+	   	 	</if>   
+	   	 	<if test="scriptName != null">
+	       		, script_name = #{scriptName} 
+	   	 	</if>
+	   	 	<if test="scriptContentType != null">
+	       		, script_content_type = #{scriptContentType} 
+	   	 	</if>
+	   	 	<if test="scriptGroupName != null">
+	       		, script_group_name = #{scriptGroupName} 
+	   	 	</if>
+	   	 	<if test="itemName != null">
+	       		, item_name = #{itemName} 
+	   	 	</if>
+	   	 	<if test="templateId != null">
+	       		, template_id = #{templateId} 
+	   	 	</if>   
+	   	 	
+	   	 	<if test="templateName != null">
+	       		, template_name = #{templateName} 
+	   	 	</if>  
+	   	 	<if test="lastUpdateTime != null">
+	       		, last_update_time = #{lastUpdateTime} 
+	   	 	</if> 
+	   	 	
+		 where id = #{id}
+	</update>
+
+	<select id="queryWhitelistCruiseCheckById" resultMap="whitelistCruiseCheck" parameterType="java.lang.String">
+		select <include refid="whitelist_cruisecheck_cols"/>, 
+			   s.whitelist_type host_whitelist_type, s.whitelist_id host_whitelist_id, 
+			   s.constraint_type host_constraint_type, s.constraint_value host_constraint_value,
+			   p.whitelist_type os_type_whitelist_type, p.whitelist_id os_type_whitelist_id, 
+			   p.constraint_type os_type_constraint_type, p.constraint_value os_type_constraint_value 
+		  from ops_whitelist_cruisecheck c
+		  left join ops_whitelist_constraint s on c.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = c.id and s.constraint_type = 'host' 
+		  left join ops_whitelist_constraint p on p.whitelist_type = c.whitelist_type 
+				and p.whitelist_id = c.id and p.constraint_type = 'os_type'	
+		 where c.id = #{id}
+	</select>
+	
+	<delete id="deleteWhitelistCruiseCheckById" parameterType="java.lang.String"> 
+		delete from ops_whitelist_cruisecheck where id = #{id}
+	</delete>
+	
+	
+	
+	
+	
+	<select id="queryActiveWhiteListCruiseCheckListByConstraintVal" resultMap="whitelistCruiseCheck" 
+				parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+		select <include refid="whitelist_cruisecheck_cols"/>
+		  from ops_whitelist_cruisecheck c inner join ops_whitelist_constraint cons
+		       on c.status = 'ON' and c.whitelist_type = cons.whitelist_type 
+		       and c.id = cons.whitelist_id and cons.whitelist_type = #{whitelistType} 
+		       and cons.constraintType = #{constraintType} and cons.constraint_value = #{constraintValue}
+	</select>
+	
+	
+	
+	<!--  漏洞白名单查询语句 sql for cruisecheck   -->
+	
+	
+  
+  
+	<sql id="whitelist_vulnerability_cols">
+		v.id, v.whitelist_type, v.pool_id,v.pool_name,v.vul_name, v.vul_level, v.vul_producer, v.vul_type, 
+		v.vul_id, v.remark, v.attachment,  v.creater, v.create_time ,v.updater ,
+		v.last_update_time ,v.status 
+	
+	</sql>
+	
+	<select id="queryWhitelistVulnerabilityList" resultMap="whitelistVulnerability"
+	 		parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistVulnerability$OpsWhitelistVulnerabilityQueryParam">
+		select <include refid="whitelist_vulnerability_cols"/>, 
+			   s.whitelist_type host_whitelist_type, s.whitelist_id host_whitelist_id, 
+			   s.constraint_type host_constraint_type, s.constraint_value host_constraint_value,
+			   p.whitelist_type os_type_whitelist_type, p.whitelist_id os_type_whitelist_id, 
+			   p.constraint_type os_type_constraint_type, p.constraint_value os_type_constraint_value 
+		  from ops_whitelist_vulnerability v
+		  left join ops_whitelist_constraint s on v.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = v.id and s.constraint_type = 'host' 
+		  left join ops_whitelist_constraint p on v.whitelist_type = p.whitelist_type 
+		  		and p.whitelist_id = v.id and p.constraint_type = 'os_type'	
+		  		
+		  		
+		 <!-- 资源池、漏洞名称、漏洞分类、漏洞级别、厂商类型，时间段（创建时间），状态，关联主机数量。 --> 		
+		 where 1 = 1
+		   	<if test="poolId != null and poolId != ''">
+		  		and  v.pool_id = #{poolId}
+		  	</if>
+		  	<if test="poolName != null and poolName != ''">
+		  		and  v.pool_name = #{poolName}
+		  	</if>
+		  	<if test="vulName != null and vulName != ''">
+		  		and v.vul_name = #{vulName}
+		  	</if>
+		  	
+		  	<if test="vulType != null and vulType != ''">
+		  		and v.vul_type = #{vulType }
+		  	</if>
+		  	
+		  	<if test="vulLevel != null and vulLevel != ''">
+		  		and v.vul_level = #{vulLevel}
+		  	</if>
+		  	
+		  	<if test="vulProducer != null and vulProducer != ''">
+		  		and v.vul_producer = #{vulProducer}
+		  	</if>
+			  	
+		  	<if test="status != null and status != ''">
+		  		and v.status = #{status}
+		  	</if>
+		  	
+		  	<if test="createTime != null">
+		  		and v.create_time &gt; #{createTime}  
+		  	</if>
+		  	
+		  	<if test="lastUpdateTime != null">
+		  		and v.last_update_time &lt; #{lastUpdateTime}  
+		  	</if>
+		  	
+		  	<if test="pageSize != null and pageSize > 0 ">
+	     	 	order by v.last_update_time desc
+	         	limit #{startIdx}, #{pageSize}
+          	</if>		
+	</select>
+	
+	<select id="queryWhitelistVulnerabilityTotalCount" resultType="java.lang.Integer"
+			parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistVulnerability$OpsWhitelistVulnerabilityQueryParam">
+		select count(v.id)
+		  from ops_whitelist_vulnerability v
+		  where 1 = 1
+		   	<if test="poolId != null and poolId != ''">
+		  		and  v.pool_id = #{poolId}
+		  	</if>
+		  	<if test="poolName != null and poolName != ''">
+		  		and  v.pool_name = #{poolName}
+		  	</if>
+		  	<if test="vulName != null and vulName != ''">
+		  		and v.vul_name = #{vulName}
+		  	</if>
+		  	<if test="vulLevel != null and vulLevel != ''">
+		  		and v.vul_level = #{vulLevel}
+		  	</if>
+		  	<if test="vulProducer != null and vulProducer != ''">
+		  		and v.vul_producer = #{vulProducer}
+		  	</if>
+		  	<if test="vulType != null and vulType != ''">
+		  		and v.vul_type = #{vulType }
+		  	</if>
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	<if test="status != null and status != ''">
+		  		and v.status = #{status}
+		  	</if>
+		  	
+		  	<if test="createTime != null">
+		  		and v.create_time &gt; #{createTime}  
+		  	</if>
+		  	
+		  	<if test="lastUpdateTime != null">
+		  		and v.last_update_time &lt; #{lastUpdateTime}  
+		  	</if>
+		  	
+	</select>
+
+
+
+	<insert id="insertOpsWhitelistVulnerability" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistVulnerability">
+		insert into ops_whitelist_vulnerability (
+			id, whitelist_type, pool_id,pool_name, vul_name, vul_level, vul_producer, vul_type,vul_id, remark, attachment, creater, 
+			create_time,updater, last_update_time, status
+		) VALUES (
+			#{id}, #{whitelistType}, #{poolId},#{poolName}, #{vulName}, #{ vulLevel}, #{vulProducer}, #{vulType},#{vulId}, #{remark}, 
+			#{attachmentJson}, #{creater}, #{createTime}, #{updater}, #{lastUpdateTime}, #{status}
+		)
+	</insert>
+	
+	<update id="updateOpsWhitelistVulnerability" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistVulnerability">
+		update ops_whitelist_vulnerability
+		   set id = #{id}
+	   	 	<if test="poolId != null and poolId != ''">
+		  		, pool_id = #{poolId}
+		  	</if>
+		  	
+		  	<if test="poolName != null and poolName != ''">
+		  		, pool_name = #{poolName}
+		  	</if>
+		  	<if test="vulName != null and vulName != ''">
+		  		, vul_name = #{vulName}
+		  	</if>
+		  	<if test="vulLevel != null and vulLevel != ''">
+		  		, vul_level = #{vulLevel}
+		  	</if>
+		  	<if test="vulProducer != null and vulProducer != ''">
+		  		, vul_producer = #{vulProducer}
+		  	</if>
+		  	<if test="vulType != null and vulType != ''">
+		  		, vul_type = #{vulType }
+		  	</if>
+		  	<if test="vulId != null and vulId != ''">
+		  		, vul_id = #{vulId}
+		  	</if>
+		  	<if test="attachmentJson != null and attachmentJson != ''">
+	       		, attachment = #{attachmentJson} 
+	   	 	</if> 
+	
+		  	<if test="remark != null and remark != ''">
+		  		, remark = #{remark}
+		  	</if>
+		  	
+		  	<if test="status != null and status != ''">
+		  		, status = #{status}
+		  	</if>
+		  	 	
+		  	<if test="updater != null and updater !=''">
+		  		, updater = #{updater}  
+		  	</if>
+		  	<if test="lastUpdateTime != null and lastUpdateTime !=''">
+		  		, last_update_time = #{lastUpdateTime}  
+		  	</if>
+	   	 	
+		 where id = #{id}
+	</update>
+
+	<select id="queryWhitelistVulnerabilityById" resultMap="whitelistVulnerability" parameterType="java.lang.String">
+		select <include refid="whitelist_vulnerability_cols"/>, 
+			   s.whitelist_type host_whitelist_type, s.whitelist_id host_whitelist_id, 
+			   s.constraint_type host_constraint_type, s.constraint_value host_constraint_value,
+			   p.whitelist_type os_type_whitelist_type, p.whitelist_id os_type_whitelist_id, 
+			   p.constraint_type os_type_constraint_type, p.constraint_value os_type_constraint_value 
+		  from ops_whitelist_vulnerability v
+		  left join ops_whitelist_constraint s on v.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = v.id and s.constraint_type = 'host' 
+		  left join ops_whitelist_constraint p on p.whitelist_type = v.whitelist_type 
+				and p.whitelist_id = v.id and p.constraint_type = 'os_type'	
+		 where v.id = #{id}
+	</select>
+	
+	<delete id="deleteWhitelistVulnerabilityById" parameterType="java.lang.String"> 
+		delete from ops_whitelist_vulnerability where id = #{id}
+	</delete>
+	
+	
+	
+	
+	
+	<select id="queryActiveWhiteListVulnerabilityListByConstraintVal" resultMap="whitelistVulnerability" 
+				parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+		select <include refid="whitelist_vulnerability_cols"/>
+		  from ops_whitelist_vulnerability  v inner join ops_whitelist_constraint cons
+		       on v.status = 'ON' and v.whitelist_type = cons.whitelist_type 
+		       and v.id = cons.whitelist_id and cons.whitelist_type = #{whitelistType} 
+		       and cons.constraintType = #{constraintType} and cons.constraint_value = #{constraintValue}
+	</select>
+	
+	<!-- 基线黑名单查询语句-->
+	
+	
+	<sql id="whitelist_baseline_cols">
+		b.id, b.whitelist_type, b.pool_id,b.pool_name,b.baseline_type, b.baseline_id, b.remark, b.attachment,  b.creater, b.create_time ,b.updater ,
+		b.last_update_time ,b.status 
+	
+	</sql>
+	
+	<select id="queryWhitelistBaselineList" resultMap="whitelistBaseline"
+	 		parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistBaseline$OpsWhitelistBaselineQueryParam">
+		select <include refid="whitelist_baseline_cols"/>, 
+			   s.whitelist_type script_whitelist_type, s.whitelist_id script_whitelist_id, 
+			   s.constraint_type script_constraint_type, s.constraint_value script_constraint_value,
+			   p.whitelist_type pipeline_whitelist_type, p.whitelist_id pipeline_whitelist_id, 
+			   p.constraint_type pipeline_constraint_type, p.constraint_value pipeline_constraint_value 
+		  from ops_whitelist_baseline b
+		  left join ops_whitelist_constraint s on b.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = b.id and s.constraint_type = 'script' 
+		  left join ops_whitelist_constraint p on b.whitelist_type = p.whitelist_type 
+		  		and p.whitelist_id = b.id and p.constraint_type = 'pipeline'	
+		  		
+		  		
+		 <!-- 资源池、漏洞名称、漏洞分类、漏洞级别、厂商类型，时间段（创建时间），状态，关联主机数量。 --> 		
+		 where 1 = 1
+		   	<if test="poolId != null and poolId != ''">
+		  		and  b.pool_id = #{poolId}
+		  	</if>
+		  	<if test="poolName != null and poolName != ''">
+		  		and  b.pool_name = #{poolName}
+		  	</if>
+		  	
+		  	<if test="baselineType != null and baselineType != ''">
+		  		and b.baseline_type = #{baselineType}
+		  	</if>
+		  	
+		  	<if test="baselineId != null and baselineId != ''">
+		  		and b.baseline_id = #{baselineId }
+		  	</if>
+		  	
+
+			  	
+		  	<if test="status != null and status != ''">
+		  		and b.status = #{status}
+		  	</if>
+		  	
+		  	<if test="createTime != null">
+		  		and b.create_time &gt; #{createTime}  
+		  	</if>
+		  	
+		  	<if test="lastUpdateTime != null">
+		  		and b.last_update_time &lt; #{lastUpdateTime}  
+		  	</if>
+		  	
+		  	<if test="pageSize != null and pageSize > 0 ">
+	     	 	order by b.last_update_time desc
+	         	limit #{startIdx}, #{pageSize}
+          	</if>		
+	</select>
+	
+	<select id="queryWhitelistBaselineTotalCount" resultType="java.lang.Integer"
+			parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistBaseline$OpsWhitelistBaselineQueryParam">
+		select count(b.id)
+		  from ops_whitelist_baseline b
+		  where 1 = 1
+		   	<if test="poolId != null and poolId != ''">
+		  		and  b.pool_id = #{poolId}
+		  	</if>
+		  	<if test="poolName != null and poolName != ''">
+		  		and  b.pool_name = #{poolName}
+		  	</if>
+		  	<if test="baselineType != null and baselineType != ''">
+		  		and b.baseline_type = #{baselineType}
+		  	</if>
+		  	<if test="baselineId != null and baselineId != ''">
+		  		and b.baseline_id = #{baselineId}
+		  	</if>
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	
+		  	<if test="status != null and status != ''">
+		  		and b.status = #{status}
+		  	</if>
+		  	
+		  	<if test="createTime != null">
+		  		and b.create_time &gt; #{createTime}  
+		  	</if>
+		  	
+		  	<if test="lastUpdateTime != null">
+		  		and b.last_update_time &lt; #{lastUpdateTime}  
+		  	</if>
+		  	
+	</select>
+
+
+
+	<insert id="insertOpsWhitelistBaseline" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistBaseline">
+		insert into ops_whitelist_baseline (
+			id, whitelist_type, pool_id,pool_name baseline_type, baseline_id,  remark, attachment, creater, 
+			create_time,updater, last_update_time, status
+		) VALUES (
+			#{id}, #{whitelistType}, #{poolId},#{poolName}, #{baselineType}, #{ baselineId},  #{remark}, 
+			#{attachmentJson}, #{creater}, #{createTime}, #{updater}, #{lastUpdateTime}, #{status}
+		)
+	</insert>
+	
+	<update id="updateOpsWhitelistBaseline" parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistBaseline">
+		update ops_whitelist_cruisecheck
+		   set id = #{id}
+	   	 	<if test="poolId != null and poolId != ''">
+		  		, pool_id = #{poolId}
+		  	</if>
+		  	
+		  	<if test="poolName != null and poolName != ''">
+		  		, pool_name = #{poolName}
+		  	</if>
+		  	<if test="baselineType != null and baselineType != ''">
+		  		, baseline_type = #{baselineType}
+		  	</if>
+		  	<if test="baselineId != null and baselineId != ''">
+		  		, baseline_id = #{baselineId}
+		  	</if>
+		  	
+		  	<if test="attachmentJson != null and attachmentJson != ''">
+	       		, attachment = #{attachmentJson} 
+	   	 	</if> 
+	
+		  	<if test="remark != null and remark != ''">
+		  		, remark = #{remark}
+		  	</if>
+		  	
+		  	<if test="status != null and status != ''">
+		  		, status = #{status}
+		  	</if>
+		  	 	
+		  	<if test="updater != null and updater !=''">
+		  		, updater = #{updater}  
+		  	</if>
+		  	<if test="lastUpdateTime != null and lastUpdateTime !=''">
+		  		, last_update_time = #{lastUpdateTime}  
+		  	</if>
+	   	 	
+		 where id = #{id}
+	</update>
+
+	<select id="queryWhitelistBaselineById" resultMap="whitelistBaseline" parameterType="java.lang.String">
+		select <include refid="whitelist_baseline_cols"/>, 
+			   s.whitelist_type script_whitelist_type, s.whitelist_id script_whitelist_id, 
+			   s.constraint_type script_constraint_type, s.constraint_value script_constraint_value,
+			   p.whitelist_type pipeline_whitelist_type, p.whitelist_id pipeline_whitelist_id, 
+			   p.constraint_type pipeline_constraint_type, p.constraint_value pipeline_constraint_value 
+		  from ops_whitelist_baseline b
+		  left join ops_whitelist_constraint s on b.whitelist_type = s.whitelist_type 
+		  		and s.whitelist_id = b.id and s.constraint_type = 'script' 
+		  left join ops_whitelist_constraint p on p.whitelist_type = b.whitelist_type 
+				and p.whitelist_id = b.id and p.constraint_type = 'pipeline'	
+		 where b.id = #{id}
+	</select>
+	
+	<delete id="deleteWhitelistBaselineById" parameterType="java.lang.String"> 
+		delete from ops_whitelist_baseline where id = #{id}
+	</delete>
+	
+	
+	
+	
+	
+	<select id="queryActiveWhiteListBaselineListByConstraintVal" resultMap="whitelistBaseline" 
+				parameterType="com.aspire.mirror.ops.api.domain.whitelist.OpsWhitelistConstraint">
+		select <include refid="whitelist_baseline_cols"/>
+		  from ops_whitelist_baseline b inner join ops_whitelist_constraint cons
+		       on b.status = 'ON' and b.whitelist_type = cons.whitelist_type 
+		       and b.id = cons.whitelist_id and cons.whitelist_type = #{whitelistType} 
+		       and cons.constraintType = #{constraintType} and cons.constraint_value = #{constraintValue}
+	</select>
+	
+	
+	
+	
+	
+</mapper>

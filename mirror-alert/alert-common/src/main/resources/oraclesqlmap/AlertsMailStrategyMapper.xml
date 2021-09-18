@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.mailAlert.AlertsMailStrategyDao">
+    <resultMap id="strategyResultMap" type="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailFilterStrategy">
+        <result column="id" property="id" jdbcType="INTEGER"></result>
+        <result column="filter_id" property="filterId" jdbcType="VARCHAR"></result>
+        <result column="alert_field" property="alertField" jdbcType="VARCHAR"></result>
+        <result column="mail_field" property="mailField" jdbcType="INTEGER"></result>
+        <result column="field_match_val" property="fieldMatchValue" jdbcType="VARCHAR"></result>
+        <result column="use_reg" property="useReg" jdbcType="INTEGER"></result>
+        <result column="field_match_reg" property="fieldMatchReg" jdbcType="VARCHAR"></result>
+        <result column="field_match_target" property="fieldMatchTarget" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+
+    <insert id="batchInsertStrategies" parameterType="list">
+        INSERT INTO alert_mail_resolve_strategy(
+        id,filter_id, alert_field, mail_field, field_match_val, use_reg, field_match_reg, field_match_target
+        )
+        select  SEQ_MAIL_STRATEGY.nextval,A.* from
+        (
+        <foreach collection="list" item="item" index="index" separator="union all">
+            select
+            #{item.filterId,jdbcType=VARCHAR},
+            #{item.alertField,jdbcType=VARCHAR},
+            #{item.mailField,jdbcType=INTEGER},
+            #{item.fieldMatchValue,jdbcType=VARCHAR},
+            #{item.useReg,jdbcType=INTEGER},
+            #{item.fieldMatchReg,jdbcType=VARCHAR},
+            #{item.fieldMatchTarget,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+        ) A
+    </insert>
+
+
+    <select id="selectStrategiesByFilterId" parameterType="string" resultMap="strategyResultMap">
+        SELECT *
+        FROM alert_mail_resolve_strategy
+        WHERE filter_id = #{filterId}
+    </select>
+
+
+    <update id="updateStrategy" parameterType="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailFilterStrategy">
+        update alert_mail_resolve_strategy
+        <set>
+            <if test="alertField != null and alertField != ''">
+                alert_field = #{alertField},
+            </if>
+            <if test="mailField != null and mailField != ''">
+                mail_field = #{mailField},
+            </if>
+            <if test="fieldMatchValue != null and fieldMatchValue != ''">
+                field_match_val = #{fieldMatchValue},
+            </if>
+            <if test="useReg != null">
+                use_reg = #{useReg},
+            </if>
+            <if test="fieldMatchReg != null and fieldMatchReg != ''">
+                field_match_reg = #{fieldMatchReg},
+            </if>
+            <if test="fieldMatchTarget != null and fieldMatchTarget != ''">
+                field_match_target = #{fieldMatchTarget},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <delete id="removeStrategyByFilterIds" parameterType="list">
+        DELETE FROM alert_mail_resolve_strategy WHERE filter_id IN
+        <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.AlertSubscribeRulesDao">
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.Alerts" id="baseResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="operateStatus" column="operate_status" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time" jdbcType="TIMESTAMP"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR"/>
+        <result property="messageSend" column="message_send" jdbcType="VARCHAR"/>
+        <result property="messageOpen" column="message_open" jdbcType="VARCHAR"/>
+        <result property="mailSend" column="mail_send" jdbcType="VARCHAR"/>
+        <result property="mailOpen" column="mail_open" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="hostName" column="host_name" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="itemKey" column="item_key" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="query" parameterType="map" resultType="map">
+        SELECT
+        CASE alert.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' when '1' then
+        '提示'else alert.alert_level end alertLevel,
+        CASE r.is_open when '1' then '启用' when '0' then '关闭' else r.is_open end isOpen,
+        CASE r.notify_type when '0' then '邮件/短信' when '1' then '邮件'when '2' then '短信' else r.notify_type end notifyType,
+        r.subscribe_rules subscribeRules,alert.moni_index moniIndex,alert.device_ip deviceIp,alert.idc_type
+        idcType, r.defensetor defensetor ,alert.id id,alert.item_key itemKey,DATE_FORMAT(r.create_time,'%Y-%m-%d %H:%i:%s') curSendTime,r.is_delete,alert.id managementId
+        from alert_subscribe_rules r join alert_subscribe_rules_management alert
+        on r.id=alert.alert_subscribe_rules_id where r.is_delete =1
+
+        <if test="deviceIp != null and  deviceIp != ''">
+            and alert.device_ip like concat(concat('%',#{deviceIp}),'%')
+        </if>
+        <if test="subscribeRules != null and  subscribeRules != ''">
+            and r.subscribe_rules like concat(concat('%',#{subscribeRules}),'%')
+        </if>
+
+        <if test="alertLevel != null and alertLevel != ''">
+            and alert.alert_level = #{alertLevel}
+        </if>
+        <if test="idcType != null and  idcType != ''">
+            and alert.idc_type = #{idcType}
+        </if>
+        order by curSendTime
+        <if test="pageNo != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+    <sql id="page_limit">
+        limit #{pageNo}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </sql>
+
+
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRules"
+            resultType="Integer">
+        select count(1) from ( SELECT
+        CASE alert.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' when '1' then
+        '提示'else alert.alert_level end alertLevel,
+        CASE r.is_open when '1' then '启用' when '0' then '关闭' else r.is_open end isOpen,
+        CASE r.notify_type when '0' then '邮件/短信' when '1' then '邮件'when '2' then '短信' else r.notify_type end notifyType,
+        r.subscribe_rules subscribeRules,alert.moni_index moniIndex,alert.device_ip,alert.idc_type
+        idcType,alert.item_key itemKey,DATE_FORMAT(r.create_time,'%Y-%m-%d
+        %H:%i:%s')curSendTime,r.is_delete,alert.id managementId
+        from alert_subscribe_rules r join alert_subscribe_rules_management alert
+        on r.id=alert.alert_subscribe_rules_id
+        where r.is_delete=1
+        <if test="deviceIp != null and  deviceIp != ''">
+            and alert.device_ip like concat(concat('%',#{deviceIp}),'%')
+        </if>
+        <if test="subscribeRules != null and  subscribeRules != ''">
+            and r.subscribe_rules like concat(concat('%',#{subscribeRules}),'%')
+        </if>
+
+        <if test="alertLevel != null and alertLevel != ''">
+            and alert.alert_level = #{alertLevel}
+        </if>
+        <if test="idcType != null and  idcType != ''">
+            and alert.idc_type = #{idcType}
+        </if>
+        order by curSendTime) t
+    </select>
+    <select id="queryRules" parameterType="map" resultType="map">
+        select count(1) count,t.subscribeRules  ,t.isOpen,t.notifyType,t.curSendTime,t.id ,t.defensetor
+        from
+        (SELECT
+        CASE r.is_open when '1' then '启用' when '0' then '关闭' else r.is_open end isOpen,
+        CASE r.notify_type when '0' then '邮件/短信' when '1' then '邮件'when '2' then '短信' else r.notify_type end notifyType,
+        r.subscribe_rules
+        subscribeRules,r.id id,r.defensetor defensetor,
+        DATE_FORMAT(r.cur_send_time,'%Y-%m-%d %H:%i:%s') curSendTime
+        from alert_subscribe_rules r join alert_subscribe_rules_management  management on r.id=management.alert_subscribe_rules_id
+        where r.is_delete =1 order by curSendTime) t
+        <where>
+            <if test="subscribeRules != null and  subscribeRules != ''">
+                and t.subscribeRules like concat(concat('%', #{subscribeRules}),'%')
+            </if>
+            <if test="isOpen != null and  isOpen != ''">
+                and t.isOpen= #{isOpen}
+            </if>
+        </where>
+        GROUP BY t.subscribeRules,t.notifyType,isOpen
+        <if test="pageNo != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+
+    <select id="findRulesWithCount" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRules"
+            resultType="Integer">
+      <!--  select count(1) from ( select count(1) count,t.subscribeRules ,t.alertLevel
+        ,t.isOpen,t.notifyType,t.curSendTime,t.id from
+        (SELECT
+        CASE alert.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' when '1' then
+        '提示'else alert.alert_level end alertLevel,
+        CASE r.is_open when '1' then '启用' when '0' then '关闭' else r.is_open end isOpen,
+        CASE r.notify_type when '0' then '邮件/短信' when '1' then '邮件'when '2' then '短信' else r.notify_type end notifyType,
+        r.subscribe_rules
+        subscribeRules,r.id id
+        ,alert.moni_index,alert.device_ip,alert.idc_type,alert.item_key,DATE_FORMAT(r.cur_send_time,
+        '%Y-%m-%d %H:%i:%s') curSendTime
+        from alert_subscribe_rules r left join alert_subscribe_rules_management alert
+        on r.id=alert.alert_subscribe_rules_id where r.is_delete =1 order by curSendTime) t
+        <where>
+            <if test="subscribeRules != null and  subscribeRules != ''">
+                and t.subscribeRules like concat(concat('%', #{subscribeRules}),'%')
+            </if>
+            <if test="isOpen != null and  isOpen != ''">
+                and t.isOpen= #{isOpen}
+            </if>
+        </where>
+        GROUP BY t.subscribeRules,t.notifyType,isOpen)t1-->
+        select count(1) from (select count(1) count,t.subscribeRules ,t.isOpen,t.notifyType,
+        t.curSendTime,t.id ,t.defensetor from (SELECT CASE r.is_open when '1' then '启用' when '0' then '关闭' else r.is_open end isOpen, CASE r.notify_type when '0' then '邮件/短信' when '1' then '邮件'when '2' then '短信' else r.notify_type end notifyType, r.subscribe_rules subscribeRules,r.id id,r.defensetor defensetor,
+        DATE_FORMAT(r.cur_send_time,'%Y-%m-%d %H:%i:%s') curSendTime from alert_subscribe_rules r join alert_subscribe_rules_management management on r.id=management.alert_subscribe_rules_id
+        where r.is_delete =1 order by curSendTime) t
+        <where>
+            <if test="subscribeRules != null and  subscribeRules != ''">
+                and t.subscribeRules like concat(concat('%', #{subscribeRules}),'%')
+            </if>
+            <if test="isOpen != null and  isOpen != ''">
+                and t.isOpen= #{isOpen}
+            </if>
+        </where>
+        GROUP BY t.subscribeRules,t.notifyType,isOpen
+        <if test="pageNo != null">
+            <include refid="page_limit"/>
+        </if>)t1
+
+    </select>
+
+    <update id="updateRules" parameterType="java.util.List">
+        UPDATE alert_subscribe_rules SET is_open = #{isOpen} WHERE is_delete=1 and id IN
+        <foreach collection="idlist" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </update>
+
+    <delete id="deteleRules" parameterType="java.util.List">
+        update alert_subscribe_rules set is_delete=0 WHERE id IN
+        <foreach collection="idlist" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <select id="export" parameterType="map"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.ExportAlertSubscribeRulesManagement">
+        SELECT
+        alert.subscribe_rules subscribeRules,
+        management.device_ip deviceIp,
+        CASE management.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' when '1'
+        then
+        '提示'else management.alert_level end alertLevel,
+        management.idc_type idcType,
+        management.item_key itemKey,
+        management.moni_index moniIndex
+        from alert_subscribe_rules alert left join alert_subscribe_rules_management management on
+        alert.id=management.alert_subscribe_rules_id
+        where alert.is_delete =1 and alert.id IN
+        <foreach collection="idlist" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </select>
+
+    <select id="querySubscribeRules" resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement">
+     SELECT   CASE management.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' when '1' then
+        '提示'else management.alert_level end alertLevel ,
+		 CASE rules.is_open when '1' then '启用' when '0' then '关闭' else rules.is_open end isOpen,
+		  rules.subscribe_rules subscribeRules,  management.idc_type idcType ,rules.id id ,rules.defensetor defensetor from
+		  alert_subscribe_rules_management management join alert_subscribe_rules rules
+		  on rules.id=management.alert_subscribe_rules_id  where rules.is_delete =1
+		  GROUP BY id
+   </select>
+
+    <select id="selectByIds" resultType="com.aspire.mirror.alert.server.dao.alert.po.Alerts" resultMap="baseResultMap">
+        select
+        t.*
+        from alert_alerts t
+        where alert_id IN
+        <foreach collection="list" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement">
+        INSERT INTO alert_subscribe_rules_management (
+            id,
+            alert_subscribe_rules_id,
+            alert_level,
+            moni_index,
+            device_ip,
+            idc_type,
+            item_key,
+            alert_id,
+            cur_moni_value
+             )
+        VALUES
+            (#{id}, #{alertSubscribeRulesId}, #{alertLevel}, #{moniIndex},#{deviceIp}, #{idcType},
+             #{itemKey},#{alertId},#{curMoniValue})
+    </insert>
+
+    <insert id="insertRevicer" parameterType="com.aspire.mirror.alert.server.dao.notify.po.Reciver">
+        INSERT INTO alert_subscribe_filter_rules_reciver (
+            id,
+            telephone,
+            alert_subscribe_rules_id,
+            email,
+            notify_obj_info)
+        VALUES
+            (#{id}, #{telephone}, #{alertSubscribeRulesId}, #{email}, #{notifyObjInfo})
+    </insert>
+
+
+    <insert id="CreateSubscribeRules" parameterType="com.aspire.mirror.alert.server.dao.notify.po.CreateAlertSubscribeRules">
+        INSERT INTO alert_subscribe_rules (
+            id,
+            is_open,
+            subscribe_rules,
+            notify_alert_type,
+            notify_type,
+            is_recurrence_interval,
+            recurrence_interval,
+            recurrence_interval_util,
+            recurrence_count,
+            email_type,
+            create_time,
+            creator,
+            period,
+            start_period,
+            end_period,
+            emial_content,
+            emial_subject,
+            sms_content,
+            is_delete,
+            defensetor)
+        VALUES
+            (#{uuid}, #{isOpen}, #{subscribeRules}, #{notifyAlertType},#{notifyType},#{isRecurrenceInterval},
+            #{recurrenceInterval}, #{recurrenceIntervalUtil}, #{recurrenceCount},#{emailType},NOW(),
+            #{creator},#{period},#{startPeriod},#{endPeriod},#{emialContent},#{subject},#{smsContent},#{isDelete},#{defensetor})
+    </insert>
+
+    <delete id="deleteReciver" parameterType="java.util.List">
+        DELETE FROM alert_subscribe_filter_rules_reciver WHERE alert_subscribe_rules_id IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAlertSubscribeRules" parameterType="java.util.List">
+        DELETE FROM alert_subscribe_rules WHERE id IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAlertSubscribeRulesManagement" parameterType="java.util.List">
+        DELETE FROM alert_subscribe_rules_management WHERE alert_subscribe_rules_id IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAlertSubscribeRulesManagementByAlertId">
+        DELETE FROM alert_subscribe_rules_management WHERE alert_id=#{id}
+   </delete>
+
+    <select id="getAlertSubscribeRulesNotifyConfig" parameterType="map"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesDetail">
+        SELECT
+        id,
+        is_open isOpen,
+        notify_alert_type notifyAlertType,
+        notify_type notifyType,
+        is_recurrence_interval ,
+        recurrence_interval recurrenceInterval,
+        recurrence_interval_util recurrenceIntervalUtil,
+        recurrence_count recurrenceCount,
+        email_type emailType,
+        send_operation sendOperation,
+        cur_send_time curSendTime,
+        period period,
+        create_time,
+        start_period startPeriod,
+        end_period endPeriod,
+        emial_content emialContent,
+        emial_subject emialSubject,
+        sms_content smsContent
+        FROM
+        alert_subscribe_rules
+        WHERE
+        is_open = 1 and is_delete = 1
+        <if test="params !=null">
+            <if test="params['resend'] != '' and params['resend'] != null ">
+                AND is_recurrence_interval = 1
+            </if>
+        </if>
+    </select>
+
+
+    <select id="getRevicerInformationByAlertSubscribe_rulesId" parameterType="map"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.Reciver">
+       SELECT t1.telephone,t1.email,t1.notify_obj_info notifyObjInfo from alert_subscribe_rules t left join alert_subscribe_filter_rules_reciver t1
+       on t.id=t1.alert_subscribe_rules_id  where t1.alert_subscribe_rules_id=#{id}
+    </select>
+
+    <select id="detailById" parameterType="java.lang.String" resultType="java.util.Map">
+         select
+         t.*
+        from alert_subscribe_rules_management t where t.alert_subscribe_rules_id= #{alertId}
+    </select>
+
+    <select id="selectBySubscribeRulesIds" resultType="java.util.Map" parameterType="java.util.List">
+        select * from alert_subscribe_rules_management
+        where alert_subscribe_rules_id in
+        <foreach collection="list" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </select>
+
+    <select id="GetSubscribeRulesRevicerById" resultType="com.aspire.mirror.alert.server.dao.notify.po.Reciver"
+            parameterType="java.util.List">
+           SELECT telephone,email,notify_obj_info notifyObjInfo  FROM `alert_subscribe_filter_rules_reciver`
+           WHERE alert_subscribe_rules_id=#{id}
+        </select>
+    <select id="GetSubscribeRulesById" resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesDetail"
+            parameterType="java.util.List">
+           select subscribe_rules subscribeRules,notify_alert_type notifyAlertType,notify_type notifyType,email_type emailType,
+           is_recurrence_interval isRecurrenceInterval,recurrence_interval recurrenceInterval,recurrence_interval_util recurrenceIntervalUtil,
+           recurrence_count recurrenceCount,resend_time resendTime, creator creator,period period,start_period startPeriod,end_period endPeriod,
+           emial_content emialContent,emial_subject emialSubject,sms_content smsContent,defensetor from  alert_subscribe_rules
+           WHERE  id=#{id}
+        </select>
+
+    <select id="getReSendAlerts" parameterType="java.util.Map" resultType="java.util.Map">
+        select a.*, al.receiver_tmp, al.send_time_tmp from
+        (select a.* from alert_alerts a JOIN alert_subscribe_rules_management b
+        on a.device_ip = b.device_ip and a.alert_level=b.alert_level and a.item_key=b.item_key and a.idc_type=b.idc_type
+        where b.alert_subscribe_rules_id=#{id}) a JOIN
+        (select send_alert_id, receiver receiver_tmp, MAX(send_time) send_time_tmp, COUNT(1) log_count from
+        alert_notify_config_log
+        where alert_notify_config_id= #{id}
+        GROUP BY send_alert_id, receiver
+        <if test="recurrenceCount != null and recurrenceCount > 0">
+            having log_count <![CDATA[<]]> #{recurrenceCount}
+        </if>
+        ) al on a.alert_id=al.send_alert_id
+    </select>
+    <update id="updateAlertSubscribeules" parameterType="map">
+        update alert_subscribe_rules
+        set cur_send_time = DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%S')
+        where id= #{alertNotifyConfigId}
+    </update>
+
+    <select id="querySubscribeRulesManagementById" parameterType="java.util.Map"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement">
+        select alert_level alertLevel,device_ip deviceIp,idc_type idcType,moni_index moniIndex,item_key itemKey ,alert_id alertId from alert_subscribe_rules_management
+        where alert_subscribe_rules_id =#{id}
+   </select>
+
+
+    <select id="querySubscribeRulesManagement" parameterType="java.util.Map" resultType="map">
+        select a.* from alert_alerts a JOIN alert_subscribe_rules_management b
+        on a.device_ip = b.device_ip and a.alert_level=b.alert_level and a.item_key=b.item_key and a.idc_type=b.idc_type
+        where b.alert_subscribe_rules_id=#{id}
+        <if test="startTime != null and endTime != null and startTime != '' and endTime != ''">
+            and create_time  <![CDATA[>=]]> #{startTime} and create_time  <![CDATA[<]]> #{endTime}
+        </if>
+    </select>
+
+    <select id="querySubscribeRulesManagementHis" parameterType="java.util.Map" resultType="map">
+        select a.* from alert_alerts_his a JOIN alert_subscribe_rules_management b
+        on a.device_ip = b.device_ip and a.alert_level=b.alert_level and a.item_key=b.item_key and a.idc_type=b.idc_type
+        where b.alert_subscribe_rules_id=#{id}
+        <if test="startTime != null and endTime != null and startTime != '' and endTime != ''">
+            and alert_end_time  <![CDATA[>=]]> #{startTime} and alert_end_time  <![CDATA[<]]> #{endTime}
+        </if>
+    </select>
+    <delete id="deleteSubscribeRulesManagement" parameterType="java.util.List">
+        DELETE FROM alert_subscribe_rules_management WHERE id IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <select id="getSubscribeRules" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRules"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRules">
+      select sms_content smsContent, emial_subject emialSubject,emial_content emialContent from  alert_subscribe_rules
+      where id=#{id}
+    </select>
+
+    <select id="selectAlertSubscribeRulesManagementBysubscribeRules"
+            parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement">
+        SELECT
+		  rules.subscribe_rules subscribeRules,rules.id id from
+		  alert_subscribe_rules_management management left join alert_subscribe_rules rules
+		  on rules.id=management.alert_subscribe_rules_id  where rules.is_delete =1 and   rules.subscribe_rules=#{subscribeRules}
+		  GROUP BY id
+    </select>
+
+    <update id="update" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement">
+           update alert_subscribe_rules_management
+         set
+            alert_level=#{alertLevel},
+            moni_index=#{moniIndex},
+            device_ip=#{deviceIp},
+            idc_type=#{idcType},
+            item_key=#{itemKey},
+            alert_id=#{alertId},
+            id=#{id}
+            where alert_subscribe_rules_id=#{alertSubscribeRulesId}
+    </update>
+
+
+    <update id="updateRevicer" parameterType="com.aspire.mirror.alert.server.dao.notify.po.Reciver">
+       update alert_subscribe_filter_rules_reciver
+         set
+            telephone=#{telephone},
+            email=#{email},
+            notify_obj_info=#{notifyObjInfo}
+          where alert_subscribe_rules_id=#{alertSubscribeRulesId}
+    </update>
+
+    <update id="updateSubscribeRules" parameterType="com.aspire.mirror.alert.server.dao.notify.po.CreateAlertSubscribeRules">
+         update alert_subscribe_rules
+         set
+            is_open=#{isOpen},
+            subscribe_rules=#{subscribeRules},
+            notify_alert_type=#{notifyAlertType},
+            notify_type=#{notifyType},
+            is_recurrence_interval=#{isRecurrenceInterval},
+            recurrence_interval=#{recurrenceInterval},
+            recurrence_interval_util= #{recurrenceIntervalUtil},
+            recurrence_count=#{recurrenceCount},
+            email_type=#{emailType},
+            create_time=NOW(),
+            creator=#{creator},
+            period=#{period},
+            start_period=#{startPeriod},
+            end_period=#{endPeriod},
+            emial_content=#{emialContent},
+            emial_subject=#{subject},
+            sms_content=#{smsContent},
+            is_delete=#{isDelete}
+            where id=#{uuid}
+    </update>
+
+
+
+
+    <select id="querySubscribeRulesManagementByAlertId" parameterType="java.util.Map"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRulesManagement">
+        select  alert_subscribe_rules_id alertSubscribeRulesId from alert_subscribe_rules_management
+        where alert_id =#{id} and alert_subscribe_rules_id=#{alertSubscribeRulesId}
+   </select>
+
+
+    <select id="queryAlertSubscribeRules" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRules"
+            resultType="com.aspire.mirror.alert.server.dao.notify.po.AlertSubscribeRules">
+        select  subscribe_rules subscribeRules, id  from alert_subscribe_rules
+   </select>
+
+
+
+</mapper>

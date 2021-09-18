@@ -1,0 +1,179 @@
+pipeline {
+    agent any 
+    environment {
+		ROOT_DIR='${WORKSPACE}'
+        K8S_APP_NAME='webbas-support'  //部署到k8s中定义的应用名称，需要修改
+        K8S_APP_VERSION_URL='version' //k8s应用url 需要修改，可以为空
+		K8S_NODE_PORT='30344'  //k8s应用暴露给主机的端口，可通过此在集群外访问应用。需要修改，该端口需要提前申请
+		K8S_NAMESPACE='yw-webbas' //k8s应用命名空间，需要修改，需要提前申请
+		K8S_NODE_HOST='10.1.202.8' //k8s应用访问端点中的IP，一般不需要修改
+		DOCKER_HOST='tcp://10.1.202.102:2375' //镜像构建主机，一般不需要修改
+		DOKCER_BASE_IMAGE='10.1.202.102:8082/aspire-base/centos7-jdk8' //基础镜像简写，一般不需要修改
+		DOKCER_IMAGE='10.1.202.102:8082/aspire-webbas/webbas-support' //应用镜像名称，需要修改,私有镜像仓库用户名test需提前申请，应用名称demo需修改为实际的
+        EMAIL_ALERTS='zhuxiaolong@aspirecn.com'
+		MVN_OPTS='-Duser.home=/var/maven'
+		
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timeout(time: 25, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
+
+    stages {
+
+        stage('config server/eureka/adapt/proxy/alert/common/composite/template/theme') {
+            steps {
+                createVersion()
+                sh "cd ${ROOT_DIR}/mirror-bdc"
+                sh "mvn  clean  package -Ppipeline -Dunit-tests.skip=true -Drevision=${versionName} -f  pom.xml"
+               	archiveArtifacts "**/target/*.zip"
+            }
+        }
+    }
+	post {
+		// Always runs. And it runs before any of the other post conditions.
+        always {
+            // Archive Unit and integration test results, if any
+            junit (allowEmptyResults: true,testResults: '**/target/surefire-reports/TEST-*.xml, **/target/failsafe-reports/*.xml')
+            //writeFile(file:'devops.html',text:'<html><body><h2><p style="text-align:center" title="point to yg devops"><Strong><a href="http://10.1.202.102">yg devops entrypoint</a></p></h2></body></html>')
+            //archiveArtifacts '*.html'
+            // Let's wipe out the workspace before we finish!
+            //deleteDir()
+        }
+        success  {
+            sendEmail("Successful");
+        }
+	    unstable {
+	        sendEmail("Unstable");
+	    }
+	    failure {
+	        sendEmail("Failed");
+	    }
+        
+    }
+
+   
+}
+
+void createPipelineTriggers() {
+    script {
+        def triggers = []
+        if (env.BRANCH_NAME == 'master') {
+            // Run a nightly only for master
+            triggers = [cron('H H(0-3) * * 1-5')]
+        }
+        properties([
+                pipelineTriggers(triggers)
+        ])
+    }
+}
+
+String createVersion() {
+    // E.g. "201708140933"
+    String versionName = "${new Date().format('yyyyMMddHHmm')}"
+
+    if (env.BRANCH_NAME != "master") {
+        versionName += '-SNAPSHOT'
+    }
+    echo "Building version ${versionName} on branch ${env.BRANCH_NAME}"
+    currentBuild.description = versionName
+    env.versionName = versionName
+}
+
+boolean  isNightly(){
+	return Calendar.instance.get(Calendar.HOUR_OF_DAY) in 0..3
+}
+
+void deployToKubernetes(String versionName, String credentialsId) {
+	/*String dockerRegistry = 'us.gcr.io/ces-demo-instances'
+    String imageName = "${dockerRegistry}/kitchensink:${versionName}"
+
+    docker.withRegistry("https://${dockerRegistry}", 'docker-us.gcr.io/ces-demo-instances') {
+        docker.build(imageName, '.').push()
+    }*/
+	
+	String imageName ="${DOKCER_IMAGE}:${versionName}"
+	
+	withEnv(["IMAGE_NAME=${imageName}","APP_NAME=${K8S_APP_NAME}","NODE_PORT=${K8S_NODE_PORT}","NAMESPACE=${K8S_NAMESPACE}"]) {
+
+            kubernetesDeploy(
+                    kubeconfigId: credentialsId,
+                    configs: '**/auth-k8s.yaml',
+                    enableConfigSubstitution: true
+            )
+    }
+	
+    timeout(time: 5, unit: 'MINUTES') {
+        waitUntil {
+            sleep(time: 10, unit: 'SECONDS')
+            isVersionDeployed(versionName, "http://${K8S_NODE_HOST}:${K8S_NODE_PORT}/${K8S_APP_VERSION_URL}")
+        }
+    }
+	
+}
+
+boolean isVersionDeployed(String expectedVersion, String versionEndpoint) {
+	def status = sh(returnStatus:true, script: "curl -s ${versionEndpoint}")
+	if(status !=0) return false;
+    def deployedVersion = sh(returnStdout: true, script: "curl -s ${versionEndpoint}").trim()
+    echo "Deployed version returned by ${versionEndpoint}: ${deployedVersion}. Waiting for ${expectedVersion}."
+    return expectedVersion == deployedVersion || '''"'''+expectedVersion+'''"'''==deployedVersion
+}
+
+void analyzeWithSonarQubeAndWaitForQualityGoal() {
+    withSonarQubeEnv('sonarcloud.io') {
+	    sh 'mvn  -Drevision=${versionName} pmd:pmd checkstyle:checkstyle findbugs:findbugs sonar:sonar -f webbas-application/application-portal/pom.xml'
+    }
+    timeout(time: 1, unit: 'MINUTES') { // Normally, this takes only some ms. sonarcloud.io might take minutes, though :-(
+        def qg = waitForQualityGate()
+        if (qg.status != 'OK') {
+            echo "Pipeline unstable due to quality gate failure: ${qg.status}"
+            currentBuild.result = 'UNSTABLE'
+        }	
+    }
+}
+
+String getServiceIp(String kubeconfigCredential) {
+
+    withCredentials([file(credentialsId: kubeconfigCredential, variable: 'kubeconfig')]) {
+
+        String serviceName = 'kitchensink' // See k8s/service.yaml
+
+        // Using kubectl is so much easier than plain REST via curl (parsing info from kubeconfig is cumbersome!)
+        return sh(returnStdout: true, script:
+                "docker run -v ${kubeconfig}:/root/.kube/config lachlanevenson/k8s-kubectl:v1.9.5" +
+                        " get svc ${serviceName}" +
+                        ' |  awk \'{print $4}\'  | sed -n 2p'
+                ).trim()
+    }
+}
+
+void sendEmail(status) {
+           emailext  body: '''${JELLY_SCRIPT,template="static-analysis2"}''',
+                          mimeType: 'text/html',
+                          subject: "Build $BUILD_NUMBER - " + status + " (${currentBuild.fullDisplayName})", 
+                          to: "${EMAIL_ALERTS}"
+}
+
+@NonCPS
+def getChangeString() {
+    MAX_MSG_LEN = 100
+    def changeString = ""
+
+    echo "Gathering SCM changes"
+    def changeLogSets = currentBuild.changeSets
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            truncated_msg = entry.msg.take(MAX_MSG_LEN)
+            changeString += " - ${truncated_msg} [${entry.author}]\n"
+        }
+    }
+
+    if (!changeString) {
+        changeString = " - No new changes"
+    }
+    return changeString
+}

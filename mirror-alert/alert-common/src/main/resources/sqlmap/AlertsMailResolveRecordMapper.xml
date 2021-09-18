@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.mailAlert.AlertMailResolveRecordDao">
+    <resultMap id="baseResultMap" type="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailResolveRecord">
+        <result property="id" column="id" jdbcType="INTEGER"></result>
+        <result property="filterId" column="filter_id" jdbcType="VARCHAR"></result>
+        <result property="mailTitle" column="mail_title" jdbcType="VARCHAR"></result>
+        <result property="mailContent" column="mail_content" jdbcType="VARCHAR"></result>
+        <result property="mailSender" column="mail_sender" jdbcType="VARCHAR"></result>
+        <result property="mailReceiver" column="mail_receiver" jdbcType="VARCHAR"></result>
+        <result property="mailSendTime" column="mail_send_time" jdbcType="TIMESTAMP"></result>
+        <result property="resolveTime" column="resolve_time" jdbcType="TIMESTAMP"></result>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"></result>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"></result>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"></result>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"></result>
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <sql id="baseWhereClause">
+        <where>
+            1 = 1
+            <if test="params['filterId'] != null and params['filterId'] != ''">
+                AND filter_id = #{params.filterId}
+            </if>
+            <if test="params['gatherTimeStart'] != null and params['gatherTimeEnd'] != null">
+                AND resolve_time >= #{params.gatherTimeStart}
+                AND resolve_time <![CDATA[<]]> date_add(#{params.gatherTimeEnd}, interval 1 day)
+            </if>
+            <if test="params['sendTimeStart'] != null and params['sendTimeEnd'] != null">
+                AND mail_send_time >= #{params.sendTimeStart}
+                AND mail_send_time <![CDATA[<]]> date_add(#{params.sendTimeEnd}, interval 1 day)
+            </if>
+            <if test="params['mailTitle'] != null and params['mailTitle'] != ''">
+                AND mail_title LIKE concat(concat('%',#{params.mailTitle}),'%')
+            </if>
+            <if test="params['mailContent'] != null and params['mailContent'] != ''">
+                AND mail_content LIKE concat(concat('%',#{params.mailContent}),'%')
+            </if>
+            <if test="params['alertId'] != null and params['alertId'] != ''">
+                AND alert_id = #{params.alertId}
+            </if>
+        </where>
+    </sql>
+    <select id="countResolveRecords" parameterType="com.aspire.mirror.common.entity.Page" resultType="int">
+        SELECT COUNT(1) FROM alert_mail_resolve_record <include refid="baseWhereClause"></include>
+    </select>
+    <select id="resolveRecordsList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        SELECT *
+        FROM alert_mail_resolve_record
+        <include refid="baseWhereClause"></include>
+        order by resolve_time desc
+        limit #{begin},#{pageSize}
+    </select>
+    <insert id="insertResolveRecords" parameterType="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailResolveRecord">
+        INSERT INTO alert_mail_resolve_record
+        (
+        filter_id,
+        mail_title,
+        mail_content,
+        mail_sender,
+        mail_receiver,
+        mail_send_time,
+        resolve_time,
+        device_ip,
+        moni_index,
+        moni_object,
+        alert_level,
+        alert_id
+        )
+        VALUES (
+          #{filterId},
+          #{mailTitle},
+          #{mailContent},
+          #{mailSender},
+          #{mailReceiver},
+          #{mailSendTime},
+          #{resolveTime},
+          #{deviceIp},
+          #{moniIndex},
+          #{moniObject},
+          #{alertLevel},
+          #{alertId}
+        )
+    </insert>
+</mapper>

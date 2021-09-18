@@ -1,0 +1,370 @@
+{
+    "list": [
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "bpm_reminder_orders_event",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": true,
+            "indexFixed": false,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": true,
+            "multipleSelectionFixed": false,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [],
+            "show-operation": false,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [],
+            "list": [
+                {
+                    "label": "工单号",
+                    "columnName": "id",
+                    "type": "link",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "请求描述",
+                    "columnName": "reqDesc",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "请求分类",
+                    "columnName": "reqType",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "70",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "请求子类",
+                    "columnName": "reqSubType",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "70",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "客户名称",
+                    "columnName": "customerName",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "80",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "联系电话",
+                    "columnName": "concatPhone",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "请求来源",
+                    "columnName": "reqSource",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "资源池",
+                    "columnName": "resourcePool",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "100",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "timeStamp": 1605256431008,
+                    "label": "表格可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                },
+                {
+                    "label": "邮箱",
+                    "columnName": "concatMail",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "一级部门",
+                    "columnName": "yjbm",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "二级部门",
+                    "columnName": "ejbm",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "请求等级",
+                    "columnName": "reqLevel",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "审批意见",
+                    "columnName": "opinion",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前处理人",
+                    "columnName": "qualfiedNames",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前环节",
+                    "columnName": "taskName",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                }
+            ],
+            "operation": [],
+            "toolList": [],
+            "operation-width": "200",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    50,
+                    10,
+                    20,
+                    100,
+                    200
+                ],
+                "currentPage": 1,
+                "pageSize": 50,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/desk/remind/list"
+            },
+            "hidden": false,
+            "fixed-pagination": false,
+            "show-operation-status": []
+        }
+    ],
+    "model": {},
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "project": "webbas",
+        "labelWidth": 80,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "exportName": "table_event_orders_list"
+    }
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbComponentInfoMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbComponentInfo">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="maintenance_id" jdbcType="VARCHAR" property="maintenanceId"/>
+        <result column="specific_model" jdbcType="VARCHAR" property="specificModel"/>
+        <result column="config_desc" jdbcType="VARCHAR" property="configDesc"/>
+        <result column="serial_number" jdbcType="VARCHAR" property="serialNumber"/>
+        <result column="component_name" jdbcType="VARCHAR" property="componentName"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="quantity" jdbcType="VARCHAR" property="quantity"/>
+        <result column="unit_not_tax" jdbcType="DECIMAL" property="unitNotTax"/>
+        <result column="money_not_tax" jdbcType="DECIMAL" property="moneyNotTax"/>
+        <result column="add_tax" jdbcType="VARCHAR" property="addTax"/>
+        <result column="add_amount" jdbcType="DECIMAL" property="addAmount"/>
+        <result column="money_with_tax" jdbcType="DECIMAL" property="moneyWithTax"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        id,
+        maintenance_id,
+        specific_model,
+        config_desc,
+        serial_number,
+        component_name,
+        unit,
+        quantity,
+        unit_not_tax,
+        money_not_tax,
+        add_tax,
+        add_amount,
+        money_with_tax
+    </sql>
+
+    <!--  新增 -->
+    <select id="save" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbComponentInfo">
+      insert into cmdb_component_info(
+      <include refid="baseSql"></include>
+      )
+      values (
+        #{id, jdbcType=VARCHAR},
+        #{maintenanceId,jdbcType=VARCHAR},
+        #{specificModel,jdbcType=VARCHAR},
+        #{configDesc,jdbcType=VARCHAR},
+        #{serialNumber,jdbcType=VARCHAR},
+        #{componentName,jdbcType=VARCHAR},
+        #{unit,jdbcType=VARCHAR},
+        #{quantity,jdbcType=VARCHAR},
+        #{unitNotTax,jdbcType=DECIMAL},
+        #{moneyNotTax,jdbcType=DECIMAL},
+        #{addTax,jdbcType=VARCHAR},
+        #{addAmount,jdbcType=DECIMAL},
+        #{moneyWithTax,jdbcType=DECIMAL}
+      )
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbComponentInfo">
+        delete from cmdb_component_info
+        where id = #{id}
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbComponentInfo">
+        update cmdb_component_info
+        set
+          specific_model = #{specificModel,jdbcType=VARCHAR},
+          config_desc = #{configDesc,jdbcType=VARCHAR},
+          serial_number = #{serialNumber,jdbcType=VARCHAR},
+          component_name = #{componentName,jdbcType=VARCHAR},
+          unit = #{unit,jdbcType=VARCHAR},
+          quantity = #{quantity,jdbcType=VARCHAR},
+          unit_not_tax = #{unitNotTax,jdbcType=DECIMAL},
+          money_not_tax = #{moneyNotTax,jdbcType=DECIMAL},
+          add_tax = #{addTax,jdbcType=VARCHAR},
+          add_amount = #{addAmount,jdbcType=DECIMAL},
+          money_with_tax = #{moneyWithTax,jdbcType=DECIMAL}
+        where id = #{id}
+    </update>
+
+    <!-- 查询列表 -->
+    <select id="list" resultMap="resultMap">
+      select <include refid="baseSql"></include>
+      from  cmdb_component_info
+      where 1=1
+      <if test="maintenanceId != null and maintenanceId!= ''">
+          and maintenance_id = #{maintenanceId}
+      </if>
+      <if test="pageNo != null and pageSize != null">
+          limit #{pageNo},#{pageSize}
+      </if>
+    </select>
+
+    <!-- 查询列表的数量 -->
+    <select id="listByCount" resultType="Integer">
+        select count(*)
+        from  cmdb_component_info
+        where 1=1
+        <if test="maintenanceId != null and maintenanceId!= ''">
+            and maintenance_id = #{maintenanceId}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipAudit.mapper.IpAuditSurvivingUnassignIpV6Mapper" >
+    <!-- 定义基础返回结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.ipAudit.payload.IpAuditCommonResp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 定义列表返回结果集 -->
+    <resultMap id="resultListMap" type="com.aspire.ums.cmdb.ipAudit.payload.UnassignIpV6Resp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="idcType" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="VARCHAR" />
+        <result column="network_segment_name" property="networkName" jdbcType="VARCHAR" />
+        <result column="idcManageFlag" property="idcManageFlag" jdbcType="VARCHAR" />
+        <result column="ipv6_segment_type" property="networkSegmentType" jdbcType="VARCHAR" />
+        <result column="ipv6_segment_sub_type" property="networkSegmentSubType" jdbcType="VARCHAR" />
+        <result column="addressUse" property="addressUse" jdbcType="VARCHAR" />
+        <result column="first_business_system" property="businessName1" jdbcType="VARCHAR" />
+        <result column="alone_business_system" property="businessName2" jdbcType="VARCHAR" />
+        <result column="is_cmdb_manager" property="cmdbManageFlag" jdbcType="VARCHAR" />
+        <result column="processingStatusDesc" property="processingStatusDesc" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="reqParam">
+        <if test="checkTimeBegin != null and checkTimeBegin != ''">
+            AND a.check_time <![CDATA[>=]]> #{checkTimeBegin}
+        </if>
+        <if test="checkTimeEnd != null and checkTimeEnd != ''">
+            AND a.check_time <![CDATA[<=]]> #{checkTimeEnd}
+        </if>
+        <if test="ips != null and ips.size() > 0">
+            and
+            <foreach collection="ips" item="ip" index="index" open="(" separator=" or " close=")">
+                a.ip LIKE CONCAT('%', #{ip}, '%')
+            </foreach>
+        </if>
+        <if test="dcList != null and dcList.size() > 0">
+            AND a.dc IN
+            <foreach collection="dcList" item="dc" index="index" open="(" separator="," close=")">
+                #{dc}
+            </foreach>
+        </if>
+        <if test="networkSegmentType != null and networkSegmentType != ''">
+            AND a.`ipv6_segment_type` = #{networkSegmentType}
+        </if>
+        <if test="networkSegmentSubType != null and networkSegmentSubType != ''">
+            AND a.`ipv6_segment_sub_type` = #{networkSegmentSubType}
+        </if>
+        <if test="idcManageFlag != null and idcManageFlag != ''">
+            AND a.`is_pool` = #{idcManageFlag}
+        </if>
+        <if test="businessName1 != null and businessName1 != ''">
+            AND a.`first_business_system` = #{businessName1}
+        </if>
+        <if test="businessName2 != null and businessName2 != ''">
+            AND a.`alone_business_system` = #{businessName2}
+        </if>
+        <if test="addressUse != null and addressUse != ''">
+            AND a.`ipv6_segment_use` LIKE CONCAT('%',#{addressUse},'%')
+        </if>
+        <if test="cmdbManageFlag != null and cmdbManageFlag != ''">
+            AND a.`is_cmdb_manager` = #{cmdbManageFlag}
+        </if>
+        <if test="businessNameUse != null and businessNameUse != ''">
+            AND a.`use_business` LIKE CONCAT('%',#{addressUse},'%')
+        </if>
+    </sql>
+
+    <sql id="ipv6QueryTable">
+        SELECT a.id,a.ip,DATE_FORMAT(a.check_time,'%Y-%m-%d %T') AS check_time,a.processing_status,a.reason,a.operator,
+        DATE_FORMAT(a.operating_time,'%Y-%m-%d %T') AS operating_time,
+        CASE a.processing_status
+        WHEN '0' THEN '待处理' WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中' WHEN '3' THEN '已处理'
+        ELSE a.processing_status END processingStatusDesc,
+        a.ipv6_segment_name AS network_segment_name,
+        a.dc AS idcType,a.is_pool AS idcManageFlag,a.ipv6_segment_type,a.ipv6_segment_sub_type,a.ipv6_segment_use AS addressUse,
+        a.first_business_system,a.alone_business_system,a.is_cmdb_manager,a.use_business AS businessNameUse,
+        a.ipv6_id AS ipId,a.ipv6_segment_id AS segmentId
+        FROM
+        ip_audit_surviving_unassign_ipv6 a
+    </sql>
+
+    <sql id="getIpv6OneSql">
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_ipv6_segment')
+        AND rs.is_delete = 0 AND rs.id = t.segmentId
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_ipv6_ip')
+        AND ri.is_delete = 0 AND ri.id = t.ipId
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `check_time`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_surviving_unassign_ipv6
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultListMap" parameterType="com.aspire.ums.cmdb.ipAudit.payload.UnassignIpV6Req">
+        SELECT * FROM
+        (
+            <include refid="ipv6QueryTable" />
+            <where>
+                <include refid="reqParam" />
+            </where>
+        ) t
+        <if test="pageNo != null and pageSize != null">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getListCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.ipAudit.payload.UnassignIpV6Req">
+        SELECT
+        COUNT(*) AS totalCount
+        FROM (
+            <include refid="ipv6QueryTable" />
+            <where>
+                <include refid="reqParam" />
+            </where>
+        ) t
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.ipAudit.payload.UnassignIpV6Req" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `check_time`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_surviving_unassign_ipv6
+        WHERE `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnassignIpV6">
+        INSERT INTO ip_audit_surviving_unassign_ipv6
+        (
+            `id`,
+            `ip`,
+            `check_time`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{ip, jdbcType=VARCHAR},
+            #{checkTime, jdbcType=DATE},
+            #{processingStatus, jdbcType=VARCHAR},
+            #{reason, jdbcType=VARCHAR},
+            #{operator, jdbcType=VARCHAR},
+            #{operatingTime, jdbcType=DATE},
+            #{checkNum, jdbcType=TINYINT},
+            #{isDelete, jdbcType=TINYINT},
+            #{updateTime, jdbcType=DATE},
+            #{updatePerson, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnassignIpV6">
+        UPDATE ip_audit_surviving_unassign_ipv6 SET
+        `ip` = #{ip},
+        `check_time` = #{checkTime},
+        `processing_status` = #{processingStatus},
+        `reason` = #{reason},
+        `operator` = #{operator},
+        `operating_time` = #{operatingTime},
+        `check_num` = #{checkNum},
+        `is_delete` = #{isDelete},
+        `update_time` = #{updateTime},
+        `update_person` = #{updatePerson}
+        WHERE `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnassignIpV6">
+        DELETE FROM ip_audit_surviving_unassign_ipv6
+        WHERE `id` = #{id}
+    </delete>
+
+    <!-- 批量新增记录 -->
+    <insert id="batchInsertIp" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditSurvivingUnassignIpV6">
+        INSERT INTO ip_audit_surviving_unassign_ipv6
+        (
+            `id`,
+            `ip`,
+            `check_time`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`,
+            `dc`,`ipv6_id`,`ipv6_segment_id`,`ipv6_segment_name`,`is_pool`,`ipv6_segment_type`,`ipv6_segment_sub_type`,
+            `ipv6_segment_use`,`first_business_system`,`alone_business_system`,`is_cmdb_manager`,`use_business`
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.ip, jdbcType=VARCHAR},
+            NOW(),
+            #{item.processingStatus, jdbcType=VARCHAR},
+            #{item.reason, jdbcType=VARCHAR},
+            #{item.operator, jdbcType=VARCHAR},
+            NOW(),
+            #{item.checkNum, jdbcType=TINYINT},
+            #{item.isDelete, jdbcType=TINYINT},
+            NOW(),
+            #{item.updatePerson, jdbcType=VARCHAR},
+            #{item.dc, jdbcType=VARCHAR},
+            #{item.ipv6Id, jdbcType=VARCHAR},
+            #{item.ipv6SegmentId, jdbcType=VARCHAR},
+            #{item.ipv6SegmentName, jdbcType=VARCHAR},
+            #{item.isPool, jdbcType=VARCHAR},
+            #{item.ipv6SegmentType, jdbcType=VARCHAR},
+            #{item.ipv6SegmentSubType, jdbcType=VARCHAR},
+            #{item.ipv6SegmentUse, jdbcType=VARCHAR},
+            #{item.firstBusinessSystem, jdbcType=VARCHAR},
+            #{item.aloneBusinessSystem, jdbcType=VARCHAR},
+            #{item.isCmdbManager, jdbcType=VARCHAR},
+            #{item.useBusiness, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!--列表顶部总数查询逻辑-->
+    <select id="getStatisticsData" parameterType="com.aspire.ums.cmdb.ipAudit.payload.UnassignIpV6Req" resultType="java.util.HashMap">
+        SELECT
+        COUNT(IF(t.processing_status = '待处理', TRUE, NULL)) AS numOfToBeProcessedIp,
+        COUNT(IF(t.processing_status = '暂不处理', TRUE, NULL)) AS numOfNotProcessIp,
+        COUNT(t.ip) AS numOfUnPlanIp
+        FROM
+        (
+            <include refid="ipv6QueryTable" />
+            <where>
+                <include refid="reqParam" />
+            </where>
+        ) t
+    </select>
+
+    <update id="updateProcess" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        update
+        <choose>
+            <when test='opIpType == "ipv61"'>
+                `ip_audit_surviving_unplanned_ipv6`
+            </when>
+            <when test='opIpType == "ipv62"'>
+                `ip_audit_surviving_unassign_ipv6`
+            </when>
+        </choose>
+        <set>
+            `processing_status` = #{handleStatus},
+            `reason` = #{notHandleReason},
+            <if test="operator != null and operator != ''">
+                `operator` = #{operator},
+                `update_person` = #{operator},
+            </if>
+            `update_time` = NOW(),
+            `operating_time` = NOW()
+        </set>
+        where `id` in
+        <foreach collection="mainId" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- IP登记：根据Ipv6地址库的主键进行修改 新增 fanwenhui 20200608 -->
+    <update id="updateIpv6IpInfo" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        UPDATE cmdb_ip_repository_ipv6_ip
+        <set>
+            <if test=" requestPerson != null and requestPerson != ''">
+                request_person = #{requestPerson},
+            </if>
+            <if test=" requestTime != null and requestTime != ''">
+                request_time = #{requestTime},
+            </if>
+            <if test=" requestOrder != null and requestOrder != ''">
+                request_process_id = #{requestOrder},
+            </if>
+            <if test=" expirationDate != null and expirationDate != ''">
+                useful_life = #{expirationDate},
+            </if>
+        </set>
+        <where>
+            id IN
+            <foreach collection="ipIds" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <!-- IP登记：根据Ipv6网段的的主键进行修改 新增 fanwenhui 20200608 -->
+    <update id="updateIpv6SegmentInfo" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        UPDATE cmdb_ip_repository_ipv6_segment
+        <set>
+            <if test=" businessId1 != null and businessId1 != ''">
+                first_business_system = #{businessId1},
+            </if>
+            <if test=" businessName1 != null and businessName1 != ''">
+                first_business_system = #{businessName1},
+            </if>
+            <if test=" businessId2 != null and businessId2 != ''">
+                alone_business_system = #{businessId2},
+            </if>
+            <if test=" businessName2 != null and businessName2 != ''">
+                alone_business_system = #{businessName2},
+            </if>
+<!--            <if test=" ipUse != null and ipUse != ''">-->
+<!--                public_segment_use = #{ipUse},-->
+<!--            </if>-->
+        </set>
+        <where>
+            id IN
+            <foreach collection="segmentIds" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <!-- 获取最大检查次数 -->
+    <select id="getMaxCheckNum" resultType="java.lang.Long">
+        SELECT MAX(check_num) FROM ip_audit_surviving_unassign_ipv6
+    </select>
+
+    <!-- 查询IPV6地址库获取录入IP管理的IP 新增 fanwenhui 20200611 -->
+    <select id="getIpRepositoryIpv6s" resultType="java.util.Map">
+        SELECT CONCAT(a.ipv6,'-', b.idcType) AS ipIdc,request_person AS requestPerson,
+        assign_status AS assignStatus,a.ipv6,
+        a.id AS ipv6Id,b.id AS ipv6SegmentId,a.ipv6_segment_owner AS ipv6SegmentName,b.idcType AS dc,
+        b.ipv6_segment_type AS ipv6SegmentType,b.ipv6_segment_sub_type AS ipv6SegmentSubType,
+        a.ipv6_segment_use AS ipv6SegmentUse,b.first_business_system AS firstBusinessSystem,b.alone_business_system AS aloneBusinessSystem,
+        a.is_cmdb_manager AS isCmdbManager
+        FROM cmdb_ip_repository_ipv6_ip a
+        INNER JOIN cmdb_ip_repository_ipv6_segment b ON b.ipv6_segment_address = a.ipv6_segment_owner
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_ipv6_segment')
+        AND rs.is_delete = 0 AND rs.id = b.id
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_ipv6_ip')
+        AND ri.is_delete = 0 AND ri.id = a.id
+--         INNER JOIN config_dict c ON c.`VALUE` = b.idcType
+        WHERE a.is_delete = 0 AND b.is_delete = 0
+--         AND c.TYPE = 'idcType' AND c.DELETE_FLAG = 0
+    </select>
+
+    <!-- 批量更新Ipv6地址库的分配状态 -->
+    <update id="batchUpdateIpv6Status" parameterType="java.util.List">
+        UPDATE cmdb_ip_repository_ipv6_ip SET assign_status =
+        (SELECT id FROM t_cfg_dict WHERE col_name = 'ipAllocationStatusType' AND dict_note = '已分配' AND is_delete = '0' LIMIT 1),
+        assign_user = 'IP稽核'
+        WHERE id IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.allocate.mapper.AllocateIpConfigMapper">
+
+    <sql id="baseWhereClause">
+        <where>
+            rai.flag = 0
+            <if test="vpnId != 0 ">
+                and rai.vpn_id = #{vpnId}
+            </if>
+            <if test="networkId != 0 ">
+                and rai.network_id = #{networkId}
+            </if>
+            <if test="bizSystem != null and bizSystem != ''">
+                and biz_system = #{bizSystem}
+            </if>
+            <if test="ip != null and  ip != ''">
+                and allocate_ip like concat('%',#{ip},'%')
+            </if>
+            <if test="privateIp != null and privateIp != ''">
+                and clouds_ip like concat('%',#{privateIp},'%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="getAllocateIpConfigData" parameterType="com.aspire.ums.cmdb.allocate.payload.AllocateIpConfigListReq"
+             resultType="com.aspire.ums.cmdb.allocate.payload.AllocateIpConfigRes">
+        SELECT rai.id id, rad.domain vpnName,ran.network_segment network,rai.biz_system bizSystem,rai.allocate_ip allocateIp,rai.clouds_ip cloudsIp,
+                concat(DATE_FORMAT(rai.start_time,'%Y/%m/%d'),'~',DATE_FORMAT(rai.end_time,'%Y/%m/%d')) useTime,
+                concat(rai.user_name,' ',rai.telephone) userInfo
+        FROM cmdb_allocate_ipaddress rai
+        INNER JOIN cmdb_allocate_domain rad on rai.vpn_id = rad.id
+        INNER JOIN cmdb_allocate_netsegment ran on rai.network_id = ran.id
+        <include refid="baseWhereClause"></include>
+        ORDER BY useTime DESC
+        <if test="startPageNum != -1" >
+            LIMIT #{startPageNum},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getAllocateIpConfigDataCount" parameterType="com.aspire.ums.cmdb.allocate.payload.AllocateIpConfigListReq" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM cmdb_allocate_ipaddress rai
+        INNER JOIN cmdb_allocate_domain rad on rai.vpn_id = rad.id
+        INNER JOIN cmdb_allocate_netsegment ran on rai.network_id = ran.id
+        <include refid="baseWhereClause"></include>
+    </select>
+
+    <insert id="insertAllocateIpConfig" parameterType="java.util.List">
+        INSERT INTO cmdb_allocate_ipaddress
+        (biz_system,start_time,end_time,user_name,telephone,vpn_id,network_id,allocate_ip,clouds_ip,flag)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.bizSystem}, #{item.startTime},#{item.endTime},#{item.userName}, #{item.userT},#{item.vpnId},#{item.networkId}, #{item.ip},#{item.privateIp},#{item.flag})
+        </foreach>
+    </insert>
+
+    <select id="exportAllocateIpConfigData" parameterType="com.aspire.ums.cmdb.allocate.payload.AllocateIpConfigListReq" resultType="map">
+        SELECT rad.domain vpnName,ran.network_segment network,rai.biz_system bizSystem,rai.allocate_ip allocateIp,rai.clouds_ip cloudsIp,
+        concat(DATE_FORMAT(rai.start_time,'%Y/%m/%d'),'~',DATE_FORMAT(rai.end_time,'%Y/%m/%d')) useTime,
+        concat(rai.user_name,' ',rai.telephone) userInfo
+        FROM cmdb_allocate_ipaddress rai
+        INNER JOIN cmdb_allocate_domain rad on rai.vpn_id = rad.id
+        INNER JOIN cmdb_allocate_netsegment ran on rai.network_id = ran.id
+        <include refid="baseWhereClause"></include>
+    </select>
+
+    <delete id="deleteAllocateIpConfigById" parameterType="java.util.List">
+        UPDATE cmdb_allocate_ipaddress SET flag = 1 WHERE id in
+        <foreach collection="list" item="id" open="(" separator="," close=")" >
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getVpnData" resultType="map">
+        SELECT id, domain name from cmdb_allocate_domain
+    </select>
+
+    <select id="getNetworkById" parameterType="java.lang.Long" resultType="map">
+        SELECT id, network_segment name FROM cmdb_allocate_netsegment WHERE domain_id = #{id}
+    </select>
+
+    <insert id="insertAllocateIpConfigOperation"
+             parameterType="com.aspire.ums.cmdb.allocate.payload.AllocateIpConfigOperationReq">
+        INSERT INTO cmdb_allocate_operation_log (id,type,allocate_ip_id,operator,operation_time)
+        VALUES (#{id},#{type},#{allocateIpId},#{operator},#{operationTime})
+    </insert>
+
+	    
+</mapper>

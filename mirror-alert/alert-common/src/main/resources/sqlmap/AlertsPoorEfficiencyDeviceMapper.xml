@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.mirror.alert.server.dao.monthReport.AlertsPoorEfficiencyDeviceDao">
+
+ 
+	 <sql id="baseColumnList">
+		 resourceId,avg_value_week,create_time,date,type,diff_value,item,avg_value_month
+	</sql>
+	
+	<select id="getDeviceDataByDate" parameterType="map"
+			resultType="map">
+			select  <include refid="baseColumnList" /> 
+			from alert_device_sync where date =  #{date}
+			and item = #{item} and type=#{type}
+	</select>
+	
+	
+	<select id="getDeviceDataCount" parameterType="map"
+			resultType="Integer">
+			select count(*) from ( select 
+ 			a1.resourceId,a1.avg_value_month K1,a2.avg_value_month K2 
+			,a1.avg_value_week K3,a2.avg_value_week K4,a1.diff_value K5
+			,a2.diff_value K6,a1.date 
+
+			 from
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where 
+			 date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'cpu' and type=#{type})a1 left join
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where 
+			  date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'memory' and type=#{type})a2
+			on a1.resourceId = a2.resourceId  and a1.date = a2.date 
+			union
+			 select 
+			  a2.resourceId,a1.avg_value_month K1,a2.avg_value_month K2 
+			,a1.avg_value_week K3,a2.avg_value_week K4,a1.diff_value K5
+			,a2.diff_value K6,a2.date 
+			  from
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where 
+			 date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'cpu' and type=#{type})a1 RIGHT join
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where 
+			  date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'memory' and type=#{type})a2
+			on a1.resourceId = a2.resourceId  and a1.date = a2.date 
+			)bb
+	</select>
+	
+	<select id="getDeviceDataPageList" parameterType="map"
+			resultType="map">
+			select * from(
+			select a1.resourceId,CONCAT(a1.avg_value_month,'%') K1,CONCAT(a2.avg_value_month,'%') K2 
+			,CONCAT(a1.avg_value_week,'%') K3,CONCAT(a2.avg_value_week,'%') K4,CONCAT(a1.diff_value,'%') K5
+			,CONCAT(a2.diff_value,'%') K6,a1.date from
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where 
+			 date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'cpu' and type=#{type})a1 left join
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where
+			  date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'memory' and type=#{type})a2
+			on a1.resourceId = a2.resourceId  and a1.date = a2.date 
+			
+			union
+			
+			select a2.resourceId,CONCAT(a1.avg_value_month,'%') K1,CONCAT(a2.avg_value_month,'%') K2 
+			,CONCAT(a1.avg_value_week,'%') K3,CONCAT(a2.avg_value_week,'%') K4,CONCAT(a1.diff_value,'%') K5
+			,CONCAT(a2.diff_value,'%') K6,a2.date from
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where 
+			 date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'cpu' and type=#{type})a1 RIGHT join
+			(select  <include refid="baseColumnList" /> 
+			 from alert_device_sync where
+			  date >= #{start} and  date <![CDATA[<=]]> #{end}
+			and item = 'memory' and type=#{type})a2
+			on a1.resourceId = a2.resourceId  and a1.date = a2.date )bb
+			order by date desc
+			<if test="pageNo != null and pageSize!=null">
+              limit #{pageNo},#{pageSize}
+            </if>
+			
+	</select>
+
+	<insert id="insertDeviceLogData"
+			parameterType="map">
+		INSERT INTO alert_device_sync_log
+		(date,exec_time,status,content,create_time,type,item)
+		VALUES
+		(#{date},#{exec_time},#{status},#{content},#{create_time},#{type},#{item})
+	</insert>
+	
+	<insert id="insertPoorEfficiencyDeviceData"
+			parameterType="map">
+		INSERT INTO alert_device_sync
+		(resourceId,avg_value_week,date,type,diff_value,item,avg_value_month)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.resourceId,jdbcType=VARCHAR} ,
+			#{item.avg_value_week,jdbcType=DECIMAL} ,
+		
+			#{item.date,jdbcType=VARCHAR} ,
+			#{item.type,jdbcType=INTEGER} ,
+			#{item.diff_value,jdbcType=DECIMAL} ,
+			#{item.item,jdbcType=VARCHAR} ,
+			#{item.avg_value_month,jdbcType=DECIMAL} 
+			
+		)
+		  </foreach> 
+	</insert>
+	
+	<select id="getDeviceDataLatestDate" parameterType="map"
+			resultType="map">
+			select date,exec_time,status,content,create_time,type,item from alert_device_sync_log where
+			item = #{item} and type=#{type} and status = 'success'
+		<if test="date != null">
+            AND date= #{date}
+        </if>
+			order by date desc
+			limit 1
+	</select>
+
+	
+</mapper>

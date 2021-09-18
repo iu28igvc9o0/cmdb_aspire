@@ -1,0 +1,42 @@
+server:
+  port: 7783
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+#      defaultZone: http://10.12.70.60:8761/eureka/
+      defaultZone: http://127.0.0.1:8761/eureka/
+druid:
+  #url: jdbc:mysql://10.1.5.103:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+#  url: jdbc:mysql://10.12.70.63:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+#  url: jdbc:mysql://10.129.133.216:3306/spider2?useUnicode=true&characterEncoding=UTF-8
+
+  username: root
+  #password: spider+999
+  password: 1234@qwer
+#  password: Opstest789
+#  password: 1mqay3zXSW!
+  useSSL: false
+
+exportScadaImage:
+  path: /opt/aspire/product/scada/images
+  http: http://10.12.70.40:6868
+  scale: 3
+  remotePath: topo
+ftp:
+  host: 10.12.70.40
+  port: 21
+  username: ftpadmin
+  password: 11qq!!QQ
+
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IIndicationProvinceDao">
+	
+	<resultMap type="com.aspire.mirror.entity.IndicationProvinceEntity" id="provinceMap">
+		<result property="provinceCode" column="province_code" jdbcType="VARCHAR"/>
+		<result property="provinceName" column="province_name" jdbcType="VARCHAR"/>
+		<result property="provinceServerIp" column="province_server_ip" jdbcType="VARCHAR"/>
+		<result property="provinceServerUser" column="province_server_user" jdbcType="VARCHAR"/>
+		<result property="provinceServerPwd" column="province_server_pwd" jdbcType="VARCHAR"/>
+		<result property="provinceFileDir" column="province_file_dir" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="getIndicationProvinceByCode" resultMap="provinceMap" >
+		SELECT * FROM mirror_province where province_code = #{provinceCode}
+	</select>
+
+	<select id="getIndicationProvinceByName" resultMap="provinceMap" >
+		SELECT * FROM mirror_province where province_name = #{provinceName}
+	</select>
+
+	<select id="getAllProvince" resultMap="provinceMap" >
+		SELECT * FROM mirror_province
+	</select>
+</mapper>

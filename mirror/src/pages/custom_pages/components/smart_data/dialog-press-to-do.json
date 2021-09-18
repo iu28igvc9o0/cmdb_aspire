@@ -1,0 +1,126 @@
+{
+    "formList": [
+        {
+            "label": "空容器",
+            "type": "empty",
+            "isLabelWidth": false,
+            "columnName": "empty_1604902138432",
+            "icon-dev": "iconfont icontabs1",
+            "child-type": "inline-block",
+            "span": 24,
+            "hidden": false,
+            "class": "",
+            "formFields": [
+                {
+                    "label": "",
+                    "type": "textarea",
+                    "columnName": "content",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "required": true,
+                    "rules": [
+                        {
+                            "required": true,
+                            "message": "不能为空",
+                            "trigger": "blur"
+                        }
+                    ],
+                    "isLabelWidth": true,
+                    "icon-dev": "iconfont iconduohangwenben",
+                    "icon": "",
+                    "class": "",
+                    "operation": [],
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "请输入催办内容",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "rows": "4",
+                        "text": ""
+                    },
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 0
+                },
+                {
+                    "label": "按钮组",
+                    "type": "buttonGroup",
+                    "isLabelWidth": false,
+                    "columnName": "buttonGroup_1604902158300",
+                    "icon-dev": "iconfont iconanniu",
+                    "span": 24,
+                    "hidden": false,
+                    "position": "left",
+                    "operation": [],
+                    "toolList": [
+                        {
+                            "columnName": "btn-press-submit",
+                            "type": "primary",
+                            "icon": "",
+                            "label": "确定",
+                            "interactive": "button_group_submit_all_validate",
+                            "validateProp": "",
+                            "apiName": "/v1/bpm/runTime/instance/reminder",
+                            "class": "",
+                            "default": "show",
+                            "activeType": "button_group_form_interface",
+                            "apiMethod": "post+json"
+                        },
+                        {
+                            "columnName": "btn-press-cacel",
+                            "type": "",
+                            "icon": "",
+                            "label": "取消",
+                            "interactive": "",
+                            "validateProp": "",
+                            "apiName": "",
+                            "class": "",
+                            "default": "show"
+                        }
+                    ],
+                    "name": "layout",
+                    "labelWidth": 160
+                }
+            ],
+            "marginTop": "",
+            "marginBottom": "",
+            "marginLeft": "",
+            "marginRight": "",
+            "isFontWeightBold": true,
+            "name": "layout",
+            "labelWidth": 160
+        }
+    ],
+    "formConfig": {
+        "labelWidth": 160,
+        "labelPosition": "right",
+        "starPostion": "left",
+        "class": "",
+        "exportName": "表单json",
+        "defaultClass": "webbas",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "content": ""
+    }
+}

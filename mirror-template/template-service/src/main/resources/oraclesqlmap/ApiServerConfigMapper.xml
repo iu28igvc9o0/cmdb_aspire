@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.ApiServerConfigDao">
+
+    <resultMap id="ApiServerConfigResultMap" type="com.aspire.mirror.template.server.dao.po.ApiServerConfig">
+        <result property="apiServerId" column="api_server_id" jdbcType="VARCHAR"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="room" column="room" jdbcType="VARCHAR"/>
+        <result property="serverType" column="server_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="ApiServerConfig_Base_Column">
+        monitor_api_server_config.api_server_id,
+        monitor_api_server_config.url,
+        monitor_api_server_config.username,
+        monitor_api_server_config.password,
+        monitor_api_server_config.room,
+        monitor_api_server_config.server_type
+    </sql>
+
+    <sql id="ApiServerConfig_Query_List_Sharing">
+        <where>
+            <if test="apiServerId != null ">
+                and monitor_api_server_config.api_server_id = #{apiServerId}
+            </if>
+            <if test="url != null ">
+                and monitor_api_server_config.url = #{url}
+            </if>
+            <if test="username != null ">
+                and monitor_api_server_config.username = #{username}
+            </if>
+            <if test="password != null ">
+                and monitor_api_server_config.password = #{password}
+            </if>
+            <if test="room != null ">
+                and monitor_api_server_config.room = #{room}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="apiServerId"
+                 open="(" separator="," close=")">
+            #{apiServerId}
+        </foreach>
+    </sql>
+    
+    <sql id="Foreach_RoomIdArrays_Sql">
+        <foreach collection="array" index="index" item="roomId"
+                 open="(" separator="," close=")">
+            #{roomId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig" >
+        INSERT INTO monitor_api_server_config (
+        <include refid="ApiServerConfig_Base_Column" />
+        ) VALUES (
+                #{apiServerId,jdbcType=VARCHAR},
+                #{url,jdbcType=VARCHAR},
+                #{username,jdbcType=VARCHAR},
+                #{password,jdbcType=VARCHAR},
+                #{room,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="apiServerId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig" >
+        INSERT INTO monitor_api_server_config (
+        <include refid="ApiServerConfig_Base_Column" />
+        ) (
+        <foreach  collection="list" item="item" index="index" separator="," >
+            select
+                #{apiServerId,jdbcType=VARCHAR},
+                #{url,jdbcType=VARCHAR},
+                #{username,jdbcType=VARCHAR},
+                #{password,jdbcType=VARCHAR},
+                #{item.room,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+        )
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_api_server_config WHERE api_server_id = #{apiServerId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_api_server_config WHERE api_server_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig" >
+        DELETE FROM monitor_api_server_config WHERE api_server_id = #{apiServerId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig" >
+        UPDATE monitor_api_server_config monitor_api_server_config
+        <set >
+                <if test="apiServerId != null" >
+                monitor_api_server_config.api_server_id = #{apiServerId},
+                </if>
+                <if test="url != null" >
+                monitor_api_server_config.url = #{url},
+                </if>
+                <if test="username != null" >
+                monitor_api_server_config.username = #{username},
+                </if>
+                <if test="password != null" >
+                monitor_api_server_config.password = #{password},
+                </if>
+                <if test="room != null" >
+                monitor_api_server_config.room = #{room},
+                </if>
+        </set>
+        WHERE api_server_id = #{apiServerId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig" >
+        UPDATE monitor_api_server_config monitor_api_server_config
+        SET
+        monitor_api_server_config.api_server_id = #{apiServerId},
+        monitor_api_server_config.url = #{url},
+        monitor_api_server_config.username = #{username},
+        monitor_api_server_config.password = #{password},
+        monitor_api_server_config.room = #{room}
+        WHERE api_server_id = #{apiServerId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="ApiServerConfigResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="ApiServerConfig_Base_Column" />
+        FROM monitor_api_server_config monitor_api_server_config
+        WHERE api_server_id = #{apiServerId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="ApiServerConfigResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="ApiServerConfig_Base_Column" />
+        FROM monitor_api_server_config monitor_api_server_config
+        WHERE api_server_id = #{apiServerId}
+    </select>
+    
+    <select id="selectByRoomIdArrays" resultMap="ApiServerConfigResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="ApiServerConfig_Base_Column" />
+        FROM monitor_api_server_config monitor_api_server_config
+        WHERE room in <include refid="Foreach_RoomIdArrays_Sql"/>
+    </select>
+    
+    <select id="select" resultMap="ApiServerConfigResultMap" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig">
+        SELECT
+        <include refid="ApiServerConfig_Base_Column" />
+        FROM monitor_api_server_config monitor_api_server_config
+        <include refid="ApiServerConfig_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.ApiServerConfig">
+        SELECT COUNT(*) FROM monitor_api_server_config monitor_api_server_config
+        <include refid="ApiServerConfig_Query_List_Sharing" />
+    </select>
+
+</mapper>

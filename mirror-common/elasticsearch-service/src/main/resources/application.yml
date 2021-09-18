@@ -1,0 +1,41 @@
+server:
+  port: 28103
+
+version: /v1 ##版本号
+
+spring:
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+elasticsearch:
+  cluster-name: elasticsearch #elk-application
+  cluster-nodes: 10.12.70.40:9300 #10.12.70.56:9301
+  cluster:
+    open: true
+    indexs: #跨集群索引，正则history.+,lldp-network.+,stp-network.+,route-network.+,log-network.+,config-network.+,fw-rule-policy-.+
+    queryKeywords: {}
+    indexKeywords: {}
+
+dashboard:
+  index: history_uint
+  type: history_uint
+  conditionField: item
+  xlineColumn: clock
+  countField: value
+
+lldp_index_name: lldp-network*
+logging:
+  level:
+    org.elasticsearch: debug
+    com.aspire.mirror.elasticsearch.server: debug
+  file: /opt/data/logs/elasticsearch-service.log
+stp_index_name: '业支域非池化:stp-network-feichi-;信息港资源池:stp-network-xxgchi-;哈尔滨资源池:stp-network-hachi-;呼和浩特资源池:stp-network-huchi-'
+route_index_name: '哈尔滨资源池:route-network-hachi-;呼和浩特资源池:route-network-hachi-;'

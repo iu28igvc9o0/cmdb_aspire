@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.dictMapper.mapper.CmdbSyncFiledMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.dictMapper.payload.CmdbSyncFiledMapperEntity">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="other_filed_code" property="otherFiledCode" jdbcType="VARCHAR"/>
+        <result column="ums_filed_code" property="umsFiledCode" jdbcType="VARCHAR"/>
+        <result column="mapper_type" property="mapperType" jdbcType="VARCHAR"/>
+        <result column="filed_type" property="filedType" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `other_filed_code`,
+        `ums_filed_code`,
+        `mapper_type`,
+        `filed_type`,
+        `source`
+    </sql>
+
+    <select id="listByEntity" parameterType="com.aspire.ums.cmdb.v3.dictMapper.payload.CmdbSyncFiledMapperEntity" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_sync_filed_mapper
+        where 1=1
+        <if test="otherFiledCode != null and otherFiledCode != ''">
+            and other_filed_code = #{otherFiledCode}
+        </if>
+        <if test="umsFiledCode != null and umsFiledCode != ''">
+            and ums_filed_code = #{umsFiledCode}
+        </if>
+        <if test="mapperType != null and mapperType != ''">
+            and mapper_type = #{mapperType}
+        </if>
+        <if test="filedType != null and filedType != ''">
+            and filed_type = #{filedType}
+        </if>
+        <if test="source != null and source != ''">
+            and source = #{source}
+        </if>
+    </select>
+</mapper>

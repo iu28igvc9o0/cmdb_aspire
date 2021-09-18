@@ -1,0 +1,1148 @@
+{
+  "formList": [
+    {
+      "label": "栅格布局",
+      "type": "row",
+      "columnName": "row_1599213073905",
+      "icon-dev": "iconfont iconicon-editor-grid",
+      "operation": [],
+      "hidden": false,
+      "rowTypeFlex": false,
+      "formFields": [
+        {
+          "span": 24,
+          "childList": [
+            {
+              "label": "请求描述",
+              "type": "input",
+              "columnName": "jtms",
+              "defaultValue": "",
+              "isModel": true,
+              "class": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "请求描述不能为空",
+                  "trigger": "blur"
+                }
+              ],
+              "label-width": "",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont icondanhangwenben",
+              "icon": "",
+              "hidden": false,
+              "props": {
+                "placeholder": "请输入请求描述",
+                "maxlength": "",
+                "show-word-limit": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "text": ""
+              },
+              "operation": [],
+              "button": false,
+              "slot": "",
+              "button-name": "",
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "labelWidth": 160,
+              "style": {
+                "word-break": "break-all"
+              },
+              "isNumberType": false
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "请求分类",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "请求分类不能为空",
+                  "trigger": "blur"
+                }
+              ],
+              "columnName": "qqfl",
+              "targetName": "label_select_1599445663882",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [],
+              "option-label": "name",
+              "option-value": "name",
+              "option-alias": "alias",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "2",
+                "sessionKey": "sessionDictsData",
+                "dicKey": "REQUEST_TYPE",
+                "apiName": "/v1/desk/zxgllc/dropData",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{aliasName:\"qqfl\", pageNo: 1,pageSize:100}"
+              },
+              "options": [
+                {
+                  "label": "是",
+                  "value": "Y",
+                  "disabled": false
+                },
+                {
+                  "label": "否",
+                  "value": "N",
+                  "disabled": false
+                }
+              ],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [
+                {
+                  "label": "是",
+                  "value": "Y",
+                  "disabled": false
+                },
+                {
+                  "label": "否",
+                  "value": "N",
+                  "disabled": false
+                }
+              ],
+              "labelWidth": 100,
+              "loading": false,
+              "disabled": false,
+              "filterOptionStatus": [],
+              "disabledOptionStatus": [],
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              }
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "请求子类",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "请求子类不能为空",
+                  "trigger": "blur"
+                }
+              ],
+              "columnName": "qqzl",
+              "targetName": "label_needReboot_1603785083991",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [],
+              "option-label": "name",
+              "option-value": "name",
+              "option-alias": "alias",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "2",
+                "sessionKey": "sessionDictsData",
+                "dicKey": "REQUEST_SUB_TYPE",
+                "apiName": "/v1/desk/zxgllc/dropData",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{aliasName:\"qqzl\", pageNo: 1,pageSize:100}"
+              },
+              "options": [
+                {
+                  "label": "是",
+                  "value": "Y",
+                  "disabled": false
+                },
+                {
+                  "label": "否",
+                  "value": "N",
+                  "disabled": false
+                }
+              ],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [
+                {
+                  "label": "是",
+                  "value": "Y",
+                  "disabled": false
+                },
+                {
+                  "label": "否",
+                  "value": "N",
+                  "disabled": false
+                }
+              ],
+              "labelWidth": 100,
+              "loading": false,
+              "disabled": false,
+              "filterOptionStatus": [],
+              "disabledOptionStatus": [],
+              "class": "",
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              }
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "客户名称",
+              "type": "input",
+              "columnName": "bzr",
+              "defaultValue": "",
+              "isModel": true,
+              "class": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "客户名称不能为空",
+                  "trigger": "blur"
+                }
+              ],
+              "label-width": "",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont icondanhangwenben",
+              "icon": "",
+              "hidden": false,
+              "props": {
+                "placeholder": "请输入客户名称",
+                "maxlength": "",
+                "show-word-limit": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "text": ""
+              },
+              "operation": [],
+              "button": false,
+              "slot": "",
+              "button-name": "",
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "labelWidth": 160,
+              "style": {
+                "word-break": "break-all"
+              },
+              "isNumberType": false
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "联系电话",
+              "type": "input",
+              "columnName": "bzrdh",
+              "defaultValue": "",
+              "isModel": true,
+              "class": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "联系电话不能为空",
+                  "trigger": "blur"
+                },
+                {
+                  "message": "请输入正确的手机号",
+                  "pattern": "^1[34578]\\d{9}$",
+                  "trigger": "blur"
+                }
+              ],
+              "label-width": "",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont icondanhangwenben",
+              "icon": "",
+              "hidden": false,
+              "props": {
+                "placeholder": "请输入联系电话",
+                "maxlength": "",
+                "show-word-limit": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "text": ""
+              },
+              "operation": [],
+              "button": false,
+              "slot": "",
+              "button-name": "",
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "labelWidth": 160,
+              "style": {
+                "word-break": "break-all"
+              },
+              "isNumberType": false
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "请求等级",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "请求等级不能为空",
+                  "trigger": "blur"
+                }
+              ],
+              "columnName": "qqdj",
+              "targetName": "label_select_1599445662250",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [],
+              "option-label": "name",
+              "option-value": "name",
+              "option-alias": "alias",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "2",
+                "sessionKey": "",
+                "dicKey": "",
+                "apiName": "/v1/desk/zxgllc/dropData",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{aliasName:\"qqdj\", pageNo: 1,pageSize:100}"
+              },
+              "options": [
+                {
+                  "label": "绿盟",
+                  "value": "lvmeng",
+                  "disabled": false
+                },
+                {
+                  "label": "启明星辰",
+                  "value": "qiming",
+                  "disabled": false
+                }
+              ],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [
+                {
+                  "label": "绿盟",
+                  "value": "lvmeng",
+                  "disabled": false
+                },
+                {
+                  "label": "启明星辰",
+                  "value": "qiming",
+                  "disabled": false
+                }
+              ],
+              "labelWidth": 100,
+              "loading": false,
+              "disabled": false,
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              }
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "请求来源",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": true,
+              "rules": [
+                {
+                  "required": true,
+                  "message": "请求来源不能为空",
+                  "trigger": "blur"
+                }
+              ],
+              "columnName": "qqly",
+              "targetName": "label_needReboot_1603785073135",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [],
+              "option-label": "name",
+              "option-value": "name",
+              "option-alias": "alias",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "2",
+                "sessionKey": "sessionDictsData",
+                "dicKey": "REQUEST_SOURCE",
+                "apiName": "/v1/desk/zxgllc/dropData",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{aliasName:\"qqly\", pageNo: 1,pageSize:100}"
+              },
+              "options": [
+                {
+                  "label": "是",
+                  "value": "Y",
+                  "disabled": false
+                },
+                {
+                  "label": "否",
+                  "value": "N",
+                  "disabled": false
+                }
+              ],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [
+                {
+                  "label": "是",
+                  "value": "Y",
+                  "disabled": false
+                },
+                {
+                  "label": "否",
+                  "value": "N",
+                  "disabled": false
+                }
+              ],
+              "labelWidth": 160,
+              "loading": false,
+              "disabled": false,
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              }
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "资源池",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": false,
+              "rules": [],
+              "columnName": "zyc",
+              "targetName": "",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": false,
+              "operation": [],
+              "option-label": "name",
+              "option-value": "name",
+              "option-alias": "alias",
+              "option-disabled": "",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "2",
+                "sessionKey": "",
+                "dicKey": "",
+                "apiName": "/v1/desk/zxgllc/dropData",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{aliasName:\"zyc1\", pageNo: 1,pageSize:100}"
+              },
+              "options": [],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [],
+              "labelWidth": 160,
+              "loading": false,
+              "disabled": false,
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              }
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "邮箱",
+              "type": "input",
+              "columnName": "bzryx",
+              "defaultValue": "",
+              "isModel": true,
+              "class": "",
+              "required": false,
+              "rules": [],
+              "label-width": "",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont icondanhangwenben",
+              "icon": "",
+              "hidden": false,
+              "props": {
+                "placeholder": "请输入邮箱",
+                "maxlength": "",
+                "show-word-limit": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false
+              },
+              "operation": [],
+              "button": false,
+              "slot": "",
+              "button-name": "",
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "labelWidth": 100,
+              "style": {
+                "word-break": "break-all"
+              },
+              "isNumberType": false
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "一级部门",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": false,
+              "rules": [],
+              "columnName": "yjbm",
+              "targetName": "label_select_1599445677870",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [],
+              "option-label": "name",
+              "option-value": "code",
+              "option-alias": "alias",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "2",
+                "sessionKey": "",
+                "dicKey": "",
+                "apiName": "/v1/desk/zxgllc/dropData/department",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{parentId:\"0\"}"
+              },
+              "options": [
+                {
+                  "label": "销售分公司",
+                  "value": "00a4e8b49a524f2f8d85b7c58ea7b502",
+                  "disabled": false
+                },
+                {
+                  "label": "黑龙江公司",
+                  "value": "03377fdb87cb485d9a769d0e2c94fd54",
+                  "disabled": false
+                },
+                {
+                  "label": "香港移动",
+                  "value": "11f7e8dd5f834f6a9bd01d064177bf03",
+                  "disabled": false
+                }
+              ],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [
+                {
+                  "label": "销售分公司",
+                  "value": "00a4e8b49a524f2f8d85b7c58ea7b502",
+                  "disabled": false
+                },
+                {
+                  "label": "黑龙江公司",
+                  "value": "03377fdb87cb485d9a769d0e2c94fd54",
+                  "disabled": false
+                },
+                {
+                  "label": "香港移动",
+                  "value": "11f7e8dd5f834f6a9bd01d064177bf03",
+                  "disabled": false
+                }
+              ],
+              "labelWidth": 100,
+              "loading": false,
+              "dynamic": {
+                "single_mainform_list": [
+                  {
+                    "key": 1604479708713,
+                    "source": {
+                      "label": "一级部门:yjbm",
+                      "columnName": "yjbm",
+                      "targetName": "label_select_1599445677870",
+                      "name": "basic",
+                      "type": "select"
+                    },
+                    "target": [
+                      {
+                        "label": "二级部门 : ejbm",
+                        "columnName": "ejbm",
+                        "targetName": "label_yjbm_1604476068138",
+                        "name": "basic",
+                        "type": "select"
+                      }
+                    ],
+                    "condition": []
+                  }
+                ],
+                "single_option_select": [
+                  {
+                    "source": {
+                      "label": "一级部门:yjbm",
+                      "columnName": "yjbm",
+                      "targetName": "label_select_1599445677870",
+                      "name": "basic",
+                      "type": "select"
+                    },
+                    "target": [
+                      {
+                        "label": "二级部门 : ejbm",
+                        "columnName": "ejbm",
+                        "targetName": "label_yjbm_1604476068138",
+                        "name": "basic",
+                        "type": "select"
+                      }
+                    ],
+                    "optionType": "2",
+                    "condition": [
+                      {
+                        "columnName": "yjbm",
+                        "condition": "=",
+                        "valueType": "value",
+                        "compareValueType": "string",
+                        "columnValue": "$yjbm$",
+                        "apiType": "get",
+                        "apiName": "/v1/desk/zxgllc/dropData/department",
+                        "apiParam": "{parentId:\"$yjbm$\"}",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "status": [],
+                        "numberSign": ">=",
+                        "numberValue": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "disabled": false,
+              "filterOptionStatus": [],
+              "disabledOptionStatus": [],
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              }
+            }
+          ]
+        },
+        {
+          "span": 12,
+          "childList": [
+            {
+              "label": "二级部门",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": false,
+              "rules": [],
+              "columnName": "ejbm",
+              "targetName": "label_yjbm_1604476068138",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [
+                {
+                  "status": "",
+                  "attr": "",
+                  "formatter": ""
+                }
+              ],
+              "option-label": "name",
+              "option-value": "name",
+              "option-alias": "alias",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "0",
+                "apiName": "",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "condition"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": false,
+                "remote": false,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "0",
+                "sessionKey": "",
+                "dicKey": "",
+                "apiName": "",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": ""
+              },
+              "options": [
+                {
+                  "label": "TCP",
+                  "value": "TCP",
+                  "disabled": false
+                },
+                {
+                  "label": "UDP",
+                  "value": "UDP",
+                  "disabled": false
+                },
+                {
+                  "label": "其他",
+                  "value": "其他",
+                  "disabled": false
+                }
+              ],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [
+                {
+                  "label": "TCP",
+                  "value": "TCP",
+                  "disabled": false
+                },
+                {
+                  "label": "UDP",
+                  "value": "UDP",
+                  "disabled": false
+                },
+                {
+                  "label": "其他",
+                  "value": "其他",
+                  "disabled": false
+                }
+              ],
+              "labelWidth": 100,
+              "loading": true,
+              "dynamic": {},
+              "disabled": true,
+              "operations": []
+            }
+          ]
+        },
+        {
+          "span": 24,
+          "childList": [
+            {
+              "label": "处理人",
+              "type": "select",
+              "isLabelWidth": false,
+              "icon-dev": "iconfont iconxialakuang",
+              "icon": "",
+              "required": false,
+              "rules": [],
+              "columnName": "clrID",
+              "targetName": "clr",
+              "defaultValue": "",
+              "defaultContent": "",
+              "isModel": true,
+              "operation": [],
+              "option-label": "fullname",
+              "option-value": "account",
+              "option-alias": "",
+              "option-disabled": "disabled",
+              "searchProps": {
+                "need": "2",
+                "apiName": "/v1/desk/zxgllc/dropData/userInfo",
+                "isShowInput": false,
+                "labelAlias": "",
+                "remotePropName": "search",
+                "apiType": "get"
+              },
+              "hidden": false,
+              "props": {
+                "placeholder": "请选择处理人",
+                "multiple": false,
+                "clearable": true,
+                "disabled": false,
+                "readonly": false,
+                "filterable": true,
+                "remote": true,
+                "text": ""
+              },
+              "optionProps": {
+                "optionType": "0",
+                "sessionKey": "",
+                "dicKey": "",
+                "apiName": "/v1/desk/zxgllc/dropData/userInfo",
+                "separator": ",",
+                "apiType": "get",
+                "apiParam": "{pageNo:\"1\",pageSize:\"1000\"}"
+              },
+              "options": [],
+              "allItemSwitch": false,
+              "span": 24,
+              "width": "100%",
+              "isCompare": true,
+              "isDisabledRequired": false,
+              "isReadonlyRequired": false,
+              "name": "basic",
+              "showOptions": [],
+              "labelWidth": 100,
+              "loading": false,
+              "disabled": false,
+              "network$$$response": {
+                "status": 404,
+                "message": "Not Found"
+              },
+              "filterOptionStatus": [],
+              "disabledOptionStatus": [],
+              "isNoConvertLabel": true
+            }
+          ]
+        }
+      ],
+      "name": "layout",
+      "labelWidth": 160,
+      "operations": [
+        {
+          "status": [],
+          "show": ""
+        }
+      ]
+    },
+    {
+      "label": "按钮组",
+      "type": "buttonGroup",
+      "isLabelWidth": false,
+      "columnName": "buttonGroup_1601170610376",
+      "icon-dev": "iconfont iconanniu",
+      "span": 24,
+      "hidden": false,
+      "position": "right",
+      "operation": [],
+      "toolList": [
+        {
+          "columnName": "btn-reset",
+          "type": "",
+          "icon": "",
+          "label": "重置",
+          "interactive": "",
+          "validateProp": [],
+          "apiName": "",
+          "class": "",
+          "default": "show",
+          "add": "",
+          "modify": "",
+          "activeType": "button_group_other",
+          "dialogConfig": {
+            "bindName": "",
+            "title": "",
+            "subTitle": "",
+            "width": "",
+            "height": "",
+            "toolList": []
+          }
+        },
+        {
+          "columnName": "btn-add-draft",
+          "label": "存为草稿",
+          "type": "",
+          "interactive": "button_group_submit_all_validate",
+          "validateProp": [],
+          "apiName": "/v1/desk/zxgllc/startDraft",
+          "class": "",
+          "icon": "",
+          "default": "show",
+          "add": "",
+          "modify": "",
+          "activeType": "button_group_form_interface",
+          "dialogConfig": {
+            "bindName": "",
+            "title": "",
+            "subTitle": "",
+            "width": "",
+            "height": "",
+            "toolList": []
+          }
+        },
+        {
+          "columnName": "btn-add-submit",
+          "label": "生成工单",
+          "type": "primary",
+          "interactive": "button_group_submit_all_validate",
+          "validateProp": [],
+          "apiName": "/v1/desk/zxgllc/start",
+          "class": "",
+          "icon": "",
+          "default": "show",
+          "add": "",
+          "modify": "",
+          "activeType": "button_group_form_interface",
+          "apiMethod": "post+json",
+          "dialogConfig": {
+            "bindName": "",
+            "title": "",
+            "subTitle": "",
+            "width": "",
+            "height": "",
+            "toolList": []
+          }
+        }
+      ],
+      "name": "layout",
+      "labelWidth": 100
+    }
+  ],
+  "formConfig": {
+    "labelWidth": 100,
+    "labelPosition": "left",
+    "starPostion": "left",
+    "class": "",
+    "defaultClass": "default",
+    "size": "small",
+    "statusList": [
+      "add",
+      "modify"
+    ],
+    "serverProps": {
+      "nodeEnv": "production",
+      "localProxy": "",
+      "nigxProxy": "",
+      "statusKey": "status",
+      "statusValue": "200",
+      "dataKey": "data",
+      "requestDataKey": ""
+    },
+    "compareStatusList": [],
+    "bpmProps": {
+      "initPrefix": "/web/wf",
+      "actionPrefix": "/web/business",
+      "proxy": "",
+      "flowKey": "bpmFlowKey",
+      "instanceId": "",
+      "taskId": "",
+      "readOnly": ""
+    }
+  },
+  "dataConfig": {},
+  "virtual_model": {},
+  "model": {
+    "jtms": "",
+    "qqfl": "",
+    "label_select_1599445663882": "",
+    "qqzl": "",
+    "label_needReboot_1603785083991": "",
+    "bzr": "",
+    "bzrdh": "",
+    "qqdj": "",
+    "label_select_1599445662250": "",
+    "qqly": "",
+    "label_needReboot_1603785073135": "",
+    "bzryx": "",
+    "yjbm": "",
+    "label_select_1599445677870": "",
+    "ejbm": "",
+    "label_yjbm_1604476068138": "",
+    "zyc": "",
+    "clr": "",
+    "clrID": ""
+  },
+  "pre_loading_request_list": [],
+  "dynamic": {}
+}

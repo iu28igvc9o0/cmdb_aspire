@@ -1,0 +1,45 @@
+server:
+  port: 28503
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true #当出现404错误时,是否直接抛出异常
+  resources:
+    add-mappings: false #是否开启默认的资源处理
+  kafka: 
+    bootstrap-servers: 10.12.70.40:9092
+    producer: 
+      retries: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    #com.aspire.mirror.dao: debug
+    #tk.mybatis.mapper.common.base.select: debug #输出mybatis select SQL
+    #tk.mybatis.mapper.common.base.update: debug #输出mybatis update SQL
+    #tk.mybatis.mapper.common.base.insert: debug #输出mybatis insert SQL
+    #tk.mybatis.mapper.common.base.delete: debug #输出mybatis delete SQL
+  file: ./log-proxy.log
+
+mybatis:
+  mapperLocations:
+  - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+    org.springboot.sample.entity
+  configLocation: classpath:mybatis-config.xml
+
+
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useUnicode: true
+  characterEncoding: UTF8
+  useSSL: false
+
+idcType: 信息港资源池
+isIntranet: 1
+kafka_http_topic: TOPIC_SYSTEM_ALERTS

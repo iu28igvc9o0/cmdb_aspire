@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.assessment.mapper.CmdbDeviceRepairEventMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="event_name" property="eventName" jdbcType="VARCHAR" />
+        <result column="event_level" property="eventLevel" jdbcType="VARCHAR" />
+        <result column="province" property="province" jdbcType="VARCHAR" />
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="produce" property="produce" jdbcType="VARCHAR" />
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+        <result column="device_model" property="deviceModel" jdbcType="VARCHAR" />
+        <result column="dianpei_type" property="dianpeiType" jdbcType="VARCHAR" />
+        <result column="repaire_belong" property="repaireBelong" jdbcType="VARCHAR" />
+        <result column="problem_part_type" property="problemPartType" jdbcType="VARCHAR" />
+        <result column="problem_start_time" property="problemStartTime" jdbcType="TIMESTAMP" />
+        <result column="problem_end_time" property="problemEndTime" jdbcType="TIMESTAMP" />
+        <result column="problem_long" property="problemLong" jdbcType="VARCHAR" />
+        <result column="problem_handle_count" property="problemHandleCount" jdbcType="TINYINT" />
+        <result column="problem_part_change_count" property="problemPartChangeCount" jdbcType="TINYINT" />
+        <result column="create_username" property="createUsername" jdbcType="VARCHAR" />
+        <result column="create_user_phone" property="createUserPhone" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="quarter" property="quarter" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent" >
+        SELECT
+            count(1)
+        FROM cmdb_device_repair_event
+             where 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="eventName != null and eventName != ''">
+            AND `event_name` = #{eventName}
+        </if>
+        <if test="eventLevel != null and eventLevel != ''">
+            AND `event_level` = #{eventLevel}
+        </if>
+        <if test="province != null and province != ''">
+            AND `province` = #{province}
+        </if>
+        <if test="city != null and city != ''">
+            AND `city` = #{city}
+        </if>
+        <if test="produce != null and produce != ''">
+            AND `produce` = #{produce}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            AND `device_type` = #{deviceType}
+        </if>
+        <if test="deviceModel != null and deviceModel != ''">
+            AND `device_model` = #{deviceModel}
+        </if>
+        <if test="dianpeiType != null and dianpeiType != ''">
+            AND `dianpei_type` = #{dianpeiType}
+        </if>
+        <if test="repaireBelong != null and repaireBelong != ''">
+            AND `repaire_belong` = #{repaireBelong}
+        </if>
+        <if test="problemPartType != null and problemPartType != ''">
+            AND `problem_part_type` = #{problemPartType}
+        </if>
+        <if test="problemStartTime != null and problemStartTime != ''">
+            AND `problem_start_time` = #{problemStartTime}
+        </if>
+        <if test="problemEndTime != null and problemEndTime != ''">
+            AND `problem_end_time` = #{problemEndTime}
+        </if>
+        <if test="problemLong != null and problemLong != ''">
+            AND `problem_long` = #{problemLong}
+        </if>
+        <if test="problemHandleCount != null and problemHandleCount != ''">
+            AND `problem_handle_count` = #{problemHandleCount}
+        </if>
+        <if test="problemPartChangeCount != null and problemPartChangeCount != ''">
+            AND `problem_part_change_count` = #{problemPartChangeCount}
+        </if>
+        <!--<if test="createUsername != null and createUsername != ''">-->
+            <!--AND `create_username` = #{createUsername}-->
+        <!--</if>-->
+        <!--<if test="createUserPhone != null and createUserPhone != ''">-->
+            <!--AND `create_user_phone` = #{createUserPhone}-->
+        <!--</if>-->
+        <if test="status != null and status != ''">
+            AND `status` = #{status}
+        </if>
+        <if test="quarter != null and quarter != ''">
+            AND `quarter` = #{quarter}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap">
+        SELECT
+        `id`,
+        `event_name`,
+        `event_level`,
+        `province`,
+        `city`,
+        `produce`,
+        `device_type`,
+        `device_model`,
+        `dianpei_type`,
+        `repaire_belong`,
+        `problem_part_type`,
+        `problem_start_time`,
+        `problem_end_time`,
+        `problem_long`,
+        `problem_handle_count`,
+        `problem_part_change_count`,
+        `create_username`,
+        `create_user_phone`,
+       `create_time`,
+        `status`,
+       `quarter`
+        FROM cmdb_device_repair_event
+             where 1=1
+        <if test="event.id != null and event.id != ''">
+        AND `id` = #{event.id}
+        </if>
+        <if test="event.eventName != null and event.eventName != ''">
+        AND `event_name` = #{event.eventName}
+        </if>
+        <if test="event.eventLevel != null and event.eventLevel != ''">
+        AND `event_level` = #{event.eventLevel}
+        </if>
+        <if test="event.province != null and event.province != ''">
+        AND `province` = #{event.province}
+        </if>
+        <if test="event.city != null and event.city != ''">
+        AND `city` = #{event.city}
+        </if>
+        <if test="event.produce != null and event.produce != ''">
+        AND `produce` = #{event.produce}
+        </if>
+        <if test="event.deviceType != null and event.deviceType != ''">
+        AND `device_type` = #{event.deviceType}
+        </if>
+        <if test="event.deviceModel != null and event.deviceModel != ''">
+        AND `device_model` = #{event.deviceModel}
+        </if>
+        <if test="event.dianpeiType != null and event.dianpeiType != ''">
+        AND `dianpei_type` = #{event.dianpeiType}
+        </if>
+        <if test="event.repaireBelong != null and event.repaireBelong != ''">
+        AND `repaire_belong` = #{event.repaireBelong}
+        </if>
+        <if test="event.problemPartType != null and event.problemPartType != ''">
+        AND `problem_part_type` = #{event.problemPartType}
+        </if>
+        <if test="event.problemStartTime != null and event.problemStartTime != ''">
+        AND `problem_start_time` = #{event.problemStartTime}
+        </if>
+        <if test="event.problemEndTime != null and event.problemEndTime != ''">
+        AND `problem_end_time` = #{event.problemEndTime}
+        </if>
+        <if test="event.problemLong != null and event.problemLong != ''">
+        AND `problem_long` = #{event.problemLong}
+        </if>
+        <if test="event.problemHandleCount != null and event.problemHandleCount != ''">
+        AND `problem_handle_count` = #{event.problemHandleCount}
+        </if>
+        <if test="event.problemPartChangeCount != null and event.problemPartChangeCount != ''">
+        AND `problem_part_change_count` = #{event.problemPartChangeCount}
+        </if>
+        <if test="event.problemPartChangeCount != null and event.problemPartChangeCount != ''">
+            AND `problem_part_change_count` = #{event.problemPartChangeCount}
+        </if>
+        <if test="event.quarter != null and event.quarter != ''">
+            AND `quarter` = #{event.quarter}
+        </if>
+        <!--<if test="event.createUsername != null and event.createUsername != ''">-->
+            <!--AND `create_username` = #{event.createUsername}-->
+        <!--</if>-->
+        <!--<if test="event.createUserPhone != null and event.createUserPhone != ''">-->
+            <!--AND `create_user_phone` = #{event.createUserPhone}-->
+        <!--</if>-->
+        <if test="event.status != null and event.status != ''">
+        AND `status` = #{event.status}
+        </if>
+        order by  `create_time`
+        <if test="pageNum != null and pageSize != null">
+            limit #{pageNum}, #{pageSize}
+        </if>
+
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent" resultMap="resultMap">
+        SELECT
+        `id`,
+        `event_name`,
+        `event_level`,
+        `province`,
+        `city`,
+        `produce`,
+        `device_type`,
+        `device_model`,
+        `dianpei_type`,
+        `repaire_belong`,
+        `problem_part_type`,
+        `problem_start_time`,
+        `problem_end_time`,
+        `problem_long`,
+        `problem_handle_count`,
+        `problem_part_change_count`,
+        `create_username`,
+        `create_user_phone`,
+        `create_time`,
+        `status`,
+         `quarter`
+        FROM cmdb_device_repair_event
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent">
+        INSERT INTO cmdb_device_repair_event
+        (
+            `id`,
+            `event_name`,
+            `event_level`,
+            `province`,
+            `city`,
+            `produce`,
+            `device_type`,
+            `device_model`,
+            `dianpei_type`,
+            `repaire_belong`,
+            `problem_part_type`,
+            `problem_start_time`,
+            `problem_end_time`,
+            `problem_long`,
+            `problem_handle_count`,
+            `problem_part_change_count`,
+            `create_username`,
+            `create_user_phone`,
+            `create_time`,
+            `status`,
+         `quarter`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{eventName, jdbcType=VARCHAR},
+            #{eventLevel, jdbcType=VARCHAR},
+            #{province, jdbcType=VARCHAR},
+            #{city, jdbcType=VARCHAR},
+            #{produce, jdbcType=VARCHAR},
+            #{deviceType, jdbcType=VARCHAR},
+            #{deviceModel, jdbcType=VARCHAR},
+            #{dianpeiType, jdbcType=VARCHAR},
+            #{repaireBelong, jdbcType=VARCHAR},
+            #{problemPartType, jdbcType=VARCHAR},
+            #{problemStartTime, jdbcType=TIMESTAMP},
+            #{problemEndTime, jdbcType=TIMESTAMP},
+            #{problemLong, jdbcType=VARCHAR},
+            #{problemHandleCount, jdbcType=TINYINT},
+            #{problemPartChangeCount, jdbcType=TINYINT},
+            #{createUsername, jdbcType=VARCHAR},
+            #{createUserPhone, jdbcType=VARCHAR},
+            #{createTime, jdbcType=TIMESTAMP},
+            #{status, jdbcType=INTEGER},
+            #{quarter, jdbcType=VARCHAR}
+        )
+         ON duplicate KEY UPDATE
+          event_name = values(event_name),
+          event_level = values(event_level),
+         city = values(city),
+       produce = values(produce),
+        device_type = values(device_type),
+         device_model = values(device_model),
+           dianpei_type = values(dianpei_type),
+         repaire_belong = values(repaire_belong),
+     problem_part_type = values(problem_part_type),
+           create_username = values(create_username),
+        create_user_phone = values(create_user_phone),
+   problem_start_time = values(problem_start_time),
+ problem_end_time = values(problem_end_time),
+ problem_long = values(problem_long),
+  problem_handle_count = values(problem_handle_count),
+problem_part_change_count = values(problem_part_change_count),
+       status = VALUES(status),
+                       quarter = VALUES(quarter)
+
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent">
+        INSERT INTO cmdb_device_repair_event
+        (
+            `id`,
+            `event_name`,
+            `event_level`,
+            `province`,
+            `city`,
+            `produce`,
+            `device_type`,
+            `device_model`,
+            `dianpei_type`,
+            `repaire_belong`,
+            `problem_part_type`,
+            `problem_start_time`,
+            `problem_end_time`,
+            `problem_long`,
+            `problem_handle_count`,
+            `problem_part_change_count`,
+            `create_username`,
+            `create_user_phone`,
+            `create_time`,
+            `status`,
+          `quarter`
+        ) VALUES
+                 <foreach collection="list" item="item" index="index" separator=",">
+                     (
+                     #{item.id, jdbcType=VARCHAR},
+                     #{item.eventName, jdbcType=VARCHAR},
+                     #{item.eventLevel, jdbcType=VARCHAR},
+                     #{item.province, jdbcType=VARCHAR},
+                     #{item.city, jdbcType=VARCHAR},
+                     #{item.produce, jdbcType=VARCHAR},
+                     #{item.deviceType, jdbcType=VARCHAR},
+                     #{item.deviceModel, jdbcType=VARCHAR},
+                     #{item.dianpeiType, jdbcType=VARCHAR},
+                     #{item.repaireBelong, jdbcType=VARCHAR},
+                     #{item.problemPartType, jdbcType=VARCHAR},
+                     #{item.problemStartTime, jdbcType=TIMESTAMP},
+                     #{item.problemEndTime, jdbcType=TIMESTAMP},
+                     #{item.problemLong, jdbcType=VARCHAR},
+                     #{item.problemHandleCount, jdbcType=TINYINT},
+                     #{item.problemPartChangeCount, jdbcType=TINYINT},
+                     #{item.createUsername, jdbcType=VARCHAR},
+                     #{item.createUserPhone, jdbcType=VARCHAR},
+                     #{item.createTime, jdbcType=TIMESTAMP},
+                     #{item.status, jdbcType=INTEGER},
+                     #{item.quarter, jdbcType=VARCHAR}
+                     )
+                 </foreach>
+
+        ON duplicate KEY UPDATE
+        event_name = values(event_name),
+        event_level = values(event_level),
+        province = values(province),
+        city = values(city),
+        produce = values(produce),
+        device_type = values(device_type),
+        device_model = values(device_model),
+        dianpei_type = values(dianpei_type),
+        repaire_belong = values(repaire_belong),
+        problem_part_type = values(problem_part_type),
+        create_username = values(create_username),
+        create_user_phone = values(create_user_phone),
+        problem_start_time = values(problem_start_time),
+        problem_end_time = values(problem_end_time),
+        problem_long = values(problem_long),
+        problem_handle_count = values(problem_handle_count),
+        problem_part_change_count = values(problem_part_change_count),
+        create_username = values(create_username),
+        create_user_phone = values(create_user_phone),
+        status = VALUES(status),
+        quarter = VALUES(quarter)
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent">
+        UPDATE cmdb_device_repair_event SET
+        `status` = #{status}
+        WHERE
+            `province` = #{province}
+            and quarter=#{quarter}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceRepairEvent">
+        DELETE FROM cmdb_device_repair_event
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <!-- 删除记录 -->
+    <delete id="deleteByBatch" parameterType="java.lang.String">
+        DELETE FROM cmdb_device_repair_event
+        WHERE
+            `id` in
+      <foreach collection="list" item="item" separator="," open="(" close=")">
+          #{item}
+      </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.MaintenanceStatistAnalysisMapper">
+
+    <!-- 动态查询sql -->
+    <sql id="where_sql">
+        <if test="resourcePool != null">
+            AND IFNULL(idcType,'') = #{resourcePool}
+        </if>
+        <if test="projectName != null and projectName != ''">
+            AND `project_name` like concat('%',#{projectName},'%')
+        </if>
+        <if test="contractProduce != null and contractProduce != ''">
+            AND `contract_produce` = #{contractProduce}
+        </if>
+        <if test="serviceProduce != null and serviceProduce != ''">
+            AND `service_produce` = #{serviceProduce}
+        </if>
+        <if test="serviceStartTime != null and serviceStartTime != ''">
+            AND `service_start_time` <![CDATA[ >= ]]> #{serviceStartTime}
+        </if>
+        <if test="serviceEndTime != null and serviceEndTime != ''">
+            AND `service_end_time` <![CDATA[ <= ]]> #{serviceEndTime}
+        </if>
+        <if test="brand != null and brand != ''">
+            AND `device_mfrs` = #{brand}
+        </if>
+        <if test="deviceClass != null and deviceClass != ''">
+            AND `device_class` = #{deviceClass}
+        </if>
+        <if test="procureType != null and procureType != ''">
+            AND `procure_type` = #{procureType}
+        </if>
+        <if test="serviceType != null and serviceType != ''">
+            AND `service_type` = #{serviceType}
+        </if>
+        <if test="maintenanceProjectType != null and maintenanceProjectType != ''">
+            AND `maintenance_project_type` = #{maintenanceProjectType}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            AND `device_type` = #{deviceType}
+        </if>
+        <if test="warrantyDate != null and warrantyDate != ''">
+            AND DATE_FORMAT(service_end_time,'%Y-%m-%d') = #{warrantyDate}
+        </if>
+        <if test="deviceArea != null and deviceArea != ''">
+            AND `device_area` like concat('%',#{deviceArea},'%')
+        </if>
+    </sql>
+
+    <select id="firstLayer" resultType="java.util.HashMap">
+        SELECT
+            wvb1.idcType resourcePool,
+            wvb1.maintenance_project_type maintenanceProjectType,
+            wvb1.project_count projectNum,
+            wvb1.device_count deviceNum,
+            ifnull(wvb2.total_money,0) totalMoney,
+            wvb1.service_end_time serviceEndTime
+        FROM
+        (
+            SELECT
+            vwmp.idcType,
+            vwmp.maintenance_project_type,
+            count(DISTINCT vwmp.project_name) project_count,
+            count(DISTINCT vwmp.instance_id) device_count,
+            min(vwmp.service_end_time) service_end_time
+            FROM
+            vw_mainten_bind_instance vwmp
+            WHERE
+            1 = 1 <include refid="where_sql"></include>
+            GROUP BY
+            vwmp.idcType,
+            vwmp.maintenance_project_type
+            ORDER BY service_end_time <![CDATA[ <= ]]> NOW(), service_end_time
+        ) wvb1
+        LEFT JOIN (
+            SELECT
+                idcType,
+                maintenance_project_type,
+                SUM(st.money) total_money
+            FROM
+            (
+                SELECT
+                    vw.idcType,
+                    vw.maintenance_project_type,
+                    IFNULL(vw.money,0) money
+                FROM
+                  vw_mainten_bind_instance vw
+                WHERE
+                  1 = 1 <include refid="where_sql"></include>
+                GROUP BY
+                    vw.idcType,
+                    vw.maintenance_project_type,
+                    vw.project_name
+            ) st
+            GROUP BY
+            idcType,
+            maintenance_project_type
+        ) wvb2 ON (wvb1.idcType = wvb2.idcType AND wvb1.maintenance_project_type = wvb2.maintenance_project_type)
+        LEFT JOIN cmdb_idc_manager idc on wvb1.idcType = idc.idc_name
+        ORDER BY
+        wvb1.idcType = '',
+        idc.sort_index
+    </select>
+
+    <select id="getCloserDate" resultType="java.util.HashMap">
+        SELECT
+			service_end_time
+		FROM
+			vw_mainten_bind_instance
+		WHERE
+			1 = 1
+			<if test="resourcePool != null">
+                AND ifnull(idcType,'') = #{resourcePool}
+            </if>
+            <if test="maintenanceProjectType != null and maintenanceProjectType != ''">
+                AND maintenance_project_type = #{maintenanceProjectType}
+            </if>
+            <if test="deviceType != null and deviceType != ''">
+                AND device_type = #{deviceType}
+            </if>
+            <if test="serviceProduce != null and serviceProduce != ''">
+                AND service_produce = #{serviceProduce}
+            </if>
+        ORDER BY DATE_FORMAT(service_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d') desc,ABS(DATEDIFF(NOW(),service_end_time))
+        limit 0,1
+    </select>
+
+    <select id="secondLayer" resultType="java.util.HashMap">
+        SELECT
+            wvb1.idcType resourcePool,
+            wvb1.maintenance_project_type maintenanceProjectType,
+            wvb1.device_type deviceType,
+            wvb1.project_count projectNum,
+            wvb1.device_count deviceNum,
+            wvb1.produce_count produceNum,
+            IFNULL(wvb2.total_money,0) totalMoney,
+            wvb1.service_end_time serviceEndTime
+        FROM
+        (
+            SELECT
+                vwmp.idcType,
+                vwmp.maintenance_project_type,
+                ifnull(vwmp.device_type,'') device_type,
+                count(DISTINCT vwmp.project_name) project_count,
+                count(DISTINCT vwmp.instance_id) device_count,
+                count(DISTINCT vwmp.service_produce) produce_count,
+                vwmp.service_end_time
+            FROM
+              vw_mainten_bind_instance vwmp
+            WHERE
+              1 = 1 <include refid="where_sql"></include>
+            GROUP BY ifnull(vwmp.device_type,'')
+            ORDER BY service_end_time <![CDATA[ <= ]]> NOW(), service_end_time
+        ) wvb1
+        LEFT JOIN (
+            SELECT
+                idcType,
+                maintenance_project_type,
+                device_type,
+                SUM(st.money) total_money
+            FROM
+            (
+                SELECT
+                    vw.idcType,
+                    vw.project_name,
+                    vw.maintenance_project_type,
+                    ifnull(vw.device_type,'') device_type,
+                    IFNULL(vw.money,0) money
+                FROM
+                  vw_mainten_bind_instance vw
+                WHERE
+                  1 = 1 <include refid="where_sql"></include>
+                GROUP BY
+                  ifnull(vw.device_type,''),
+                  vw.project_name
+            ) st
+            GROUP BY device_type
+        ) wvb2 on (wvb1.idcType = wvb2.idcType AND wvb1.maintenance_project_type = wvb2.maintenance_project_type AND wvb1.device_type = wvb2.device_type)
+        LEFT JOIN	cmdb_idc_manager idc on wvb1.idcType = idc.idc_name
+        ORDER BY
+            wvb1.idcType = '',
+            wvb1.device_type DESC,
+            idc.sort_index
+    </select>
+
+    <select id="thirdLayer" resultType="java.util.HashMap">
+        SELECT
+            wvb1.idcType resourcePool,
+            wvb1.maintenance_project_type maintenanceProjectType,
+            wvb1.device_type deviceType,
+            wvb1.service_produce serviceProduce,
+            wvb1.project_count projectNum,
+            wvb1.device_count deviceNum,
+            wvb2.total_money totalMoney,
+            wvb1.service_end_time serviceEndTime
+        FROM
+        (
+            SELECT
+                vwmp.idcType,
+                vwmp.maintenance_project_type,
+                vwmp.device_type,
+                vwmp.service_produce,
+                count(DISTINCT vwmp.project_name) project_count,
+                count(DISTINCT vwmp.instance_id) device_count,
+                vwmp.service_end_time
+            FROM
+              vw_mainten_bind_instance vwmp
+            WHERE
+              1 = 1 <include refid="where_sql"></include>
+            GROUP BY
+                vwmp.device_type,
+                vwmp.service_produce
+            ORDER BY service_end_time <![CDATA[ <= ]]> NOW(), service_end_time
+        ) wvb1
+        LEFT JOIN(
+            SELECT
+                idcType,
+                maintenance_project_type,
+                device_type,
+                service_produce,
+                SUM(st.money) total_money
+            FROM
+            (
+                SELECT
+                    vw.idcType,
+                    vw.maintenance_project_type,
+                    vw.project_name,
+                    vw.device_type,
+                    vw.service_produce,
+                    IFNULL(vw.money,0) money
+                FROM
+                  vw_mainten_bind_instance vw
+                WHERE
+                  1 = 1 <include refid="where_sql"></include>
+                GROUP BY
+                    vw.project_name,
+                    vw.device_type,
+                    vw.service_produce
+                ) st
+                GROUP BY
+                    idcType,
+                    maintenance_project_type,
+                    device_type,
+                    service_produce
+        ) wvb2 ON (wvb1.idcType = wvb2.idcType AND wvb1.maintenance_project_type = wvb2.maintenance_project_type
+                        AND wvb1.device_type = wvb2.device_type AND wvb1.service_produce = wvb2.service_produce)
+        LEFT JOIN cmdb_idc_manager idc on (wvb1.idcType = idc.idc_name)
+        ORDER BY
+            wvb1.idcType = '',
+            idc.sort_index
+    </select>
+
+    <select id="fourthLayer" resultType="java.util.HashMap">
+        SELECT
+            project_no projectNo,
+            project_name projectName,
+            contract_produce contractProduce,
+            service_produce serviceProduce,
+            device_type deviceType,
+            idcType resourcePool,
+            procure_type procureType,
+            service_end_time serviceEndTime,
+            IFNULL(money,0) money,
+            discount_rate discountRate,
+            COUNT(DISTINCT instance_id) deviceNum,
+            GROUP_CONCAT(b.service_type) serviceType,
+            GROUP_CONCAT(b.service_num) serviceNum
+        from
+          vw_mainten_bind_instance a
+        left join cmdb_maintenance_service_num b on a.id = b.project_id
+        where
+          1=1 <include refid="where_sql"></include>
+        GROUP BY a.id
+    </select>
+
+    <select id="maintenancePeriodAnalysis" resultType="java.util.HashMap">
+        SELECT
+            a.project_name projectName,
+            a.contract_produce contractProduce,
+            a.service_produce serviceProduce,
+            a.device_type deviceType,
+            a.device_area deviceArea,
+            a.deviceNum,
+            a.money,
+            a.discount_rate discountRate,
+            a.quarter_flag quarterFlag,
+            a.service_end_time serviceEndTime,
+            t.serviceType,
+            t.serviceNum
+        FROM
+        (
+            SELECT *,
+                  count(device_sn) deviceNum
+            FROM vw_mainten_bind_instance
+            group by id
+            having 1=1 <include refid="where_sql"></include>
+        ) a
+        LEFT JOIN (
+            SELECT
+                t1.id projectId,
+                GROUP_CONCAT(t2.service_num) serviceNum,
+                GROUP_CONCAT(t2.service_type) serviceType
+            FROM cmdb_maintenance_project t1
+            LEFT JOIN cmdb_maintenance_service_num t2 on t1.id = t2.project_id
+            GROUP BY t1.id
+        ) t on t.projectId = a.id
+        WHERE
+        (
+            SELECT
+              count(1)
+            FROM
+            (
+                SELECT *
+                FROM vw_mainten_bind_instance
+                group by id
+                having 1=1 <include refid="where_sql"></include>
+            ) b
+            WHERE
+              a.quarter_flag = b.quarter_flag
+              AND a.service_end_time <![CDATA[ < ]]> b.service_end_time
+              <include refid="where_sql"></include>
+        ) <![CDATA[ < ]]> 2
+        ORDER BY
+        a.quarter_flag DESC,
+        a.service_end_time DESC;
+    </select>
+
+    <select id="getCloserMaintenPeriod" resultType="java.util.HashMap">
+        SELECT
+            a.project_name projectName,
+            a.contract_produce contractProduce,
+            a.service_produce serviceProduce,
+            a.device_type deviceType,
+            a.device_area deviceArea,
+            a.deviceNum,
+            a.money,
+            a.discount_rate discountRate,
+            a.quarter_flag quarterFlag,
+            a.service_end_time serviceEndTime,
+            t.serviceType,
+            t.serviceNum
+        FROM
+        (
+            SELECT *,
+                count(device_sn) deviceNum
+            FROM vw_mainten_bind_instance
+            group by id
+        ) a
+        LEFT JOIN (
+            SELECT
+                t1.id projectId,
+                GROUP_CONCAT(t2.service_num) serviceNum,
+                GROUP_CONCAT(t2.service_type) serviceType
+            FROM cmdb_maintenance_project t1
+            LEFT JOIN cmdb_maintenance_service_num t2 on t1.id = t2.project_id
+            GROUP BY t1.id
+        ) t on t.projectId = a.id
+        WHERE a.quarter_flag = #{quarterFlag} and DATE_FORMAT(a.service_end_time,'%Y-%m-%d') <![CDATA[ <= ]]> #{serviceEndTime}
+        ORDER BY a.service_end_time desc
+        limit 0,2
+    </select>
+
+    <select id="getMaintenPeriodByProjectName" resultType="java.util.HashMap">
+        SELECT
+            a.project_name projectName,
+            a.contract_produce contractProduce,
+            a.service_produce serviceProduce,
+            a.device_type deviceType,
+            a.device_area deviceArea,
+            a.deviceNum,
+            a.money,
+            a.discount_rate discountRate,
+            a.quarter_flag quarterFlag,
+            a.service_end_time serviceEndTime,
+            t.serviceType,
+            t.serviceNum
+        FROM
+        (
+            SELECT *,
+                count(device_sn) deviceNum
+            FROM vw_mainten_bind_instance
+            group by id
+            having 1=1 <include refid="where_sql"></include>
+        ) a
+        LEFT JOIN (
+            SELECT
+                t1.id projectId,
+                GROUP_CONCAT(t2.service_num) serviceNum,
+                GROUP_CONCAT(t2.service_type) serviceType
+            FROM cmdb_maintenance_project t1
+            LEFT JOIN cmdb_maintenance_service_num t2 on t1.id = t2.project_id
+            GROUP BY t1.id
+        ) t on t.projectId = a.id
+        ORDER BY
+        a.quarter_flag DESC,
+        a.service_end_time DESC;
+    </select>
+</mapper>

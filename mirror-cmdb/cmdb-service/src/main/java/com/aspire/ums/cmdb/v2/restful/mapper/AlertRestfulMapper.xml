@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.restful.mapper.AlertRestfulMapper" >
+    <sql id="baseDict">
+        select t.* from t_cfg_dict t
+                            inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+    </sql>
+    <select id="statisticsDeviceByIdcType" resultType="java.util.LinkedHashMap">
+        select idcType, count(1) deviceCount from vw_instance_for_x86 t
+        where 1=1 and ifNull(idcType, '') != ''
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        group by idcType
+    </select>
+
+    <select id="statisticsDeviceByDepartment1" resultType="java.util.LinkedHashMap">
+        select department1, count(1) deviceCount from cmdb_instance t
+        where 1=1 and ifNull(department1, '') != ''
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="deviceClass != null and deviceClass != ''">
+            and device_class = #{deviceClass}
+        </if>
+        <if test="bizSystemList != null and bizSystemList != ''">
+            and bizSystem in (
+            <foreach collection="bizSystemList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="department1List != null and department1List != ''">
+            and department1 in (
+            <foreach collection="department1List" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        group by department1
+    </select>
+
+    <select id="statisticsDeviceByBizSystem" resultType="java.util.LinkedHashMap">
+        select t.bizSystem, t.department1, t.department2, count(1) deviceCount 
+          from cmdb_instance t
+         <if test="resFilterMap != null and resFilterMap.device_type != null and resFilterMap.device_type.size > 0">
+          	inner join 	(<include refid="baseDict"/>) dd on dd.delete_flag = 0 and dd.col_name='device_type'
+          	   and dd.dict_code = t.device_type and dd.dict_id in
+          	(
+				<foreach collection="resFilterMap.device_type" item="item" separator=",">
+	                #{item}
+	            </foreach>          	
+          	)
+         </if>
+         <if test="resFilterMap != null and resFilterMap.bizSystem != null and resFilterMap.bizSystem.size > 0">
+          	inner join cmdb_business_system bs on bs.is_delete = 0 and bs.bizSystem = t.bizSystem and bs.id in
+          	(
+				<foreach collection="resFilterMap.bizSystem" item="item" separator=",">
+	                #{item}
+	            </foreach>          	
+          	)
+         </if>
+        where 1=1 and ifNull(t.bizSystem, '') != ''
+        <if test="resFilterMap != null and resFilterMap.device != null and resFilterMap.device.size > 0">
+          	and t.id in
+          	(
+				<foreach collection="resFilterMap.device" item="item" separator=",">
+	                #{item}
+	            </foreach>          	
+          	)
+         </if>
+         <if test="resFilterMap != null and resFilterMap.idcType != null and resFilterMap.idcType.size > 0">
+          	and exists(
+          	 select 1 from cmdb_idc_manager idc
+          	 where idc.idc_code = t.idcType
+          	   and idc.id in (
+				<foreach collection="resFilterMap.idcType" item="item" separator=",">
+	                #{item}
+	            </foreach>          	
+          	  )
+          	)
+         </if> 
+         <if test="resFilterMap != null and resFilterMap.roomId != null and resFilterMap.roomId.size > 0">
+          	and exists(
+          	 select 1 from cmdb_room_manager rm
+          	 where t.roomId = rm.room_code 
+          	   and rm.id in (
+				<foreach collection="resFilterMap.roomId" item="item" separator=",">
+	                #{item}
+	            </foreach>          	
+          	  )
+          	)
+         </if> 
+        <if test="params.idcType != null and params.idcType != ''">
+            and t.idcType = #{params.idcType}
+        </if>
+        <if test="params.deviceType != null and params.deviceType != ''">
+            and t.device_type = #{params.deviceType}
+        </if>
+        <if test="params.deviceClass != null and params.deviceClass != ''">
+            and t.device_class = #{params.deviceClass}
+        </if>
+        <if test="params.bizSystemList != null and params.bizSystemList != ''">
+            and t.bizSystem in (
+            <foreach collection="params.bizSystemList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        group by t.bizSystem, t.department1, t.department2 order by count(1) desc
+    </select>
+
+    <select id="statisticsDepartment1ForAvailability" resultType="java.util.LinkedHashMap">
+        select department1 department, count(1) totalCount from cmdb_instance
+        where is_delete = '0' and IFNULL(department1, '') != ''
+        group by department1 ORDER BY count(1) desc
+    </select>
+
+    <select id="statisticsDepartment2ForAvailability" resultType="java.util.LinkedHashMap">
+        select department2 department, count(1) totalCount from cmdb_instance
+        where is_delete = '0' and department1 = #{department1}
+        group by department2 ORDER BY count(1) desc
+    </select>
+</mapper>

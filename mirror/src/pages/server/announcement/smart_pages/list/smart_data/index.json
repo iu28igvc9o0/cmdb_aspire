@@ -1,0 +1,723 @@
+{
+    "list": [
+        {
+            "type": "form",
+            "label": "表单容器",
+            "columnName": "form_announcement_list",
+            "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+            "width": "100%",
+            "list": [
+                {
+                    "label": "生效起始日：",
+                    "type": "datePicker",
+                    "columnName": "startTime",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": true,
+                        "picker-options": {},
+                        "clearableStatus": []
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "datePicker_1603713274119"
+                },
+                {
+                    "label": "生效结束日：",
+                    "type": "datePicker",
+                    "columnName": "endTime",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": true,
+                        "picker-options": {},
+                        "clearableStatus": []
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "datePicker_1603713297110"
+                },
+                {
+                    "type": "input",
+                    "label": "主题：",
+                    "columnName": "subject",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont icondanhangwenben",
+                    "customLabelWidth": false,
+                    "classify": "form",
+                    "class": "",
+                    "props": {
+                        "placeholder": "请输入",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "clearableStatus": []
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "id"
+                },
+                {
+                    "label": "",
+                    "type": "customArea",
+                    "columnName": "customArea_1603714026456",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont iconquyu",
+                    "customLabelWidth": true,
+                    "classify": "form",
+                    "class": "",
+                    "slotName": "customStatus",
+                    "props": {
+                        "placeholder": ""
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 0
+                },
+                {
+                    "type": "select",
+                    "label": "公告类型",
+                    "columnName": "noticeType",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "confont iconxialakuang",
+                    "classify": "form",
+                    "needLabel": true,
+                    "defaultSetLabel": false,
+                    "customLabelWidth": false,
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "optionProps": {
+                        "optionType": "2",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "/v1/desk/publicNotice/noticeType/list",
+                        "separator": "",
+                        "allLabel": "全选",
+                        "allValue": "000",
+                        "isUserAllValue": false,
+                        "apiType": "get"
+                    },
+                    "class": "",
+                    "props": {
+                        "placeholder": "请选择",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "collapse-tags": false,
+                        "clearableStatus": []
+                    },
+                    "options": [
+                        {
+                            "label": "Option 1",
+                            "value": "1"
+                        },
+                        {
+                            "label": "Option 2",
+                            "value": "2"
+                        }
+                    ],
+                    "hidden": false,
+                    "isAddOption": false,
+                    "showOptions": [
+                        {
+                            "label": "Option 1",
+                            "value": "1",
+                            "disabled": false
+                        },
+                        {
+                            "label": "Option 2",
+                            "value": "2",
+                            "disabled": false
+                        }
+                    ],
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "targetName": "label_select_1608204658979",
+                    "filterOptionStatus": [],
+                    "oldColumnName": "select_1608204658979"
+                },
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1598940232112",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [
+                        {
+                            "type": "button",
+                            "label": "查询",
+                            "columnName": "btn-form-search",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {
+                                "type": "primary",
+                                "icon": "el-icon-search"
+                            },
+                            "class": "mleft10",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "submit",
+                            "oldColumnName": "form-search-btn",
+                            "authSwitch": false
+                        },
+                        {
+                            "type": "button",
+                            "label": "重置",
+                            "columnName": "btn-form-reset",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {},
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "reset-submit",
+                            "oldColumnName": "form-reset-btn"
+                        }
+                    ],
+                    "classify": "layout",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100
+                }
+            ],
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1608205625998",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+                {
+                    "type": "button",
+                    "label": "发起公告",
+                    "columnName": "btn-table-send",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": false,
+                    "labelWidth": 80,
+                    "oldColumnName": "button_1608205633054"
+                },
+                {
+                    "type": "button",
+                    "label": "启用",
+                    "columnName": "btn-table-run",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": false,
+                    "labelWidth": 80,
+                    "oldColumnName": "button_1608205634709"
+                },
+                {
+                    "type": "button",
+                    "label": "停用",
+                    "columnName": "btn-table-stop",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": false,
+                    "labelWidth": 80,
+                    "oldColumnName": "button_1608205636154"
+                },
+                {
+                    "type": "button",
+                    "label": "导出",
+                    "columnName": "btn-table-export",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": false,
+                    "labelWidth": 80,
+                    "oldColumnName": "button_1608205645367"
+                }
+            ],
+            "position": "left",
+            "class": "",
+            "isDialogFooterBtns": false,
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "table_announcement_list",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": false,
+            "indexFixed": true,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": true,
+            "multipleSelectionFixed": true,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [],
+            "show-operation": true,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [
+                {
+                    "label": "btn-operate-push",
+                    "columnName": "btn-operate-push",
+                    "authId": "",
+                    "statusList": [],
+                    "state": "show",
+                    "dataLinkage": [
+                        {
+                            "columnName": "noticeType",
+                            "compare": "!=",
+                            "targetValue": "割接公告",
+                            "authSwitch": false,
+                            "authId": "",
+                            "if": "&&"
+                        }
+                    ]
+                }
+            ],
+            "list": [
+                {
+                    "label": "主题",
+                    "columnName": "subject",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "300",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "状态",
+                    "columnName": "status",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": true,
+                    "convertProps": {
+                        "type": "select",
+                        "optionType": "0",
+                        "options": [
+                            {
+                                "label": "有效",
+                                "value": "1"
+                            },
+                            {
+                                "label": "失效",
+                                "value": "0"
+                            }
+                        ],
+                        "apiType": "post+json",
+                        "localProxy": "",
+                        "statusKey": "status",
+                        "statusValue": "200",
+                        "responseDataKey": "data",
+                        "option-value": "value",
+                        "option-label": "label",
+                        "separator": ","
+                    },
+                    "list": [],
+                    "show": true,
+                    "canSortConvert": false
+                },
+                {
+                    "label": "公告范围",
+                    "columnName": "range",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": true,
+                    "convertProps": {
+                        "type": "select",
+                        "optionType": "0",
+                        "options": [
+                            {
+                                "label": "其他",
+                                "value": "1"
+                            },
+                            {
+                                "label": "全部",
+                                "value": "0"
+                            }
+                        ],
+                        "apiType": "post+json",
+                        "localProxy": "",
+                        "statusKey": "status",
+                        "statusValue": "200",
+                        "responseDataKey": "data",
+                        "option-value": "value",
+                        "option-label": "label",
+                        "separator": ","
+                    },
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "生效日期",
+                    "columnName": "startTime",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "140",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "formatter": "yyyymmddhhmmss"
+                },
+                {
+                    "label": "失效日期",
+                    "columnName": "endTime",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "140",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "formatter": "yyyymmddhhmmss"
+                },
+                {
+                    "label": "通知内容",
+                    "columnName": "content",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "200",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "工单号",
+                    "columnName": "instId",
+                    "type": "link",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "内置可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                },
+                {
+                    "label": "公告类型",
+                    "columnName": "noticeType",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "140",
+                    "min-width": "",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "操作状态",
+                    "columnName": "operateStatus",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                }
+            ],
+            "operation": [],
+            "toolList": [
+                {
+                    "type": "text",
+                    "timestamp": 1608206102424,
+                    "columnName": "btn-operate-push",
+                    "label": "通知推送",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationStatus": []
+                }
+            ],
+            "operation-width": "100",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    "10",
+                    " 20",
+                    " 50",
+                    " 100",
+                    " 200"
+                ],
+                "currentPage": 1,
+                "pageSize": 50,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/desk/publicNotice/findList"
+            },
+            "hidden": false,
+            "fixed-pagination": false,
+            "show-operation-status": [],
+            "multipleSelectionStatus": []
+        }
+    ],
+    "model": {
+        "protocol": "",
+        "canFixed": "",
+        "name": "",
+        "service": "",
+        "select_1601346502272": "",
+        "select_1603713797234": "",
+        "select_1603713810454": "",
+        "customArea_1603713854429": "",
+        "input_1603713943868": "",
+        "customArea_1603714026456": "",
+        "customArea_1603788096432": "",
+        "subject": "",
+        "startTime": "",
+        "endTime": "",
+        "timePicker_1603957040990": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "project": "webbas",
+        "labelWidth": 80,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "exportName": "index"
+    }
+}

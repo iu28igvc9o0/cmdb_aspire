@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.inspection.server.dao.TaskDao">
+
+    <resultMap id="TaskResultMap" type="com.aspire.mirror.inspection.server.dao.po.Task">
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="cycle" column="cycle" jdbcType="VARCHAR"/>
+        <result property="execTime" column="exec_time" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="recentRunTime" column="recent_run_time" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+   <resultMap id="TaskRunResultMap" type="com.aspire.mirror.inspection.server.dao.po.TaskRun">
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="execTimeStart" column="exec_time_start" jdbcType="TIMESTAMP"/>
+        <result property="execTimeEnd" column="exec_time_end" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Task_Base_Column">
+        inspection_task.task_id,
+        inspection_task.name,
+        inspection_task.type,
+        inspection_task.cycle,
+        inspection_task.exec_time,
+        inspection_task.status,
+        inspection_task.create_time,
+        inspection_task.update_time
+    </sql>
+    
+    <sql id="Task_Run_Base_Column">
+        inspection_task.task_id,
+        inspection_task.name AS name,
+        INSPECTION_REPORT.status,
+        min(INSPECTION_REPORT.finish_time) AS exec_time_start,
+        max(INSPECTION_REPORT.finish_time) AS exec_time_end
+    </sql>
+    
+   <sql id="Task_Run_Query_List_Sharing">
+        <where>
+        	INSPECTION_REPORT.status='RUNNING'
+        	<if test="params['task_id'] != null and  params['task_id'] !=''">
+        		and inspection_task.task_id=#{params.task_id}
+        	</if>
+        	<if test="params['name'] != null and  params['name'] !=''">
+				and inspection_task.name LIKE "%"#{params.name}"%"
+			</if>
+			<if test="params['type'] != null and  params['type'] !=''">
+				and inspection_task.type=#{params.type}
+			</if>
+			<if test="params['exec_time_start'] != null and  params['exec_time_start'] !=''">
+				and INSPECTION_REPORT.create_time &gt;=str_to_date(#{params.exec_time_start}, '%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="params['exec_time_end'] != null and  params['exec_time_end'] !=''">
+				and INSPECTION_REPORT.finish_time &lt;=str_to_date(#{params.exec_time_end}, '%Y-%m-%d %H:%i:%s')
+			</if>
+        </where>
+    </sql>
+
+    <sql id="Task_Query_List_Sharing">
+        <where>
+        	<if test="params['template_id'] != null and  params['template_id'] !=''">
+        		and inspection_task.task_id in (select distinct task_id from inspection_task_object where template_id =  #{params.template_id})
+        	</if>
+            <if test="params['name'] != null and  params['name'] !=''">
+                and inspection_task.name like CONCAT('%', #{params.name}, '%')
+            </if>
+            <if test="params['type'] != null and params['type']!=''">
+                and inspection_task.type = #{params.type}
+            </if>
+            <if test="params['cycle'] != null and  params['cycle']!=''">
+                and inspection_task.cycle = #{params.cycle}
+            </if>
+            <if test="params['exec_time_start'] != null and  params['exec_time_start'] != ''">
+                and INSPECTION_REPORT.create_time &gt;= str_to_date(#{params.exec_time_start}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params['exec_time_end'] != null and  params['exec_time_end'] != ''">
+                and INSPECTION_REPORT.finish_time &lt;= str_to_date(#{params.exec_time_end}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params['resFilterMap'] != null">
+                <if test="params['resFilterMap'].authAccounts != null and params['resFilterMap'].authAccounts .size > 0">
+                    and inspection_task.creater in (
+                    <foreach collection="params['resFilterMap'].authAccounts" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>
+                    )
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="taskId"
+                 open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </sql>
+
+   <insert id="insert"  parameterType="com.aspire.mirror.inspection.server.dao.po.Task" >
+        INSERT INTO inspection_task (
+        <include refid="Task_Base_Column" />
+        ) VALUES (
+                #{taskId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR},
+                #{cycle,jdbcType=VARCHAR},
+                #{execTime,jdbcType=VARCHAR},
+                #{status,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP},
+                #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+	<!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="taskId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>--> 
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.inspection.server.dao.po.Task" >
+        INSERT INTO inspection_task (
+        <include refid="Task_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{taskId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR},
+                #{cycle,jdbcType=VARCHAR},
+                #{execTime,jdbcType=TIMESTAMP},
+                #{status,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP},
+                #{item.updateTime,jdbcType=TIMESTAMP}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM inspection_task WHERE task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM inspection_task WHERE task_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.inspection.server.dao.po.Task" >
+        DELETE FROM inspection_task WHERE task_id = #{taskId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.inspection.server.dao.po.Task" >
+        UPDATE inspection_task inspection_task
+        <set >
+                <if test="name != null" >
+                inspection_task.name = #{name},
+                </if>
+                <if test="type != null">
+                inspection_task.type = #{type},
+                </if>
+                <if test="cycle != null">
+                inspection_task.cycle = #{cycle},
+                </if>
+                <if test="execTime != null">
+                inspection_task.exec_time = #{execTime},
+                </if>
+                <if test="status != null">
+                inspection_task.status = #{status},
+                </if>
+                <if test="updateTime != null">
+                inspection_task.update_time = #{updateTime},
+                </if>
+        </set>
+        WHERE task_id = #{taskId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.inspection.server.dao.po.Task" >
+        UPDATE inspection_task inspection_task
+        SET
+        inspection_task.name = #{name},
+        inspection_task.type = #{type},
+        inspection_task.cycle = #{cycle},
+        inspection_task.exec_time = #{execTime},
+        inspection_task.status = #{status},
+        inspection_task.update_time = #{updateTime}
+        WHERE task_id = #{taskId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="TaskResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Task_Base_Column" />
+        FROM inspection_task inspection_task
+        WHERE task_id = #{taskId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="TaskResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Task_Base_Column" />
+        FROM inspection_task inspection_task
+        WHERE task_id = #{taskId}
+    </select>
+    <select id="pageList" resultMap="TaskResultMap" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT
+        inspection_task.task_id,
+        inspection_task.name,
+        inspection_task.type,
+        inspection_task.cycle,
+        inspection_task.exec_time,
+        inspection_task.status,
+        inspection_task.create_time,
+        inspection_task.update_time,
+        max(INSPECTION_REPORT.create_time) recent_run_time
+        FROM inspection_report INSPECTION_REPORT right join
+        inspection_task inspection_task on INSPECTION_REPORT.task_id = inspection_task.task_id
+        <include refid="Task_Query_List_Sharing"/>
+        group by inspection_task.task_id
+        order by inspection_task.create_time desc
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.inspection.server.dao.po.Task">
+        select count(*) from (
+        SELECT inspection_task.task_id FROM INSPECTION_REPORT INSPECTION_REPORT right join
+        inspection_task inspection_task on INSPECTION_REPORT.task_id = inspection_task.task_id
+        <include refid="Task_Query_List_Sharing"/>
+        group by inspection_task.task_id
+        ) a
+    </select>
+    
+    <select id="runList" resultMap="TaskRunResultMap"  parameterType="com.aspire.mirror.common.entity.Page">
+    	SELECT 
+    	<include refid="Task_Run_Base_Column"/>
+		FROM inspection_task inspection_task 
+		LEFT JOIN INSPECTION_REPORT INSPECTION_REPORT ON inspection_task.task_id=INSPECTION_REPORT.task_id
+		<include refid="Task_Run_Query_List_Sharing"/>
+		GROUP BY inspection_task.task_id
+		order by inspection_task.create_time desc;
+    </select>
+    
+    <resultMap id="TaskRunResultMap2" type="com.aspire.mirror.inspection.server.dao.po.TaskRun">
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="name" column="task_name" jdbcType="VARCHAR"/>
+        <result property="status" column="run_status" jdbcType="VARCHAR"/>
+        <result property="execTimeStart" column="exec_time_start" jdbcType="TIMESTAMP"/>
+        <result property="execTimeEnd" column="exec_time_end" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+     <sql id="Task_Run_Base_Column_2">
+        task.task_id AS task_id,
+		task.`name` AS task_name,
+		task.runstatus as run_status,
+		min(report.create_time) as exec_time_start,
+		max(report.finish_time) as exec_time_end
+    </sql>
+    
+    <sql id="Task_Run_Query_List_Sharing_2">
+    	<where>
+			task.`runstatus` IS NOT NULL
+			<if test="params['task_id'] != null and  params['task_id'] !=''">
+				AND task.task_id= #{params.task_id}
+			</if>
+			<if test="params['type'] != null and  params['type'] !=''">
+				AND task.runstatus = #{params.type}
+			</if>
+			<if test="params['name'] != null and  params['name'] !=''">
+				AND task.`name` LIKE  CONCAT('%', #{params.name}, '%')
+			</if>
+			<if test="params['exec_time_start'] != null and  params['exec_time_start'] !=''">
+				AND report.create_time &gt;= str_to_date(#{params.exec_time_start}, '%Y-%m-%d %H:%i:%s')
+			</if>
+			<if test="params['exec_time_end'] != null and  params['exec_time_end'] !=''">
+				AND report.finish_time &lt;= str_to_date(#{params.exec_time_end}, '%Y-%m-%d %H:%i:%s')
+			</if>
+		</where>
+    </sql>
+    
+    <select id="runList2" resultMap="TaskRunResultMap2" parameterType="com.aspire.mirror.common.entity.Page">
+    	SELECT 
+		<include refid="Task_Run_Base_Column_2"/>
+		FROM
+			(SELECT t.task_id,t.`name`,t.create_time,
+				(CASE  WHEN exists ( SELECT r.report_id FROM inspection_report r WHERE
+							r.task_id = t.task_id AND r.status = "RUNNING"
+				) THEN  'RUNNING'
+					   WHEN exists ( SELECT r.report_id FROM inspection_report r WHERE
+							r.task_id = t.task_id  AND r.status = "FINNISHED"
+				) THEN 'FINNISHED'
+					END
+				) as `runstatus`
+				FROM inspection_task t) task
+		LEFT JOIN inspection_report report ON task.task_id=report.task_id
+		<include refid="Task_Run_Query_List_Sharing_2"/>
+		GROUP BY task.task_id,task.`name`,task.runstatus
+		order by task.create_time desc;
+    </select>
+    
+    <select id="selectTaskRunCount2" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+    	SELECT count(*)
+		FROM
+			(SELECT 
+			<include refid="Task_Run_Base_Column_2"/>
+			FROM
+				(SELECT t.task_id,t.`name`,t.create_time,
+					(CASE  WHEN exists ( SELECT r.report_id FROM inspection_report r WHERE
+								r.task_id = t.task_id AND r.status = "RUNNING"
+					) THEN  'RUNNING'
+						   WHEN exists ( SELECT r.report_id FROM inspection_report r WHERE
+								r.task_id = t.task_id  AND r.status = "FINNISHED"
+					) THEN 'FINNISHED'
+						END
+					) as `runstatus`
+					FROM inspection_task t) task
+			LEFT JOIN inspection_report report ON task.task_id=report.task_id
+			<include refid="Task_Run_Query_List_Sharing_2"/>
+			GROUP BY task.task_id,task.`name`,task.runstatus ) a;
+    </select>
+    
+    <select id="selectTaskRunCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+    	SELECT count(*)
+		FROM 
+		(SELECT 
+    	<include refid="Task_Run_Base_Column"/>
+		FROM inspection_task inspection_task 
+		LEFT JOIN INSPECTION_REPORT INSPECTION_REPORT ON inspection_task.task_id =INSPECTION_REPORT.task_id
+		<include refid="Task_Run_Query_List_Sharing"/>
+		GROUP BY inspection_task.task_id) a;
+    </select>
+    <!-- 根据分页对象查询总计 -->
+	<select id="selectCountByPage" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        select count(*) from (
+        SELECT inspection_task.task_id FROM inspection_report INSPECTION_REPORT right join
+        inspection_task inspection_task on INSPECTION_REPORT.task_id = inspection_task.task_id
+        <include refid="Task_Query_List_Sharing"/>
+        group by inspection_task.task_id
+        ) a
+	</select>
+    <select id="selectCountByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*) from inspection_task where name = #{name}
+    </select>
+    <select id="selectByName" resultMap="TaskResultMap"  parameterType="java.lang.String">
+        select <include refid="Task_Base_Column" />
+        FROM inspection_task
+        where name = #{name}
+    </select>
+</mapper>

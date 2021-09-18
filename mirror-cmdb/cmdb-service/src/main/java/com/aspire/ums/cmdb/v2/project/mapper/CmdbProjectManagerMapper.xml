@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.project.mapper.CmdbProjectManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v2.project.entity.CmdbProjectManager" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_code" property="projectCode" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="idc_id" property="idcId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_code`,
+        `project_name`,
+        `idc_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_project_manager
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v2.project.entity.CmdbProjectManager">
+        SELECT
+        `id`,
+        `project_code`,
+        `project_name`,
+        `idc_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_project_manager
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="projectCode != null and projectCode != ''">
+        AND `project_code` = #{projectCode}
+        </if>
+        <if test="projectName != null and projectName != ''">
+        AND `project_name` = #{projectName}
+        </if>
+        <if test="idcId != null and idcId != ''">
+        AND `idc_id` = #{idcId}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v2.project.entity.CmdbProjectManager" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_code`,
+        `project_name`,
+        `idc_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_project_manager
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v2.project.entity.CmdbProjectManager">
+        INSERT INTO cmdb_project_manager
+        (
+            `id`,
+            `project_code`,
+            `project_name`,
+            `idc_id`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{projectCode, jdbcType=VARCHAR},
+            #{projectName, jdbcType=VARCHAR},
+            #{idcId, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            #{isDelete, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v2.project.entity.CmdbProjectManager">
+        UPDATE cmdb_project_manager SET
+        `project_code` = #{projectCode},
+        `project_name` = #{projectName},
+        `idc_id` = #{idcId},
+        `sort_index` = #{sortIndex},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v2.project.entity.CmdbProjectManager">
+        DELETE FROM cmdb_project_manager
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

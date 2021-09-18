@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.monthReport.mapper.CmdbVmMemoryUtzLowReportMapper">
+    <sql id="cmdbColumn">
+        bizSystem,
+        name,
+        phone,
+        department2,
+        department1,
+        idcType,
+        vm_dist_count,
+        vm_dist_memory_count,
+        month
+    </sql>
+    <sql id="alertColumn">
+        bizSystem,
+        idcType,
+        alert_vm_memory_max,
+        month
+    </sql>
+
+    <select id="save" parameterType="java.util.List">
+        insert into cmdb_month_report_vm_memory_utzlow
+        (
+        <include refid="cmdbColumn"/>
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.bizSystem,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.phone,jdbcType=VARCHAR},
+            #{item.department2,jdbcType=VARCHAR},
+            #{item.department1,jdbcType=VARCHAR},
+             #{item.idcType,jdbcType=VARCHAR},
+            #{item.vm_dist_count,jdbcType=VARCHAR},
+            #{item.vm_dist_memory_count,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m') )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        name = VALUES( name ),
+        phone = VALUES( phone),
+        department2 = VALUES( department2 ),
+        department1 = VALUES( department1 ),
+        vm_dist_count = VALUES( vm_dist_count ),
+        vm_dist_memory_count = VALUES( vm_dist_memory_count )
+    </select>
+
+
+    <select id="saveAlert" parameterType="java.util.List">
+        insert into cmdb_month_report_vm_memory_utzlow
+        (
+        <include refid="alertColumn"/>
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.bizSystem,jdbcType=VARCHAR},
+            #{item.idcType,jdbcType=VARCHAR},
+            #{item.vm_memory_max,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m') )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        alert_vm_memory_max = VALUES( alert_vm_memory_max )
+    </select>
+
+    <!-- 租户信息 -->
+    <select id="count" resultType="java.util.Map">
+        SELECT a.bizSystem,b.`business_concat` NAME,b.`business_concat_phone` phone, a.`department2`,a.`department1`,a.`idcType`,
+               SUM( CASE WHEN a.`device_type`='云主机' AND a.department2 != '基础平台部' THEN 1 ELSE 0 END) vm_dist_count,
+               TRUNCATE(SUM( CASE WHEN a.`device_type`='云主机' AND a.department2 != '基础平台部' THEN IFNULL(d.memory_size, 0) ELSE 0 END),2) vm_dist_memory_count
+        FROM cmdb_instance a
+                 LEFT JOIN `cmdb_business_system` b ON a.`bizSystem` = b.bizSystem
+                 LEFT JOIN `cmdb_instance_server` d ON a.id = d.id
+        WHERE a.`is_delete`='0' AND IFNULL(a.bizSystem, '') != '' AND IFNULL(a.idcType, '') != ''
+        GROUP BY a.bizSystem,a.idcType
+    </select>
+</mapper>

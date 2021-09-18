@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.HostDao">
+    <resultMap id="HostResultMap" type="com.aspire.mirror.template.api.dto.vo.MirrorHostVO">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="ip" column="ip" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="pool" column="pool" jdbcType="VARCHAR"/>
+        <result property="hostid" column="hostid" jdbcType="VARCHAR"/>
+        <result property="proxyIdentity" column="proxy_identity" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Host_Base_Column">
+        monitor_host.id,
+        monitor_host.ip,
+        monitor_host.name,
+        monitor_host.pool,
+        monitor_host.hostid,
+        monitor_host.proxy_identity,
+        monitor_host.status
+    </sql>
+    <insert id="batchInsertHost" parameterType="com.aspire.mirror.template.api.dto.vo.MirrorHostVO">
+        INSERT INTO MONITOR_HOST (
+            ip,
+            name,
+            pool,
+            hostid,
+            proxy_identity,
+            status
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.ip,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.pool,jdbcType=VARCHAR},
+            #{item.hostid,jdbcType=VARCHAR},
+            #{item.proxyIdentity,jdbcType=VARCHAR},
+            #{item.status,jdbcType=INTEGER}
+            )
+        </foreach>
+
+    </insert>
+    <select id="selectByIpAndPool" resultMap="HostResultMap">
+        select <include refid="Host_Base_Column"/>
+        from MONITOR_HOST monitor_host where ip = #{ip} and pool = #{pool}
+    </select>
+    <select id="selectByTemplateId" resultMap="HostResultMap">
+        select <include refid="Host_Base_Column" />
+        from MONITOR_HOST monitor_host
+        left join MONITOR_template_object t on t.object_id =monitor_host.id and t.object_type ='3'
+        where t.template_id = #{templateId}
+    </select>
+    <select id="selectByProxyIdentity" resultMap="HostResultMap">
+        select <include refid="Host_Base_Column" />
+        from MONITOR_HOST monitor_host
+        where monitor_host.proxy_identity = #{proxyIdentity}
+    </select>
+</mapper>

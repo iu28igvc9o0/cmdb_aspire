@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsYumDataDao">
+
+	<resultMap type="com.aspire.mirror.ops.api.domain.OsDistributionModel" id="osDistributionModel">
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="osType" column="os_type" jdbcType="VARCHAR"/>
+		<result property="osVendor" column="os_vendor" jdbcType="VARCHAR"/>
+    	<result property="version" column="version" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsYumFileGroup" id="yumFileGroup">
+    	<result property="groupId" column="group_id" jdbcType="BIGINT"/>
+    	<result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+    	<result property="parentGroupId" column="parent_group_id" jdbcType="BIGINT"/>
+    	<result property="level" column="level" jdbcType="INTEGER"/>
+    	<result property="description" column="description" jdbcType="VARCHAR"/>
+    	<result property="creater" column="creater" jdbcType="VARCHAR"/>
+    	<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    	<result property="lastUpdater" column="last_updater" jdbcType="VARCHAR"/>
+    	<result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsYumFileModel" id="yumFileModel">
+    	<result property="id" column="id" jdbcType="BIGINT"/>
+    	<result property="fileType" column="file_type" jdbcType="INTEGER"/>
+    	<result property="name" column="name" jdbcType="VARCHAR"/>
+    	<result property="version" column="version" jdbcType="VARCHAR"/>
+    	<result property="osDistributionId" column="os_distribution_id" jdbcType="INTEGER"/>
+    	<result property="osDistributionName" column="os_distribution_name" jdbcType="VARCHAR"/>
+    	<result property="uploadFilePath" column="upload_file_path" jdbcType="VARCHAR"/>
+    	<result property="yumFileGroupId" column="yumfile_group_id" jdbcType="BIGINT"/>
+    	<result property="yumFileGroupName" column="yumfile_group_name" jdbcType="VARCHAR"/>
+    	<result property="description" column="description" jdbcType="VARCHAR"/>
+    	<result property="creater" column="creater" jdbcType="VARCHAR"/>
+    	<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    	<result property="lastUpdater" column="last_updater" jdbcType="VARCHAR"/>
+    	<result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+		<collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+			<result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+			<result property="groupId" column="group_id" jdbcType="BIGINT"/>
+			<result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+			<result property="objectId" column="object_id" jdbcType="BIGINT"/>
+			<result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+		</collection>
+	</resultMap>
+
+
+	<select id="fetchOsDistributionList" resultMap="osDistributionModel">
+		select id, os_type, os_vendor, version from ops_os_distribution order by os_type, os_vendor
+	</select>
+	
+	<select id="queryTotalYumFileGroupCount" resultType="java.lang.Integer"
+			 parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileGroupQueryModel">
+		select count(group_id)
+		  from ops_yum_file_group
+		 where 1 = 1
+		 <if test="groupNameLike != null and groupNameLike != ''">
+			and group_name like concat('%', #{groupNameLike},'%') 
+	     </if>	 
+	</select>
+	
+	<select id="queryYumFileGroupList" resultMap="yumFileGroup"
+			 parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileGroupQueryModel">
+		select group_id, group_name, parent_group_id, level, description, creater, create_time, last_updater, last_update_time
+		  from ops_yum_file_group
+		 where 1 = 1
+		 <!-- 
+		 <if test="groupNameLike != null and groupNameLike != ''">
+			and group_name like concat('%', #{groupNameLike},'%') 
+	     </if>
+		  -->
+	     <if test="parentGroupId != null">
+			and parent_group_id = #{parentGroupId}
+	     </if>
+	     <if test="groupName != null and groupName != ''">
+			and group_name = #{groupName}
+	     </if>
+	     order by level asc, parent_group_id asc, group_id asc
+	     <!-- 
+	     <if test="pageSize != null and pageSize > 0 ">
+        	limit #{startIdx}, #{pageSize}
+         </if>
+	      -->
+	</select>
+	
+	<insert id="createYumFileGroup" useGeneratedKeys="true" keyColumn="group_id" keyProperty="groupId" 
+			parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileGroup"> 
+		insert into ops_yum_file_group (
+			group_name, parent_group_id, level, description, creater, create_time, last_updater, last_update_time
+		) values (
+			#{groupName}, #{parentGroupId}, #{level}, #{description}, #{creater}, #{createTime}, #{lastUpdater}, #{lastUpdateTime}
+		)
+	</insert>
+	
+	<update id="updateYumFileGroup" parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileGroup"> 
+		update ops_yum_file_group 
+		   set group_id = #{groupId}
+		<if test="groupName != null and groupName != ''">
+			, group_name = #{groupName}
+	    </if>
+	    <if test="description != null and description != ''">
+			, description = #{description}
+	    </if>
+	    <if test="lastUpdater != null and lastUpdater != ''">
+			, last_updater = #{lastUpdater}
+	    </if>
+	    <if test="lastUpdateTime != null">
+			, last_update_time = #{lastUpdateTime}
+	    </if>
+		where group_id = #{groupId}
+	</update>
+	
+	<delete id="removeYumFileGroup" parameterType="java.lang.Long">
+		delete from ops_yum_file_group where group_id = #{yumFileGroupId} 
+	</delete>
+	
+	<select id="queryYumFileList" parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileQueryModel"
+					resultMap="yumFileModel">
+		select f.id, f.file_type, f.name, f.os_distribution_id, f.version,
+		concat(d.os_type, '-', d.os_vendor, '-', d.version) os_distribution_name,
+		f.upload_file_path, f.yumfile_group_id, g.group_name yumfile_group_name,
+		f.description, f.creater, f.create_time, f.last_updater, f.last_update_time, gr.object_id,
+		gr.object_type, gr.group_relation_id, gr.group_id,og.group_name
+		from ops_yum_file f
+		LEFT JOIN ops_yum_file_group g on f.yumfile_group_id = g.group_id
+		LEFT JOIN ops_os_distribution d on d.id = f.os_distribution_id
+		left join ops_group_relation gr on f.id = gr.object_id and gr.object_type = 'yum'
+		left join ops_group og on og.group_id = gr.group_id
+		where file_type = #{fileType}
+		 <if test="yumFileGroupId != null">
+			  and f.yumfile_group_id = #{yumFileGroupId}
+		 </if>	  
+	     <if test="yumFileGroupIdList != null and yumFileGroupIdList.size > 0">
+			AND f.yumfile_group_id in (
+			<foreach collection="yumFileGroupIdList" item="item" index="index" separator=",">
+				#{item}
+			</foreach>
+			)
+		 </if>
+		 <if test="name != null and name != ''">
+		 	and f.name = #{name}
+		 </if>
+		 <if test="version != null and version != ''">
+		 	and f.version = #{version}
+		 </if>
+		 <if test="nameLike != null and nameLike != ''">
+			  and f.name like concat('%', #{nameLike},'%') 
+	     </if>
+	     <if test="createrLike != null and createrLike != ''">
+			  and f.creater like concat('%', #{createrLike},'%') 
+	     </if>
+	     <if test="yumFileGroupNameLike != null and yumFileGroupNameLike != ''">
+			  and g.group_name like concat('%', #{yumFileGroupNameLike},'%') 
+	     </if>
+	     <if test="uploadFilePathLike != null and uploadFilePathLike != ''">
+			  and f.upload_file_path like concat('%', #{uploadFilePathLike},'%') 
+	     </if>
+	     <!-- 
+	     <if test="osDistributionNameLike != null and osDistributionNameLike != ''">
+			  and (d.os_vendor like concat('%', #{osDistributionNameLike},'%') or 
+			       d.os_type like  concat('%', #{osDistributionNameLike},'%'))
+	     </if>
+	      -->
+		<choose>
+			<when test="authYumIdList != null and authYumIdList.size > 0 and authGroupIdList != null and authGroupIdList.size > 0">
+				and ( f.id in (
+				<foreach collection="authYumIdList" item="item" index="index" separator=",">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+				)
+				or gr.group_id in (
+				<foreach collection="authGroupIdList" item="item" index="index" separator=",">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+				)
+				)
+			</when>
+			<otherwise>
+				<if test="authYumIdList != null and authYumIdList.size > 0">
+					and f.id in (
+					<foreach collection="authYumIdList" item="item" index="index" separator=",">
+						#{item, jdbcType=VARCHAR}
+					</foreach>
+					)
+				</if>
+				<if test="authGroupIdList != null and authGroupIdList.size > 0">
+					and gr.group_id in (
+					<foreach collection="authGroupIdList" item="item" index="index" separator=",">
+						#{item, jdbcType=VARCHAR}
+					</foreach>
+					)
+				</if>
+			</otherwise>
+		</choose>
+		 <if test="pageSize != null and pageSize > 0 ">
+	     	order by f.id desc
+        	limit #{startIdx}, #{pageSize}
+         </if>
+	</select>
+	
+	<select id="queryTotalYumFileCount" parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileQueryModel"
+					resultType="java.lang.Integer">
+		select count(f.id)
+		  from ops_yum_file f
+		       LEFT JOIN ops_yum_file_group g on f.yumfile_group_id = g.group_id
+		       LEFT JOIN ops_os_distribution d on d.id = f.os_distribution_id
+			left join ops_group_relation gr on f.id = gr.object_id and gr.object_type = 'yum'
+			left join ops_group og on og.group_id = gr.group_id
+		 where file_type = #{fileType}
+		 <if test="yumFileGroupId != null">
+			  and f.yumfile_group_id = #{yumFileGroupId}
+		 </if>
+		 <if test="yumFileGroupIdList != null and yumFileGroupIdList.size > 0">
+			AND f.yumfile_group_id in (
+			<foreach collection="yumFileGroupIdList" item="item" index="index" separator=",">
+				#{item}
+			</foreach>
+			)
+		 </if>
+		 <if test="name != null and name != ''">
+		 	and f.name = #{name}
+		 </if>
+		 <if test="version != null and version != ''">
+		 	and f.version = #{version}
+		 </if>
+		 <if test="nameLike != null and nameLike != ''">
+			  and f.name like concat('%', #{nameLike},'%') 
+	     </if>
+	     <if test="createrLike != null and createrLike != ''">
+			  and f.creater like concat('%', #{createrLike},'%') 
+	     </if>
+	     <if test="yumFileGroupNameLike != null and yumFileGroupNameLike != ''">
+			  and g.group_name like concat('%', #{yumFileGroupNameLike},'%') 
+	     </if>
+	     <if test="uploadFilePathLike != null and uploadFilePathLike != ''">
+			  and f.upload_file_path like concat('%', #{uploadFilePathLike},'%') 
+	     </if>
+		<choose>
+			<when test="authYumIdList != null and authYumIdList.size > 0 and authGroupIdList != null and authGroupIdList.size > 0">
+				and ( f.id in (
+				<foreach collection="authYumIdList" item="item" index="index" separator=",">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+				)
+				or gr.group_id in (
+				<foreach collection="authGroupIdList" item="item" index="index" separator=",">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+				)
+				)
+			</when>
+			<otherwise>
+				<if test="authYumIdList != null and authYumIdList.size > 0">
+					and f.id in (
+					<foreach collection="authYumIdList" item="item" index="index" separator=",">
+						#{item, jdbcType=VARCHAR}
+					</foreach>
+					)
+				</if>
+				<if test="authGroupIdList != null and authGroupIdList.size > 0">
+					and gr.group_id in (
+					<foreach collection="authGroupIdList" item="item" index="index" separator=",">
+						#{item, jdbcType=VARCHAR}
+					</foreach>
+					)
+				</if>
+			</otherwise>
+		</choose>
+	     <!-- 
+	     <if test="osDistributionNameLike != null and osDistributionNameLike != ''">
+			  and (d.os_vendor like concat('%', #{osDistributionNameLike},'%') or 
+			       d.os_type like  concat('%', #{osDistributionNameLike},'%'))
+	     </if>
+	      -->		
+	</select>
+	
+	<select id="queryYumFileModelById" parameterType="java.lang.Long" resultMap="yumFileModel">
+		select f.id, f.file_type, f.name, f.os_distribution_id, f.version, 
+			   concat(d.os_type, '-', d.os_vendor, '-', d.version) os_distribution_name,  
+		   	   f.upload_file_path, f.yumfile_group_id, g.group_name yumfile_group_name,
+			   f.description, f.creater, f.create_time, f.last_updater, f.last_update_time, gr.object_id,
+		gr.object_type, gr.group_relation_id, gr.group_id,og.group_name
+		  from ops_yum_file f
+		       LEFT JOIN ops_yum_file_group g on f.yumfile_group_id = g.group_id
+		       LEFT JOIN ops_os_distribution d on d.id = f.os_distribution_id
+		       left join ops_group_relation gr on f.id = gr.object_id and gr.object_type = 'yum'
+		left join ops_group og on og.group_id = gr.group_id
+		 where f.id = #{yumFileId}	
+	</select>
+	
+	<insert id="createYumFileModel" useGeneratedKeys="true" keyColumn="id" keyProperty="id" 
+			parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileModel"> 
+		insert into ops_yum_file (
+			file_type, name, version, os_distribution_id, upload_file_path, yumfile_group_id, 
+			description, creater, create_time, last_updater, last_update_time
+		) values (
+			#{fileType}, #{name}, #{version}, #{osDistributionId}, #{uploadFilePath}, #{yumFileGroupId}, 
+			#{description}, #{creater}, #{createTime}, #{lastUpdater}, #{lastUpdateTime}
+		)
+	</insert>
+	
+	<update id="updateYumFileModel" parameterType="com.aspire.mirror.ops.api.domain.OpsYumFileModel">
+		update ops_yum_file 
+		   set id = #{id}
+		   <if test="name != null and name != ''">
+				, name = #{name}
+	       </if>
+	       <if test="version != null and version != ''">
+				, version = #{version}
+	       </if> 
+	       <if test="osDistributionId != null">
+				, os_distribution_id = #{osDistributionId}
+	       </if> 
+	       <if test="yumFileGroupId != null">
+				, yumfile_group_id = #{yumFileGroupId}
+	       </if>   
+	       <if test="uploadFilePath != null">
+				, upload_file_path = #{uploadFilePath}
+	       </if> 
+	       <if test="description != null and description != ''">
+				, description = #{description}
+		   </if> 
+	       <if test="lastUpdater != null and lastUpdater != ''">
+				, last_updater = #{lastUpdater}
+		   </if>
+		   <if test="lastUpdateTime != null">
+				, last_update_time = #{lastUpdateTime}
+		   </if>
+	  where id = #{id} 
+	</update>
+	
+	<delete id="removeYumFileModel" parameterType="java.lang.Long">
+		delete from ops_yum_file where id = #{yumFileId} 
+	</delete>
+</mapper>

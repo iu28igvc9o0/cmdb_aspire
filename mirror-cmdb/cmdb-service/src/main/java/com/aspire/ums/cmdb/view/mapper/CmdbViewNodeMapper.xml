@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.view.mapper.CmdbViewNodeMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.view.payload.CmdbViewNode" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
+        <result column="icon_dict_id" property="iconDictId" jdbcType="VARCHAR" />
+        <result column="view_id" property="viewId" jdbcType="VARCHAR" />
+        <result column="enable_query" property="enableQuery" jdbcType="TINYINT" />
+        <result column="enable_use_code" property="enableUseCode" jdbcType="TINYINT" />
+        <result column="use_code_id" property="useCodeId" jdbcType="VARCHAR" />
+        <result column="to_query_filed" property="toQueryFiled" jdbcType="VARCHAR" />
+        <result column="config_sql" property="configSql" jdbcType="VARCHAR" />
+        <result column="enable_show_count" property="enableShowCount" jdbcType="TINYINT" />
+        <result column="show_sep" property="showSep" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultDetailMap" type="com.aspire.ums.cmdb.view.payload.CmdbViewNode" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="node_name" property="nodeName" jdbcType="VARCHAR" />
+        <result column="icon_dict_id" property="iconDictId" jdbcType="VARCHAR" />
+        <result column="view_id" property="viewId" jdbcType="VARCHAR" />
+        <result column="parent_node_id" property="parentNodeId" jdbcType="VARCHAR" />
+        <result column="enable_query" property="enableQuery" jdbcType="TINYINT" />
+        <result column="enable_use_code" property="enableUseCode" jdbcType="TINYINT" />
+        <result column="use_code_id" property="useCodeId" jdbcType="VARCHAR" />
+        <result column="to_query_filed" property="toQueryFiled" jdbcType="VARCHAR" />
+        <result column="config_sql" property="configSql" jdbcType="VARCHAR" />
+        <result column="enable_show_count" property="enableShowCount" jdbcType="TINYINT" />
+        <result column="show_sep" property="showSep" jdbcType="VARCHAR" />
+        <association property="parentNodeName" select="getNameById"
+                     column="parent_node_id"></association>
+        <association property="icon" select="com.aspire.ums.cmdb.dict.mapper.ConfigDictMapper.getValueById"
+                     column="icon_dict_id"></association>
+        <collection property="subNodeList" column="{parentNodeId = id}" select="list" />
+        <collection property="nodeShowList" column="{nodeId = id}" select="com.aspire.ums.cmdb.view.mapper.CmdbViewNodeShowMapper.list" />
+
+    </resultMap>
+    <sql id="baseColumn">
+        `id`,
+        `node_name`,
+        `icon_dict_id`,
+        `view_id`,
+        `parent_node_id`,
+        `enable_query`,
+        `enable_use_code`,
+        `use_code_id`,
+        `to_query_filed`,
+        `config_sql`,
+        `enable_show_count`,
+        `show_sep`
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultDetailMap">
+        select <include refid="baseColumn"/>
+        from cmdb_view_node
+        where 1=1
+        <if test="viewId != null and viewId != ''">
+            and view_id = #{viewId}
+        </if>
+        <if test="parentNodeId != null and parentNodeId != ''">
+            and parent_node_id = #{parentNodeId}
+        </if>
+        <if test="parentNodeId == null or parentNodeId == ''">
+            and IFNULL(parent_node_id, '') = ''
+        </if>
+        <if test="nodeName != null and nodeName != ''">
+            and node_name = #{nodeName}
+        </if>
+        order by sort_index
+    </select>
+
+    <!-- list查询 -->
+    <select id="getOne" resultMap="resultDetailMap" parameterType="com.aspire.ums.cmdb.view.payload.CmdbViewNode">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_view_node
+        where 1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parentNodeId != null and parentNodeId != ''">
+            and parent_node_id = #{parentNodeId}
+        </if>
+        <if test="viewId != null and viewId != ''">
+            and view_id = #{viewId}
+        </if>
+        <if test="nodeName != null and nodeName != ''">
+            and node_name = #{nodeName}
+            <if test="parentNodeId == null or parentNodeId == ''">
+                and IFNULL(parent_node_id, '') = ''
+            </if>
+        </if>
+    </select>
+    <!-- list查询 -->
+    <select id="getNameById" resultType="java.lang.String">
+        SELECT
+            `node_name`
+        FROM cmdb_view_node
+             WHERE id = #{id}
+
+    </select>
+
+    <insert id="save" parameterType="com.aspire.ums.cmdb.view.payload.CmdbViewNode">
+        INSERT INTO cmdb_view_node
+        (`id`,
+         `node_name`,
+         `icon_dict_id`,
+         `view_id`,
+         `parent_node_id`,
+         `enable_query`,
+         `enable_use_code`,
+         `use_code_id`,
+         `to_query_filed`,
+         `config_sql`,
+         `enable_show_count`,
+         `show_sep`)
+        VALUES (#{id, jdbcType=VARCHAR},
+                #{nodeName, jdbcType=VARCHAR},
+                #{iconDictId, jdbcType=VARCHAR},
+                #{viewId, jdbcType=VARCHAR},
+                #{parentNodeId, jdbcType=VARCHAR},
+                #{enableQuery, jdbcType=TINYINT},
+                #{enableUseCode, jdbcType=TINYINT},
+                #{useCodeId, jdbcType=VARCHAR},
+                #{toQueryFiled, jdbcType=VARCHAR},
+                #{configSql, jdbcType=VARCHAR},
+                #{enableShowCount, jdbcType=TINYINT},
+                #{showSep, jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+         node_name = values (node_name),
+         enable_query = values (enable_query),
+         icon_dict_id = values (icon_dict_id),
+         enable_use_code = values (enable_use_code),
+        use_code_id = values (use_code_id),
+        to_query_filed = values (to_query_filed),
+        config_sql = values (config_sql),
+        enable_show_count = values (enable_show_count),
+        show_sep = values (show_sep)
+    </insert>
+
+    <delete id="deleteById">
+        delete FROM cmdb_view_node where id = #{id}
+    </delete>
+
+    <delete id="deleteByViewId">
+        delete FROM cmdb_view_node where view_id = #{viewId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.third.Alerts3050Dao">
+
+
+	<select id="getAlerts" resultType="map">
+		select 1 alert_type,alert_id,device_id,source,device_ip,source_room
+		,idc_type,device_class,device_type,device_mfrs,device_model
+		,host_name,pod_name,project_name,biz_sys,moni_object,moni_index
+		,alert_level,DATE_FORMAT(cur_moni_time,'%Y-%m-%d %H:%i:%s') cur_moni_time
+		,cur_moni_value,item_id,DATE_FORMAT(alert_start_time,'%Y-%m-%d %H:%i:%s') alert_start_time
+		,remark,object_type 
+		from alert_alerts
+		WHERE source_room= #{roomId} and
+		 cur_moni_time  <![CDATA[<]]> #{endTime} and cur_moni_time  <![CDATA[>=]]> #{startTime}
+	</select>
+
+	<select id="getAlertsHis" resultType="map">
+		select 2 alert_type,alert_id,device_id,source,device_ip,source_room
+		,idc_type,device_class,device_type,device_mfrs,device_model
+		,host_name,pod_name,project_name,biz_sys,moni_object,moni_index
+		,alert_level,DATE_FORMAT(cur_moni_time,'%Y-%m-%d %H:%i:%s') cur_moni_time,cur_moni_value,item_id,DATE_FORMAT(alert_start_time,'%Y-%m-%d %H:%i:%s') alert_start_time
+		,remark,object_type ,DATE_FORMAT(alert_end_time,'%Y-%m-%d %H:%i:%s') alert_end_time
+		 from alert_alerts_his
+		WHERE alert_end_time <![CDATA[<]]> #{endTime} and alert_end_time <![CDATA[>=]]> #{startTime}
+		 and source_room= #{roomId}
+	</select>
+
+
+
+<select id="getRestfulAlerts" resultType="map">
+		select 1 alert_type,${cols} 
+		from alert_alerts
+        where 
+        create_time  <![CDATA[<]]> #{endTime} and create_time  <![CDATA[>=]]> #{startTime}
+           ${conditions}
+	</select>
+
+	<select id="getRestfulAlertsHis" resultType="map">
+		select  2 alert_type,${cols} 
+		 from alert_alerts_his
+		WHERE 
+		alert_end_time <![CDATA[<]]> #{endTime} and alert_end_time <![CDATA[>=]]> #{startTime}
+		 ${conditions}   
+	</select>
+</mapper>

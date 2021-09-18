@@ -1,0 +1,496 @@
+/* restcss */
+
+/* 设置框 */
+.geEditor .geFormatContainer > div:nth-child(1) span {
+  position: relative;
+  bottom: 3px;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(1)
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > input:nth-child(4) {
+  right: 115px !important;
+  text-align: center !important;
+}
+.geEditor .geFormatContainer > div:nth-child(1) > div:nth-child(5) {
+  text-align: center !important;
+}
+/* tab 1 div 背景框 */
+.geEditor .geFormatContainer > div:nth-child(2) span {
+  position: relative;
+  bottom: 3px;
+}
+.geEditor .geFormatContainer > div:nth-child(2) > div:nth-child(2) {
+  margin-top: 10px;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > div:nth-child(3)
+  > a {
+  position: relative;
+  left: 36px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > div:nth-child(3)
+  > input {
+  right: 63px !important;
+  text-align: center !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > div:nth-child(3)
+  > div {
+  margin-top: 4px !important;
+}
+.geEditor .geFormatContainer > div:nth-child(2) > div:nth-child(6) {
+  text-align: center;
+}
+
+.geEditor
+  .geFormatContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > div:nth-child(4)
+  > div:nth-child(3) {
+  right: 19px !important;
+  margin-top: 0px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > div:nth-child(4)
+  > input {
+  right: 62px !important;
+  text-align: center !important;
+}
+.geEditor .geFormatContainer > div:nth-child(2) > div:nth-child(4) > input {
+  right: 62px !important;
+  text-align: center !important;
+}
+.geEditor .geFormatContainer > div:nth-child(2) > div:nth-child(4) > div {
+  right: 19px !important;
+  margin-top: -16px !important;
+}
+
+/* tab3 */
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(1) {
+  text-align: center;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > input:nth-child(2) {
+  right: 170px !important;
+  text-align: center !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(3) {
+  right: 127px !important;
+  margin-top: 0px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > input:nth-child(4) {
+  right: 66px !important;
+  text-align: center !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(5) {
+  right: 23px !important;
+  margin-top: 0px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(6) {
+  margin-left: -17px !important;
+  margin-top: -2px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(7) {
+  right: 150px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(8) {
+  right: 50px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(10) {
+  padding-right: 26px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(2)
+  > div:nth-child(10)
+  > div
+  > span {
+  position: relative;
+  top: -2px;
+}
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(3) {
+  padding-right: 26px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(3)
+  > div:nth-child(3) {
+  right: 127px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(3) {
+  margin-bottom: 10px;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(3)
+  > input:nth-child(2) {
+  right: 170px !important;
+  text-align: center !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(3)
+  > input:nth-child(4) {
+  right: 66px !important;
+  text-align: center !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(3)
+  > div:nth-child(5) {
+  right: 23px !important;
+  margin-top: 0px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(3)
+  > div:nth-child(7) {
+  right: 150px !important;
+  margin-top: 10px !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(3)
+  > div:nth-child(8) {
+  right: 50px !important;
+  margin-top: 10px !important;
+}
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(7) {
+  text-align: center;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(7)
+  > input:nth-child(2) {
+  right: 66px !important;
+  text-align: center !important;
+}
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(7)
+  > div:nth-child(3) {
+  right: 23px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(7) > button {
+  margin-top: 10px !important;
+}
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(8) {
+  text-align: center;
+}
+
+.geEditor .geFormatContainer > div:nth-child(4) > div:nth-child(9) {
+  text-align: center;
+}
+
+/* 文本框样式 */
+.geSidebarContainer .texttable > div:nth-child(5) > input:nth-child(6) {
+  text-align: center !important;
+  right: 93px !important;
+  height: 15px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(5) > div:nth-child(7) {
+  text-align: center !important;
+  right: 50px !important;
+  margin-top: 6px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > input:nth-child(1) {
+  text-align: center !important;
+  right: 93px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(2) {
+  text-align: center !important;
+  right: 50px !important;
+  margin-top: -16px !important;
+}
+.geSidebarContainer .texttable > .geToolbarContainer > input:nth-child(5) {
+  text-align: center !important;
+  right: 93px !important;
+  height: 15px !important;
+}
+.geSidebarContainer .texttable > .geToolbarContainer > div:nth-child(6) {
+  right: 50px !important;
+  margin-top: 6px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(8) > input:nth-child(1) {
+  text-align: center !important;
+  margin-top: -3px !important;
+  right: 93px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(8) > div:nth-child(2) {
+  right: 50px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > input:nth-child(2) {
+  text-align: center !important;
+  right: 174px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(3) {
+  right: 131px !important;
+  margin-top: 0px !important;
+}
+
+.geSidebarContainer .texttable > div:nth-child(9) > input:nth-child(4) {
+  text-align: center !important;
+  right: 63px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(5) {
+  right: 20px !important;
+  margin-top: 0px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(7) {
+  right: 144px !important;
+  margin-top: 6px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(8) {
+  right: 32px !important;
+  margin-top: 6px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > input:nth-child(11) {
+  text-align: center !important;
+  right: 243px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(12) {
+  right: 200px !important;
+  margin-top: 0px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > input:nth-child(13) {
+  text-align: center !important;
+  right: 146px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(14) {
+  right: 103px !important;
+  margin-top: 0px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > input:nth-child(15) {
+  text-align: center !important;
+  right: 48px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(16) {
+  right: 5px !important;
+  margin-top: 0px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(18) {
+  right: 214px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(19) {
+  right: 116px !important;
+}
+.geSidebarContainer .texttable > div:nth-child(9) > div:nth-child(20) {
+  right: 18px !important;
+}
+
+.geEditor
+  .geFormatContainer
+  > div:nth-child(4)
+  > div:nth-child(7)
+  > div:nth-child(1) {
+  text-align: left;
+}
+/* line样式 */
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(2)
+  > input:nth-child(3) {
+  right: 61px !important;
+  text-align: center !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(2)
+  > div:nth-child(4) {
+  right: 18px !important;
+  margin-top: 4px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(4)
+  > a:nth-child(3) {
+  position: relative !important;
+  left: 31px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  input:nth-child(2) {
+  text-align: center !important;
+  right: 155px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  div:nth-child(3) {
+  margin-top: 0px !important;
+  right: 112px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  input:nth-child(4) {
+  text-align: center !important;
+  right: 63px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  div:nth-child(5) {
+  margin-top: 0px !important;
+  right: 20px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  input:nth-child(9) {
+  text-align: center !important;
+  right: 155px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  div:nth-child(10) {
+  margin-top: 0px !important;
+  right: 112px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  input:nth-child(11) {
+  text-align: center !important;
+  right: 63px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  div:nth-child(12) {
+  margin-top: 0px !important;
+  right: 20px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(2)
+  > .line3:nth-child(5)
+  div:nth-child(14) {
+  right: 116px !important;
+}
+.geSidebarContainer
+  > div:nth-child(2)
+  > div:nth-child(3)
+  > .lineclass1:nth-child(2) {
+  right: 99px !important;
+  height: 21px !important;
+}
+.geSidebarContainer > div:nth-child(2) > div:nth-child(3) > input:nth-child(3) {
+  text-align: center !important;
+  right: 63px !important;
+}
+.geSidebarContainer > div:nth-child(2) > div:nth-child(3) > div:nth-child(4) {
+  margin-top: 0px !important;
+  right: 20px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .start > input:nth-child(2) {
+  text-align: center !important;
+  right: 160px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .start > div:nth-child(3) {
+  margin-top: 0px !important;
+  right: 117px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .start > input:nth-child(4) {
+  text-align: center !important;
+  right: 63px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .start > div:nth-child(5) {
+  margin-top: 0px !important;
+  right: 20px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .start > div:nth-child(7) {
+  right: 112px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .end > input:nth-child(2) {
+  text-align: center !important;
+  right: 160px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .end > div:nth-child(3) {
+  margin-top: 0px !important;
+  right: 117px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .end > input:nth-child(4) {
+  text-align: center !important;
+  right: 63px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .end > div:nth-child(5) {
+  margin-top: 0px !important;
+  right: 20px !important;
+}
+.geSidebarContainer > div:nth-child(4) > .end > div:nth-child(7) {
+  right: 112px !important;
+}
+

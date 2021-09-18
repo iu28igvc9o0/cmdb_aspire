@@ -1,0 +1,172 @@
+{
+    "list": [
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "table_shenzhen_myOrders",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": false,
+            "indexFixed": true,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": false,
+            "multipleSelectionFixed": true,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [],
+            "show-operation": false,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [],
+            "list": [
+                {
+                    "timeStamp": 1605753836530,
+                    "label": "表格可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                },
+                {
+                    "label": "流程标题",
+                    "columnName": "subject",
+                    "type": "link",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "300",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "发起时间",
+                    "columnName": "createTime",
+                    "type": "text",
+                    "sort": true,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "110",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前处理人",
+                    "columnName": "solveUser",
+                    "type": "text",
+                    "sort": true,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "90",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前环节",
+                    "columnName": "taskName",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "60",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                }
+            ],
+            "operation": [],
+            "toolList": [],
+            "operation-width": "100",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    5
+                ],
+                "currentPage": 1,
+                "pageSize": 5,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "POST",
+                "methods": "/v1/bpm/runtime/umsHome/getBpmInsData"
+            },
+            "hidden": false,
+            "show-operation-status": []
+        }
+    ],
+    "model": {
+        "checkbox_1605755371684": []
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "exportName": "",
+        "project": "webbas",
+        "labelWidth": 100,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": []
+    }
+}

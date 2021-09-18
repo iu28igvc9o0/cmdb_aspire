@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.collect.mapper.AutoDiscoveryLogShieldMapper" >
+    <resultMap id="discoveryShieldEntity" type="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryLogShieldEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ruleId" property="ruleId" jdbcType="VARCHAR" />
+        <result column="instanceName" property="instanceName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="selectColumn">
+        id,ruleId,instanceName
+    </sql>
+
+    <select id="getListByRuleIds" parameterType="java.util.List" resultType="java.util.List">
+        select instanceName from cmdb_auto_discovery_log_shield where ruleId in
+        <foreach collection="list" index="index" item="ruleId" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </select>
+    <select id="getListByRuleId" resultType="java.lang.String">
+        select instanceName from cmdb_auto_discovery_log_shield where ruleId = #{ruleId}
+    </select>
+
+    <insert id="insertShields" parameterType="java.util.List">
+        insert into cmdb_auto_discovery_log_shield (`id`, `ruleId`, `instanceName`)  values
+        <foreach collection="list" item="shield" separator=",">
+            (#{shield.id}, #{shield.ruleId}, #{shield.instanceName})
+        </foreach>
+    </insert>
+    <delete id="delete" parameterType="java.lang.String">
+      DELETE FROM `cmdb_auto_discovery_log_shield` WHERE `instanceName` = #{instanceName} and ruleId = #{ruleId};
+    </delete>
+</mapper>

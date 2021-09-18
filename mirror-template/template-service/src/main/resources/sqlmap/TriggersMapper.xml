@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.TriggersDao">
+
+    <resultMap id="TriggersResultMap" type="com.aspire.mirror.template.server.dao.po.Triggers">
+        <result property="triggerId" column="trigger_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="expression" column="expression" jdbcType="VARCHAR"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
+        <result property="priority" column="priority" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="param" column="param" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Triggers_Base_Column">
+        monitor_triggers.trigger_id,
+        monitor_triggers.name,
+        monitor_triggers.expression,
+        monitor_triggers.url,
+        monitor_triggers.status,
+        monitor_triggers.value,
+        monitor_triggers.priority,
+        monitor_triggers.item_id,
+        monitor_triggers.param,
+        monitor_triggers.type
+    </sql>
+
+    <sql id="Triggers_Query_List_Sharing">
+        <where>
+            <if test="triggerId != null ">
+                and monitor_triggers.trigger_id = #{triggerId}
+            </if>
+            <if test="name != null ">
+                and monitor_triggers.name = #{name}
+            </if>
+            <if test="expression != null ">
+                and monitor_triggers.expression = #{expression}
+            </if>
+            <if test="url != null ">
+                and monitor_triggers.url = #{url}
+            </if>
+            <if test="status != null ">
+                and monitor_triggers.status = #{status}
+            </if>
+            <if test="value != null ">
+                and monitor_triggers.value = #{value}
+            </if>
+            <if test="priority != null ">
+                and monitor_triggers.priority = #{priority}
+            </if>
+            <if test="itemId != null ">
+                and monitor_triggers.item_id = #{itemId}
+            </if>
+            <if test="param != null ">
+                and monitor_triggers.param = #{param}
+            </if>
+            <if test="type != null ">
+                and monitor_triggers.type = #{type}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="triggerId"
+                 open="(" separator="," close=")">
+            #{triggerId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.Triggers" >
+        INSERT INTO monitor_triggers (
+        <include refid="Triggers_Base_Column" />
+        ) VALUES (
+                #{triggerId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{expression,jdbcType=VARCHAR},
+                #{url,jdbcType=VARCHAR},
+                #{status,jdbcType=VARCHAR},
+                #{value,jdbcType=VARCHAR},
+                #{priority,jdbcType=VARCHAR},
+                #{itemId,jdbcType=VARCHAR},
+                #{param,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="triggerId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.Triggers" >
+        INSERT INTO monitor_triggers (
+        <include refid="Triggers_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{item.triggerId,jdbcType=VARCHAR},
+                #{item.name,jdbcType=VARCHAR},
+                #{item.expression,jdbcType=VARCHAR},
+                #{item.url,jdbcType=VARCHAR},
+                #{item.status,jdbcType=VARCHAR},
+                #{item.value,jdbcType=VARCHAR},
+                #{item.priority,jdbcType=VARCHAR},
+                #{item.itemId,jdbcType=VARCHAR},
+                #{item.param,jdbcType=VARCHAR},
+                #{item.type,jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_triggers WHERE trigger_id = #{triggerId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_triggers WHERE trigger_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.Triggers" >
+        DELETE FROM monitor_triggers WHERE trigger_id = #{triggerId}
+    </delete>
+    <delete id="deleteByItemIds" parameterType="java.util.List">
+        DELETE FROM monitor_triggers WHERE item_id in
+        <foreach collection="array" index="index" item="itemId"
+                 open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </delete>
+    <delete id="deleteByTemplateIdArrays" parameterType="java.util.List">
+        DELETE FROM monitor_triggers where item_id in (select item_id from monitor_items where template_id in
+        <foreach collection="array" index="index" item="templateId"
+                 open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+        )
+    </delete>
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.Triggers" >
+        UPDATE monitor_triggers monitor_triggers
+        <set >
+                <if test="triggerId != null" >
+                monitor_triggers.trigger_id = #{triggerId},
+                </if>
+                <if test="name != null" >
+                monitor_triggers.name = #{name},
+                </if>
+                <if test="expression != null" >
+                monitor_triggers.expression = #{expression},
+                </if>
+                <if test="url != null" >
+                monitor_triggers.url = #{url},
+                </if>
+                <if test="status != null" >
+                monitor_triggers.status = #{status},
+                </if>
+                <if test="value != null" >
+                monitor_triggers.value = #{value},
+                </if>
+                <if test="priority != null" >
+                monitor_triggers.priority = #{priority},
+                </if>
+                <if test="itemId != null" >
+                monitor_triggers.item_id = #{itemId},
+                </if>
+                <if test="param != null" >
+                monitor_triggers.param = #{param},
+                </if>
+                <if test="type != null" >
+                    monitor_triggers.type = #{type},
+                </if>
+
+        </set>
+        WHERE trigger_id = #{triggerId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.Triggers" >
+        UPDATE monitor_triggers monitor_triggers
+        SET
+        monitor_triggers.trigger_id = #{triggerId},
+        monitor_triggers.name = #{name},
+        monitor_triggers.expression = #{expression},
+        monitor_triggers.url = #{url},
+        monitor_triggers.status = #{status},
+        monitor_triggers.value = #{value},
+        monitor_triggers.priority = #{priority},
+        monitor_triggers.item_id = #{itemId},
+        monitor_triggers.param = #{param},
+        monitor_triggers.type = #{type}
+        WHERE trigger_id = #{triggerId}
+    </update>
+    <update id="updateExpressionByItemIdionByItemId" parameterType="com.aspire.mirror.template.server.dao.po.Triggers" >
+        UPDATE monitor_triggers monitor_triggers
+        SET monitor_triggers.expression = #{expression}  WHERE item_id = #{itemId}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="TriggersResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        WHERE trigger_id = #{triggerId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="TriggersResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        WHERE trigger_id in
+        <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </select>
+    <select id="selectByPrimaryKeyArraysAndProxyIdentity" resultMap="TriggersResultMap">
+        SELECT
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        left join monitor_items i on monitor_triggers.item_id = i.item_id
+        left join monitor_template t on i.template_id = t.template_id
+        WHERE trigger_id in
+        <foreach collection="triggerIdArray" index="index" item="triggerId"
+                 open="(" separator="," close=")">
+            #{triggerId}
+        </foreach>
+        <if test="proxyIdentity != null and proxyIdentity != ''">
+            and (t.proxy_identity = '' or t.proxy_identity = #{proxyIdentity})
+        </if>
+    </select>
+    <select id="select" resultMap="TriggersResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Triggers">
+        SELECT
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        <include refid="Triggers_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.Triggers">
+        SELECT COUNT(*) FROM monitor_triggers monitor_triggers
+        <include refid="Triggers_Query_List_Sharing" />
+    </select>
+
+    <select id="selectByItemIdArrays" resultMap="TriggersResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        WHERE item_id in
+        <foreach collection="array" index="index" item="itemId"
+                                     open="(" separator="," close=")">
+        #{itemId}
+    </foreach>
+    </select>
+    <select id="listByTemplateId" resultMap="TriggersResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        WHERE item_id in
+        (select item_id from monitor_items where template_id =  #{templateId})
+    </select>
+    <select id="selectDynamicModelTriggerBySpecialParam" resultMap="TriggersResultMap">
+        select
+        <include refid="Triggers_Base_Column" />
+        FROM monitor_triggers monitor_triggers
+        left join monitor_items i on i.item_id = monitor_triggers.item_id
+        left join monitor_template t on t.template_id = i.template_id
+        where t.proxy_identity = #{thridSystemId}
+        and i.zabbix_item_id = #{zabbixItemId}
+        and monitor_triggers.type = '2'
+        and monitor_triggers.priority = #{priority}
+    </select>
+    <insert id="insertDynamicModel" parameterType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModel">
+        insert into monitor_triggers_dynamic_model (
+            model_id,
+            trigger_id,
+            device_item_id,
+            device_id,
+            ip,
+            idc_type,
+            create_time,
+            update_time,
+            model_json,
+            thrid_system_id,
+            model_status
+        ) values (
+            #{modelId,jdbcType=VARCHAR},
+            #{triggerId,jdbcType=VARCHAR},
+            #{deviceItemId,jdbcType=VARCHAR},
+            #{deviceId,jdbcType=VARCHAR},
+            #{ip,jdbcType=VARCHAR},
+            #{idcType,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP},
+            #{modelJson,jdbcType=VARCHAR},
+            #{thridSystemId,jdbcType=VARCHAR},
+            #{modelStatus,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertBatchDynamicModel" parameterType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModel">
+        insert into monitor_triggers_dynamic_model (
+        model_id,
+        trigger_id,
+        device_item_id,
+        device_id,
+        ip,
+        idc_type,
+        create_time,
+        update_time,
+        model_json,
+        thrid_system_id,
+        model_status
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+            #{item.modelId,jdbcType=VARCHAR},
+            #{item.triggerId,jdbcType=VARCHAR},
+            #{item.deviceItemId,jdbcType=VARCHAR},
+            #{item.deviceId,jdbcType=VARCHAR},
+            #{item.ip,jdbcType=VARCHAR},
+            #{item.idcType,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP},
+            #{item.modelJson,jdbcType=VARCHAR},
+            #{item.thridSystemId,jdbcType=VARCHAR},
+            #{item.modelStatus,jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <insert id="insertBatchDynamicModelExt" parameterType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModelExt">
+        insert into monitor_triggers_dynamic_model_ext (
+        model_ids,
+        source_type,
+        resource_id,
+        model_type,
+        model_status,
+        model_fail_msg,
+        update_time,
+        last_update_time,
+        zhixindu,
+        `desc`,
+        model_content
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.modelIds,jdbcType=VARCHAR},
+            #{item.sourceType,jdbcType=VARCHAR},
+            #{item.resourceId,jdbcType=VARCHAR},
+            #{item.modelType,jdbcType=VARCHAR},
+            #{item.modelStatus,jdbcType=VARCHAR},
+            #{item.modelFailMsg,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP},
+            #{item.lastUpdateTime,jdbcType=TIMESTAMP},
+            #{item.zhixindu,jdbcType=VARCHAR},
+            #{item.desc,jdbcType=VARCHAR},
+            #{item.modelContent,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <select id="selectDynamicModelExtByModelIds" resultType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModelExt">
+        select
+        model_ids modelIds,
+        source_type sourceType,
+        resource_id resourceId,
+        model_type modelType,
+        model_status modelStatus,
+        model_fail_msg modelFailMsg,
+        update_time updateTime,
+        last_update_time lastUpdateTime,
+        zhixindu zhixindu,
+        `desc` 'desc',
+        model_content modelContent
+        from monitor_triggers_dynamic_model_ext where model_ids = #{modelIds}
+    </select>
+    <select id="selectDynamicModel" resultType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModel">
+        select
+        model_id modelId,
+        trigger_id triggerId,
+        device_item_id deviceItemId,
+        device_id deviceId,
+        ip ip,
+        idc_type idcType,
+        create_time createTime,
+        update_time updateTime,
+        model_json modelJson,
+        thrid_system_id thridSystemId,
+        model_status modelStatus
+        from monitor_triggers_dynamic_model where trigger_id= #{triggerId} and device_item_id = #{deviceItemId}
+    </select>
+    <update id="updateDynamicModelById" parameterType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModel">
+        update monitor_triggers_dynamic_model set model_id = #{modelId}
+        <if test="triggerId != null and triggerId != ''">
+            , trigger_id = #{triggerId}
+        </if>
+        <if test="deviceItemId != null and deviceItemId != ''">
+            , device_item_id = #{deviceItemId}
+        </if>
+        <if test="deviceId != null and deviceId != ''">
+            , device_id = #{deviceId}
+        </if>
+        <if test="ip != null and ip != ''">
+            , ip = #{ip}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            , idc_type = #{idcType}
+        </if>
+        <if test="updateTime != null">
+            , update_time = #{updateTime}
+        </if>
+        <if test="modelJson != null and modelJson != ''">
+            , model_json = #{modelJson}
+        </if>
+        <if test="thridSystemId != null and thridSystemId != ''">
+            , thrid_system_id = #{thridSystemId}
+        </if>
+        <if test="modelStatus != null and modelStatus != ''">
+            , model_status = #{modelStatus}
+        </if>
+        where model_id = #{modelId}
+    </update>
+    <update id="updateDynamicModelExtById" parameterType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModelExt">
+        update monitor_triggers_dynamic_model_ext set id = #{id}
+        <if test="modelIds != null and modelIds != ''">
+            , model_ids = #{modelIds}
+        </if>
+        <if test="modelContent != null and modelContent != ''">
+            , model_content = #{modelContent}
+        </if>
+        <if test="modelStatus != null and modelStatus != ''">
+            , model_status = #{modelStatus}
+        </if>
+        <if test="desc != null and desc != ''">
+            , `desc` = #{desc}
+        </if>
+        where id = #{id}
+    </update>
+    <select id="selectDynamicModelByModelIdArrayAndProxyIdentity" resultType="com.aspire.mirror.template.api.dto.vo.StandardDynamicModel">
+        select
+        model_id modelId,
+        trigger_id triggerId,
+        device_item_id deviceItemId,
+        device_id deviceId,
+        ip ip,
+        idc_type idcType,
+        create_time createTime,
+        update_time updateTime,
+        model_json modelJson,
+        thrid_system_id thridSystemId,
+        model_status modelStatus
+        from monitor_triggers_dynamic_model where
+        model_id in
+        <foreach collection="modelIdArray" index="index" item="modelId"
+                 open="(" separator="," close=")">
+            #{modelId}
+        </foreach>
+        and thrid_system_id = #{thridSystemId}
+    </select>
+    <select id="selecAlltDynamicModelId" resultType="java.lang.String">
+        select model_id modelId from monitor_triggers_dynamic_model
+    </select>
+    <delete id="deleteDynamicModelByModelIdList" parameterType="java.util.List">
+        delete from  monitor_triggers_dynamic_model model_id in (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+</mapper>

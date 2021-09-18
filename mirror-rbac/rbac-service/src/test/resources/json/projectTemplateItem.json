@@ -1,0 +1,301 @@
+{
+	"id": 1,
+	"required": true,
+	"name": "[name]-roles",
+	"dependsOn": [],
+	"parents": [],
+	"permissions": [{
+		"actions": ["cluster_node:view"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["application:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["job_config:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["ip:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["build_history:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["cloud_instance:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["cloud_account:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["registry:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["job_history:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["env_file:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["application_template:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["notification:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["build_config:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["subnet:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["integration:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["volume:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["load_balancer:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["cluster:view"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["dashboard:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["pipeline_task:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["certificate:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["sync_history:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["repository:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["configuration_file:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["organization:view"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["log_filter:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["sync_config:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["service:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["alarm:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["space:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["pipeline_config:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["registry_project:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["dashboard_panel:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["knamespace:view"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["subaccount:view"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["private_ip:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["role:view"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["project:view"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["pipeline_history:*"],
+		"resource": ["*"],
+		"constraints": [{
+			"res:project": "[name]"
+		}]
+	},
+	{
+		"actions": ["project_template:view"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["zuul-config:view"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	},
+	{
+		"actions": ["event:*"],
+		"resource": ["*"],
+		"constraints": [{
+			
+		}]
+	}]
+}

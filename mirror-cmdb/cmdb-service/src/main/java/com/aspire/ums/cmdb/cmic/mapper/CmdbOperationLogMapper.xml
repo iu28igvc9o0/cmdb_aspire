@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.cmic.mapper.CmdbOperationLogMapper">
+
+    <!--插入操作日志数据-->
+    <insert id="addOperationLog" parameterType="com.aspire.ums.cmdb.cmic.entity.CmdbOperationLog">
+        INSERT INTO cmdb_operation_log (id, content, menu_url, fun_model, remote_addr,create_by, create_date)
+        VALUES(#{id},#{content},#{menuUrl},#{funModel},#{remoteAddr},#{createBy},now())
+    </insert>
+    <!-- 根据菜单url查询菜单名称 -->
+    <select id="findMenuNameByUrl" resultType="string">
+       SELECT `name` FROM sys_menu t where t.path=#{menuUrl} limit 0, 1
+    </select>
+
+</mapper>

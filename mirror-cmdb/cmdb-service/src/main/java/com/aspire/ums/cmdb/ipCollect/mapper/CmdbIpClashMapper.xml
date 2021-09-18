@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipCollect.mapper.CmdbIpClashMapper">
+    <!--    主表字段实体类-->
+    <resultMap id="mainMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashMainEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="record_id" property="recordId" jdbcType="VARCHAR"/>
+        <result column="clash_ip" property="clashIp" jdbcType="VARCHAR"/>
+        <result column="handle_status" property="handleStatus" jdbcType="VARCHAR"/>
+        <result column="not_handle_reason" property="notHandleReason" jdbcType="VARCHAR"/>
+        <result column="operator" property="operator" jdbcType="VARCHAR"/>
+        <result column="job_number" property="jobNumber" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--    冲突IP查询-->
+    <resultMap id="responseMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashFindPageResponse">
+        <result column="main_id" property="mainId" jdbcType="VARCHAR"/>
+        <result column="record_id" property="recordId" jdbcType="VARCHAR"/>
+        <result column="check_time" property="checkTime" jdbcType="TIMESTAMP"/>
+        <result column="clash_ip" property="clashIp" jdbcType="VARCHAR"/>
+        <result column="old_mac" property="oldMac" jdbcType="VARCHAR"/>
+        <result column="now_mac" property="nowMac" jdbcType="VARCHAR"/>
+        <result column="total" property="changeTotal" jdbcType="INTEGER"/>
+        <result column="system_infer" property="systemInfer" jdbcType="VARCHAR"/>
+        <result column="gateway" property="gateway" jdbcType="VARCHAR"/>
+        <result column="resource" property="resource" jdbcType="VARCHAR"/>
+        <result column="handle_status" property="handleStatus" jdbcType="VARCHAR"/>
+        <result column="not_handle_reason" property="notHandleReason" jdbcType="VARCHAR"/>
+        <result column="operator" property="operator" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="is_notify" property="isNotify" jdbcType="VARCHAR"/>
+        <result column="job_number" property="jobNumber" jdbcType="VARCHAR"/>
+        <result column="collect_type" property="collectType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--    页面头栏统计-->
+    <resultMap id="topTotalMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashTopTotalResponse">
+        <result column="clash_total" property="clashTotal" jdbcType="INTEGER"/>
+        <result column="change_total" property="changeTotal" jdbcType="INTEGER"/>
+        <result column="pending_total" property="pendingTotal" jdbcType="INTEGER"/>
+        <result column="processed_total" property="processedTotal" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--    主体字段-->
+    <sql id="mainBaseColum">
+        `id`, `record_id`, `clash_ip`, `handle_status`, `not_handle_reason`, `operator`, `collect_type`
+    </sql>
+    <!--    记录表字段-->
+    <sql id="insertColumn">
+        `id`,
+        <include refid="recordBaseColumn"/>
+    </sql>
+    <sql id="recordBaseColumn">
+        `main_id`, `ip`, `old_mac`, `now_mac`, `gateway`, `resource`, `job_number`, `check_time`
+    </sql>
+
+    <sql id="findColumn">
+        r.main_id, r.id as record_id, r.check_time, m.clash_ip, r.old_mac, r.now_mac,
+        '冲突ip' as system_infer, r.gateway, r.resource, m.handle_status,m.not_handle_reason, m.operator,m.update_time,
+        ( case when r.job_number is null then '否' else '是' end ) as is_notify, r.job_number, m.collect_type
+    </sql>
+
+    <!--    按检测时间筛选最新的IP数据-->
+    <sql id="nowIpSelectSql2">
+        select * from(
+        select distinct<include refid="recordBaseColumn"/>, a.`id`,
+        ( LENGTH(REPLACE(now_mac, ',', '--')) - LENGTH(now_mac) ) AS total
+        from cmdb_ip_clash_record a join cmdb_ip_clash_main b on a.main_id = b.id
+        where b.collect_type = '2'
+        <if test="startTime != null">
+            and a.check_time &gt; #{startTime}
+        </if>
+        <if test="endTime != null">
+            and a.check_time &lt; #{endTime}
+        </if>
+        AND a.statistic_flag = #{checkType}
+        )ab
+    </sql>
+    <sql id="nowIpSelectSql1">
+        select * from(
+        select distinct<include refid="recordBaseColumn"/>, a.`id`,
+        ( LENGTH(REPLACE(now_mac, ',', '--')) - LENGTH(now_mac) ) AS total
+        from cmdb_ip_clash_record a join cmdb_ip_clash_main b on a.main_id = b.id
+        where b.collect_type = '1'
+        <if test="startTime != null">
+            and a.check_time &gt; #{startTime}
+        </if>
+        <if test="endTime != null">
+            and a.check_time &lt; #{endTime}
+        </if>
+        AND a.statistic_flag = #{checkType}
+        )ab
+    </sql>
+    <sql id="checkTimeMaxSql">
+        select max( check_time ) from cmdb_ip_clash_record
+        <where>
+            ip = a.ip
+            <if test="startTime != null">
+                and check_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and check_time &lt; #{endTime}
+            </if>
+        </where>
+    </sql>
+
+    <!--    根据IP分组查询-->
+    <sql id="groupByIpSql">
+        select ip, (LENGTH(replace(now_mac,',','--')) - LENGTH(now_mac)) as total
+        from cmdb_ip_clash_record cr join cmdb_ip_clash_main m on m.id = cr.main_id
+        where 1=1
+        <if test="startTime != null">
+            and check_time &gt; #{startTime}
+        </if>
+        <if test="endTime != null">
+            and check_time &lt; #{endTime}
+        </if>
+    </sql>
+
+    <!--    查询条件-->
+    <sql id="queryWhere">
+        <where>
+            <if test="startTime != null">
+                and r.check_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and r.check_time &lt; #{endTime}
+            </if>
+            <if test="updateStartTime != null">
+                and m.update_time &gt; #{updateStartTime}
+            </if>
+            <if test="updateEndTime != null">
+                and m.update_time &lt; #{updateEndTime}
+            </if>
+            <if test="ipList != null and ipList.size() > 0">
+                <choose>
+                    <when test="ipList.size() == 1">
+                        <foreach collection="ipList" item="ip" index="index">
+                            and m.clash_ip like concat ('',#{ip},'%')
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        and m.clash_ip in
+                        <foreach collection="ipList" item="ip" index="index" open="(" separator="," close=")">
+                            #{ip}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="oldMac != null and oldMac != ''">
+                and r.old_mac = #{oldMac}
+            </if>
+            <if test="nowMac != null and nowMac != ''">
+                and r.now_mac = #{nowMac}
+            </if>
+            <if test="changeTotal != null and changeTotal >= 0">
+                and r.total = #{changeTotal}
+            </if>
+            <if test="gateway != null and gateway != ''">
+                and r.gateway = #{gateway}
+            </if>
+            <if test="resource != null and resource != ''">
+                and r.resource = #{resource}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and m.handle_status = #{handleStatus}
+            </if>
+            <if test="notHandleReason != null and notHandleReason != ''">
+                and m.not_handle_reason like concat ('%',#{notHandleReason},'%')
+            </if>
+            <if test="operator != null and operator != ''">
+                and m.operator = #{operator}
+            </if>
+            <if test="isNotify != null and isNotify != ''">
+                <choose>
+                    <when test="isNotify == 0">
+                        and r.job_number is null
+                    </when>
+                    <otherwise>
+                        and r.job_number is not null
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                and r.job_number like concat ('%',#{jobNumber},'%')
+            </if>
+            <if test="collectType != null and collectType != ''">
+                and m.collect_type = #{collectType}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 插入主表-->
+    <insert id="insertMain" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashMainEntity">
+        INSERT INTO `cmdb_ip_clash_main`
+        (
+        <include refid="mainBaseColum"/>, `create_time`, `update_time`, `del_flag`
+        )
+        VALUES
+        ( #{id}, #{recordId}, #{clashIp}, #{handleStatus}, #{notHandleReason}, #{operator}, #{collectType}, NOW(),
+        NOW(), '0' )
+    </insert>
+
+    <!-- 批量插入主表-->
+    <insert id="batchInsertMain" parameterType="java.util.List">
+        INSERT INTO `cmdb_ip_clash_main`
+        (
+        <include refid="mainBaseColum"/>, `create_time`, `update_time`, `del_flag`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.id}, #{item.recordId}, #{item.clashIp}, #{item.handleStatus}, #{item.notHandleReason},
+            #{item.operator}, #{item.collectType}, NOW(), NOW(), '0' )
+        </foreach>
+    </insert>
+
+    <!-- 插入记录表-->
+    <insert id="batchInsertRecord" parameterType="java.util.List">
+        INSERT INTO `cmdb_ip_clash_record` (<include refid="insertColumn"/>, `create_time`,`statistic_flag`,`time_key` )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.id}, #{item.mainId}, #{item.ip}, #{item.oldMac},#{item.nowMac}, #{item.gateway}, #{item.resource},
+            #{item.jobNumber}, #{item.checkTime}, NOW(), #{item.statisticFlag}, #{item.timeKey} )
+        </foreach>
+    </insert>
+
+    <!-- 插入记录表-->
+    <insert id="insertRecord" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashRecordEntity">
+        INSERT INTO `cmdb_ip_clash_record` (<include refid="insertColumn"/>, `create_time`)
+        VALUES
+        ( #{id}, #{mainId}, #{ip}, #{oldMac},#{nowMac}, #{gateway}, #{resource}, #{jobNumber},
+        #{checkTime}, NOW() )
+    </insert>
+
+    <!-- 获取主表所有冲突IP-->
+    <select id="getAllIpForMain" resultType="java.lang.String">
+        select clash_ip from `cmdb_ip_clash_main` where def_falg = '0'
+    </select>
+
+    <!-- 统计当前IP的数量-->
+    <select id="countByIpForMain" resultType="java.lang.Integer">
+        select count(clash_ip) from `cmdb_ip_clash_main` where def_falg = '0' and ip = #{ip}
+    </select>
+
+    <!--    根据IP查询-->
+    <select id="getEntityByIpForMain" resultMap="mainMap" parameterType="string">
+        select
+            m.id,
+            m.record_id,
+            m.clash_ip,
+            m.handle_status,
+            m.not_handle_reason,
+            m.operator,
+            r.job_number,
+            m.collect_type
+        from
+            cmdb_ip_clash_main m
+            join cmdb_ip_clash_record r on m.record_id = r.id
+        where
+            m.del_flag = '0'
+            and m.clash_ip = #{ip}
+    </select>
+
+    <select id="getEntityByIpAndTypeForMain" parameterType="string" resultMap="mainMap">
+        select
+        m.id,
+        m.record_id,
+        m.clash_ip,
+        m.handle_status,
+        m.not_handle_reason,
+        m.operator,
+        r.job_number,
+        m.collect_type
+        from
+        cmdb_ip_clash_main m
+        join cmdb_ip_clash_record r on m.record_id = r.id
+        where
+        m.del_flag = '0'
+        <if test="ip != null and ip != ''">
+            and m.clash_ip = #{ip}
+        </if>
+        <if test="collectType != null and collectType != ''">
+            and m.collect_type = #{collectType}
+        </if>
+    </select>
+
+    <!--    查询冲突IP-->
+    <select id="findData_bak" resultType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashFindPageResponse">
+        select
+        r.check_time,
+        m.clash_ip,
+        r.old_mac,
+        r.now_mac,
+        t.total,
+        'IP冲突' as system_infer,
+        r.gateway,
+        r.resource,
+        m.handle_status,
+        m.not_handle_reason,
+        m.operator,
+        m.update_time,
+        ( case when r.job_number is null then '否' else '是' end ) as is_notify,
+        r.job_number
+        from
+        cmdb_ip_clash_main m
+        join cmdb_ip_clash_record r on m.record_id = r.id
+        join (
+        select ip, count( id ) as total from cmdb_ip_clash_record
+        <where>
+            <if test="startTime != null">
+                and r.check_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and r.check_time &lt; #{endTime}
+            </if>
+        </where>
+        group by ip
+        ) t on m.clash_ip = t.ip
+        <where>
+            <if test="startTime != null">
+                and r.check_time &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and r.check_time &lt; #{endTime}
+            </if>
+            <if test="ipList != null and ipList.size() > 0">
+                and m.clash_ip in
+                <foreach collection="list" item="ip" index="index" open="(" separator="," close=")">
+                    #{ip}
+                </foreach>
+            </if>
+            <if test="changeTotal != null and changeTotal >= 0">
+                and t.total = #{changeTotal}
+            </if>
+            <if test="gateway != null and gateway != ''">
+                and r.gateway = #{gateway}
+            </if>
+            <if test="resource != null and resource != ''">
+                and r.resource = #{resource}
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                and m.handle_status = #{handleStatus}
+            </if>
+            <if test="notHandleReason != null and notHandleReason != ''">
+                and m.not_handle_reason like concat ('%',#{notHandleReason},'%')
+            </if>
+            <if test="operator != null and operator != ''">
+                and m.operator = #{operator}
+            </if>
+            <if test="isNotify != null and isNotify != ''">
+                <choose>
+                    <when test="isNotify = '0'">
+                        and r.job_number is null
+                    </when>
+                    <otherwise>
+                        and r.job_number is not null
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                /*and r.job_number = #{jobNumber}*/
+                and r.job_number like concat ('%',#{jobNumber},'%')
+            </if>
+        </where>
+        order by r.check_time desc
+        <if test="pageNo >= 0 and pageSize > 0">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <!--    条件查询-->
+    <select id="findData" resultMap="responseMap"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashFindPageRequest">
+        select main_id,record_id,check_time,clash_ip,old_mac,now_mac,total,system_infer,gateway,
+        resource,handle_status,not_handle_reason,operator,update_time,is_notify,job_number,
+        (case when collect_type = '1' then '自动化一期' else '自动化二期' end) as collect_type
+        from (
+        select<include refid="findColumn"/>, r.total as total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql2"/>) r on m.id = r.main_id
+<!--        join (-->
+<!--        <include refid="groupByIpSql"/>-->
+<!--        and m.collect_type = '2') t on m.clash_ip = t.ip-->
+        <include refid="queryWhere"/>
+        union all
+        select<include refid="findColumn"/>, r.total as total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql1"/>) r on m.id = r.main_id
+<!--        join (-->
+<!--        <include refid="groupByIpSql"/>-->
+<!--        and m.collect_type = '1') t on m.clash_ip = t.ip-->
+        <include refid="queryWhere"/>
+        ) da ORDER BY check_time
+        <if test="pageNo >= 0 and pageSize > 0">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+
+    <select id="findPendingIpList"  resultType="java.util.HashMap"  parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashFindPageRequest">
+        select main_id,record_id,check_time,clash_ip,old_mac,now_mac,total,system_infer,gateway,
+        resource,
+        (CASE handle_status
+        WHEN '0' THEN '待处理'
+        WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中'
+        WHEN '3' THEN '已处理'
+        ELSE '其他' END) as  handle_status,
+        not_handle_reason,operator,update_time,is_notify,job_number,
+        (case when collect_type = '1' then '自动化一期' else '自动化二期' end) as collect_type
+        from (
+        select<include refid="findColumn"/>, r.total as total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql2"/>) r on m.id = r.main_id
+        <include refid="queryWhere"/>
+        union all
+        select<include refid="findColumn"/>, r.total as total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql1"/>) r on m.id = r.main_id
+        <include refid="queryWhere"/>
+        ) da ORDER BY check_time
+    </select>
+
+    <update id="updateIpClashOrderStatus" parameterType="java.util.HashMap">
+        update cmdb_ip_clash_record
+        <set>
+            job_number=#{orderNo},
+            update_time=now()
+        </set>
+        <where>
+            id in
+            <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </update>
+
+    <!--    条件查询统计总数-->
+    <select id="findDataCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashFindPageRequest">
+        select sum(da.total) as total
+        from (
+        select
+        count(m.id) as total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql2"/>) r on m.id = r.main_id
+<!--        join (-->
+<!--        <include refid="groupByIpSql"/>-->
+<!--        and m.collect_type = '2') t on m.clash_ip = t.ip-->
+        <include refid="queryWhere"/>
+        union all
+        select
+        count(m.id) as total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql1"/>) r on m.id = r.main_id
+<!--        join (-->
+<!--        <include refid="groupByIpSql"/>-->
+<!--        and m.collect_type = '1') t on m.clash_ip = t.ip-->
+        <include refid="queryWhere"/>
+        ) da
+    </select>
+
+    <!--    冲突IP页面头栏统计-->
+    <select id="findDataTopTotal" resultMap="topTotalMap"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashFindPageRequest">
+        select
+        sum(da.clash_total) as clash_total,
+        sum(da.change_total) as change_total,
+        sum(pending_total) as pending_total,
+        sum(processed_total) as processed_total
+        from (
+        select
+        count(m.id) as clash_total,
+        sum(r.total) as change_total,
+        count(case when m.handle_status = '0' then 1 end) as pending_total,
+        count(case when m.handle_status = '3' then 1 end) as processed_total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql2"/>) r on m.id = r.main_id
+<!--        join (-->
+<!--        <include refid="groupByIpSql"/>-->
+<!--        and m.collect_type = '2') t on m.clash_ip = t.ip-->
+        <include refid="queryWhere"/>
+        union all
+        select
+        count(m.id) as clash_total,
+        0 as change_total,
+        count(case when m.handle_status = '0' then 1 end) as pending_total,
+        count(case when m.handle_status = '3' then 1 end) as processed_total
+        from
+        cmdb_ip_clash_main m
+        join (<include refid="nowIpSelectSql1"/>) r on m.id = r.main_id
+<!--        join (-->
+<!--        <include refid="groupByIpSql"/>-->
+<!--        and m.collect_type = '1') t on m.clash_ip = t.ip-->
+        <include refid="queryWhere"/>
+        ) da
+    </select>
+
+    <!--    根据采集类型查询所有IP-->
+    <select id="getIpByTypeForMain" parameterType="string" resultType="java.lang.String">
+        select clash_ip from cmdb_ip_clash_main where del_flag = '0' and collect_type = #{colletType}
+    </select>
+
+
+    <update id="updateMain" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashMainEntity">
+        update `cmdb_ip_clash_main`
+        <set>
+            <if test="recordId != null and recordId != ''">
+                `record_id` = #{recordId},
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                `handle_status` = #{handleStatus},
+            </if>
+            <if test="notHandleReason != null and notHandleReason != ''">
+                `not_handle_reason` = #{notHandleReason},
+            </if>
+            <if test="operator != null and operator != ''">
+                `operator` = #{operator},
+            </if>
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <!--    根据IP和采集类型修改-->
+    <update id="updateMainByIpAndType"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashMainEntity">
+        update `cmdb_ip_clash_main`
+        <set>
+            <if test="recordId != null and recordId != ''">
+                `record_id` = #{recordId},
+            </if>
+            <if test="handleStatus != null and handleStatus != ''">
+                `handle_status` = #{handleStatus},
+            </if>
+        </set>
+        where `clash_ip` = #{clashIp} and `collect_type` = #{collectType}
+    </update>
+
+    <update id="updateHandleStatus"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashUpdateRequest">
+        update `cmdb_ip_clash_main`
+        <set>
+            `handle_status` = #{handleStatus},
+            `not_handle_reason` = #{notHandleReason},
+            <if test="operator != null and operator != ''">
+                `operator` = #{operator},
+            </if>
+            `update_time` = NOW()
+        </set>
+        where `id` in
+        <foreach collection="mainId" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--    根据ID批量修改处理状态-->
+    <update id="updateStatusByIdsForMain" parameterType="java.util.Map">
+        update `cmdb_ip_clash_main`
+        <set>
+            `handle_status` = #{handleStatus}
+        </set>
+        where `id` in
+        <foreach collection="mainId" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateRecord" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpClashRecordEntity">
+        update `cmdb_ip_clash_record`
+        <set>
+            <if test="mainId != null and mainId != ''">
+                `main_id` = #{mainId},
+            </if>
+            <if test="resource != null and resource != ''">
+                `resource` = #{resource},
+            </if>
+            <if test="jobNumber != null and jobNumber != ''">
+                `job_number` = #{jobNumber},
+            </if>
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <!--    根据ID批量修改工单号-->
+    <update id="updateJobNumberByIdsForRecord" parameterType="java.util.Map">
+        update `cmdb_ip_clash_record`
+        <set>
+            `job_number` = #{jobNumber}
+        </set>
+        where `id` in
+        <foreach collection="recordId" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--查询当天的冲突IP是否已有记录入库 create by fanwenhui 20201112-->
+    <select id="getClashMain4Now" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_clash_main WHERE create_time > DATE(NOW()) AND collect_type = '2'
+    </select>
+
+    <!-- 冲突IP二次检测历史记录表 create by fanwenhui 20200827-->
+    <insert id="insertRebuildClash" parameterType="java.util.Map">
+        INSERT INTO `cmdb_ip_clash_rebuild`
+        (
+        `id`,`request_content`,`reponse_content`,`convert_content`,`create_time`,`type`
+        )
+        VALUES
+        ( #{id},#{requestContent},#{reponseContent}, #{convertContent}, NOW(),#{type} )
+    </insert>
+
+    <!--获取当天已经入库的冲突IP列表对应的IP检测字段 create by fanwenhui 20210303-->
+    <select id="getClashIpTimeKeyList" resultType="java.lang.String">
+        SELECT time_key AS timeKey FROM cmdb_ip_clash_record
+        WHERE create_time > DATE(NOW()) AND statistic_flag = '0'
+        GROUP BY time_key
+    </select>
+
+</mapper>

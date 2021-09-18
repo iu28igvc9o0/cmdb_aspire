@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umsAlertMetas>
+	<!-- for nanji 
+	<alertMetaItem umsAlertLevel="1" umsAlertDesc="低" zbxAlertLevels="0,1,2" />
+	<alertMetaItem umsAlertLevel="2" umsAlertDesc="中" zbxAlertLevels="3" />
+	<alertMetaItem umsAlertLevel="3" umsAlertDesc="高" zbxAlertLevels="*" />
+	-->
+	
+	<!-- for hangyan -->
+	<!--<alertMetaItem umsAlertLevel="0" umsAlertDesc="未知" zbxAlertLevels="0,*" />-->
+	<!--<alertMetaItem umsAlertLevel="1" umsAlertDesc="提示" zbxAlertLevels="1" />-->
+	<!--<alertMetaItem umsAlertLevel="2" umsAlertDesc="警告" zbxAlertLevels="1,2" />-->
+	<!--<alertMetaItem umsAlertLevel="3" umsAlertDesc="一般" zbxAlertLevels="3" />-->
+	<!--<alertMetaItem umsAlertLevel="4" umsAlertDesc="严重" zbxAlertLevels="4" />-->
+	<!--<alertMetaItem umsAlertLevel="5" umsAlertDesc="灾难" zbxAlertLevels="5" />-->
+
+	<!--  far zhongyi  -->
+	<alertMetaItem umsAlertLevel="2" umsAlertDesc="低" zbxAlertLevels="1,2" />
+	<alertMetaItem umsAlertLevel="3" umsAlertDesc="中" zbxAlertLevels="3" />
+	<alertMetaItem umsAlertLevel="4" umsAlertDesc="高" zbxAlertLevels="4" />
+	<alertMetaItem umsAlertLevel="5" umsAlertDesc="重大" zbxAlertLevels="5" />
+</umsAlertMetas>

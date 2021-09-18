@@ -1,0 +1,69 @@
+server:
+  port: 8135
+
+eureka:
+  instance:
+    #    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}/template
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useSSL: false
+#   url: jdbc:oracle:thin:@10.1.203.50:1522:db12c
+#   username: bmc_dev
+#   password: bmc_dev_50
+#   driver-class-name: oracle.jdbc.driver.OracleDriver
+
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+    org.springboot.sample.entity
+
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+
+sample:
+  zipkin:
+    enabled: true
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: true
+    com.dy.springboot.server.mapper: DEBUG
+    com.aspire.mirror.template.server.dao: DEBUG
+    com.aspire.mirror.template: info
+  file: ./logs/threshold.log
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000
+
+dynamic:
+  model:
+    sftp-file-server:
+      ip-address: "10.12.70.39"
+      port: 2088
+      login-user: sftpuser
+      login-pass: sftppass
+      root-directory: '/home/sudoroot/pgh/sftp/ops_sftproot/'
+dh:
+  ftp:
+    host: 10.12.70.40
+    port: 21
+    username: ftpadmin
+    password: 11qq!!QQ

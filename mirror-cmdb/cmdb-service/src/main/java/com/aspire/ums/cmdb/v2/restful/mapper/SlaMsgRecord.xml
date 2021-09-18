@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.restful.mapper.SlaMsgRecordMapper" >
+   
+    <select id="queryMsgRecord" resultType="map">
+        select rel_id,scene,scan_type,status,message,create_time
+        from sla_msg_record
+        where
+         <if test="scanType != null and scanType != ''">
+            and scan_type = #{scanType}
+        </if>
+        
+         <if test="scene != null and scene != ''">
+            and scene = #{scene}
+        </if>
+         <if test="relIdList != null">
+            and rel_id in (
+            <foreach collection="relIdList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        
+    </select>
+
+	 <insert id="insert" parameterType="map" >
+        INSERT INTO sla_msg_record
+        (
+            rel_id,scene,scan_type,status,message,create_time,rule_id
+        ) VALUES (
+            #{rel_id, jdbcType=VARCHAR},
+            #{scene, jdbcType=VARCHAR},
+            #{scan_type, jdbcType=VARCHAR},
+              #{status, jdbcType=VARCHAR},
+              #{message, jdbcType=VARCHAR},
+                #{create_time, jdbcType=TIMESTAMP},
+                 #{rule_id, jdbcType=VARCHAR}
+         
+        )
+    </insert>
+    
+    
+     <select id="listNoWorkingDays" resultType="map">
+    SELECT year_ AS year,
+           day_ AS day,
+           type_ AS type,
+           comment_ AS comment
+    FROM yearly_vacation_attendance
+    </select>
+    
+</mapper>

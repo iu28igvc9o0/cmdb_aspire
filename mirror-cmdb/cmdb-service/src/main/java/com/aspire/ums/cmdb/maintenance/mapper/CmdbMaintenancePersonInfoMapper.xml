@@ -1,0 +1,19 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenancePersonInfoMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenancePersonInfo">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="device_class" jdbcType="VARCHAR" property="deviceClass"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+    </resultMap>
+    
+    <select id="getOne" resultMap="resultMap">
+        select *
+        from cmdb_maintenance_person_info
+        where resource_pool = #{resourcePool}
+        and device_class = #{deviceClass};
+    </select>
+</mapper>

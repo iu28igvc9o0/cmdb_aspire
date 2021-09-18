@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.theme.server.dao.InstanceMapper">
+
+    <sql id="Instance_Column_List">
+        id, name, moduleId, insertTime, updateTime, isDelete 
+    </sql>
+
+    <select id="getInstanceBaseInfoList" parameterType="java.util.HashMap"
+            resultType="com.aspire.mirror.theme.server.entity.InstanceBaseColumn">
+        select * from (
+        SELECT
+        ci.name name,
+        ci.moduleId moduleId,
+        ci.isDelete isDelete,
+        TO_CHAR(ci.insertTime,'yyyy-mm-dd hh24:mi:ss'),
+        TO_CHAR(ci.updateTime,'yyyy-mm-dd hh24:mi:ss'),
+        cm.name moduleName,
+        ifv.instanceId
+        instanceId,
+        ifv.bizSystem bizSystem,
+        ifv.ip ip,
+        ifv.roomId roomId,
+        ifv.idcType idcType,
+        ifv.deviceClass
+        deviceClass,
+        ifv.deviceRegion deviceRegion,
+        ROWNUM nm
+        FROM
+        cmdb_instance ci
+        INNER JOIN cmdb_module cm ON ci.moduleId = cm.id AND cm.isDelete = 0 AND cm.disabled='false'
+        INNER JOIN
+        (
+        SELECT instanceId, MAX(CASE WHEN formCode='bizSystem' THEN
+        formValue END
+        ) AS bizSystem, MAX(CASE WHEN formCode='IP' THEN
+        formValue END
+        ) AS ip, MAX(CASE WHEN formCode='roomId' THEN
+        formValue END
+        ) AS roomId, MAX(CASE WHEN formCode='idcType' THEN
+        formValue END
+        ) AS idcType,MAX(CASE WHEN formCode='device_class' THEN
+        formValue END
+        ) AS deviceClass,MAX(CASE WHEN formCode='DEVICE_REGION' THEN
+        formValue END
+        ) AS deviceRegion
+        FROM cmdb_instance_form_value
+        GROUP BY instanceId
+        ) ifv ON ci.id = ifv.instanceId
+        WHERE 1=1
+        <if test="includeDelete == null or includeDelete == 0">
+            AND ci.isDelete = 0
+        </if>
+        <if test="freshTime != null and freshTime != ''">
+            AND ci.updateTime &gt;=  '%Y%m%d%H%i%s')to_date(#{freshTime},'yyyy-mm-dd hh24:mi:ss'),
+        </if>
+        <if test="name!=null and name!=''">
+            AND ci.name like concat('%', #{name}, '%')
+        </if>
+        <if test="moduleId!=null and moduleId!=''">
+            AND ci.moduleId = #{moduleId}
+        </if>
+        <if test="instanceIds!=null">
+            and ci.id in
+            <foreach collection="instanceIds" index="index" item="instanceId"
+                     open="(" separator="," close=")">
+                #{instanceId}
+            </foreach>
+        </if>
+        <if test="roomId!=null and roomId!=''">
+            AND roomId=#{roomId}
+        </if>
+        <if test="ip!=null and ip!=''">
+            AND ifv.ip like concat('%', #{ip}, '%')
+        </if>
+        <if test="bizSystem!=null and bizSystem!=''">
+            AND bizSystem=#{bizSystem}
+        </if>
+        <if test="pageNumber!=null">
+            AND ROWNUM <![CDATA[<=]]> ${pageNumber}+${pageSize}
+        </if>
+        ) aa
+        <if test="pageNumber!=null">
+             where aa.nm &gt; ${pageNumber}
+        </if>
+        <if test="sort!=null">
+             order by #{sort} #{order}
+        </if>
+    </select>
+
+</mapper>

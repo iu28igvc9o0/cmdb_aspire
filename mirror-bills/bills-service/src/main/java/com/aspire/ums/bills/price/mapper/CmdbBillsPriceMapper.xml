@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.aspire.ums.bills.price.mapper.CmdbBillsPriceMapper">
+
+    <!-- 查询资源池列表 -->
+    <select id="queryIdcList" resultType="HashMap">
+        select m.id as idcId, m.idc_name as idcName
+        from ${tablePrefix}.cmdb_idc_manager m
+        where m.is_delete = 0
+        order by m.sort_index asc
+    </select>
+
+    <!-- 查询设备类型列表 -->
+    <select id="queryDeviceTypeList" resultType="HashMap">
+        select t.id as deviceTypeId, t.dict_note as deviceTypeName
+        from ${tablePrefix}.t_cfg_dict t
+        where t.is_delete = 0 and t.col_name = 'bills_device_type'
+        order by t.sort_index asc
+    </select>
+
+    <!-- 新增单价 -->
+    <insert id="insertPrice">
+        insert into cmdb_bills_price(id, idc_id, device_type_id, price,
+            unit, insert_time, insert_person, is_delete)
+        values (#{domain.id}, #{domain.idcId}, #{domain.deviceTypeId},
+        #{domain.price}, #{domain.unit}, #{domain.insertTime},
+        #{domain.insertPerson}, 0)
+    </insert>
+
+    <!-- 条件查询单价 -->
+    <select id="queryPriceByCondition" resultMap="priceDomain">
+        select p.*, idc.idc_name, t.dict_note from cmdb_bills_price p
+        left join ${tablePrefix}.cmdb_idc_manager idc on p.idc_id = idc.id
+        left join ${tablePrefix}.t_cfg_dict t on p.device_type_id = t.id
+            and t.col_name = 'bills_device_type'
+        <where>
+            and p.is_delete = 0
+            <if test="idcId != null">
+               and p.idc_id = #{idcId}
+            </if>
+            <if test="deviceTypeId != null">
+               and p.device_type_id = #{deviceTypeId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询单价详情 -->
+    <select id="queryPriceDetailById" parameterType="String" resultMap="priceDomain">
+        select p.*, idc.idc_name, t.dict_note from cmdb_bills_price p
+        left join ${tablePrefix}.cmdb_idc_manager idc on p.idc_id = idc.id
+        left join ${tablePrefix}.t_cfg_dict t on p.device_type_id = t.id
+            and t.col_name = 'bills_device_type'
+        where p.id = #{id} and p.is_delete = 0
+    </select>
+
+    <!-- 修改单价 -->
+    <update id="updatePrice">
+        update cmdb_bills_price
+        <set>
+            <if test="domain.idcId != null">
+                idc_id = #{domain.idcId},
+            </if>
+            <if test="domain.deviceTypeId != null">
+                device_type_id = #{domain.deviceTypeId},
+            </if>
+            <if test="domain.price != null">
+                price = #{domain.price},
+            </if>
+            <if test="domain.unit != null">
+                unit = #{domain.unit},
+            </if>
+            <if test="domain.updateTime != null">
+                update_time = #{domain.updateTime},
+            </if>
+            <if test="domain.updatePerson != null">
+                update_person = #{domain.updatePerson}
+            </if>
+        </set>
+        where id = #{domain.id}
+    </update>
+
+    <!-- 删除单价 -->
+    <update id="deletePrice">
+        update cmdb_bills_price
+        <set>
+            is_delete = 1
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 查询单价列表 -->
+    <select id="queryPriceList" resultMap="priceDomain">
+        select p.*, idc.idc_name, t.dict_note from cmdb_bills_price p
+        left join ${tablePrefix}.cmdb_idc_manager idc on p.idc_id = idc.id
+        left join ${tablePrefix}.t_cfg_dict t on p.device_type_id = t.id
+        and t.col_name = 'bills_device_type'
+        where p.is_delete = 0
+        order by p.insert_time desc
+    </select>
+
+    <!-- 获取单价单位列表 -->
+    <select id="getPriceUnitList" resultType="HashMap">
+        select d.id as id, concat('元/',d.dict_note,'/月') as value
+        from ${tablePrefix}.t_cfg_dict d
+        where d.is_delete = 0 and d.col_name = 'bills_price_unit'
+    </select>
+
+    <!-- 查询设备月单价列表 -->
+    <select id="getDevicePriceList" resultType="HashMap">
+        select d.dict_note as device, parent.dict_note as parent,
+            concat(ifnull(p.price, '-')) as price, p.unit as unit
+        from cmdb_bills_price p
+        left join ${tablePrefix}.t_cfg_dict d on p.device_type_id = d.id
+            and  d.is_delete = 0 and d.col_name ='bills_device_type'
+        left join ${tablePrefix}.t_cfg_dict parent on d.up_dict = parent.id
+        where p.idc_id = #{idcId} and p.is_delete = 0
+        order by d.sort_index
+    </select>
+
+    <resultMap id="priceDomain" type="com.aspire.ums.bills.price.payload.CmdbBillsPriceResponse">
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="idc_id" property="idcId" jdbcType="VARCHAR" />
+        <result column="idc_name" property="idcName" jdbcType="VARCHAR" />
+        <result column="device_type_id" property="deviceTypeId" jdbcType="VARCHAR"/>
+        <result column="dict_note" property="deviceTypeName" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="insert_time" property="insertTime" jdbcType="DATE" />
+        <result column="insert_person" property="insertPerson" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    </resultMap>
+</mapper>

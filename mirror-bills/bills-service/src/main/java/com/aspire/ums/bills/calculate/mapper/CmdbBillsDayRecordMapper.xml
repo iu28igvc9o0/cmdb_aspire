@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.bills.calculate.mapper.CmdbBillsDayRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.bills.calculate.payload.CmdbBillsDayRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="business_system_id" property="businessSystemId" jdbcType="VARCHAR" />
+    <result column="idc_id" property="idcId" jdbcType="VARCHAR" />
+    <result column="pod_id" property="podId" jdbcType="VARCHAR" />
+    <result column="device_type_id" property="deviceTypeId" jdbcType="VARCHAR" />
+    <result column="quota" property="quota" jdbcType="VARCHAR" />
+    <result column="discount" property="discount" jdbcType="DOUBLE" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="discount_before" property="discountBefore" jdbcType="DOUBLE" />
+    <result column="total_money" property="totalMoney" jdbcType="DOUBLE" />
+    <result column="charge_time" property="chargeTime" jdbcType="TIMESTAMP" />
+    <result column="insert_time" property="insertTime" jdbcType="TIMESTAMP" />
+    <result column="insert_person" property="insertPerson" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, department_id, business_system_id, idc_id, pod_id, device_type_id, quota, discount, price,discount_before
+    total_money, charge_time, insert_time, insert_person, update_time, update_person, 
+    is_delete
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_bills_day_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_bills_day_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="batchInsert" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsDayRecord">
+    insert into cmdb_bills_day_record (id, department_id, business_system_id,
+      idc_id, pod_id, device_type_id, quota,
+      discount, price, discount_before, total_money,
+      charge_time, insert_time, insert_person,
+      update_time, update_person, is_delete
+      )
+    values
+    <foreach collection="list" separator="," item="item">
+      (#{item.id,jdbcType=VARCHAR}, #{item.departmentId,jdbcType=VARCHAR}, #{item.businessSystemId,jdbcType=VARCHAR},
+      #{item.idcId,jdbcType=VARCHAR}, #{item.podId,jdbcType=VARCHAR}, #{item.deviceTypeId,jdbcType=VARCHAR}, #{item.quota,jdbcType=VARCHAR},
+      #{item.discount,jdbcType=DOUBLE}, #{item.price,jdbcType=DOUBLE}, #{item.discountBefore,jdbcType=DOUBLE}, #{item.totalMoney,jdbcType=DOUBLE},
+      #{item.chargeTime,jdbcType=TIMESTAMP}, #{item.insertTime,jdbcType=TIMESTAMP}, #{item.insertPerson,jdbcType=VARCHAR},
+      #{item.updateTime,jdbcType=TIMESTAMP}, #{item.updatePerson,jdbcType=VARCHAR}, 0
+      )
+    </foreach>
+
+  </insert>
+
+  <insert id="insert" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsDayRecord" >
+    insert into cmdb_bills_day_record (id, department_id, business_system_id, 
+      idc_id, pod_id, device_type_id, quota,
+      discount, price, discount_before, total_money,
+      charge_time, insert_time, insert_person, 
+      update_time, update_person, is_delete
+      )
+    values (#{id,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{businessSystemId,jdbcType=VARCHAR}, 
+      #{idcId,jdbcType=VARCHAR}, #{podId,jdbcType=VARCHAR}, #{deviceTypeId,jdbcType=VARCHAR}, #{quota,jdbcType=VARCHAR},
+      #{discount,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE}, #{discountBefore,jdbcType=DOUBLE}, #{totalMoney,jdbcType=DOUBLE},
+      #{chargeTime,jdbcType=TIMESTAMP}, #{insertTime,jdbcType=TIMESTAMP}, #{insertPerson,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, 0
+      )
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsDayRecord" >
+    update cmdb_bills_day_record
+    <set >
+      <if test="quota != null" >
+        quota = #{quota,jdbcType=VARCHAR},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=DOUBLE},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="totalMoney != null" >
+        total_money = #{totalMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="discountBefore != null" >
+        discount_before = #{discountBefore,jdbcType=DOUBLE},
+      </if>
+      <if test="chargeTime != null" >
+        charge_time = #{chargeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertTime != null" >
+        insert_time = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertPerson != null" >
+        insert_person = #{insertPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsDayRecord" >
+    update cmdb_bills_day_record
+    set
+      quota = #{quota,jdbcType=VARCHAR},
+      discount = #{discount,jdbcType=DOUBLE},
+      price = #{price,jdbcType=DOUBLE},
+      discount_before = #{discountBefore,jdbcType=DOUBLE},
+      total_money = #{totalMoney,jdbcType=DOUBLE},
+      charge_time = #{chargeTime,jdbcType=TIMESTAMP},
+      insert_time = #{insertTime,jdbcType=TIMESTAMP},
+      insert_person = #{insertPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="getDayBillsRecordWithMonth" resultMap="BaseResultMap">
+    SELECT
+      department_id,
+      business_system_id,
+      idc_id,
+      pod_id,
+      device_type_id,
+      SUM(total_money) total_money,
+      SUM(discount_before) discount_before
+    FROM cmdb_bills_day_record
+    WHERE DATE_FORMAT(charge_time,'%Y-%m') = #{chargeTime}
+    GROUP BY department_id,business_system_id,idc_id,pod_id,device_type_id
+  </select>
+</mapper>

@@ -1,0 +1,528 @@
+{
+    "list": [
+        {
+            "type": "empty",
+            "label": "空容器",
+            "columnName": "empty_1604995925078",
+            "asideIcon": "iconfont iconkongkuang",
+            "width": "100%",
+            "list": [
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1602234061703",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [
+                        {
+                            "type": "button",
+                            "label": "选择修复作业",
+                            "columnName": "btn-choose-fix-work",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {
+                                "type": "primary"
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": false,
+                            "labelWidth": 100,
+                            "oldColumnName": "btn-choose-fix-pipeline"
+                        }
+                    ],
+                    "classify": "layout",
+                    "hidden": false
+                },
+                {
+                    "type": "table",
+                    "label": "表格",
+                    "columnName": "table_1604995981963",
+                    "asideIcon": "iconfont icondashujukeshihuaico-",
+                    "width": "100%",
+                    "classify": "layout",
+                    "show-index": true,
+                    "indexFixed": true,
+                    "show-single-selection": false,
+                    "singleSelectionFixed": true,
+                    "show-multiple-selection": false,
+                    "multipleSelectionFixed": true,
+                    "cacheMultipleSelection": true,
+                    "multipleSelectionColumnName": [
+                        "pipeline_id"
+                    ],
+                    "show-operation": true,
+                    "operationFixed": true,
+                    "show-pagination": true,
+                    "defaultSelectAll": false,
+                    "defaultSort": {
+                        "prop": "",
+                        "order": "",
+                        "ascending": "asc",
+                        "descending": "desc"
+                    },
+                    "props": {
+                        "border": true,
+                        "stripe": true,
+                        "highlight-current-row": false,
+                        "show-header": true,
+                        "default-sort": ""
+                    },
+                    "btnGroupDynamic": [],
+                    "list": [
+                        {
+                            "label": "作业名称",
+                            "columnName": "pipeline_name",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "200",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "步骤数",
+                            "columnName": "step_count",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "80",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "创建人",
+                            "columnName": "creater",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "80",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "最后修改人",
+                            "columnName": "updater",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "90",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "创建时间",
+                            "columnName": "create_time",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "140",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "修改时间",
+                            "columnName": "update_time",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "140",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "ID",
+                            "columnName": "pipeline_id",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "80",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "分类",
+                            "columnName": "label_id",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "100",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        }
+                    ],
+                    "operation": [],
+                    "toolList": [
+                        {
+                            "type": "text",
+                            "columnName": "remove-btn",
+                            "label": "删除",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": []
+                        }
+                    ],
+                    "operation-width": "100",
+                    "pagination": {
+                        "layout": "total, sizes, prev, pager, next, jumpe",
+                        "pageSizes": [
+                            "10",
+                            " 20",
+                            " 50",
+                            " 100",
+                            " 200"
+                        ],
+                        "currentPage": 1,
+                        "pageSize": 50,
+                        "total": 0,
+                        "hide-on-single-page": false
+                    },
+                    "http": {
+                        "initHttp": true,
+                        "type": "post",
+                        "methods": "/v1/ops-service/opsManage/queryOpsPipelineList"
+                    },
+                    "hidden": false,
+                    "show-operation-status": []
+                },
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1602236250146",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [
+                        {
+                            "type": "button",
+                            "label": "选择回退作业",
+                            "columnName": "btn-choose-goback-work",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {
+                                "type": "primary"
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": false,
+                            "labelWidth": 100,
+                            "oldColumnName": "button_1602236252899"
+                        }
+                    ],
+                    "classify": "layout",
+                    "hidden": false
+                },
+                {
+                    "type": "table",
+                    "label": "表格",
+                    "columnName": "table_goback_work_selected",
+                    "asideIcon": "iconfont icondashujukeshihuaico-",
+                    "width": "100%",
+                    "classify": "layout",
+                    "show-index": true,
+                    "indexFixed": true,
+                    "show-single-selection": false,
+                    "singleSelectionFixed": true,
+                    "show-multiple-selection": false,
+                    "multipleSelectionFixed": true,
+                    "cacheMultipleSelection": true,
+                    "multipleSelectionColumnName": [
+                        "pipeline_id"
+                    ],
+                    "show-operation": true,
+                    "operationFixed": true,
+                    "show-pagination": true,
+                    "defaultSelectAll": false,
+                    "defaultSort": {
+                        "prop": "",
+                        "order": "",
+                        "ascending": "asc",
+                        "descending": "desc"
+                    },
+                    "props": {
+                        "border": true,
+                        "stripe": true,
+                        "highlight-current-row": false,
+                        "show-header": true,
+                        "default-sort": ""
+                    },
+                    "btnGroupDynamic": [],
+                    "list": [
+                        {
+                            "label": "作业名称",
+                            "columnName": "pipeline_name",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "200",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "步骤数",
+                            "columnName": "step_count",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "80",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "创建人",
+                            "columnName": "creater",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "80",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "最后修改人",
+                            "columnName": "updater",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "90",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "创建时间",
+                            "columnName": "create_time",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "140",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "修改时间",
+                            "columnName": "update_time",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "140",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "ID",
+                            "columnName": "pipeline_id",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "80",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        },
+                        {
+                            "label": "分类",
+                            "columnName": "label_id",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "100",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true
+                        }
+                    ],
+                    "operation": [],
+                    "toolList": [
+                        {
+                            "type": "text",
+                            "columnName": "remove-btn",
+                            "label": "删除",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": []
+                        }
+                    ],
+                    "operation-width": "100",
+                    "pagination": {
+                        "layout": "total, sizes, prev, pager, next, jumpe",
+                        "pageSizes": [
+                            "10",
+                            " 20",
+                            " 50",
+                            " 100",
+                            " 200"
+                        ],
+                        "currentPage": 1,
+                        "pageSize": 50,
+                        "total": 0,
+                        "hide-on-single-page": false
+                    },
+                    "http": {
+                        "initHttp": true,
+                        "type": "post",
+                        "methods": "/v1/ops-service/opsManage/queryOpsPipelineList"
+                    },
+                    "hidden": false,
+                    "show-operation-status": [],
+                    "hasParentForm": true,
+                    "labelWidth": 100
+                }
+            ],
+            "classify": "empty",
+            "hidden": false
+        }
+    ],
+    "model": {},
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "exportName": "",
+        "project": "webbas",
+        "labelWidth": 100,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": []
+    }
+}

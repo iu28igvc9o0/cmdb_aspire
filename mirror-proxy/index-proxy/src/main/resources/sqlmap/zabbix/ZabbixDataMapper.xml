@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.indexproxy.selfmonitor.zabbix.dao.ZabbixCollectDao">
+
+    <resultMap type="com.aspire.mirror.indexproxy.selfmonitor.zabbix.domain.ZbxItemHistoryRecord" id="historyRecord">
+    	<result property="itemId" column="itemid" jdbcType="BIGINT"/>
+    	<result property="itemKey" column="item_key" jdbcType="VARCHAR"/>
+    	<result property="clock" column="clock" jdbcType="INTEGER"/>
+    	<result property="value" column="value" jdbcType="FLOAT"/>
+    	<result property="sequenceNo" column="sequence_no" jdbcType="BIGINT"/>
+    </resultMap>
+    
+    <select id="queryHistoryLatestSequenceNo" resultType="java.lang.Long">
+    	SELECT MAX(sequence_no)	FROM history
+    </select>
+    
+    <select id="queryHistoryBySequenceNo" parameterType="com.aspire.mirror.indexproxy.selfmonitor.zabbix.domain.ZbxHistoryQueryParam"
+    			resultMap="historyRecord">
+    	select h.itemid, i.key_ item_key, h.clock, h.value, h.sequence_no 
+    	  from history h INNER JOIN items i on h.itemid = i.itemid 
+		 where exists (select 1 from hosts t where i.hostid = t.hostid and t.hostid = #{hostId})
+		<if test="sequenceNo != null">
+			and h.sequence_no > #{sequenceNo}
+        </if>               
+        <choose>
+            <when test="sortWay != null and sortWay == 'ASC'.toString()">
+              	order by h.sequence_no ASC
+            </when>
+            <otherwise>
+                order by h.sequence_no DESC
+            </otherwise>
+        </choose>
+		<if test="limitOne != null">
+			limit 0, 1
+		</if>
+    </select>
+    
+    <select id="queryHistoryUintLatestSequenceNo" resultType="java.lang.Long">
+    	SELECT MAX(sequence_no)	FROM history_uint
+    </select>
+    
+    <select id="queryHistoryUintBySequenceNo" parameterType="com.aspire.mirror.indexproxy.selfmonitor.zabbix.domain.ZbxHistoryQueryParam"
+    			resultMap="historyRecord">
+		select h.itemid, i.key_ item_key, h.clock, h.value, h.sequence_no 
+    	  from history_uint h INNER JOIN items i on h.itemid = i.itemid 
+		 where exists (select 1 from hosts t where i.hostid = t.hostid and t.hostid = #{hostId})                  
+		<if test="sequenceNo != null">
+			and h.sequence_no > #{sequenceNo}
+        </if>                  
+		<choose>
+            <when test="sortWay != null and sortWay == 'ASC'.toString()">
+              	order by h.sequence_no ASC
+            </when>
+            <otherwise>
+                order by h.sequence_no DESC
+            </otherwise>
+        </choose>
+		<if test="limitOne != null">
+			limit 0, 1
+		</if>
+    </select>
+</mapper>

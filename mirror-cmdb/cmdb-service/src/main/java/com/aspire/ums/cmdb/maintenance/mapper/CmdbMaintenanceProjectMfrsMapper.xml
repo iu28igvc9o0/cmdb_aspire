@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceProjectMfrsMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
+        <result column="produce_id" property="produceId" jdbcType="VARCHAR" />
+        <result column="produce_concat_name" property="produceConcatName" jdbcType="VARCHAR" />
+        <result column="produce_concat_phone" property="produceConcatPhone" jdbcType="VARCHAR" />
+        <result column="produce_concat_email" property="produceConcatEmail" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_id`,
+        `produce_id`,
+        `produce_concat_name`,
+        `produce_concat_phone`,
+        `produce_concat_email`,
+        `is_delete`
+        FROM cmdb_maintenance_project_mfrs
+        where `is_delete` = '0'
+    </select>
+
+    <select id="getMfrsListByProjectId" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_id`,
+        `produce_id`,
+        `produce_concat_name`,
+        `produce_concat_phone`,
+        `produce_concat_email`,
+        `is_delete`
+        FROM cmdb_maintenance_project_mfrs
+        where `is_delete` = '0' and `project_id` = #{projectId}
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs">
+        SELECT
+        `id`,
+        `project_id`,
+        `produce_id`,
+        `produce_concat_name`,
+        `produce_concat_phone`,
+        `produce_concat_email`,
+        `is_delete`
+        FROM cmdb_maintenance_project_mfrs
+        WHERE `is_delete` = '0'
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="projectId != null and projectId != ''">
+        AND `project_id` = #{projectId}
+        </if>
+        <if test="produceId != null and produceId != ''">
+        AND `produce_id` = #{produceId}
+        </if>
+        <if test="produceConcatName != null and produceConcatName != ''">
+        AND `produce_concat_name` = #{produceConcatName}
+        </if>
+        <if test="produceConcatPhone != null and produceConcatPhone != ''">
+        AND `produce_concat_phone` = #{produceConcatPhone}
+        </if>
+        <if test="produceConcatEmail != null and produceConcatEmail != ''">
+        AND `produce_concat_email` = #{produceConcatEmail}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_id`,
+        `produce_id`,
+        `produce_concat_name`,
+        `produce_concat_phone`,
+        `produce_concat_email`,
+        `is_delete`
+        FROM cmdb_maintenance_project_mfrs
+        WHERE `is_delete` = '0'
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs">
+        INSERT INTO cmdb_maintenance_project_mfrs
+        (
+            `id`,
+            `project_id`,
+            `produce_id`,
+            `produce_concat_name`,
+            `produce_concat_phone`,
+            `produce_concat_email`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{projectId, jdbcType=VARCHAR},
+            #{produceId, jdbcType=VARCHAR},
+            #{produceConcatName, jdbcType=VARCHAR},
+            #{produceConcatPhone, jdbcType=VARCHAR},
+            #{produceConcatEmail, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs">
+        UPDATE cmdb_maintenance_project_mfrs SET
+        `project_id` = #{projectId},
+        `produce_id` = #{produceId},
+        `produce_concat_name` = #{produceConcatName},
+        `produce_concat_phone` = #{produceConcatPhone},
+        `produce_concat_email` = #{produceConcatEmail}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs">
+        UPDATE cmdb_maintenance_project_mfrs SET
+        `is_delete` = '1'
+        WHERE
+        `id` = #{id}
+    </delete>
+
+    <!-- 删除记录 通过项目id -->
+    <delete id="deleteByProjectId" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectMfrs">
+        UPDATE cmdb_maintenance_project_mfrs SET
+        `is_delete` = '1'
+        WHERE
+        `project_id` = #{projectId}
+    </delete>
+</mapper>

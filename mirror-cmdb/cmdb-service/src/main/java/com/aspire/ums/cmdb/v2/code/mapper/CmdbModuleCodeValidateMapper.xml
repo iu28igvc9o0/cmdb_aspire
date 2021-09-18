@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.code.mapper.CmdbModuleCodeValidateMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate" >
+        <result column="relation_id" property="relationId" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="validate_id" property="validateId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `relation_id`,
+        `module_id`,
+        `code_id`,
+        `validate_id`
+        FROM cmdb_module_code_validate
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate">
+        SELECT
+        `relation_id`,
+        `module_id`,
+        `code_id`,
+        `validate_id`
+        FROM cmdb_module_code_validate
+        WHERE 1=1
+        <if test="relationId != null and relationId != ''">
+        AND `relation_id` = #{relationId}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+        AND `module_id` = #{moduleId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="validateId != null and validateId != ''">
+        AND `validate_id` = #{validateId}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate" resultMap="resultMap">
+        SELECT
+        `relation_id`,
+        `module_id`,
+        `code_id`,
+        `validate_id`
+        FROM cmdb_module_code_validate
+        WHERE 1=1
+        AND `relation_id` = #{relationId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate">
+        INSERT INTO cmdb_module_code_validate
+        (
+            `relation_id`,
+            `module_id`,
+            `code_id`,
+            `validate_id`
+        ) VALUES (
+            #{relationId, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{validateId, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate">
+        INSERT INTO cmdb_module_code_validate
+        (
+            `relation_id`,
+            `module_id`,
+            `code_id`,
+            `validate_id`
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                     #{item.relationId, jdbcType=VARCHAR},
+                     #{item.moduleId, jdbcType=VARCHAR},
+                     #{item.codeId, jdbcType=VARCHAR},
+                     #{item.validateId, jdbcType=VARCHAR}
+                 )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate">
+        UPDATE cmdb_module_code_validate SET
+        `module_id` = #{moduleId},
+        `code_id` = #{codeId},
+        `validate_id` = #{validateId}
+        WHERE
+        `relation_id` = #{relationId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate">
+        DELETE FROM cmdb_module_code_validate
+        WHERE
+         `relation_id` = #{relationId}
+    </delete>
+
+    <!-- 删除记录 -->
+    <delete id="deleteBySelective" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeValidate">
+        DELETE FROM cmdb_module_code_validate
+        WHERE 1=1
+        <if test="relationId != null and relationId != ''">
+            AND `relation_id` = #{relationId}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+            AND `module_id` = #{moduleId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+            AND `code_id` = #{codeId}
+        </if>
+        <if test="validateId != null and validateId != ''">
+            AND `validate_id` = #{validateId}
+        </if>
+    </delete>
+</mapper>

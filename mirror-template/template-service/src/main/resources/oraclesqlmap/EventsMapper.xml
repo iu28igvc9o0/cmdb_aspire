@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.EventsDao">
+
+    <resultMap id="EventsResultMap" type="com.aspire.mirror.template.server.dao.po.Events">
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="object" column="object" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
+        <result property="acknowledged" column="acknowledged" jdbcType="VARCHAR"/>
+        <result property="clock" column="clock" jdbcType="INTEGER"/>
+        <result property="ns" column="ns" jdbcType="INTEGER"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Events_Base_Column">
+        monitor_events.event_id,
+        monitor_events.source,
+        monitor_events.object,
+        monitor_events.object_id,
+        monitor_events.value,
+        monitor_events.acknowledged,
+        monitor_events.clock,
+        monitor_events.ns,
+        monitor_events.device_id
+    </sql>
+
+    <sql id="Events_Query_List_Sharing">
+        <where>
+            <if test="eventId != null ">
+                and monitor_events.event_id = #{eventId}
+            </if>
+            <if test="source != null ">
+                and monitor_events.source = #{source}
+            </if>
+            <if test="object != null ">
+                and monitor_events.object = #{object}
+            </if>
+            <if test="objectId != null ">
+                and monitor_events.object_id = #{objectId}
+            </if>
+            <if test="value != null ">
+                and monitor_events.value = #{value}
+            </if>
+            <if test="acknowledged != null ">
+                and monitor_events.acknowledged = #{acknowledged}
+            </if>
+            <if test="clock != null ">
+                and monitor_events.clock = #{clock}
+            </if>
+            <if test="ns != null ">
+                and monitor_events.ns = #{ns}
+            </if>
+            <if test="deviceId != null ">
+                and monitor_events.device_id = #{deviceId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="eventId"
+                 open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.Events" >
+        INSERT INTO monitor_events (
+        <include refid="Events_Base_Column" />
+        ) VALUES (
+                #{eventId,jdbcType=VARCHAR},
+                #{source,jdbcType=VARCHAR},
+                #{object,jdbcType=VARCHAR},
+                #{objectId,jdbcType=VARCHAR},
+                #{value,jdbcType=VARCHAR},
+                #{acknowledged,jdbcType=VARCHAR},
+                #{clock,jdbcType=INTEGER},
+                #{ns,jdbcType=INTEGER},
+                #{deviceId,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="eventId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.Events" useGeneratedKeys="false">
+        INSERT INTO monitor_events (
+        <include refid="Events_Base_Column" />
+        ) (
+        <foreach  collection="list" item="item" index="index" separator="union all" >
+            select
+            #{eventId,jdbcType=VARCHAR},
+            #{source,jdbcType=VARCHAR},
+            #{object,jdbcType=VARCHAR},
+            #{objectId,jdbcType=VARCHAR},
+            #{value,jdbcType=VARCHAR},
+            #{acknowledged,jdbcType=VARCHAR},
+            #{clock,jdbcType=INTEGER},
+            #{ns,jdbcType=INTEGER},
+            #{item.deviceId,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+        )
+    </insert>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_events WHERE event_id = #{eventId}
+    </delete>
+
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_events WHERE event_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.Events" >
+        DELETE FROM monitor_events WHERE event_id = #{eventId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.Events" >
+        UPDATE monitor_events monitor_events
+        <set >
+                <if test="eventId != null" >
+                monitor_events.event_id = #{eventId},
+                </if>
+                <if test="source != null" >
+                monitor_events.source = #{source},
+                </if>
+                <if test="object != null" >
+                monitor_events.object = #{object},
+                </if>
+                <if test="objectId != null" >
+                monitor_events.object_id = #{objectId},
+                </if>
+                <if test="value != null" >
+                monitor_events.value = #{value},
+                </if>
+                <if test="acknowledged != null" >
+                monitor_events.acknowledged = #{acknowledged},
+                </if>
+                <if test="clock != null" >
+                monitor_events.clock = #{clock},
+                </if>
+                <if test="ns != null" >
+                monitor_events.ns = #{ns},
+                </if>
+                <if test="deviceId != null" >
+                monitor_events.device_id = #{deviceId},
+                </if>
+        </set>
+        WHERE event_id = #{eventId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.Events" >
+        UPDATE monitor_events monitor_events
+        SET
+        monitor_events.event_id = #{eventId},
+        monitor_events.source = #{source},
+        monitor_events.object = #{object},
+        monitor_events.object_id = #{objectId},
+        monitor_events.value = #{value},
+        monitor_events.acknowledged = #{acknowledged},
+        monitor_events.clock = #{clock},
+        monitor_events.ns = #{ns},
+        monitor_events.device_id = #{deviceId}
+        WHERE event_id = #{eventId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="EventsResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Events_Base_Column" />
+        FROM monitor_events monitor_events
+        WHERE event_id = #{eventId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="EventsResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Events_Base_Column" />
+        FROM monitor_events monitor_events
+        WHERE event_id in
+        <foreach collection="array" index="index" item="eventId" open="(" separator="," close=")">
+          #{eventId}
+        </foreach>
+    </select>
+    <select id="select" resultMap="EventsResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Events">
+        SELECT
+        <include refid="Events_Base_Column" />
+        FROM monitor_events monitor_events
+        WHERE  <include refid="Events_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.Events">
+        SELECT COUNT(*) FROM monitor_events monitor_events
+        <include refid="Events_Query_List_Sharing" />
+    </select>
+
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.AlertVoiceNotifyDao">
+
+	<resultMap type="com.aspire.mirror.alert.server.dao.notify.po.AlertVoiceNotifyDetail" id="AlertVoiceNotifyDetail">
+		<result property="uuid" column="uuid" jdbcType="VARCHAR" />
+		<result property="language" column="voice_language" jdbcType="VARCHAR" />
+		<result property="voiceContent" column="voice_content" jdbcType="VARCHAR" />
+		<result property="isOpen" column="is_open" jdbcType="INTEGER" />
+		<result property="alertFilterId" column="alert_filter_id" jdbcType="INTEGER" />
+		<result property="alertFilterSceneId" column="alert_filter_scene_id" jdbcType="INTEGER" />
+		<result property="content" column="content" jdbcType="VARCHAR" />
+		<result property="alertExistTime" column="alert_exist_time" jdbcType="INTEGER" />
+		<result property="creator" column="creator" jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+        <result property="voiceAlertId" column="voice_alert_id" jdbcType="VARCHAR" />
+		<collection column="alert_filter_scene_id" property="alertFilterSceneInfo"
+					select="com.aspire.mirror.alert.server.dao.notify.AlertNotifyConfigDao.getAlertFilterSceneData" />
+	</resultMap>
+
+	<insert id="createdAlertVoiceNotify" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertVoiceNotifyReqDTO">
+		INSERT INTO alert_voice_notify
+		(uuid,voice_language,voice_content,is_open,alert_filter_id,alert_filter_scene_id,content,alert_exist_time,creator,create_time,voice_alert_id)
+		VALUES
+		(#{uuid},#{language},#{voiceContent},#{isOpen},#{alertFilterId},#{alertFilterSceneId},#{content},#{alertExistTime},#{creator},now(),#{voiceAlertId})
+	</insert>
+
+	<select id="getAlertVoiceNotify" parameterType="java.lang.String" resultMap="AlertVoiceNotifyDetail">
+		SELECT
+		uuid,voice_language,voice_content,is_open,alert_filter_id,alert_filter_scene_id,content,alert_exist_time,creator,create_time,voice_alert_id
+		FROM
+		alert_voice_notify
+		WHERE
+		creator = #{creator}
+	</select>
+
+	<delete id="deleteVoiceNotifyByCreator" parameterType="java.lang.String">
+		DELETE FROM alert_voice_notify WHERE creator = #{creator}
+	</delete>
+
+	<update id="updateVoiceAlertId" parameterType="java.lang.String">
+		UPDATE alert_voice_notify
+		SET voice_alert_id = #{voiceAlertId}
+		WHERE
+			creator = #{creator}
+	</update>
+	<insert id="insertAlertNotifyConfigLog"
+			parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigLogDetail">
+		INSERT INTO alert_voice_notify_log
+		(alert_notify_config_id,voice_alert_id,operator,operation_time)
+		VALUES
+		<foreach collection="list" item="item" separator="," >
+			(#{item.alertNotifyConfigId},#{item.voiceAlertId},#{item.operator},now())
+		</foreach>
+	</insert>
+	<select id="getAlertNotifyConfigLog" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT voice_alert_id FROM alert_voice_notify_log WHERE alert_notify_config_id = #{id}
+	</select>
+
+</mapper>

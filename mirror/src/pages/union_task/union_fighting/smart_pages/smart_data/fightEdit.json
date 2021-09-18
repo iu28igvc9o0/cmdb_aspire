@@ -1,0 +1,486 @@
+{
+    "formList": [
+        {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1615518728762",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [
+                {
+                    "span": 24,
+                    "childList": [
+                        {
+                            "label": "作战标题",
+                            "type": "input",
+                            "columnName": "twTitle",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "作战标题不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "text": ""
+                            },
+                            "style": {
+                                "word-break": "break-all"
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "isNumberType": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 24,
+                    "childList": [
+                        {
+                            "label": "栅格布局",
+                            "type": "row",
+                            "columnName": "row_1615519239541",
+                            "icon-dev": "iconfont iconicon-editor-grid",
+                            "operation": [],
+                            "hidden": false,
+                            "rowTypeFlex": true,
+                            "formFields": [
+                                {
+                                    "span": 12,
+                                    "childList": [
+                                        {
+                                            "label": "作战场景",
+                                            "type": "select",
+                                            "isLabelWidth": false,
+                                            "icon-dev": "iconfont iconxialakuang",
+                                            "icon": "",
+                                            "required": false,
+                                            "rules": [],
+                                            "columnName": "twSence",
+                                            "targetName": "label_select_1615540847389",
+                                            "defaultValue": "",
+                                            "defaultContent": "",
+                                            "isModel": true,
+                                            "operation": [],
+                                            "option-label": "name",
+                                            "option-value": "value",
+                                            "option-alias": "alias",
+                                            "option-disabled": "disabled",
+                                            "searchProps": {
+                                                "need": "1",
+                                                "apiName": "",
+                                                "isShowInput": false,
+                                                "labelAlias": "",
+                                                "remotePropName": "condition"
+                                            },
+                                            "hidden": false,
+                                            "props": {
+                                                "placeholder": "",
+                                                "multiple": false,
+                                                "clearable": true,
+                                                "disabled": false,
+                                                "readonly": false,
+                                                "filterable": true,
+                                                "remote": false,
+                                                "text": ""
+                                            },
+                                            "optionProps": {
+                                                "optionType": "0",
+                                                "sessionKey": "",
+                                                "dicKey": "",
+                                                "apiName": "",
+                                                "apiType": "post+json",
+                                                "apiParam": "",
+                                                "separator": ","
+                                            },
+                                            "options": [],
+                                            "allItemSwitch": false,
+                                            "span": 24,
+                                            "width": "100%",
+                                            "isCompare": true,
+                                            "isDisabledRequired": false,
+                                            "isReadonlyRequired": false,
+                                            "name": "basic",
+                                            "showOptions": [],
+                                            "labelWidth": 120,
+                                            "filterOptionStatus": [],
+                                            "disabledOptionStatus": [],
+                                            "loading": false,
+                                            "disabled": false,
+                                            "network$$$response": {
+                                                "status": 404,
+                                                "message": "Not Found"
+                                            },
+                                            "dynamic": {},
+                                            "isClearOtherValue": true,
+                                            "otherValueList": [
+                                                {
+                                                    "label": "子场景 : subScenesId",
+                                                    "columnName": "subScenesId",
+                                                    "targetName": "label_select_1615540886737",
+                                                    "props": {
+                                                        "placeholder": "",
+                                                        "multiple": false,
+                                                        "clearable": true,
+                                                        "disabled": false,
+                                                        "readonly": false,
+                                                        "filterable": false,
+                                                        "remote": false,
+                                                        "text": ""
+                                                    },
+                                                    "name": "basic",
+                                                    "type": "select"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "span": 12,
+                                    "childList": [
+                                        {
+                                            "label": "子场景",
+                                            "type": "select",
+                                            "isLabelWidth": false,
+                                            "icon-dev": "iconfont iconxialakuang",
+                                            "icon": "",
+                                            "required": false,
+                                            "rules": [],
+                                            "columnName": "twSource",
+                                            "targetName": "label_select_1615540886737",
+                                            "defaultValue": "",
+                                            "defaultContent": "",
+                                            "isModel": true,
+                                            "operation": [],
+                                            "option-label": "name",
+                                            "option-value": "value",
+                                            "option-alias": "alias",
+                                            "option-disabled": "disabled",
+                                            "searchProps": {
+                                                "need": "1",
+                                                "apiName": "",
+                                                "isShowInput": false,
+                                                "labelAlias": "",
+                                                "remotePropName": "condition"
+                                            },
+                                            "hidden": false,
+                                            "props": {
+                                                "placeholder": "",
+                                                "multiple": false,
+                                                "clearable": true,
+                                                "disabled": false,
+                                                "readonly": false,
+                                                "filterable": true,
+                                                "remote": false,
+                                                "text": ""
+                                            },
+                                            "optionProps": {
+                                                "optionType": "0",
+                                                "sessionKey": "",
+                                                "dicKey": "",
+                                                "apiName": "",
+                                                "apiType": "post+json",
+                                                "apiParam": "",
+                                                "separator": ","
+                                            },
+                                            "options": [],
+                                            "allItemSwitch": false,
+                                            "span": 24,
+                                            "width": "100%",
+                                            "isCompare": true,
+                                            "isDisabledRequired": false,
+                                            "isReadonlyRequired": false,
+                                            "name": "basic",
+                                            "showOptions": [],
+                                            "labelWidth": 120,
+                                            "filterOptionStatus": [],
+                                            "disabledOptionStatus": [],
+                                            "loading": false,
+                                            "disabled": false,
+                                            "network$$$response": {
+                                                "status": 404,
+                                                "message": "Not Found"
+                                            },
+                                            "isClearOtherValue": true,
+                                            "otherValueList": [
+                                                {
+                                                    "label": "记录标签 : tags",
+                                                    "columnName": "tags",
+                                                    "props": {
+                                                        "disabled": false,
+                                                        "readonly": false
+                                                    },
+                                                    "name": "advance",
+                                                    "type": "customArea"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "name": "layout",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 24,
+                    "childList": [
+                        {
+                            "label": "记录标签",
+                            "type": "customArea",
+                            "columnName": "labelList",
+                            "isModel": true,
+                            "icon-dev": "iconfont iconquyu",
+                            "isLabelWidth": false,
+                            "span": 24,
+                            "width": "100%",
+                            "slotName": "tags",
+                            "operation": [],
+                            "required": false,
+                            "rules": [],
+                            "hidden": false,
+                            "props": {
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "isCompare": true,
+                            "name": "advance",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 24,
+                    "childList": [
+                        {
+                            "label": "作战内容",
+                            "type": "textarea",
+                            "columnName": "twContent",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "作战内容不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconduohangwenben",
+                            "icon": "",
+                            "class": "",
+                            "operation": [],
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "rows": "10",
+                                "text": ""
+                            },
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 24,
+                    "childList": [
+                        {
+                            "label": "作战人员",
+                            "type": "customArea",
+                            "columnName": "userList",
+                            "isModel": true,
+                            "icon-dev": "iconfont iconquyu",
+                            "isLabelWidth": false,
+                            "span": 24,
+                            "width": "100%",
+                            "slotName": "user",
+                            "operation": [],
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "作战人员不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "hidden": false,
+                            "props": {
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "isCompare": true,
+                            "name": "advance",
+                            "labelWidth": 160,
+                            "operations": [
+                                {
+                                    "status": [],
+                                    "attr": "",
+                                    "formatter": ""
+                                }
+                            ],
+                            "weak-tips": ""
+                        }
+                    ]
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+        },
+        {
+            "label": "按钮组",
+            "type": "buttonGroup",
+            "isLabelWidth": false,
+            "columnName": "buttonGroup_1615520411002",
+            "icon-dev": "iconfont iconanniu",
+            "span": 24,
+            "hidden": false,
+            "bpmSwitchFlag": false,
+            "bpmNodesButtonActiveList": [],
+            "align": null,
+            "position": "center",
+            "operation": [],
+            "toolList": [
+                {
+                    "columnName": "submit",
+                    "type": "primary",
+                    "icon": "",
+                    "label": "启动",
+                    "interactive": "",
+                    "validateProp": [],
+                    "apiName": "",
+                    "class": "",
+                    "default": "show",
+                    "apiCloseDialog": false,
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "titleClass": "dialog-title-default",
+                        "width": "",
+                        "height": "",
+                        "toolList": [],
+                        "exportName": "test"
+                    },
+                    "confirmStatus": [],
+                    "activeType": "",
+                    "actionWithPrePageList": [],
+                    "apiCloseDialogWithResposne": false,
+                    "confirmationSwitch": false,
+                    "confirmationMessage": "校验"
+                },
+                {
+                    "columnName": "cancel",
+                    "type": "",
+                    "icon": "",
+                    "label": "取消",
+                    "interactive": "",
+                    "validateProp": "",
+                    "apiName": "",
+                    "class": "",
+                    "default": "show",
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "titleClass": "dialog-title-default",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "apiCloseDialog": false,
+                    "confirmStatus": [],
+                    "bpmButtonList": [],
+                    "activeType": "button_group_close_dialog"
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+        }
+    ],
+    "formConfig": {
+        "labelWidth": 120,
+        "labelPosition": "right",
+        "starPostion": "left",
+        "class": "",
+        "exportName": "test",
+        "defaultClass": "default",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "bpmProps": {
+            "bpmOpenSwitchFlag": false,
+            "initPrefix": "/web/wf",
+            "actionPrefix": "/web/business",
+            "proxy": "",
+            "bpmFlowKey": "bpmFlowKey",
+            "instanceId": "",
+            "taskId": "",
+            "list": [
+                {
+                    "flowKey": "bpmFlowKey",
+                    "flowKeyName": "",
+                    "flowActionList": []
+                }
+            ]
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "input_1615518447791": "",
+        "input_1615518462046": "",
+        "cascader_1615519677159": [],
+        "cascader_1615519926634": [],
+        "twTitle": "",
+        "twContent": "",
+        "twSence": "",
+        "twSource": ""
+    }
+}

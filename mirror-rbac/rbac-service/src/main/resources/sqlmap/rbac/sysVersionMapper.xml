@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.SysVersionDao">
+   <resultMap id="sysVersion" type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysVersion">
+       <result property="systemVersion" column="systemVersion"/>
+       <result property="databaseVersion" column="databaseVersion"/>
+       <result property="versionDate" column="versionDate"/>
+       <result property="versionInfo" column="versionInfo"/>
+       <result property="inLogo" column="inLogo"/>
+       <result property="outLogo" column="outLogo"/>
+       <result property="name" column="name"/>
+       <result property="inTitleLogo" column="inTitleLogo"/>
+       <result property="loginLogo" column="loginLogo"/>
+
+   </resultMap>
+    <select id="selectSysVersion" resultMap="sysVersion">
+    SELECT name,systemVersion ,databaseVersion,versionDate,versionInfo,outLogo,inLogo ,inTitleLogo,loginLogo FROM sys_version where id=1
+    </select>
+
+    <update id="importSysVersion" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysVersion">
+    UPDATE sys_version SET name=#{name} ,systemVersion=#{systemVersion},databaseVersion=#{databaseVersion},
+    versionDate=#{versionDate},versionInfo=#{versionInfo},outLogo=#{outLogo},inLogo=#{inLogo} ,inTitleLogo=#{inTitleLogo} ,loginLogo=#{loginLogo}
+    where id=1
+    </update>
+</mapper>

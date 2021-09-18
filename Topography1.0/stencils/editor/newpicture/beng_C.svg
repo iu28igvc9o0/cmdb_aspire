@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="13.5466mm" height="10.8372mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1355 1084"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#348DD1;stroke-width:20}
+    .str1 {stroke:#348DD1;stroke-width:20}
+    .fil3 {fill:#348DD1}
+    .fil2 {fill:#68B1E6}
+    .fil0 {fill:#96D2FF}
+    .fil1 {fill:#BFF4FF}
+   ]]>
+  </style>
+ </defs>
+ <g id="图层_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2246468967680">
+   <g>
+    <rect class="fil0 str0" x="52" y="82" width="562" height="285"/>
+    <rect class="fil1" x="96" y="95" width="505.484" height="47.9051"/>
+    <rect class="fil0 str0" x="12" y="13" width="69.3188" height="423.816"/>
+    <rect class="fil1" x="25" y="26" width="43.3901" height="47.9051"/>
+   </g>
+   <g>
+    <rect class="fil0 str0" x="742" y="717" width="562" height="285"/>
+    <rect class="fil1" x="755" y="729" width="505.484" height="47.9051"/>
+    <rect class="fil0 str0" x="1275" y="647" width="69.3188" height="423.816"/>
+    <rect class="fil1" x="1288" y="660" width="43.3901" height="47.9051"/>
+   </g>
+   <circle class="fil0 str0" cx="675" cy="542" r="463"/>
+   <circle class="fil2 str1" cx="675" cy="542" r="389"/>
+   <g>
+    <path class="fil1" d="M641 546c-78,64 -157,128 -235,192 -28,-65 -45,-134 -41,-210 91,-14 184,-3 276,18z"/>
+    <path class="fil1" d="M708 537c78,-64 157,-128 235,-192 28,65 45,134 42,211 -92,13 -185,3 -277,-19z"/>
+   </g>
+   <g>
+    <path class="fil1" d="M679 575c64,78 128,157 192,235 -65,29 -134,45 -210,42 -14,-92 -3,-184 18,-277z"/>
+    <path class="fil1" d="M670 509c-64,-79 -128,-158 -192,-236 65,-28 134,-45 211,-41 13,91 2,184 -19,277z"/>
+   </g>
+   <circle class="fil3" cx="675" cy="542" r="67"/>
+  </g>
+ </g>
+</svg>

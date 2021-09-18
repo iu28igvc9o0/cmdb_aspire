@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.TemplateDeviceDao">
+
+    <resultMap id="TemplateDeviceResultMap" type="com.aspire.mirror.template.server.dao.po.TemplateDevice">
+        <result property="templateDeviceId" column="template_device_id" jdbcType="VARCHAR"/>
+        <result property="templateId" column="template_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="TemplateDevice_Base_Column">
+        monitor_template_device.template_device_id,
+        monitor_template_device.template_id,
+        monitor_template_device.device_id
+    </sql>
+
+    <sql id="TemplateDevice_Query_List_Sharing">
+        <where>
+            <if test="templateDeviceId != null ">
+                and monitor_template_device.template_device_id = #{templateDeviceId}
+            </if>
+            <if test="templateId != null ">
+                and monitor_template_device.template_id = #{templateId}
+            </if>
+            <if test="deviceId != null ">
+                and monitor_template_device.device_id = #{deviceId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="templateDeviceId"
+                 open="(" separator="," close=")">
+            #{templateDeviceId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDevice" >
+        INSERT INTO monitor_template_device (
+        <include refid="TemplateDevice_Base_Column" />
+        ) VALUES (
+                #{templateDeviceId,jdbcType=VARCHAR},
+                #{templateId,jdbcType=VARCHAR},
+                #{deviceId,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="templateDeviceId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="java.util.List">
+        INSERT INTO monitor_template_device (
+        <include refid="TemplateDevice_Base_Column" />
+        ) VALUES
+        <foreach item="item" collection="list" separator=",">
+        (
+                #{item.templateDeviceId},
+                #{item.templateId},
+                #{item.deviceId}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByTemplateId" parameterType="java.lang.String" >
+        DELETE FROM monitor_template_device WHERE template_id = #{templateId}
+    </delete>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_template_device WHERE template_device_id = #{templateDeviceId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_template_device WHERE template_device_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDevice" >
+        DELETE FROM monitor_template_device WHERE template_device_id = #{templateDeviceId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDevice" >
+        UPDATE monitor_template_device monitor_template_device
+        <set >
+                <if test="templateDeviceId != null" >
+                monitor_template_device.template_device_id = #{templateDeviceId},
+                </if>
+                <if test="templateId != null" >
+                monitor_template_device.template_id = #{templateId},
+                </if>
+                <if test="deviceId != null" >
+                monitor_template_device.device_id = #{deviceId},
+                </if>
+        </set>
+        WHERE template_device_id = #{templateDeviceId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDevice" >
+        UPDATE monitor_template_device monitor_template_device
+        SET
+        monitor_template_device.template_device_id = #{templateDeviceId},
+        monitor_template_device.template_id = #{templateId},
+        monitor_template_device.device_id = #{deviceId}
+        WHERE template_device_id = #{templateDeviceId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="TemplateDeviceResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="TemplateDevice_Base_Column" />
+        FROM monitor_template_device monitor_template_device
+        WHERE template_device_id = #{templateDeviceId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="TemplateDeviceResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="TemplateDevice_Base_Column" />
+        FROM monitor_template_device monitor_template_device
+        WHERE template_device_id = #{templateDeviceId}
+    </select>
+    <select id="select" resultMap="TemplateDeviceResultMap" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDevice">
+        SELECT
+        <include refid="TemplateDevice_Base_Column" />
+        FROM monitor_template_device monitor_template_device
+        WHERE  <include refid="TemplateDevice_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDevice">
+        SELECT COUNT(*) FROM monitor_template_device monitor_template_device
+        <include refid="TemplateDevice_Query_List_Sharing" />
+    </select>
+
+</mapper>

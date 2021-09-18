@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.dict.mapper.ConfigDictMapper" >
+    <sql id="baseDict">
+        select t.* from t_cfg_dict t
+                            inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+    </sql>
+    <sql id="baseWhereClause">
+        <where>
+            cd1.is_delete=0
+            <if test="dictCode != null and dictCode != ''">
+              and dict_code like concat('%',#{dictCode},'%')
+            </if>
+            <if test="dictNote != null and dictNote != ''">
+              and dict_note like concat('%',#{dictNote},'%')
+            </if>
+            <if test="colName != null and colName != ''">
+              and col_name like concat('%',#{colName},'%')
+            </if>
+            <if test="pcode != null and pcode != ''">
+                and exists (select 1 from 	(<include refid="baseDict"/>) cd2 where cd2.id=cd1.up_dict and cd2.dict_code like '%${pcode}%')
+            </if>
+        </where>
+    </sql>
+
+    <sql id="baseColumnList">
+        id dict_id,dict_code,dict_note,col_name,up_dict,description,create_date,update_date
+    </sql>
+
+    <resultMap id="dict" type="com.aspire.ums.cmdb.dict.payload.Dict">
+        <result column="dict_id" property="dictId" />
+        <result column="dict_code" property="dictCode" />
+        <result column="dict_note" property="dictNote" />
+        <result column="col_name" property="colName" />
+        <result column="up_dict" property="upDict" />
+        <result column="pname" property="pname" />
+        <result column="description" property="description" />
+        <result column="sort_index" property="sortIndex" />
+    </resultMap>
+
+    <resultMap id="configDict" type="com.aspire.ums.cmdb.dict.payload.ConfigDict">
+        <result column="dict_id" property="id" />
+        <result column="dict_code" property="name" />
+        <result column="dict_note" property="value" />
+        <result column="col_name" property="type" />
+        <result column="up_dict" property="pid" />
+        <result column="pname" property="pname" />
+        <result column="description" property="description" />
+        <result column="sort_index" property="sortIndex" />
+    </resultMap>
+
+    <insert id="insertAddLog" parameterType="java.lang.String">
+        INSERT into t_cfg_dict_log SELECT t.* from (select d.*,'新增' action from 	(<include refid="baseDict"/>) d where d.id=#{id}) t
+    </insert>
+    <insert id="insertEditLog">
+        INSERT into t_cfg_dict_log SELECT t.* from (select d.*,'编辑' action from 	(<include refid="baseDict"/>) d where d.id=#{id}) t
+    </insert>
+    <insert id="insertDeleteLog">
+        INSERT into t_cfg_dict_log SELECT t.* from (select d.*,'删除' action from 	(<include refid="baseDict"/>) d where d.id in ${id}) t
+    </insert>
+
+    <select id="getConfigDictDataCount"
+            parameterType="com.aspire.ums.cmdb.dict.payload.DictListReq"
+            resultType="java.lang.Integer">
+        select count(1) from 	(<include refid="baseDict"/>) cd1
+        <include refid="baseWhereClause"></include>
+    </select>
+    <select id="getConfigDictData"
+            parameterType="com.aspire.ums.cmdb.dict.payload.DictListReq"
+            resultMap="dict">
+        select
+        <include refid="baseColumnList"/>
+        ,(SELECT dict_code from (<include refid="baseDict"/>) cd2 where cd2.id=cd1.up_dict limit 1) pname from (<include
+            refid="baseDict"/>) cd1
+        <include refid="baseWhereClause"></include>
+        <if test="startPageNum !=-1" >
+            LIMIT #{startPageNum},#{pageSize}
+        </if>
+    </select>
+
+    <!--<insert id="insert" useGeneratedKeys="true" keyProperty="dictId" parameterType="com.aspire.ums.cmdb.dict.payload.Dict">-->
+        <!--insert into t_cfg_dict(dict_id,dict_code,dict_note,col_name,up_dict,description,create_date,delete_flag, sort_index)-->
+        <!--values (#{dictId},#{dictCode},#{dictNote},#{colName},#{upDict},#{description},now(),0, #{sortIndex})-->
+    <!--</insert>-->
+
+    <select id="getDictById" parameterType="java.lang.String" resultMap="dict">
+        select <include refid="baseColumnList" /> from 	(<include refid="baseDict"/>) t
+        where t.id=#{dictId}
+    </select>
+    <select id="getValueById" parameterType="java.lang.String" resultType="java.lang.String">
+        select dict_note from 	(<include refid="baseDict"/>) t
+        where t.id=#{dictId}
+    </select>
+    <select id="getIdByNoteAndCol" parameterType="java.lang.String" resultType="java.lang.String">
+        select id dict_id from 	(<include refid="baseDict"/>) t
+        where dict_note=#{dictNote}
+        <if test="colName != null and colName != ''" >
+            and col_name=#{colName}
+        </if>
+
+    </select>
+    <select id="getDictByIds" parameterType="java.util.List" resultMap="dict">
+        select <include refid="baseColumnList" /> from 	(<include refid="baseDict"/>) t
+        where t.id in (
+        <foreach collection="dictIds" item="item" index="index" separator=",">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+        )
+    </select>
+    <update id="updateByPrimaryKey">
+        update t_cfg_dict
+        <set>
+            <if test="dictCode != null">
+                dict_code=#{dictCode},
+            </if>
+            <if test="dictNote != null">
+                dict_note=#{dictNote},
+            </if>
+            <if test="colName != null">
+                col_name=#{colName},
+            </if>
+            <if test="upDict != null">
+                up_dict=#{upDict},
+            </if>
+            <if test="description != null">
+                description=#{description},
+            </if>
+            <if test="sortIndex != null">
+                sort_index=#{sortIndex},
+            </if>
+            update_date=now()
+        </set>
+        where dict_id = #{dictId}
+    </update>
+
+    <update id="deleteByPrimaryKey">
+        update t_cfg_dict set delete_flag=1,update_date=now() where id in ${dictId}
+    </update>
+
+    <select id="getDictAll" resultMap="dict">
+        select <include refid="baseColumnList" /> from (<include refid="baseDict"/>) t
+        where 1=1
+        <if test="dictId != null and dictId != ''">
+            and t.id != #{dictId}
+        </if>
+    </select>
+
+    <select id="getDictByCode" parameterType="java.lang.String" resultMap="configDict">
+        SELECT
+            cd1.id,
+            dict_code,
+            dict_note,
+            col_name,
+            up_dict,
+            description,
+            insert_time,
+            update_date,
+            sort_index,
+            (
+                SELECT
+                    dict_code
+                FROM
+                  t_cfg_dict cd2,
+                  cmdb_dict di
+                WHERE
+                    di.id = cd2.id
+                AND di.is_delete = '0'
+                AND cd2.is_delete = '0'
+                AND cd2.id = cd1.up_dict
+                limit 1
+            ) pname
+        FROM
+            t_cfg_dict cd1
+        INNER JOIN cmdb_dict d
+        WHERE
+            cd1.id = d.id
+        AND d.is_delete = '0'
+        AND cd1.is_delete = '0'
+        and cd1.dict_code=#{code}
+    </select>
+
+    <select id="getDictExportData" resultType="java.util.Map">
+        SELECT
+            cd1.id,
+            dict_code dictCode,
+            dict_note dictNote,
+            col_name colName,
+            up_dict pid,
+            description description,
+            (
+                SELECT
+                dict_code
+                FROM
+        t_cfg_dict cd2,
+                cmdb_dict di
+                WHERE
+                di.id = cd2.id
+                AND di.is_delete = '0'
+                AND cd2.is_delete = '0'
+                AND cd2.id = cd1.up_dict
+        limit 1
+            ) pname
+        FROM
+        t_cfg_dict cd1
+        INNER JOIN cmdb_dict d
+        WHERE
+        cd1.id = d.id
+        AND d.is_delete = '0'
+        AND cd1.is_delete = '0'
+        <if test="dictCode != null and dictCode != ''">
+            and cd1.dict_code like concat('%',#{dictCode},'%')
+        </if>
+        <if test="dictNote != null and dictNote != ''">
+            and cd1.dict_note like concat('%',#{dictNote},'%')
+        </if>
+        <if test="colName != null and colName != ''">
+            and cd1.col_name like concat('%',#{colName},'%')
+        </if>
+        <if test="pcode != null and pcode != ''">
+            and exists (select 1 from 	(<include refid="baseDict"/>) cd2 where cd2.id=cd1.up_dict and cd2.dict_code like '%${pcode}%')
+        </if>
+    </select>
+
+    <select id="selectDicts" resultMap="configDict">
+        select <include refid="baseColumnList" /> from 	(<include refid="baseDict"/>) where col_name='rootModel'
+    </select>
+
+    <select id="selectDictsByType" parameterType="java.lang.String" resultMap="configDict">
+        select <include refid="baseColumnList" /> from 	(<include refid="baseDict"/>) t where is_delete=0 and col_name=#{colName}
+        <if test="pid != null and pid != ''">
+            and exists (select * from 	(<include refid="baseDict"/>) t1 where t1.id = t.up_dict and t1.col_name=#{pType} and t1.id=#{pid})
+        </if>
+        <if test="pValue != null and pValue != ''">
+            and exists (select * from 	(<include refid="baseDict"/>) t1 where t1.id = t.up_dict and t1.dict_note=#{pValue})
+        </if>
+        order by sort_index
+    </select>
+    <select id="selectDictsByTypeAndIds" resultMap="configDict">
+        select
+            cd1.id,
+            dict_code,
+            dict_note,
+            col_name,
+            up_dict,
+            description,
+            insert_time,
+            update_time,
+            sort_index
+        from 	t_cfg_dict t
+        inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0' and t.col_name=#{colName}
+        <if test="ids != null and ids.length > 0">
+            and t.id in (
+            <foreach collection="ids" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+    <select id="selectDictsByUpDictAndIds" resultMap="configDict">
+        select
+            cd1.id,
+            dict_code,
+            dict_note,
+            col_name,
+            up_dict,
+            description,
+            insert_time,
+            update_time,
+            sort_index
+        from 	t_cfg_dict t
+        inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0' and t.up_dict=#{pid}
+        <if test="ids != null and ids.length > 0">
+            and t.id in (
+            <foreach collection="ids" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+    <select id="selectDictsByUpDict"  parameterType="java.lang.String" resultMap="configDict">
+        select
+            cd1.id,
+            dict_code,
+            dict_note,
+            col_name,
+            up_dict,
+            description,
+            insert_time,
+            update_time,
+            sort_index
+        from 	t_cfg_dict t
+        inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0' and t.up_dict=#{id}
+    </select>
+
+    <select id="getDictByColNameAndDictCode"  parameterType="java.lang.String" resultMap="configDict">
+        select
+            t.id,
+            dict_code,
+            dict_note,
+            col_name,
+            up_dict,
+            description,
+            insert_time,
+            update_time,
+            sort_index
+        from 	t_cfg_dict t
+        inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0' and col_name = #{colName} and dict_code = #{dictCode}
+    </select>
+
+    <select id="getDictType" resultType="java.lang.String">
+        select
+            DISTINCT(col_name) type
+        from 	t_cfg_dict t
+        inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+    </select>
+    
+    <select id="getDistinctDictType" resultType="java.util.LinkedHashMap">
+        select
+            DISTINCT t.col_name, t.description
+        from 	t_cfg_dict t
+        inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+        order by col_name, sort_index asc;
+    </select>
+
+    <select id="getByDict" resultType="int">
+        select count(1) from 	(<include refid="baseDict"/>) t
+        where 1=1
+        and dict_code=#{dictCode}
+        and dict_note=#{dictNote}
+        and col_name=#{colName}
+    </select>
+
+    <select id="getDepartment1" resultMap="configDict">
+        SELECT
+            id dict_id,
+            orgName dict_code,
+            orgName dict_note,
+            'department1' col_name,
+            parent_id up_dict,
+            (SELECT t.orgName FROM cmdb_org_system t WHERE t.id = s.parent_id) pname,
+            '部门' description
+        FROM cmdb_org_system s
+        WHERE s.is_delete = '0'
+        and s.parent_id = '0'
+        order by s.orgName
+    </select>
+
+    <select id="getDepartment2" resultMap="configDict">
+        SELECT
+        id dict_id,
+        orgName dict_code,
+        orgName dict_note,
+        'department2' col_name,
+        parent_id up_dict,
+        (SELECT t.orgName FROM cmdb_org_system t WHERE t.id = s.parent_id) pname,
+        '部门' description
+        FROM cmdb_org_system s
+        WHERE s.is_delete = '0'
+        <if test="parentId != null and parentId != ''">
+            and s.parent_id = #{parentId}
+        </if>
+        <if test="parentId == null or parentId == ''">
+            and s.parent_id != '0'
+        </if>
+        order by s.orgName
+    </select>
+
+    <select id="getBizSystemList" resultMap="configDict">
+        select
+            id dict_id,
+            bizName dict_code,
+            bizName dict_note,
+            'bizSystem' col_name,
+            orgId up_dict,
+            (SELECT t.orgName FROM cmdb_org_system t WHERE t.id = s.orgId) pname,
+            '业务系统' description
+        from cmdb_biz_system s
+        where isdel='0'
+        <if test="departmentId != null and departmentId !=''">
+            and s.orgId in (
+                select t.id from cmdb_org_system t
+                where t.id = #{departmentId} or t.parent_id = #{departmentId}
+            )
+        </if>
+        order by s.bizName
+    </select>
+
+    <select id="getIdcTypeList" resultMap="configDict">
+        select
+            id dict_id,
+            idc_code dict_code,
+            idc_name dict_note,
+            'idcType' col_name,
+            '' up_dict,
+            '' pname,
+            '资源池' description
+        from cmdb_idc_manager s
+        where is_delete='0'
+        order by sort_index
+    </select>
+
+    <select id="getIdcTypeByName" resultType="java.util.Map">
+        select
+            id,
+            idc_code,
+            idc_name
+        from cmdb_idc_manager s
+        where is_delete='0' and idc_name = #{idcName}
+    </select>
+
+    <select id="getProjectNameList" resultMap="configDict">
+        SELECT
+            id dict_id,
+            project_code dict_code,
+            project_name dict_note,
+            'project_name' col_name,
+			idc_id up_dict,
+            '项目名称' description
+        FROM
+          cmdb_project_manager pm
+        WHERE is_delete='0'
+        <if test="idcId != null and idcId !=''">
+            and pm.idc_id = #{idcId}
+        </if>
+
+        order by pm.sort_index
+    </select>
+
+    <select id="getPodNameList" resultMap="configDict">
+        SELECT
+        id dict_id,
+        pod_code dict_code,
+        pod_name dict_note,
+        'pod_name' col_name,
+        idc_id up_dict,
+        'POD名称' description
+        FROM
+        cmdb_pod_manager pm
+        where is_delete='0'
+        <if test="idcId != null and idcId !=''">
+           and pm.idc_id = #{idcId}
+        </if>
+        order by pm.sort_index
+    </select>
+
+    <select id="getRoomList" resultMap="configDict">
+        SELECT DISTINCT
+            pm.id dict_id,
+            pm.room_code dict_code,
+            pm.room_name dict_note,
+            'roomId' col_name,
+            NULL up_dict,
+            '机房位置' description
+        FROM cmdb_room_manager pm
+        WHERE pm.is_delete = 0
+        <if test="idcId != null and idcId !=''">
+            AND EXISTS (
+                SELECT 1 FROM cmdb_idc_resource_relation d
+                WHERE d.idc_id = #{idcId} AND pm.id = d.room_id
+            )
+        </if>
+        ORDER BY
+          pm.sort_index
+    </select>
+
+    <select id="getMaintenFactory" resultMap="configDict">
+        SELECT
+            s.id dict_id,
+            s.produce dict_code,
+            s.produce dict_note,
+            'mainten_factory' col_name,
+            null up_dict,
+            null pname,
+            s.remark description
+        FROM
+            cmdb_mainten_produce s
+        WHERE
+            s.isdel = '0' and s.produce_type='维保供应商'
+        order by s.produce
+    </select>
+
+    <select id="getDeviceMfrs" resultMap="configDict">
+        SELECT
+            s.id dict_id,
+            s.produce dict_code,
+            s.produce dict_note,
+            'device_mfrs' col_name,
+            null up_dict,
+            null pname,
+            s.logo_url description
+        FROM
+            cmdb_mainten_produce s
+        WHERE
+            s.isdel = '0' and s.produce_type='生产供应商'
+        order by s.produce
+    </select>
+
+    <select id="selectDictsByTypeOrPid" parameterType="java.lang.String"
+            resultMap="configDict">
+        SELECT <include refid="baseColumnList" /> FROM t_cfg_dict WHERE  is_delete = 0 AND col_name = #{colName}
+        <if test="pid != null and pid != ''">
+            AND up_dict=#{pid}
+        </if>
+        ORDER BY col_name
+    </select>
+</mapper>

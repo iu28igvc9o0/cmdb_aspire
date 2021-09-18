@@ -1,0 +1,613 @@
+{
+    "list": [
+        {
+            "type": "form",
+            "label": "表单容器",
+            "columnName": "form_smsSendRecords",
+            "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+            "width": "100%",
+            "list": [
+                {
+                    "label": "发送开始时间",
+                    "type": "datePicker",
+                    "columnName": "startTime",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": false,
+                        "picker-options": {}
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "datePicker_1603973501875"
+                },
+                {
+                    "label": "发送结束时间",
+                    "type": "datePicker",
+                    "columnName": "endTime",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "aspProps": {
+                        "dateRange": 0
+                    },
+                    "props": {
+                        "type": "datetime",
+                        "placeholder": "请选择",
+                        "format": "yyyy-MM-dd HH:mm:ss",
+                        "value-format": "yyyy-MM-dd HH:mm:ss",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "disabled": false,
+                        "readonly": false,
+                        "clearable": true,
+                        "picker-options": {},
+                        "clearableStatus": []
+                    },
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "datePicker_1603973503854"
+                },
+                {
+                    "type": "input",
+                    "label": "联系人",
+                    "columnName": "receiver",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont icondanhangwenben",
+                    "customLabelWidth": false,
+                    "classify": "form",
+                    "class": "",
+                    "props": {
+                        "placeholder": "请输入",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "clearableStatus": []
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 70,
+                    "oldColumnName": "person"
+                },
+                {
+                    "type": "input",
+                    "label": "短信内容",
+                    "columnName": "content",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont icondanhangwenben",
+                    "customLabelWidth": false,
+                    "classify": "form",
+                    "class": "",
+                    "props": {
+                        "placeholder": "请输入",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "clearableStatus": []
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 70,
+                    "oldColumnName": "smsContent"
+                },
+                {
+                    "type": "select",
+                    "label": "状态",
+                    "columnName": "status",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "confont iconxialakuang",
+                    "classify": "form",
+                    "needLabel": true,
+                    "defaultSetLabel": false,
+                    "customLabelWidth": false,
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ",",
+                        "allLabel": "全选",
+                        "allValue": "000",
+                        "isUserAllValue": false
+                    },
+                    "class": "",
+                    "props": {
+                        "placeholder": "请选择",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "collapse-tags": false,
+                        "clearableStatus": []
+                    },
+                    "options": [
+                        {
+                            "label": "全部",
+                            "value": ""
+                        },
+                        {
+                            "label": "成功",
+                            "value": "1"
+                        },
+                        {
+                            "label": "失败",
+                            "value": "0"
+                        }
+                    ],
+                    "hidden": false,
+                    "isAddOption": false,
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "targetName": "label_select_1603693542500",
+                    "oldColumnName": "select_1603693542500"
+                },
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1603261886928",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [
+                        {
+                            "type": "button",
+                            "label": "查询",
+                            "columnName": "btn-form-search",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {
+                                "type": "primary",
+                                "icon": "el-icon-search"
+                            },
+                            "class": "mleft10",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 80,
+                            "oldColumnName": "button_1603261899549",
+                            "event": "submit"
+                        },
+                        {
+                            "type": "button",
+                            "label": "重置",
+                            "columnName": "btn-form-reset",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {},
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 80,
+                            "oldColumnName": "button_1603261903677",
+                            "event": "reset-submit"
+                        }
+                    ],
+                    "classify": "layout",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 80
+                }
+            ],
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_form_smsSendRecords",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+                {
+                    "type": "button",
+                    "label": "返回",
+                    "columnName": "btn-table-back",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "eventName": "",
+                    "props": {
+                        "type": "primary"
+                    },
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "btn-table-add",
+                    "event": "router",
+                    "routerType": "path",
+                    "routerKey": "/mirror_alert/SMS/smart_pages",
+                    "routerParamType": "query"
+                },
+                {
+                    "type": "button",
+                    "label": "删除",
+                    "columnName": "btn-table-delete",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "eventName": "",
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "btn-table-back",
+                    "event": "delete",
+                    "tableId": "table_smsSendRecords",
+                    "authSwitch": false
+                },
+                {
+                    "type": "button",
+                    "label": "导出",
+                    "columnName": "btn-table-export",
+                    "icon": "icon-input",
+                    "width": "100%",
+                    "required": false,
+                    "hidden": false,
+                    "asideIcon": "iconfont iconanniu",
+                    "eventName": "",
+                    "props": {},
+                    "class": "",
+                    "classify": "button",
+                    "hasParentForm": true,
+                    "labelWidth": 80,
+                    "oldColumnName": "button_1603262097884",
+                    "event": "",
+                    "tableId": ""
+                }
+            ],
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true
+        },
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "table_smsSendRecords",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": true,
+            "indexFixed": true,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": true,
+            "multipleSelectionFixed": true,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [
+                "receiverMobile"
+            ],
+            "show-operation": true,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [
+                {
+                    "label": "btn-operate-errorLogs",
+                    "columnName": "btn-operate-errorLogs",
+                    "authId": "",
+                    "statusList": [],
+                    "state": "show",
+                    "dataLinkage": [
+                        {
+                            "columnName": "status",
+                            "compare": "<",
+                            "targetValue": "1",
+                            "authSwitch": false,
+                            "authId": "",
+                            "if": "&&"
+                        }
+                    ]
+                }
+            ],
+            "list": [
+                {
+                    "label": "状态",
+                    "columnName": "status",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "80",
+                    "min-width": "",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "联系人",
+                    "columnName": "receiverMobile",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "短信内容",
+                    "columnName": "content",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "发送时间",
+                    "columnName": "createTime",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "内置可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                }
+            ],
+            "operation": [],
+            "toolList": [
+                {
+                    "type": "text",
+                    "columnName": "btn-operate-send",
+                    "label": "发送",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": []
+                },
+                {
+                    "type": "text",
+                    "columnName": "btn-operate-delete",
+                    "label": "删除",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": []
+                },
+                {
+                    "type": "text",
+                    "columnName": "btn-operate-saveTemplates",
+                    "label": "保存模板",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": []
+                },
+                {
+                    "type": "text",
+                    "columnName": "btn-operate-errorLogs",
+                    "label": "异常日志",
+                    "align": "left",
+                    "class": "",
+                    "icon": "",
+                    "justShowIcon": false,
+                    "defaultState": "show",
+                    "state": "show",
+                    "dataLinkage": [],
+                    "confirmationSwitch": ""
+                }
+            ],
+            "operation-width": "220",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    "50",
+                    " 10",
+                    "20",
+                    "100",
+                    " 200"
+                ],
+                "currentPage": 1,
+                "pageSize": 50,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/alerts/sms/findSmsList"
+            },
+            "hidden": false,
+            "show-operation-status": []
+        }
+    ],
+    "model": {
+        "input_1596419641343": "",
+        "input_1596419652417": "",
+        "input_1596419654708": "",
+        "product_name": "",
+        "type": "",
+        "select_1596420799210": "",
+        "timePicker_1596420874384": [
+            1596420913000,
+            1596424513000
+        ],
+        "select_1596420922814": "",
+        "select_1596420931291": "",
+        "datePicker_1596421267117": "",
+        "select_1596421290988": "",
+        "select_1596421293122": "",
+        "datePicker_1596421295296": [],
+        "input_1603261331025": "",
+        "input_1603261355371": "",
+        "input_1603261447915": "",
+        "input_1603261494848": "",
+        "datePicker_1603261510639": "",
+        "timePicker_1603261527519": "",
+        "AspDateRange_1603261538346": "",
+        "label_AspDateRange_1603261538346": "",
+        "AspDateRange_1603261597331": "",
+        "label_AspDateRange_1603261597331": "",
+        "date": "",
+        "status": "",
+        "startTime": "",
+        "endTime": "",
+        "receiver": "",
+        "content": "",
+        "input_1603693530334": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "project": "webbas",
+        "labelWidth": 80,
+        "labelPosition": "left",
+        "size": "small",
+        "defaultClass": "",
+        "class": "",
+        "statusList": []
+    }
+}

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.MonitorItemPrototypeDao">
+	
+    <resultMap id="moniItemPrototype" type="com.aspire.mirror.template.api.dto.model.MonitorItemPrototype">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="checkGroup" column="check_group" jdbcType="VARCHAR"/>
+        <result property="checkClassify" column="check_classify" jdbcType="VARCHAR"/>
+        <result property="checkConfigParams" column="check_config_params" jdbcType="VARCHAR"/>
+        <result property="baselineStandard" column="baseline_standard" jdbcType="VARCHAR"/>
+        <result property="poolId" column="pool_id" jdbcType="VARCHAR"/>
+        <result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+        <result property="baselineFlag" column="baseline_flag" jdbcType="VARCHAR"/>
+        <result property="multilineFlag" column="multiline_flag" jdbcType="VARCHAR"/>
+        <result property="prototypeLabel" column="prototype_label" jdbcType="VARCHAR"/>
+        <result property="itemType" column="item_type" jdbcType="VARCHAR"/>
+        <result property="itemName" column="item_name" jdbcType="INTEGER"/>
+        <result property="priority" column="priority" jdbcType="VARCHAR"/>
+        <result property="scriptId" column="script_id" jdbcType="VARCHAR"/>
+        <result property="scriptName" column="script_name" jdbcType="VARCHAR"/>
+        <result property="scriptContentType" column="script_content_type" jdbcType="INTEGER"/>
+        <result property="scriptGroupName" column="script_group_name" jdbcType="VARCHAR"/>
+        <result property="logicSign" column="logic_sign" jdbcType="VARCHAR"/>
+        <result property="expression" column="expression" jdbcType="VARCHAR"/>
+        <result property="defaultThresholdVal" column="default_threshold_val" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <association property="itemExt" javaType="com.aspire.mirror.template.api.dto.model.ItemExt">
+            <result column="script_param" property="scriptParam"/>
+            <result column="custom_params" property="customizeParam"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Columns">
+        monitor_item_prototype.id,
+		monitor_item_prototype.check_group,
+        monitor_item_prototype.check_classify,
+        monitor_item_prototype.check_config_params,
+        monitor_item_prototype.baseline_standard,
+        monitor_item_prototype.pool_id,
+        monitor_item_prototype.pool_name,
+		monitor_item_prototype.baseline_flag,
+		monitor_item_prototype.multiline_flag,
+		monitor_item_prototype.prototype_label,
+		monitor_item_prototype.item_type,
+		monitor_item_prototype.item_name,
+		monitor_item_prototype.priority,
+		monitor_item_prototype.script_id,
+		monitor_item_prototype.script_name,
+		monitor_item_prototype.script_content_type,
+		monitor_item_prototype.script_group_name,
+		monitor_item_prototype.script_param,
+		monitor_item_prototype.custom_params,
+		monitor_item_prototype.logic_sign,
+		monitor_item_prototype.expression,
+		monitor_item_prototype.default_threshold_val,
+		monitor_item_prototype.status,
+		monitor_item_prototype.description,
+		monitor_item_prototype.create_time,
+		monitor_item_prototype.update_time
+    </sql>
+	
+    <insert id="insertItemPrototype" parameterType="com.aspire.mirror.template.api.dto.model.MonitorItemPrototype" 
+    	 useGeneratedKeys="true" keyColumn="id" keyProperty="id" >
+        INSERT INTO monitor_item_prototype (
+			monitor_item_prototype.check_group,
+			monitor_item_prototype.check_classify,
+	        monitor_item_prototype.check_config_params,
+	        monitor_item_prototype.baseline_standard,
+	        monitor_item_prototype.pool_id,
+	        monitor_item_prototype.pool_name,
+			monitor_item_prototype.baseline_flag,
+			monitor_item_prototype.multiline_flag,
+			monitor_item_prototype.prototype_label,
+			monitor_item_prototype.item_type,
+			monitor_item_prototype.item_name,
+			monitor_item_prototype.priority,
+			monitor_item_prototype.script_id,
+			monitor_item_prototype.script_name,
+			monitor_item_prototype.script_content_type,
+			monitor_item_prototype.script_group_name,
+			monitor_item_prototype.script_param,
+			monitor_item_prototype.custom_params,
+			monitor_item_prototype.logic_sign,
+			monitor_item_prototype.expression,
+			monitor_item_prototype.default_threshold_val,
+			monitor_item_prototype.status,
+			monitor_item_prototype.description,
+			monitor_item_prototype.create_time,
+			monitor_item_prototype.update_time
+        ) VALUES (
+            #{checkGroup,jdbcType=VARCHAR},
+            #{checkClassify,jdbcType=VARCHAR},
+            #{checkConfigParams,jdbcType=VARCHAR},
+            #{baselineStandard,jdbcType=VARCHAR},
+            #{poolId,jdbcType=VARCHAR},
+            #{poolName,jdbcType=VARCHAR},
+            #{baselineFlag,jdbcType=VARCHAR},
+            #{multilineFlag,jdbcType=VARCHAR},
+            #{prototypeLabel,jdbcType=VARCHAR},
+            #{itemType,jdbcType=VARCHAR},
+            #{itemName,jdbcType=VARCHAR},
+            #{priority,jdbcType=VARCHAR},
+            #{scriptId,jdbcType=VARCHAR},
+            #{scriptName,jdbcType=VARCHAR},
+            #{scriptContentType,jdbcType=VARCHAR},
+            #{scriptGroupName,jdbcType=VARCHAR},
+            #{itemExt.scriptParam,jdbcType=VARCHAR},
+            #{itemExt.customizeParam,jdbcType=VARCHAR},
+            #{logicSign,jdbcType=VARCHAR},
+            #{expression,jdbcType=VARCHAR},
+            #{defaultThresholdVal,jdbcType=VARCHAR},
+            #{status,jdbcType=VARCHAR},
+            #{description,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    
+    <update id="updateItemPrototype" parameterType="com.aspire.mirror.template.api.dto.model.MonitorItemPrototype">
+        update monitor_item_prototype 
+           set id = #{id}
+	        <if test="checkGroup != null and checkGroup != ''">
+	            , check_group = #{checkGroup}
+	        </if>
+	        <if test="checkClassify != null and checkClassify != ''">
+	            , check_classify = #{checkClassify}
+	        </if>
+	        <if test="checkConfigParams != null and checkConfigParams != ''">
+	            , check_config_params = #{checkConfigParams}
+	        </if>
+	        <if test="baselineStandard != null and baselineStandard != ''">
+	            , baseline_standard = #{baselineStandard}
+	        </if>
+	        <if test="poolId != null and poolId != ''">
+	            , pool_id = #{poolId}
+	        </if>
+	        <if test="poolName != null and poolName != ''">
+	        	, pool_name = #{poolName,jdbcType=VARCHAR}
+	        </if>
+	        <if test="baselineFlag != null and baselineFlag != ''">
+	            , baseline_flag = #{baselineFlag}
+	        </if>
+	        <if test="multilineFlag != null and multilineFlag != ''">
+	            , multiline_flag = #{multilineFlag}
+	        </if>
+	        <if test="itemType != null and itemType != ''">
+	            , item_type = #{itemType}
+	        </if>
+	        <if test="itemName != null and itemName != ''">
+	            , item_name = #{itemName}
+	        </if>
+	        <if test="priority != null and priority != ''">
+	            , priority = #{priority}
+	        </if>
+	        <if test="logicSign != null and logicSign != ''">
+	            , logic_sign = #{logicSign}
+	        </if>
+	        <if test="scriptId != null and scriptId != ''">
+	            , script_id = #{scriptId}
+	        </if>
+	        <if test="scriptName != null and scriptName != ''">
+	            , script_name = #{scriptName}
+	        </if>
+	        <if test="scriptContentType != null">
+	            , script_content_type = #{scriptContentType}
+	        </if>
+	        <if test="scriptGroupName != null and scriptGroupName != ''">
+	            , script_group_name = #{scriptGroupName}
+	        </if>
+	        <if test="itemExt.scriptParam != null and itemExt.scriptParam != ''">
+	            , script_param = #{itemExt.scriptParam}
+	        </if>
+	        <if test="itemExt.customizeParam != null and itemExt.customizeParam != ''">
+	            , custom_params = #{itemExt.customizeParam}
+	        </if>
+	        <if test="expression != null and expression != ''">
+	            , expression = #{expression}
+	        </if>
+	        <if test="defaultThresholdVal != null and defaultThresholdVal != ''">
+	            , default_threshold_val = #{defaultThresholdVal}
+	        </if>
+	        <if test="status != null and status != ''">
+	            , status = #{status}
+	        </if>
+	        <if test="description != null and description != ''">
+	            , description = #{description}
+	        </if>
+	        <if test="createTime != null">
+	            , create_time = #{createTime}
+	        </if>
+	        <if test="updateTime != null">
+	            , update_time = #{updateTime}
+	        </if>
+        where id = #{id}
+    </update>
+    
+    <delete id="deleteItemPrototypeById" parameterType="java.lang.Long">
+    	delete from monitor_item_prototype where id = #{id}
+    </delete>
+    
+    <delete id="batchDeleteItemPrototypeById" parameterType="java.util.List">
+    	delete from monitor_item_prototype where id in
+    	<foreach collection="list" item="id" index="index" separator="," open="(" close=")">
+        	#{id}
+        </foreach>
+    </delete>
+    
+    <select id="queryItemPrototypeById" parameterType="java.lang.Long" resultMap="moniItemPrototype">
+    	select <include refid="Base_Columns" />
+		   from monitor_item_prototype
+		  where id = #{id}
+    </select>
+    
+    <select id="queryItemPrototypeList" parameterType="com.aspire.mirror.template.api.dto.model.MonitorItemPrototype$MonitorItemPrototypeQueryModel"
+    		resultMap="moniItemPrototype">
+		 select <include refid="Base_Columns" />
+		   from monitor_item_prototype
+		  where 1 = 1
+		  <if test="status != null and status != ''">
+		  	and status = #{status}
+		  </if>	 
+		  <if test="prototypeLabel != null and prototypeLabel != ''">
+		  	and prototype_label = #{prototypeLabel}
+		  </if>	 
+		  <if test="itemNameLike != null and itemNameLike != ''">
+		  	and item_name like CONCAT ('%', #{itemNameLike}, '%')
+		  </if>
+		  <if test="descriptionLike != null and descriptionLike != ''">
+		  	and description = CONCAT ('%', #{descriptionLike}, '%')
+		  </if>	
+		  <if test="pageSize != null and pageSize > 0 ">
+	         order by update_time desc
+	         limit #{startIdx}, #{pageSize}
+          </if>
+    </select>
+    
+    <select id="queryTotalItemPrototypeListCount" parameterType="com.aspire.mirror.template.api.dto.model.MonitorItemPrototype$MonitorItemPrototypeQueryModel"
+    		resultType="java.lang.Integer">
+    	select count(id)
+		   from monitor_item_prototype
+		  where 1 = 1
+		  <if test="status != null and status != ''">
+		  	and status = #{status}
+		  </if>	 
+		  <if test="prototypeLabel != null and prototypeLabel != ''">
+		  	and prototype_label = #{prototypeLabel}
+		  </if>	 
+		  <if test="itemNameLike != null and itemNameLike != ''">
+		  	and item_name like CONCAT ('%', #{itemNameLike}, '%')
+		  </if>
+		  <if test="descriptionLike != null and descriptionLike != ''">
+		  	and description = CONCAT ('%', #{descriptionLike}, '%')
+		  </if>			
+    </select>		
+</mapper>

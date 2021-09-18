@@ -1,0 +1,197 @@
+server:
+  port: 30304
+version: /v1
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/            ####---  部署时调整
+      
+middleware.configuration.switch: 
+  kafka: true
+  redis: false
+  
+####---  数据库配置，部署时调整  
+druid:
+  url: 'jdbc:mysql://10.12.70.40:3306/deploy_proxy?useUnicode=true&characterEncoding=UTF-8'
+  username: root
+  password: '1234@qwer'
+  useSSL: false
+
+mybatis:
+  mapperLocations:
+    - 'classpath*:sqlmap/*Mapper.xml'
+  type-aliases-package:
+     org.springboot.sample.entity
+  #configuration:
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+ 
+
+ops: 
+  agent-data-sync-up-topic: agent_host_sync 
+  agent-step-result-up-topic: agent_ops_step_result
+  ops-message-topic-prefix: ops_message 
+  timeout-check-interval: 2000    # millseconds
+  sftp-file-server:               ####---  sftp服务器配置, 部署时调整
+    ip-address: "10.12.70.63" 
+    port: 2024
+    login-user: root
+    login-pass: root123
+    root-directory: '/home/sudoroot/temp/demo/sftpRoot'
+    
+
+agent.loadfrom: local  # cmdb: 从cmdb服务加载     local: 本地服务加载    
+    
+
+lts:
+  jobclient:
+    cluster-name: mirror_cluster
+    ## registry-address: zookeeper://10.12.70.40:2181    ####---  LTS连接配置, 部署时调整
+    registry-address: zookeeper://10.12.70.40:2181,10.12.70.40:2182,10.12.70.40:2183
+    node-group: ops_jobclient
+    use-retry-client: true
+    configs:
+      job:
+        fail:
+          store: mapdb 
+          
+spring.http.multipart.maxFileSize: -1
+spring.http.multipart.maxRequestSize: -1        
+
+
+elasticsearch.rest: 
+  uris: http://10.12.70.68:9200
+  #  username: user 
+  #  password: pass
+  connectionTimeout: 3
+  readTimeout: 300
+  
+vulnerability.index_name: 'lvmeng_security_index_*,qiming_security_index_*'
+##============== kafka ===================
+## 本地机房kafka
+local:
+  kafka:
+    bootstrap-servers: 10.12.70.40:9092
+    producer:
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: consumer_ops_service
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 500
+      session.timeout.ms: 60000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区一个消费线程
+    properties:
+      session.timeout.ms: 60000
+#     max.poll.records: 10
+spring: 
+  zipkin:
+    enabled: false
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+  
+  ####---  kafka配置, 部署时调整  
+  kafka: 
+    bootstrap-servers: 10.12.70.40:9092
+    producer: 
+      retries: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer: 
+      group-id: consumer_ops_service
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 2000
+      session.timeout.ms: 20000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer  
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区至少1个消费线程     
+    properties: 
+      session.timeout.ms: 60000      
+          
+  jackson:
+    time-zone: GMT+8
+
+sample:
+  zipkin:
+    enabled: false
+    
+####---  redisson配置, 部署时调整
+redisson:     
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    password: foo
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://10.12.70.40:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: null
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+    - "redis://127.0.0.1:7004"
+    - "redis://127.0.0.1:7001"
+    - "redis://127.0.0.1:7000"
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false  
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"
+
+logging:
+  level:
+    org.springframework: info
+    org.springframework.data: info
+    com.aspire.mirror.ops: debug
+  file: ./ops-service.log
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000

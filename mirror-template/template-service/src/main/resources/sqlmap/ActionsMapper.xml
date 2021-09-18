@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.ActionsDao">
+
+    <resultMap id="ActionsResultMap" type="com.aspire.mirror.template.server.dao.po.Actions">
+        <result property="actionId" column="action_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="eventSource" column="event_source" jdbcType="VARCHAR"/>
+        <result property="evalType" column="eval_type" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="dealer" column="dealer" jdbcType="VARCHAR"/>
+        <result property="triggerId" column="trigger_id" jdbcType="VARCHAR"/>
+        <result property="eventType" column="event_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Actions_Base_Column">
+        monitor_actions.action_id,
+        monitor_actions.name,
+        monitor_actions.event_source,
+        monitor_actions.eval_type,
+        monitor_actions.status,
+        monitor_actions.type,
+        monitor_actions.dealer,
+        monitor_actions.trigger_id,
+        monitor_actions.event_type
+    </sql>
+
+    <sql id="Actions_Query_List_Sharing">
+        <where>
+            <if test="actionId != null ">
+                and monitor_actions.action_id = #{actionId}
+            </if>
+            <if test="name != null ">
+                and monitor_actions.name = #{name}
+            </if>
+            <if test="eventSource != null ">
+                and monitor_actions.event_source = #{eventSource}
+            </if>
+            <if test="evalType != null ">
+                and monitor_actions.eval_type = #{evalType}
+            </if>
+            <if test="status != null ">
+                and monitor_actions.status = #{status}
+            </if>
+            <if test="type != null ">
+                and monitor_actions.type = #{type}
+            </if>
+            <if test="dealer != null ">
+                and monitor_actions.dealer = #{dealer}
+            </if>
+            <if test="triggerId != null ">
+                and monitor_actions.trigger_id = #{triggerId}
+            </if>
+            <if test="eventType != null ">
+                and monitor_actions.event_type = #{eventType}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="actionId"
+                 open="(" separator="," close=")">
+            #{actionId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.Actions" >
+        INSERT INTO monitor_actions (
+        <include refid="Actions_Base_Column" />
+        ) VALUES (
+                #{actionId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{eventSource,jdbcType=VARCHAR},
+                #{evalType,jdbcType=VARCHAR},
+                #{status,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR},
+                #{dealer,jdbcType=VARCHAR},
+                #{triggerId,jdbcType=VARCHAR},
+                #{eventType,jdbcType=INTEGER}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="actionId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.Actions" >
+        INSERT INTO monitor_actions (
+        <include refid="Actions_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{actionId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{eventSource,jdbcType=VARCHAR},
+                #{evalType,jdbcType=VARCHAR},
+                #{status,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR},
+                #{dealer,jdbcType=VARCHAR},
+                #{triggerId,jdbcType=VARCHAR},
+                #{item.eventType,jdbcType=INTEGER}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_actions WHERE action_id = #{actionId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_actions WHERE action_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.Actions" >
+        DELETE FROM monitor_actions WHERE action_id = #{actionId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.Actions" >
+        UPDATE monitor_actions monitor_actions
+        <set >
+                <if test="actionId != null" >
+                monitor_actions.action_id = #{actionId},
+                </if>
+                <if test="name != null" >
+                monitor_actions.name = #{name},
+                </if>
+                <if test="eventSource != null" >
+                monitor_actions.event_source = #{eventSource},
+                </if>
+                <if test="evalType != null" >
+                monitor_actions.eval_type = #{evalType},
+                </if>
+                <if test="status != null" >
+                monitor_actions.status = #{status},
+                </if>
+                <if test="type != null" >
+                monitor_actions.type = #{type},
+                </if>
+                <if test="dealer != null" >
+                monitor_actions.dealer = #{dealer},
+                </if>
+                <if test="triggerId != null" >
+                monitor_actions.trigger_id = #{triggerId},
+                </if>
+                <if test="eventType != null" >
+                monitor_actions.event_type = #{eventType},
+                </if>
+        </set>
+        WHERE action_id = #{actionId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.Actions" >
+        UPDATE monitor_actions monitor_actions
+        SET
+        monitor_actions.action_id = #{actionId},
+        monitor_actions.name = #{name},
+        monitor_actions.event_source = #{eventSource},
+        monitor_actions.eval_type = #{evalType},
+        monitor_actions.status = #{status},
+        monitor_actions.type = #{type},
+        monitor_actions.dealer = #{dealer},
+        monitor_actions.trigger_id = #{triggerId},
+        monitor_actions.event_type = #{eventType}
+        WHERE action_id = #{actionId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="ActionsResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Actions_Base_Column" />
+        FROM monitor_actions monitor_actions
+        WHERE action_id = #{actionId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="ActionsResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Actions_Base_Column" />
+        FROM monitor_actions monitor_actions
+        WHERE action_id in
+        <foreach collection="array" index="index" item="actionId"
+                 open="(" separator="," close=")">
+            #{actionId}
+        </foreach>
+    </select>
+    <select id="selectByPrimaryKeyArraysAndProxyIdentity" resultMap="ActionsResultMap">
+        SELECT
+        <include refid="Actions_Base_Column" />
+        FROM monitor_actions monitor_actions
+        WHERE action_id in
+        <foreach collection="actionIdArray" index="index" item="actionId"
+                 open="(" separator="," close=")">
+            #{actionId}
+        </foreach>
+    </select>
+    <select id="select" resultMap="ActionsResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Actions">
+        SELECT
+        <include refid="Actions_Base_Column" />
+        FROM monitor_actions monitor_actions
+        WHERE  <include refid="Actions_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.Actions">
+        SELECT COUNT(*) FROM monitor_actions monitor_actions
+        <include refid="Actions_Query_List_Sharing" />
+    </select>
+
+</mapper>

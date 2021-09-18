@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.inspectionDaily.AlertResourcePoolDao">
+    <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertResourcePool" id="alertsRecordMap">
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="alertLevel" column="alert_level" jdbcType="INTEGER"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertMoniterObjectTop" id="alertsMoniterMap">
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="moniterObject" column="moniter_object" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertDeviceTypeTop" id="alertsDeviceMap">
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="companeyName" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="pod" column="pod" jdbcType="VARCHAR"/>
+        <result property="roomId" column="roomId" jdbcType="VARCHAR"/>
+        <result property="ip" column="roomId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <sql id="baseWhereClause">
+        <if test="params['idcType'] != null and  params['idcType'] != ''">
+            and a.idc_type = #{params.idcType}
+        </if>
+        <if test="params['month'] != null and  params['month'] != ''">
+            and a.cur_moni_time like concat(concat('%',#{params.month}),'%')
+        </if>
+    </sql>
+
+
+    <!-- 分页数据 -->
+    <select id="getResourcePoolCountAlert" parameterType="map" resultMap="alertsRecordMap">
+        select count(*) count,a.idc_type ,a.alert_level from alert_alerts a
+        where 1=1
+        <include refid="baseWhereClause"></include>
+        group by a.idc_type,a.alert_level
+        order by a.idc_type,a.alert_level;
+    </select>
+
+
+    <!-- 分页数据 -->
+    <select id="getResourcePoolaRecordAlert" parameterType="map" resultMap="alertsRecordMap">
+        select aa.* ,ai.device_type ,ai.count from
+        (
+        select aa.* from
+        (select a.idc_type,a.alert_level,ROWNUM nm from alert_alerts a
+        where 1=1 and a.device_id is not null
+        <include refid="baseWhereClause"></include>
+        AND ROWNUM <![CDATA[<=]]> #{begin}+#{pageSize}
+        ) al
+        where al.nm &gt; #{begin}
+        group BY al.idc_type,al.alert_level
+        order by al.idc_type,al.alert_level desc) aa,
+
+        (select count(*) count,a.idc_type,a.alert_level,i.device_type from alert_alerts a
+        left join cmdb_instance i on a.device_id = i.instance_id
+        where 1=1
+        <include refid="baseWhereClause"></include>
+        group by a.idc_type,a.alert_level,i.device_type)ai
+        where aa.alert_level=ai.alert_level and aa.idc_type = ai.idc_type
+        order by aa.idc_type,aa.alert_level desc
+    </select>
+
+
+    <select id="getResourcePoolaRecordAlertCount" parameterType="map" resultType="java.lang.Integer">
+        select count(*) from (
+        select count(*) count ,a.idc_type,a.alert_level from alert_alerts a
+        where 1=1 and a.device_id is not null
+        <include refid="baseWhereClause"></include>
+        group by a.idc_type,a.alert_level)aa
+    </select>
+
+
+    <select id="getDeviceTypeListCount" parameterType="map" resultType="java.lang.Integer">
+        select count(*) from (
+        select count(*) count,a.idc_type,a.alert_level,i.device_type from alert_alerts a,cmdb_instance i
+        where a.device_id = i.instance_id and i.device_type in(SELECT name from alert_devicetype_config)
+        <include refid="baseWhereClause"></include>
+        <include refid="querysql"></include>
+        group by a.idc_type,a.alert_level ,i.device_type )aa
+    </select>
+
+
+    <select id="getDeviceTypeList" parameterType="map" resultMap="alertsRecordMap">
+        select aa.* from (
+        select count(*) count,a.idc_type,a.alert_level,i.device_type ,ROWNUM nm from alert_alerts a,cmdb_instance i
+        where a.device_id = i.instance_id and i.device_type in(SELECT name from alert_devicetype_config)
+        <include refid="baseWhereClause"></include>
+        <include refid="querysql"></include>
+        where ROWNUM <![CDATA[<=]]> #{begin}+#{pageSize}
+        group by a.idc_type,a.alert_level ,i.device_type
+        order by a.idc_type,a.alert_level desc,i.device_type
+        ) aa
+        where aa.nm &gt; #{begin}
+    </select>
+
+
+    <sql id="querysql">
+        <if test="params['deviceType'] != null and  params['deviceType'] != ''">
+            and i.device_type = #{params.deviceType}
+        </if>
+        <if test="params['alertLevel'] != null and  params['alertLevel'] != ''">
+            and a.alert_level = #{params.alertLevel}
+        </if>
+    </sql>
+
+
+    <select id="getDeviceTop10Alert" parameterType="map" resultMap="alertsDeviceMap">
+        SELECT COUNT(*) count,a.idc_type,a.alert_level ,i.device_type,i.ip,concat(a.idc_type,i.pod_name)pod
+        ,i.device_mfrs,i.roomId
+        from alert_alerts a,cmdb_instance i
+        where a.device_id = i.instance_id
+        <include refid="baseWhereClause"></include>
+        <include refid="querysql"></include>
+        and ROWNUM <![CDATA[<=]]> #{pageSize}
+        group by a.idc_type,a.alert_level ,i.device_type,i.ip,i.pod_name,i.device_mfrs,i.roomId
+        order by count desc
+    </select>
+
+
+    <select id="getMoniterTop10Alert" parameterType="map" resultMap="alertsMoniterMap">
+        select aa.count,bb.count sum,aa.idc_type,aa.alert_level,aa.device_type,aa.moni_object
+        from
+        (
+        SELECT COUNT(*) count,a.idc_type,a.alert_level ,i.device_type,a.moni_object,ROWNUM rownu
+        from alert_alerts a,cmdb_instance i
+        where a.device_id = i.instance_id
+        <include refid="baseWhereClause"></include>
+        <include refid="querysql"></include>
+        AND ROWNUM <![CDATA[<=]]> #{pageSize}
+
+        group by rt.idc_type,rt.alert_level ,rt.device_type,rt.moni_object
+        order by count desc
+        )aa,
+
+        (SELECT COUNT(*) count,a.idc_type,a.alert_level ,i.device_type from alert_alerts a,cmdb_instance i
+        where a.device_id = i.instance_id
+        <include refid="baseWhereClause"></include>
+        <include refid="querysql"></include>
+        group by a.idc_type,a.alert_level ,i.device_type
+        )bb
+        where aa.idc_type= bb.idc_type and aa.alert_level=alert_level and aa.device_type = bb.device_type
+        order by count desc
+    </select>
+
+
+    <sql id="dailyQuerysql">
+        <if test="params['projectName'] != null and  params['projectName'] != ''">
+            and i.project_name = #{params.projectName}
+        </if>
+        <if test="params['pod'] != null and  params['pod'] != ''">
+            and i.pod_name = #{params.pod}
+        </if>
+        <if test="params['deviceMfrs'] != null and  params['deviceMfrs'] != ''">
+            and i.device_mfrs = #{params.deviceMfrs}
+        </if>
+        <if test="params['deviceModel'] != null and  params['deviceModel'] != ''">
+            and i.device_model = #{params.deviceModel}
+        </if>
+        <if test="params['deviceClass'] != null and  params['deviceClass'] != ''">
+            and i.device_class = #{params.deviceClass}
+        </if>
+        <if test="params['deviceType'] != null and  params['deviceType'] != ''">
+            and i.device_type = #{params.deviceType}
+        </if>
+    </sql>
+
+
+    <sql id="dailyQuerysqlTime">
+        <if test="params['inspectionDate'] != null and  params['inspectionDate'] != ''">
+            and a.cur_moni_time like concat(concat('%',#{params.inspectionDate}),'%')
+        </if>
+    </sql>
+
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertInspectionDaily" id="inspectionDailyMap">
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="alertCount" column="alertCount" jdbcType="INTEGER"/>
+        <result property="moniterCount" column="moniterCount" jdbcType="INTEGER"/>
+        <result property="deviceType" column="device_type" jdbcType="INTEGER"/>
+        <result property="companeyName" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="getInspectionDailyCount" parameterType="map" resultType="java.lang.Integer">
+        select count(*) from (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        from
+        cmdb_instance i
+        where i.idcType = #{params.idcType}
+        <include refid="dailyQuerysql"></include>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model)aa
+    </select>
+    <select id="getInspectionDaily" parameterType="map" resultMap="inspectionDailyMap">
+        select
+        aaii.*, ai.moni_object,ai.count moniterCount
+        from
+        (
+        select
+        ii.*, aa.count alertCount
+        from
+        (
+        select ci.* from (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model,
+        ROWNUM nm
+        from
+        cmdb_instance i
+        where i.idcType = #{params.idcType}
+        <include refid="dailyQuerysql"></include>
+        <if test="params['pageSize'] != null">
+            AND ROWNUM <![CDATA[<=]]> #{begin}+#{pageSize}
+        </if>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        order by i.project_name ,i.pod_name,i.device_class,i.device_type,i.device_mfrs,i.device_model
+        ) ci
+        where ci.nm > #{begin}
+        ) ii left join
+        (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        from
+        alert_alerts a,
+        cmdb_instance i
+        where
+        i.instance_id = a.device_id
+        <include refid="dailyQuerysqlTime"></include>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        ) aa
+        on
+        ii.project_name = aa.project_name
+        and ii.pod_name = aa.pod_name
+        and ii.device_class = aa.device_class
+        and ii.device_type = aa.device_type
+        and ii.device_mfrs = aa.device_mfrs
+        and ii.device_model = aa.device_model
+        ) aaii left join
+        (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model,
+        a.moni_object
+        from
+        alert_alerts a,
+        cmdb_instance i
+        where
+        i.instance_id = a.device_id
+        and (
+        a.moni_object = #{params.cpuMoniter} || a.moni_object = #{params.memoryMoniter}
+        )
+        <include refid="dailyQuerysqlTime"></include>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model,
+        a.moni_object
+        ) ai
+        on
+        aaii.project_name = ai.project_name
+        and aaii.pod_name = ai.pod_name
+        and aaii.device_class = ai.device_class
+        and aaii.device_type = ai.device_type
+        and aaii.device_mfrs = ai.device_mfrs
+        and aaii.device_model = ai.device_model
+        order by project_name ,pod_name,device_class,device_type,device_mfrs,device_model
+    </select>
+
+
+    <select id="exportInspectionDaily" parameterType="map" resultType="java.util.Map">
+        select
+        aaii.*, ai.moni_object,ai.count moniterCount
+        from
+        (
+        select
+        ii.*, aa.count alertCount
+        from
+        (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        from
+        cmdb_instance i
+        where i.idcType = #{params.idcType}
+        <include refid="dailyQuerysql"></include>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        order by i.project_name ,i.pod_name,i.device_class,i.device_type,i.device_mfrs,i.device_model
+        ) ii left join
+        (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        from
+        alert_alerts a,
+        cmdb_instance i
+        where
+        i.instance_id = a.device_id
+        <include refid="dailyQuerysqlTime"></include>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model
+        ) aa
+        on
+        ii.project_name = aa.project_name
+        and ii.pod_name = aa.pod_name
+        and ii.device_class = aa.device_class
+        and ii.device_type = aa.device_type
+        and ii.device_mfrs = aa.device_mfrs
+        and ii.device_model = aa.device_model
+        ) aaii left join
+        (
+        select
+        count(*) count,
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model,
+        a.moni_object
+        from
+        alert_alerts a,
+        cmdb_instance i
+        where
+        i.instance_id = a.device_id
+        and (
+        a.moni_object = #{params.cpuMoniter} || a.moni_object = #{params.memoryMoniter}
+        )
+        <include refid="dailyQuerysqlTime"></include>
+        group by
+        i.project_name,
+        i.pod_name,
+        i.device_class,
+        i.device_type,
+        i.device_mfrs,
+        i.device_model,
+        a.moni_object
+        ) ai
+        on
+        aaii.project_name = ai.project_name
+        and aaii.pod_name = ai.pod_name
+        and aaii.device_class = ai.device_class
+        and aaii.device_type = ai.device_type
+        and aaii.device_mfrs = ai.device_mfrs
+        and aaii.device_model = ai.device_model
+        order by project_name ,pod_name,device_class,device_type,device_mfrs,device_model
+    </select>
+</mapper>

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.automate.mapper.AutomateHostMapper">
+
+   <resultMap id="automateEntity" type="com.aspire.ums.cmdb.automate.payload.AutomateHostEntity">
+       <result column="id" property="id" jdbcType="VARCHAR" />
+       <result column="auto2_ip" property="ip" jdbcType="VARCHAR" />
+       <result column="auto2_hostname" property="hostname" jdbcType="VARCHAR" />
+       <result column="auto2_agentHeartBeat" property="agentHeartBeat" jdbcType="VARCHAR" />
+       <result column="auto2_agentStatus" property="agentStatus" jdbcType="VARCHAR" />
+       <result column="auto2_environment" property="environment" jdbcType="VARCHAR" />
+       <result column="auto2_mac" property="mac" jdbcType="VARCHAR" />
+       <result column="auto2_occupiedU" property="occupiedU" jdbcType="VARCHAR" />
+       <result column="auto2_startU" property="startU" jdbcType="VARCHAR" />
+       <result column="auto2_uuid" property="automateUuid" jdbcType="VARCHAR" />
+       <result column="auto2_agentVersion" property="agentVersion" jdbcType="VARCHAR" />
+       <result column="auto2_cpuHz" property="cpuHz" jdbcType="VARCHAR" />
+       <result column="auto2_cpuModel" property="cpuModel" jdbcType="VARCHAR" />
+       <result column="auto2_cpus" property="cpus" jdbcType="VARCHAR" />
+       <collection property="cpu" column="{assetInstanceId = id}" select="getCpuList" />
+   </resultMap>
+
+    <resultMap id="automateCpuEntity" type="com.aspire.ums.cmdb.automate.payload.AutomateHostCpuEntity">
+        <result column="auto2_cpu_brand" property="brand" jdbcType="VARCHAR" />
+        <result column="auto2_cpu_architecture" property="architecture" jdbcType="VARCHAR" />
+        <result column="auto2_cpu_hz" property="hz" jdbcType="VARCHAR" />
+        <result column="auto2_cpu_pieces" property="cpuPieces" jdbcType="VARCHAR" />
+        <result column="auto2_cpu_physical_cores" property="physicalCores" jdbcType="VARCHAR" />
+        <result column="auto2_cpu_logical_cores" property="logicalCores" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="automateHostColumn">
+        id,auto2_ip,auto2_hostname,auto2_agentHeartBeat,auto2_agentStatus,auto2_environment,auto2_mac,auto2_occupiedU,
+        auto2_startU,auto2_uuid,auto2_agentVersion,auto2_cpuHz,auto2_cpuModel,auto2_cpus,auto2_osRelease,auto2_osDistro,
+        auto2_osArchitecture,auto2_cpuModel,auto2_agentVersion,auto2_occupiedU,auto2_startU,auto2_osVersion,auto2_mac,
+        auto2_cpuHz,auto2_agentHeartBeat,auto2_uuid
+    </sql>
+
+    <!-- cpu列表字段 create by fanwenhui 20200915 -->
+    <sql id="automateCpuColumn">
+        auto2_cpu_brand,auto2_cpu_architecture,auto2_cpu_hz,
+        auto2_cpu_pieces,auto2_cpu_physical_cores,auto2_cpu_logical_cores
+    </sql>
+
+    <!-- 磁盘列表字段 create by fanwenhui 20200915 -->
+    <sql id="automateDiskColumn">
+        auto2_disk_mountpoint,auto2_disk_fstype,auto2_disk_device,
+        auto2_disk_size,auto2_disk_provider
+    </sql>
+
+    <!-- 网卡列表字段 create by fanwenhui 20200915 -->
+    <sql id="automateEthColumn">
+        auto2_eth_broadcast,auto2_eth_ip,auto2_eth_status,
+        auto2_eth_speed,auto2_eth_mask,auto2_eth_mac,auto2_eth_name
+    </sql>
+
+    <!-- 服务信息列表字段 create by fanwenhui 20200915 -->
+    <sql id="automateServiceColumn">
+        auto2_service_cwd,auto2_service_listening_ip,auto2_service_exe,
+        auto2_service_username,auto2_service_pname,auto2_service_name,auto2_service_listening_port
+    </sql>
+
+    <!-- 新增主机资源主表数据 create by fanwenhui 20200910 -->
+    <insert id="saveHost" parameterType="com.aspire.ums.cmdb.automate.payload.AutomateHostEntity">
+        INSERT INTO cmdb_instance_automate (
+        id,is_delete,auto2_environment,auto2_ip,
+        auto2_hostname,auto2_agentStatus,auto2_use,auto2_customer,
+        auto2_status,auto2_provider,auto2_isProxy,auto2_belongProxy,
+        auto2_cpuHz,auto2_agentHeartBeat,auto2_installedPatch,auto2_osSystem,
+        auto2_propertyid,auto2_product,auto2_isSinglePower,auto2_memo,
+        auto2_memSize,auto2_diskSize,auto2_cpus,auto2_osRelease,
+        auto2_osDistro,auto2_osArchitecture,auto2_cpuModel,auto2_agentVersion,
+        auto2_occupiedU,auto2_startU,auto2_osVersion,auto2_mac,auto2_info_instanceid,auto2_version,
+        auto2_cpu_json,auto2_eth_json,auto2_disk_json,auto2_service_json,
+        insert_person,update_person,insert_time,update_time
+        )
+        VALUES (
+        #{id,jdbcType=VARCHAR},#{isDelete,jdbcType=VARCHAR},#{environment,jdbcType=VARCHAR},#{ip,jdbcType=VARCHAR},
+        #{hostname,jdbcType=VARCHAR},#{agentStatus,jdbcType=VARCHAR},#{use,jdbcType=VARCHAR},#{customer,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},#{provider,jdbcType=VARCHAR},#{isProxy,jdbcType=VARCHAR},#{belongProxy,jdbcType=VARCHAR},
+        #{cpuHz,jdbcType=VARCHAR},#{agentHeartBeat,jdbcType=VARCHAR},#{installedPatch,jdbcType=VARCHAR},#{osSystem,jdbcType=VARCHAR},
+        #{propertyid,jdbcType=VARCHAR},#{product,jdbcType=VARCHAR},#{isSinglePower,jdbcType=VARCHAR},#{memo,jdbcType=VARCHAR},
+        #{memSize,jdbcType=VARCHAR},#{diskSize,jdbcType=VARCHAR},#{cpus,jdbcType=VARCHAR},#{osRelease,jdbcType=VARCHAR},
+        #{osDistro,jdbcType=VARCHAR},#{osArchitecture,jdbcType=VARCHAR},#{cpuModel,jdbcType=VARCHAR},#{agentVersion,jdbcType=VARCHAR},
+        #{occupiedU,jdbcType=VARCHAR},#{startU,jdbcType=VARCHAR},#{osVersion,jdbcType=VARCHAR},#{mac,jdbcType=VARCHAR},
+        #{instanceId,jdbcType=VARCHAR},#{version,jdbcType=VARCHAR},
+        #{cpuJson,jdbcType=VARCHAR},#{diskJson,jdbcType=VARCHAR},#{ethJson,jdbcType=VARCHAR},#{serviceJson,jdbcType=VARCHAR},
+        #{insertPerson,jdbcType=VARCHAR},#{updatePerson,jdbcType=VARCHAR},NOW(),NOW()
+        )
+    </insert>
+
+    <!-- 批量新增主机cpu列表 create by fanwenhui 20200910 -->
+    <insert id="batchSaveCpuList" parameterType="java.util.List">
+        INSERT INTO cmdb_instance_automate_cpu (
+        id,is_delete,auto2_cpu_brand,auto2_cpu_architecture,
+        auto2_cpu_hz,auto2_cpu_physical_cores,auto2_cpu_logical_cores,auto2_cpu_pieces,auto2_instanceid,
+        insert_person,update_person,insert_time,update_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},#{item.isDelete,jdbcType=VARCHAR},#{item.brand,jdbcType=VARCHAR},#{item.architecture,jdbcType=VARCHAR},
+            #{item.hz,jdbcType=VARCHAR},#{item.physicalCores,jdbcType=VARCHAR},#{item.logicalCores,jdbcType=VARCHAR},
+            #{item.cpuPieces,jdbcType=VARCHAR},#{item.assetInstanceId,jdbcType=VARCHAR},
+            #{item.insertPerson,jdbcType=VARCHAR},#{item.updatePerson,jdbcType=VARCHAR},NOW(),NOW()
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量新增主机磁盘信息列表 create by fanwenhui 20200910 -->
+    <insert id="batchSaveDiskList" parameterType="java.util.List">
+        INSERT INTO cmdb_instance_automate_disk (
+        id,is_delete,auto2_disk_mountpoint,auto2_disk_fstype,
+        auto2_disk_device,auto2_disk_size,auto2_disk_provider,auto2_instanceid,
+        insert_person,update_person,insert_time,update_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},#{item.isDelete,jdbcType=VARCHAR},#{item.mountpoint,jdbcType=VARCHAR},#{item.fstype,jdbcType=VARCHAR},
+            #{item.device,jdbcType=VARCHAR},#{item.size,jdbcType=VARCHAR},#{item.provider,jdbcType=VARCHAR},#{item.assetInstanceId,jdbcType=VARCHAR},
+            #{item.insertPerson,jdbcType=VARCHAR},#{item.updatePerson,jdbcType=VARCHAR},NOW(),NOW()
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量新增主机网卡信息列表 create by fanwenhui 20200910 -->
+    <insert id="batchSaveEthList" parameterType="java.util.List">
+        INSERT INTO cmdb_instance_automate_eth (
+        id,is_delete,auto2_eth_broadcast,auto2_eth_ip,
+        auto2_eth_status,auto2_eth_speed,auto2_eth_mask,auto2_eth_mac,auto2_eth_name,auto2_instanceid,
+        insert_person,update_person,insert_time,update_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},#{item.isDelete,jdbcType=VARCHAR},#{item.broadcast,jdbcType=VARCHAR},#{item.ip,jdbcType=VARCHAR},
+            #{item.status,jdbcType=VARCHAR},#{item.speed,jdbcType=VARCHAR},#{item.mask,jdbcType=VARCHAR},#{item.MAC,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},#{item.assetInstanceId,jdbcType=VARCHAR},
+            #{item.insertPerson,jdbcType=VARCHAR},#{item.updatePerson,jdbcType=VARCHAR},NOW(),NOW()
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量新增主机服务信息列表 create by fanwenhui 20200910 -->
+    <insert id="batchSaveServiceList" parameterType="java.util.List">
+        INSERT INTO cmdb_instance_automate_service (
+        id,is_delete,auto2_service_cwd,auto2_service_listening_ip,
+        auto2_service_exe,auto2_service_username,auto2_service_pname,
+        auto2_service_name,auto2_service_listening_port,auto2_instanceid,
+        insert_person,update_person,insert_time,update_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},#{item.isDelete,jdbcType=VARCHAR},#{item.cwd,jdbcType=VARCHAR},#{item.listeningIp,jdbcType=VARCHAR},
+            #{item.exe,jdbcType=VARCHAR},#{item.username,jdbcType=VARCHAR},#{item.pname,jdbcType=VARCHAR},#{item.name,jdbcType=VARCHAR},
+            #{item.listeningPort,jdbcType=VARCHAR},#{item.assetInstanceId,jdbcType=VARCHAR},
+            #{item.insertPerson,jdbcType=VARCHAR},#{item.updatePerson,jdbcType=VARCHAR},NOW(),NOW()
+            )
+        </foreach>
+    </insert>
+
+    <select id="getAutomateHostDetail" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT * FROM cmdb_instance_automate WHERE 1=1
+        <if test="ip != null and ip != ''">
+           AND auto2_ip = #{ip}
+        </if>
+        AND is_delete = '0'
+    </select>
+
+    <select id="getCpuList" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT <include refid="automateCpuColumn" />
+        FROM cmdb_instance_automate_cpu WHERE 1=1 AND auto2_instanceid = #{assetInstanceId}
+        AND is_delete = '0'
+    </select>
+
+    <select id="getDiskList" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT <include refid="automateDiskColumn" />
+        FROM cmdb_instance_automate_disk WHERE 1=1 AND auto2_instanceid = #{assetInstanceId}
+        AND is_delete = '0'
+    </select>
+
+    <select id="getEthList" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT <include refid="automateEthColumn" />
+        FROM cmdb_instance_automate_eth WHERE 1=1 AND auto2_instanceid = #{assetInstanceId}
+        AND is_delete = '0'
+    </select>
+
+    <select id="getServiceList" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT <include refid="automateServiceColumn" />
+        FROM cmdb_instance_automate_service WHERE 1=1 AND auto2_instanceid = #{assetInstanceId}
+        AND is_delete = '0'
+    </select>
+
+    <!-- 获取自动化配置信息的模型ID create by fanwenhui 20200914 -->
+    <select id="getAutomateModuleIds" resultType="java.util.Map" parameterType="java.util.List">
+        SELECT id,`name`,code
+        FROM cmdb_module
+        WHERE is_delete = 0 AND code IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!-- 根据主机IP逻辑删除上一次存入的主机配置信息 create by fanwenhui 20200928 -->
+    <update id="updateDelAutomate" parameterType="java.lang.String">
+        UPDATE cmdb_instance_automate a
+        LEFT JOIN cmdb_instance_automate_cpu b ON a.id = b.auto2_instanceid
+        LEFT JOIN cmdb_instance_automate_disk c ON a.id = c.auto2_instanceid
+        LEFT JOIN cmdb_instance_automate_eth d ON a.id = d.auto2_instanceid
+        LEFT JOIN cmdb_instance_automate_service e ON a.id = e.auto2_instanceid
+        SET a.is_delete = '1',b.is_delete = '1',c.is_delete = '1',d.is_delete = '1',e.is_delete = '1',
+        a.update_time = NOW(),b.update_time = NOW(),c.update_time = NOW(),d.update_time = NOW(),e.update_time = NOW()
+        WHERE a.auto2_info_instanceid = #{instanceId}
+    </update>
+
+    <!-- 根据自动化实例ID逻辑删除上一次存入的主机配置CPU、磁盘、信息、网卡、服务信息 create by fanwenhui 20201015 -->
+    <update id="delAutomateCpu" parameterType="java.lang.String">
+        DELETE FROM cmdb_instance_automate_cpu WHERE auto2_instanceid = #{assetInstanceId}
+    </update>
+
+    <update id="delAutomateDisk" parameterType="java.lang.String">
+        DELETE FROM cmdb_instance_automate_disk WHERE auto2_instanceid = #{assetInstanceId}
+    </update>
+
+    <update id="delAutomateEth" parameterType="java.lang.String">
+        DELETE FROM cmdb_instance_automate_eth WHERE auto2_instanceid = #{assetInstanceId}
+    </update>
+
+    <update id="delAutomateService" parameterType="java.lang.String">
+        DELETE FROM cmdb_instance_automate_service WHERE auto2_instanceid = #{assetInstanceId}
+    </update>
+
+    <update id="updateHostByInstanceId" parameterType="java.util.Map">
+        UPDATE cmdb_instance_automate
+        <set>
+            <if test="_parameter.containsKey('ip') ">
+                auto2_ip = #{ip},
+            </if>
+            <if test="_parameter.containsKey('hostname') ">
+                auto2_hostname = #{hostname},
+            </if>
+            <if test="_parameter.containsKey('_agentHeartBeat') ">
+                auto2_agentHeartBeat = #{_agentHeartBeat},
+            </if>
+            <if test="_parameter.containsKey('_agentStatus') ">
+                auto2_agentStatus = #{_agentStatus},
+            </if>
+            <if test="_parameter.containsKey('_environment') ">
+                auto2_environment = #{_environment},
+            </if>
+            <if test="_parameter.containsKey('_mac') ">
+                auto2_mac = #{_mac},
+            </if>
+            <if test="_parameter.containsKey('_occupiedU') ">
+                auto2_occupiedU = #{_occupiedU},
+            </if>
+            <if test="_parameter.containsKey('_startU') ">
+                auto2_startU = #{_startU},
+            </if>
+            <if test="_parameter.containsKey('_uuid') ">
+                auto2_uuid = #{_uuid},
+            </if>
+            <if test="_parameter.containsKey('agentVersion') ">
+                auto2_agentVersion = #{agentVersion},
+            </if>
+            <if test="_parameter.containsKey('cpuHz') ">
+                auto2_cpuHz = #{cpuHz},
+            </if>
+            <if test="_parameter.containsKey('cpuModel') ">
+                auto2_cpuModel = #{cpuModel},
+            </if>
+            <if test="_parameter.containsKey('cpus') ">
+                auto2_cpus = #{cpus},
+            </if>
+            <if test="_parameter.containsKey('diskSize') ">
+                auto2_diskSize = #{diskSize},
+            </if>
+            <if test="_parameter.containsKey('memSize') ">
+                auto2_memSize = #{memSize},
+            </if>
+            <if test="_parameter.containsKey('memo') ">
+                auto2_memo = #{memo},
+            </if>
+            <if test="_parameter.containsKey('osArchitecture') ">
+                auto2_osArchitecture = #{osArchitecture},
+            </if>
+            <if test="_parameter.containsKey('osDistro') ">
+                auto2_osDistro = #{osDistro},
+            </if>
+            <if test="_parameter.containsKey('osRelease') ">
+                auto2_osRelease = #{osRelease},
+            </if>
+            <if test="_parameter.containsKey('osSystem') ">
+                auto2_osSystem = #{osSystem},
+            </if>
+            <if test="_parameter.containsKey('osVersion') ">
+                auto2_osVersion = #{osVersion},
+            </if>
+            <if test="_parameter.containsKey('provider') ">
+                auto2_provider = #{provider},
+            </if>
+            <if test="_parameter.containsKey('status') ">
+                auto2_status = #{status},
+            </if>
+            <if test="_parameter.containsKey('customer') ">
+                auto2_customer = #{customer},
+            </if>
+            <if test="_parameter.containsKey('isSinglePower') ">
+                auto2_isSinglePower = #{isSinglePower},
+            </if>
+            <if test="_parameter.containsKey('product') ">
+                auto2_product = #{product},
+            </if>
+            <if test="_parameter.containsKey('propertyid') ">
+                auto2_propertyid = #{propertyid},
+            </if>
+            <if test="_parameter.containsKey('use') ">
+                auto2_use = #{use},
+            </if>
+            <if test="_parameter.containsKey('installedPatch') ">
+                auto2_installedPatch = #{installedPatch},
+            </if>
+            <if test="_parameter.containsKey('belongProxy') ">
+                auto2_belongProxy = #{belongProxy},
+            </if>
+            <if test="_parameter.containsKey('isProxy') ">
+                auto2_isProxy = #{isProxy},
+            </if>
+            <if test="_parameter.containsKey('cpuJson') ">
+                auto2_cpu_json = #{cpuJson},
+            </if>
+            <if test="_parameter.containsKey('diskJson') ">
+                auto2_disk_json = #{diskJson},
+            </if>
+            <if test="_parameter.containsKey('ethJson') ">
+                auto2_eth_json = #{ethJson},
+            </if>
+            <if test="_parameter.containsKey('serviceJson') ">
+                auto2_service_json = #{serviceJson},
+            </if>
+            update_time = NOW()
+        </set>
+        WHERE auto2_info_instanceid = #{instanceId}
+    </update>
+
+    <select id="getAutomateHostInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT id,auto2_info_instanceid AS autoInstanceId,auto2_ip AS autoIp,auto2_version AS autoVersion
+        FROM cmdb_instance_automate WHERE 1=1
+        <if test="ip != null and ip != ''">
+            AND auto2_ip = #{ip}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+            AND auto2_info_instanceid = #{instanceId}
+        </if>
+        AND is_delete = '0'
+    </select>
+
+    <!-- 批量新增主机配置文件记录 create by fanwenhui 20201105 -->
+    <insert id="batchSaveHostConfList" parameterType="java.util.List">
+        INSERT INTO cmdb_instance_automate_conf (
+        id,is_delete,auto2_conf_time,
+        auto2_conf_ip,auto2_conf_filename,auto2_conf_filetype,
+        auto2_conf_filestatus,insert_person,insert_time,remark,auto2_conf_filepath
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},'0',#{item.time,jdbcType=VARCHAR},
+            #{item.hostIp,jdbcType=VARCHAR},#{item.fileName,jdbcType=VARCHAR},#{item.fileType,jdbcType=VARCHAR},
+            #{item.fileStatus,jdbcType=VARCHAR},'主机配置文件同步',NOW(),#{item.remark,jdbcType=VARCHAR},
+            #{item.filePath,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 根据主机IP和采集时间查询对应的主机配置文件 create by fanwenhui 20201105 -->
+    <select id="findAutomateConfList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT id AS fileId,auto2_conf_filename AS fileName,auto2_conf_filetype AS fileTpye,
+        auto2_conf_filestatus AS fileStatus,auto2_conf_filepath AS filePath,auto2_conf_ip AS fileIp
+        FROM
+        cmdb_instance_automate_conf WHERE 1=1
+        <if test="time != null and time != ''">
+            AND DATE_FORMAT(auto2_conf_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')
+        </if>
+        <if test="hostIp != null and hostIp != ''">
+            AND auto2_conf_ip = #{hostIp}
+        </if>
+        <if test="fileId != null and fileId != ''">
+            AND id = #{fileId}
+        </if>
+    </select>
+
+    <!-- 查询主机配置文件的分区是否存在 新增 fanwenhui 20201110 -->
+    <select id="getAutomateHostPartName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT partition_name
+        FROM information_schema.PARTITIONS
+        WHERE `table_name` = #{tableName} AND partition_name = #{partName}
+    </select>
+
+    <!-- 新增主机配置文件的分区 新增 fanwenhui 20201110 -->
+    <update id="alterAutomateHostPart" parameterType="java.util.Map">
+        ALTER TABLE cmdb_instance_automate_conf  ADD partition (partition ${next_time_par} values less than (#{next_time}))
+    </update>
+
+</mapper>

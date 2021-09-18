@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.demand.mapper.CmdbDemandManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.demand.entity.CmdbDemandManager" >
+        <result column="demand_id" property="demandId" jdbcType="VARCHAR" />
+        <result column="department" property="department" jdbcType="VARCHAR" />
+        <result column="tenant" property="tenant" jdbcType="VARCHAR" />
+        <result column="tenant_phone" property="tenantPhone" jdbcType="VARCHAR" />
+        <result column="biz_system" property="bizSystem" jdbcType="VARCHAR" />
+        <result column="is_project" property="isProject" jdbcType="VARCHAR" />
+        <result column="project_time" property="projectTime" jdbcType="VARCHAR" />
+        <result column="submit_time" property="submitTime" jdbcType="VARCHAR" />
+        <result column="is_host_maintenance" property="isHostMaintenance" jdbcType="VARCHAR" />
+        <result column="is_disaster" property="isDisaster" jdbcType="VARCHAR" />
+        <result column="disaster_type" property="disasterType" jdbcType="VARCHAR" />
+        <result column="wlan_requirement" property="wlanRequirement" jdbcType="VARCHAR" />
+        <result column="commission_time" property="commissionTime" jdbcType="VARCHAR" />
+        <result column="is_idc_requirement" property="isIdcRequirement" jdbcType="VARCHAR" />
+        <result column="idc_requirement" property="idcRequirement" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="cycle_time" property="cycleTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `demand_id`,
+        `department`,
+        `tenant`,
+        `tenant_phone`,
+        `biz_system`,
+        `is_project`,
+        `project_time`,
+        `submit_time`,
+        `is_host_maintenance`,
+        `is_disaster`,
+        `disaster_type`,
+        `wlan_requirement`,
+        `commission_time`,
+        `is_idc_requirement`,
+        `idc_requirement`,
+        `create_time`,
+        `cycle_time`
+        FROM cmdb_demand_manager
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandManager" resultMap="resultMap">
+        SELECT
+        `demand_id`,
+        `department`,
+        `tenant`,
+        `tenant_phone`,
+        `biz_system`,
+        `is_project`,
+        `project_time`,
+        `submit_time`,
+        `is_host_maintenance`,
+        `is_disaster`,
+        `disaster_type`,
+        `wlan_requirement`,
+        `commission_time`,
+        `is_idc_requirement`,
+        `idc_requirement`,
+        `create_time`,
+        `cycle_time`
+        FROM cmdb_demand_manager
+        WHERE 1=1
+        AND `demand_id` = #{demandId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandManager">
+        INSERT INTO cmdb_demand_manager
+        (
+            `demand_id`,
+            `department`,
+            `tenant`,
+            `tenant_phone`,
+            `biz_system`,
+            `is_project`,
+            `project_time`,
+            `submit_time`,
+            `is_host_maintenance`,
+            `is_disaster`,
+            `disaster_type`,
+            `wlan_requirement`,
+            `commission_time`,
+            `is_idc_requirement`,
+            `idc_requirement`,
+            `create_time`,
+            `cycle_time`
+        ) VALUES (
+            #{demandId, jdbcType=VARCHAR},
+            #{department, jdbcType=VARCHAR},
+            #{tenant, jdbcType=VARCHAR},
+            #{tenantPhone, jdbcType=VARCHAR},
+            #{bizSystem, jdbcType=VARCHAR},
+            #{isProject, jdbcType=VARCHAR},
+            #{projectTime, jdbcType=VARCHAR},
+            #{submitTime, jdbcType=VARCHAR},
+            #{isHostMaintenance, jdbcType=VARCHAR},
+            #{isDisaster, jdbcType=VARCHAR},
+            #{disasterType, jdbcType=VARCHAR},
+            #{wlanRequirement, jdbcType=VARCHAR},
+            #{commissionTime, jdbcType=VARCHAR},
+            #{isIdcRequirement, jdbcType=VARCHAR},
+            #{idcRequirement, jdbcType=VARCHAR},
+            now(),
+            #{cycleTime, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandManager">
+        UPDATE cmdb_demand_manager SET
+        `department` = #{department},
+        `tenant` = #{tenant},
+        `tenant_phone` = #{tenantPhone},
+        `biz_system` = #{bizSystem},
+        `is_project` = #{isProject},
+        `project_time` = #{projectTime},
+        `submit_time` = #{submitTime},
+        `is_host_maintenance` = #{isHostMaintenance},
+        `is_disaster` = #{isDisaster},
+        `disaster_type` = #{disasterType},
+        `wlan_requirement` = #{wlanRequirement},
+        `commission_time` = #{commissionTime},
+        `is_idc_requirement` = #{isIdcRequirement},
+        `idc_requirement` = #{idcRequirement},
+        `cycle_time` = #{cycleTime}
+        WHERE
+        `demand_id` = #{demandId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandManager">
+        DELETE FROM cmdb_demand_manager
+        WHERE
+         `demand_id` = #{demandId}
+    </delete>
+
+    <select id="queryForMap" resultType="java.util.LinkedHashMap">
+        select dm.*, tm.*
+        from cmdb_demand_manager dm,
+        (select
+          ${caseWhenSql}
+        demand_id tm_demand_id
+        from cmdb_demand_resource_type_value rtv
+        inner join cmdb_demand_resource_type rt on rtv.resource_type_id = rt.resource_type_id
+        group by demand_id) tm
+        where dm.demand_id = tm.tm_demand_id
+        <if test="null != department and '' != department">
+            and department = #{department}
+        </if>
+        <if test="null != bizSystem and '' != bizSystem">
+            and biz_system = #{bizSystem}
+        </if>
+        <!-- 添加业务系统数据权限 -->
+        <if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+            and biz_system in (
+            <foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        order by dm.create_time desc
+        limit #{limitMin}, #{limitMax}
+    </select>
+	
+    <select id="queryForMapCount" resultType="java.lang.Integer">
+        select count(1)
+        from cmdb_demand_manager dm,
+        (select
+          ${caseWhenSql}
+        demand_id tm_demand_id
+        from cmdb_demand_resource_type_value rtv
+        inner join cmdb_demand_resource_type rt on rtv.resource_type_id = rt.resource_type_id
+        group by demand_id) tm
+        where dm.demand_id = tm.tm_demand_id
+        <if test="null != department and '' != department">
+            and department = #{department}
+        </if>
+        <if test="null != bizSystem and '' != bizSystem">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+            and biz_system in (
+            <foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="queryExportData" resultType="java.util.LinkedHashMap">
+        select dm.*, tm.*
+        from cmdb_demand_manager dm,
+        (select
+        ${caseWhenSql}
+        demand_id tm_demand_id
+        from cmdb_demand_resource_type_value rtv
+        inner join cmdb_demand_resource_type rt on rtv.resource_type_id = rt.resource_type_id
+        group by demand_id) tm
+        where dm.demand_id = tm.tm_demand_id
+        <if test="null != department and '' != department">
+            and department = #{department}
+        </if>
+        <if test="null != bizSystem and '' != bizSystem">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+            and biz_system in (
+            <foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="queryExportDataCount" resultType="java.lang.Integer">
+        select count(1)
+        from cmdb_demand_manager dm,
+        (select
+        ${caseWhenSql}
+        demand_id tm_demand_id
+        from cmdb_demand_resource_type_value rtv
+        inner join cmdb_demand_resource_type rt on rtv.resource_type_id = rt.resource_type_id
+        group by demand_id) tm
+        where dm.demand_id = tm.tm_demand_id
+        <if test="null != department and '' != department">
+            and department = #{department}
+        </if>
+        <if test="null != bizSystem and '' != bizSystem">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+            and biz_system in (
+            <foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+</mapper>

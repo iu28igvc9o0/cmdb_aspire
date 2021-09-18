@@ -1,0 +1,339 @@
+<<<<<province_code_name_map>>>>>
+	{
+		"hn": "湖南",  "jl": "吉林",  "js": "江苏",  "jx": "江西",  
+		"ln": "辽宁",  "nm": "内蒙古",  "nx": "宁夏",  "sd": "山东",  "sx": "山西",  "sn": "陕西",  "sh": "上海",  "sc": "四川",  
+		"tj": "天津",  "xz": "西藏",  "xj": "新疆",  "yn": "云南",  "zj": "浙江",  "cq": "重庆",  "qh": "青海"
+	}
+<<<<<province_code_name_map>>>>>
+
+<<<<<province_map_agentidSecret>>>>>
+	{
+	    "福建":{
+	        "agent_id":"1000015",
+	        "secret":"CMtVHipCALvOcuWsA6TEzcGoz4CTEXfTUKJMaAH2h2o"
+	    },
+	    "西藏":{
+	        "agent_id":"1000018",
+	        "secret":"JMxio7u29hBurHnKyve6jkBAYDs5XVGW4EC_TgmC5VQ"
+	    },
+	    "上海":{
+	        "agent_id":"1000023",
+	        "secret":"bU5BV9g59PkMUxT8tuCpMXlE0S7M15HgdxFcyCMaAXk"
+	    },
+	    "湖北":{
+	        "agent_id":"1000003",
+	        "secret":"1PNHguEygBkwUsuI8xSt-aXi05xZQWOimiOanQA0QSs"
+	    },
+	    "湖南":{
+	        "agent_id":"1000005",
+	        "secret":"kBlzwRp_QbGI2L_1--VtHe5Oovz80bRKlymRJckWiZk"
+	    },
+	    "广东":{
+	        "agent_id":"22",
+	        "secret":"t-EZRLlLg4hF66ZPiMf8eBVzU8KtYsgoo70lkh9Bet0"
+	    },
+	    "重庆":{
+	        "agent_id":"1000009",
+	        "secret":"X5zoKrvbnZpKyT4Dkik0EH7PuCp2sunoNv03K518heM"
+	    },
+	    "安徽":{
+	        "agent_id":"1000004",
+	        "secret":"NXOWV1yKU-33PaKXYzdpM37HtJDcqGKjNu9gw50nGg0"
+	    },
+	    "四川":{
+	        "agent_id":"20",
+	        "secret":"mPGvBLbxPiyRvaoayoiTwe64mBlI4O18vN3FpGg8aW8"
+	    },
+	    "广西":{
+	        "agent_id":"1000002",
+	        "secret":"iDNeAjlXCP9xY86okkV7p92ZMlU1BlxIMPTov_x2VlM"
+	    },
+	    "河南":{
+	        "agent_id":"1000014",
+	        "secret":"yex_WhdM9uo9KolUrp1gAq75amAqguaeyOADL-44zqs"
+	    },
+	    "河北":{
+	        "agent_id":"1000013",
+	        "secret":"vV52MlEiQ-mrwOsPplDdcYazITxjYucrcZEb0Yf8U_Y"
+	    },
+	    "海南":{
+	        "agent_id":"1000010",
+	        "secret":"ludPe9884SaPDInS_FOqsU7U0hDtab0RBqDJE9a49wg"
+	    },
+	    "新疆":{
+	        "agent_id":"1000012",
+	        "secret":"7Yy5uuyP2xLUI-RLLJT8TuqDIK8VZ3Z_Pfz7pF4N0T4"
+	    },
+	    "云南":{
+	        "agent_id":"1000031",
+	        "secret":"p4T0ojtI_v8qfrpb1eQUGiBvNOZO-KMrMy6IFMPLj3s"
+	    },
+	    "甘肃":{
+	        "agent_id":"1000008",
+	        "secret":"XMEcCQOA9FOlbbJd0AixfbWXjK0M5mdhbNXVl1OGPVc"
+	    },
+	    "陕西":{
+	        "agent_id":"1000021",
+	        "secret":"LJpF8niRyVhVKJqOlDUNkDND8vSv1MOMnfACRgznMbg"
+	    },
+	    "山东":{
+	        "agent_id":"1000016",
+	        "secret":"JLLp0pXwn9RXuC9ijYPIMpyufNQcfSsfGsOD5E0lwCs"
+	    },
+	    "浙江":{
+	        "agent_id":"1000019",
+	        "secret":"3d_ouQBUWucCZOwn2QtwDsMboy1RsBDgaVXo7rmFffE"
+	    },
+	    "内蒙古":{
+	        "agent_id":"1000025",
+	        "secret":"VTWbncb-VFTQYR5SCJufIjbJfAwcekCgw7pnxVkoUuY"
+	    },
+	    "天津":{
+	        "agent_id":"1000020",
+	        "secret":"Yqxnu2RnMDSU7_aZ-SmsUrbT72mJEAlOrpkMhniZb94"
+	    },
+	    "辽宁":{
+	        "agent_id":"1000024",
+	        "secret":"W-62g-Uyh3qx_EOGgR4JBJHwHEk8N2ss2d-Ru2QOCPI"
+	    },
+	    "黑龙江":{
+	        "agent_id":"1000030",
+	        "secret":"xjHwRX_kJ-ApY31Ky0LxwiI_GFVlTo0tLelh8C8wXdQ"
+	    },
+	    "宁夏":{
+	        "agent_id":"1000017",
+	        "secret":"xz5rqOQ1qzPSJZxYJVMnHnfiKNVitO5tVLkCk2ai3nk"
+	    },
+	    "山西":{
+	        "agent_id":"1000029",
+	        "secret":"x3CQPS6yTE1QOPu6MPG-jP98faD6rEW0MYzys-nSMhQ"
+	    }
+	}
+<<<<<province_map_secret>>>>>
+
+
+<<<<<template_fetch_5xx_percent_rawalert>>>>>
+	{
+	  "size": 0, 
+	  "query": {
+	    "bool": {
+	      "must": [
+	      		{"range": {"@timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}}
+	      ]
+	    }
+	  },
+	  "aggs":{
+	        
+	        "composite_group":{
+	            "composite":{
+	                "sources":[
+	                	{"province_name_group":{"terms":{"field":"province"}}},
+	                    {"req_domain_group":{"terms":{"field":"host"}}},
+	                    {"manufacture_group":{"terms":{"field":"manufactor"}}}
+	                ],
+	                "size":500
+	            },
+	            "aggs":{
+	                "sum_5xx_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"5xx_count"
+	                    }
+	                },
+	                "total_req_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"tscount"
+	                    }
+	                },
+	                "last_log_time":{
+	                    "max":{
+	                        "field":"@timestamp"
+	                    }
+	                },
+	                "percent_5xx":{
+	                    "bucket_script":{
+	                        "buckets_path":{
+	                            "_sum_5xx_count":"sum_5xx_count",
+	                            "_total_req_count":"total_req_count"
+	                        },
+	                        "script":"params._total_req_count == 0 ? 0 : params._sum_5xx_count/params._total_req_count"
+	                    }
+	                }
+	            }
+	        }
+	    }
+	}
+<<<<<template_fetch_5xx_percent_rawalert>>>>>
+
+
+<<<<<scroll_load_whole_idx_data>>>>>
+	{
+	  "size": 3000,
+	  "sort": [
+	    "_doc"
+	  ]
+	}
+<<<<<scroll_load_whole_idx_data>>>>>
+
+<<<<<scroll_fetch_data>>>>>
+{
+    "scroll" : "${timeout}", 
+    "scroll_id" : "${scrollId}" 
+}
+<<<<<scroll_fetch_data>>>>>
+
+<<<<<template_bytedance_domainReq_percent>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {"range": {"timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}},
+	        	{
+	        	  "bool": {
+	        	    "should": []
+	        	  }
+	        	}
+            ]
+        }
+    },
+    "aggs":{
+        "req_domain_group":{
+            "terms":{
+                "field":"req_domain",
+                "size": ${reqDomainSize}
+            },
+            "aggs":{
+                "sum_4xx_count":{
+                    "sum":{
+                        "missing":0,
+                        "field":"4xx_count"
+                    }
+                },
+                "sum_5xx_count":{
+                    "sum":{
+                        "missing":0,
+                        "field":"5xx_count"
+                    }
+                },
+                "total_req_count":{
+                    "sum":{
+                        "missing":0,
+                        "field":"req_count"
+                    }
+                },
+                "last_log_time":{
+                    "max":{
+                        "field":"timestamp"
+                    }
+                }
+            }
+        }
+    }
+}
+<<<<<template_bytedance_domainReq_percent>>>>>
+
+<<<<<bytedance_alert_notify_body>>>>>
+{
+    "cdn": "ksyun",
+    "domain": "${reqDomain}",
+    "product_line": "vod",
+    "alert_name": "edge_code",
+    "alert_baseline": ${baseline},
+    "history_value": "0",
+    "current_value": "${rate}",
+    "alert_value": ${rate},
+    "alert_time": "${alertTime}",
+    "ack_time": "0001-01-01T00:00:00Z",
+    "extra": "${classify}"
+}
+<<<<<bytedance_alert_notify_body>>>>>
+
+<<<<<readMetricAlertListByAlertkeyAndLevel>>>>>
+{
+    "size": 10, 
+    "query":{
+        "bool":{
+            "must":[
+            	{
+                    "match":{
+                        "alert_key":"${alert_key}"
+                    }
+                },
+                {
+				    "range":{
+				        "alert_level":{
+				            "gte": ${alert_level}
+				        }
+				    }
+				},
+				{
+				    "match":{
+				        "moni_result": ${moni_result}
+				    }
+				},
+                {
+                    "match":{
+                        "history_flag": ${history_flag}
+                    }
+                }
+            ]
+        }
+    },
+    "sort": [
+       {
+         "alert_level": {
+         "order": "asc"
+        }
+      }
+    ]
+}
+<<<<<readMetricAlertListByAlertkeyAndLevel>>>>>
+
+<<<<<updateActiveMetricAlertByDocId>>>>>
+{
+  "doc": {
+    "content": "${content}",
+    "last_alert_time": ${last_alert_time},
+    "step_count": ${step_count},
+    "scan_mark_time": ${scan_mark_time},
+    "value_float": ${value_float},
+    "value_integer": ${value_integer},
+    "value_text": "${value_text}"
+  }
+}
+<<<<<updateActiveMetricAlertByDocId>>>>>
+
+
+<<<<<readWexinAlertListFromSyncMark>>>>>
+{
+  "size": 500, 	
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "scan_mark_time": {
+              "gt": ${syncMarkMill},
+        	  "lte": ${syncMarkMillEnd}
+            }
+          }
+        },
+        {
+          "match": {
+            "business_source": "OTT"
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "scan_mark_time": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+<<<<<readWexinAlertListFromSyncMark>>>>>

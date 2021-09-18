@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.fileCheck.dao.IFileIndicationPeriodConfigDAO">
+
+	<resultMap type="com.aspire.fileCheck.entity.FileIndicationPeriodConfigEntity" id="indicationConfigMap">
+		<id property="configId" column="config_id" jdbcType="TINYINT"/> 
+		<result property="indicationId" column="indication_id" jdbcType="TINYINT"/>
+		<result property="dictPeriod" column="dict_period" jdbcType="TINYINT"/>
+		<result property="fixFileCount" column="fix_file_count" jdbcType="TINYINT"/>
+		<result property="provinceCode" column="province_code" jdbcType="VARCHAR"/>
+		<result property="maxAlarmLimit" column="max_alarm_limit" jdbcType="TINYINT"/>
+		<result property="minAlarmLimit" column="min_alarm_limit" jdbcType="TINYINT"/>
+		<result property="fixFileSize" column="fix_file_size" jdbcType="TINYINT"/>
+		<association property="mirrorDict" javaType="com.aspire.fileCheck.entity.MirrorDictEntity">
+            <id property="dictId" column="dict_id"/>
+            <result property="dictName" column="dict_name"/>
+            <result property="dictValue" column="dict_value"/>
+        </association>
+		<association property="fileIndication" column="indication_id"
+					 select="com.aspire.fileCheck.dao.IFileIndicationDAO.getFileIndicationByIndicationId">
+		</association>
+        <association property="provinceEntity" column="province_code"
+					 select="com.aspire.mirror.dao.IIndicationProvinceDao.getIndicationProvinceByCode">
+		</association>
+	</resultMap>
+
+
+	<select id="getConfigsByIndicationId" resultMap="indicationConfigMap">
+		select * from (
+		select * from file_indication_period_config config where config.indication_id = #{indicationId})c
+		left join mirror_dict m on c.dict_period = m.dict_id
+	</select>
+	
+	<insert id="insertIndicationPeriodConfig" parameterType="com.aspire.fileCheck.entity.FileIndicationPeriodConfigEntity">
+		insert into file_indication_period_config_copy (province_code, indication_id, dict_period, fix_file_count,fix_file_size)
+		values
+		<foreach collection="configs" item="item" index="index" separator=",">
+			(#{item.provinceCode,jdbcType=VARCHAR},
+			#{item.indicationId,jdbcType=TINYINT},
+			#{item.dictPeriod,jdbcType=TINYINT},
+			#{item.fixFileCount,jdbcType=TINYINT},
+			#{item.fixFileSize,jdbcType=TINYINT})
+		</foreach>
+	</insert>
+
+	<select id="getConfigsByPeriod" resultMap="indicationConfigMap">
+		select config.* from file_indication_period_config config
+		inner join mirror_dict dict on (config.dict_period = dict.dict_id and dict_name = 'PERIOD')
+		where dict.dict_value like concat(#{period},'%')
+	</select>
+	<select id="getConfigsByIndicationCatalog" resultMap="indicationConfigMap">
+		select * from (
+		select config.* from file_indication_period_config config,file_indication file where
+		 config.indication_id = file.file_indication_id 
+		 <if test="catalog!=null and catalog!=''">
+							and file.file_indication_type=#{catalog}
+						</if>
+						)c
+		left join mirror_dict m on c.dict_period = m.dict_id
+	</select>
+	
+	 <update id="batchUpdateFileCount" parameterType="java.util.List">
+        update file_indication_period_config
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="fix_file_count =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                     when config_id=#{item.periodConfigId} then round(#{item.updateIntegrity}*fix_file_count)
+                </foreach>
+            </trim>
+        </trim>
+        where config_id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.periodConfigId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+	
+</mapper>

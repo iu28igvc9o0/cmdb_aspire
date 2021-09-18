@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.zabbixintegrate.daoAlert.KpiResultTransferMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.zabbixintegrate.daoAlert.po.KpiResultTransfer">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="config_id" property="configId" jdbcType="INTEGER"/>
+        <result column="result_transfer_name" property="resultTransferName" jdbcType="VARCHAR"/>
+        <result column="field_group" property="fieldGroup" jdbcType="VARCHAR"/>
+        <result column="source_field" property="sourceField" jdbcType="VARCHAR"/>
+        <result column="target_field" property="targetField" jdbcType="VARCHAR"/>
+        <result column="transfer_type" property="transferType" jdbcType="VARCHAR"/>
+        <result column="transfer_formula" property="transferFormula" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectByConfigId" resultMap="resultMap" parameterType="java.lang.String">
+        select id, config_id, result_transfer_name, field_group, source_field, target_field, transfer_type, transfer_formula, description, is_delete
+        from kpi_result_transfer krt
+        where krt.config_id=#{configId} and krt.is_delete = '0'
+    </select>
+</mapper>

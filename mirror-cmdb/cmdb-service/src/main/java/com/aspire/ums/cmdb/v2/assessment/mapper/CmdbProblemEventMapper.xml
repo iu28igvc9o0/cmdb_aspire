@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.v2.assessment.mapper.CmdbProblemEventMapper">
+
+    <resultMap id="problemEvent" type="com.aspire.ums.cmdb.assessment.payload.CmdbProblemEvent">
+        <result property="problemName" column="problem_name" jdbcType="VARCHAR"/>
+        <result property="problemLevel" column="problem_level" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="produce" column="produce" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="typicalType" column="typical_type" jdbcType="VARCHAR"/>
+        <result property="repaireBelong" column="repaire_belong" jdbcType="VARCHAR"/>
+        <result property="problemPartType" column="problem_part_type" jdbcType="VARCHAR"/>
+        <result property="problemStartTime" column="problem_start_time" jdbcType="TIMESTAMP"/>
+        <result property="bizRegainTime" column="biz_regain_time" jdbcType="TIMESTAMP"/>
+        <result property="problemRemoveTime" column="problem_remove_time" jdbcType="TIMESTAMP"/>
+        <result property="bizRegainLong" column="biz_regain_long" jdbcType="VARCHAR"/>
+        <result property="problemHandleLong" column="problem_handle_long" jdbcType="VARCHAR"/>
+        <result property="problemHandleCount" column="problem_handle_count" jdbcType="VARCHAR"/>
+        <result property="problemPartChangeCount" column="problem_part_change_count" jdbcType="VARCHAR"/>
+        <result property="reportDesc" column="reportDesc" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="quarter" column="quarter" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllData" resultMap="problemEvent">
+      select
+        id,
+        problem_name,
+        problem_level,
+        province,
+        city,
+        produce,
+        device_model,
+        device_type,
+        typical_type,
+        repaire_belong,
+        problem_part_type,
+        problem_start_time,
+        biz_regain_time,
+        problem_remove_time,
+        biz_regain_long,
+        problem_handle_long,
+        problem_handle_count,
+        problem_part_change_count,
+        reportDesc,
+        status,
+             quarter
+      from cmdb_device_problem_event
+      where 1=1
+        and quarter = #{quarter}
+        <if test="province != null and province != ''">
+            AND `province` = #{province}
+        </if>
+            order by createTime
+      <if test="startPageNum !=-1" >
+         LIMIT #{startPageNum},#{pageSize}
+      </if>
+    </select>
+    <select id="getAllDataCount" resultType="Integer">
+        select count(1)
+        from cmdb_device_problem_event
+        where 1=1 and quarter = #{quarter}
+        <if test="province != null and province != ''">
+            AND `province` = #{province}
+        </if>
+    </select>
+
+    <!--<insert id="insertOrUpdate" parameterType="java.util.List">-->
+        <!--REPLACE INTO cmdb_device_problem_event (-->
+            <!--id,-->
+            <!--problem_name,-->
+            <!--problem_level,-->
+            <!--province,-->
+            <!--city,-->
+            <!--factory,-->
+            <!--device_model,-->
+            <!--device_type,-->
+            <!--typical_type,-->
+            <!--repaire_belong,-->
+            <!--problem_part_type,-->
+            <!--problem_start_time,-->
+            <!--biz_regain_time,-->
+            <!--problem_remove_time,-->
+            <!--biz_regain_long,-->
+            <!--problem_handle_long,-->
+            <!--problem_handle_count,-->
+            <!--problem_part_change_count,-->
+            <!--reportDesc,-->
+            <!--status,-->
+            <!--createTime,-->
+            <!--create_username,-->
+            <!--create_user_phone)-->
+         <!--VALUES-->
+        <!--<foreach collection="list" item="item" index="index" separator=",">-->
+            <!--(#{item.id},-->
+            <!--#{item.problemName},-->
+            <!--#{item.problemLevel},-->
+            <!--#{item.province},-->
+            <!--#{item.city},-->
+            <!--#{item.factory},-->
+            <!--#{item.deviceModel},-->
+            <!--#{item.deviceType},-->
+            <!--#{item.typicalType},-->
+            <!--#{item.repaireBelong},-->
+            <!--#{item.problemPartType},-->
+            <!--#{item.problemStartTime},-->
+            <!--#{item.bizRegainTime},-->
+            <!--#{item.problemRemoveTime},-->
+            <!--TIMESTAMPDIFF(HOUR, #{item.problemStartTime}, #{item.bizRegainTime}),-->
+            <!--TIMESTAMPDIFF(HOUR, #{item.problemStartTime}, #{item.problemRemoveTime}),-->
+            <!--#{item.problemHandleCount},-->
+            <!--#{item.problemPartChangeCount},-->
+            <!--#{item.reportDesc},-->
+            <!--#{item.status},-->
+            <!--now(),-->
+            <!--#{item.createUsername},-->
+            <!--#{item.createUserPhone})-->
+        <!--</foreach>-->
+    <!--</insert >-->
+    <insert id="insertOrUpdate" parameterType="java.util.List">
+        INSERT INTO cmdb_device_problem_event (
+            id,
+            problem_name,
+            problem_level,
+            province,
+            city,
+            produce,
+            device_model,
+            device_type,
+            typical_type,
+            repaire_belong,
+            problem_part_type,
+            problem_start_time,
+            biz_regain_time,
+            problem_remove_time,
+            biz_regain_long,
+            problem_handle_long,
+            problem_handle_count,
+            problem_part_change_count,
+            reportDesc,
+            status,
+            createTime,
+            create_username,
+            create_user_phone,quarter)
+        VALUES
+            <foreach collection="list" item="item" index="index" separator=",">
+                (#{item.id},
+                #{item.problemName},
+                #{item.problemLevel},
+                #{item.province},
+                #{item.city},
+                #{item.produce},
+                #{item.deviceModel},
+                #{item.deviceType},
+                #{item.typicalType},
+                #{item.repaireBelong},
+                #{item.problemPartType},
+                #{item.problemStartTime},
+                #{item.bizRegainTime},
+                #{item.problemRemoveTime},
+                #{item.bizRegainLong},
+                #{item.problemHandleLong},
+                #{item.problemHandleCount},
+                #{item.problemPartChangeCount},
+                #{item.reportDesc},
+                #{item.status},
+                now(),
+                #{item.createUsername},
+                #{item.createUserPhone},
+                 #{item.quarter})
+            </foreach>
+        ON DUPLICATE KEY UPDATE
+            problem_name = values(problem_name),
+            problem_level = values(problem_level),
+            city = values(city),
+            produce = values(produce),
+            device_model = values(device_model),
+            device_type = values(device_type),
+            typical_type = values(typical_type),
+            repaire_belong = values(repaire_belong),
+            problem_part_type = values(problem_part_type),
+            problem_start_time = values(problem_start_time),
+            biz_regain_time = values(biz_regain_time),
+            problem_remove_time = values(problem_remove_time),
+            biz_regain_long = values(biz_regain_long) ,
+            problem_handle_long = values(problem_handle_long),
+            problem_handle_count = values(problem_handle_count),
+            problem_part_change_count = values(problem_part_change_count),
+            reportDesc = values(reportDesc),
+            status = 2,
+            quarter=values(quarter)
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from cmdb_device_problem_event where id=#{id}
+    </delete>
+
+    <delete id="deleteByBatch" parameterType="java.lang.String">
+        delete from cmdb_device_problem_event where id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateStatus">
+        update cmdb_device_problem_event set status = #{status}
+        where province = #{province} and  quarter = #{quarter}
+    </update>
+</mapper>

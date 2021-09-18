@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.instance.mapper.CmdbContactsMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="contactsMap" type="com.aspire.ums.cmdb.instance.payload.CmdbContactsResponse">
+        <result column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_CM_CONTACT" property="businessCmContact" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_CM_TEL" property="businessCmTel" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_CM_MAIL" property="businessCmMail" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_LEVEL1" property="businessLevel1" jdbcType="VARCHAR"/>
+        <result column="BUSINESS_LEVEL2" property="businessLevel2" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="contactsColumn">
+        cbi.ID,
+        cbi.BUSINESS_CM_CONTACT,
+        cbi.BUSINESS_CM_TEL,
+        cbi.BUSINESS_CM_MAIL,
+        cbi.BUSINESS_LEVEL1,
+        cbi.BUSINESS_LEVEL2
+    </sql>
+
+    <!--    根据实例ID查询接口人信息-->
+    <select id="findContactsById" resultMap="contactsMap" parameterType="string">
+        select
+        <include refid="contactsColumn"/>
+        from
+        cmdb_business_interface cbi
+        inner join ${tableName} cirii
+        on IFNULL(cbi.BUSINESS_LEVEL1,'') = IFNULL(cirii.online_business,'')
+        and IFNULL(cbi.BUSINESS_LEVEL2,'') = IFNULL(cirii.sub_business_module,'')
+        where cirii.id = #{instanceId}
+    </select>
+
+</mapper>

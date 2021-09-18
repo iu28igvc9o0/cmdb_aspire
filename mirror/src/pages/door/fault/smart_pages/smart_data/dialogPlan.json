@@ -1,0 +1,222 @@
+{
+    "formList": [{
+        "label": "栅格布局",
+        "type": "row",
+        "columnName": "row_1604657108111",
+        "icon-dev": "iconfont iconicon-editor-grid",
+        "operation": [],
+        "hidden": false,
+        "rowTypeFlex": false,
+        "formFields": [{
+            "span": 12,
+            "childList": [{
+                "label": "故障报告名称：",
+                "type": "text",
+                "columnName": "reportTitle",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                    "disabled": false,
+                    "readonly": false,
+                    "text": ""
+                },
+                "style": {
+                    "word-break": "break-all"
+                },
+                "isCompare": true,
+                "name": "basic",
+                "labelWidth": 160
+            }]
+        }, {
+            "span": 12,
+            "childList": [{
+                "label": "故障分类 :",
+                "type": "text",
+                "columnName": "reportType",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                    "disabled": false,
+                    "readonly": false
+                },
+                "style": {
+                    "word-break": "break-all"
+                },
+                "isCompare": true,
+                "name": "basic",
+                "labelWidth": 160
+            }]
+        }, {
+            "span": 12,
+            "childList": [{
+                "label": "事件性质:  ",
+                "type": "text",
+                "columnName": "reportNature",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                    "disabled": false,
+                    "readonly": false,
+                    "text": ""
+                },
+                "style": {
+                    "word-break": "break-all"
+                },
+                "isCompare": true,
+                "name": "basic",
+                "labelWidth": 160
+            }]
+        }, {
+            "span": 12,
+            "childList": [{
+                "label": "后续计划：",
+                "type": "text",
+                "columnName": "reportFollowPlan",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                    "disabled": false,
+                    "readonly": false
+                },
+                "style": {
+                    "word-break": "break-all"
+                },
+                "isCompare": true,
+                "name": "basic",
+                "labelWidth": 160
+            }]
+        }],
+        "name": "layout",
+        "labelWidth": 160
+    }, {
+        "label": "后续计划完成说明：",
+        "type": "textarea",
+        "columnName": "reportFollowPlanExplain",
+        "defaultValue": "",
+        "isModel": true,
+        "required": false,
+        "rules": [],
+        "isLabelWidth": false,
+        "icon-dev": "iconfont iconduohangwenben",
+        "icon": "",
+        "class": "",
+        "operation": [],
+        "hidden": false,
+        "props": {
+            "placeholder": "",
+            "maxlength": "",
+            "show-word-limit": false,
+            "clearable": true,
+            "disabled": false,
+            "readonly": false,
+            "rows": "4",
+            "text": ""
+        },
+        "span": 24,
+        "width": "100%",
+        "isCompare": true,
+        "isDisabledRequired": false,
+        "isReadonlyRequired": false,
+        "name": "basic",
+        "labelWidth": 160
+    }, {
+        "label": "",
+        "type": "buttonGroup",
+        "isLabelWidth": false,
+        "columnName": "buttonGroup_1604657257530",
+        "icon-dev": "iconfont iconanniu",
+        "span": 24,
+        "hidden": false,
+        "position": "center",
+        "operation": [],
+        "toolList": [{
+            "columnName": "btn-plan-save",
+            "type": "primary",
+            "icon": "",
+            "label": "确定",
+            "interactive": "",
+            "validateProp": "",
+            "apiName": "",
+            "class": "",
+            "default": "show"
+        }, {
+            "columnName": "btn-plan-cancel",
+            "type": "",
+            "icon": "",
+            "label": "取消",
+            "interactive": "",
+            "validateProp": "",
+            "apiName": "",
+            "class": "",
+            "default": "show"
+        }],
+        "name": "layout",
+        "labelWidth": 160
+    }],
+    "formConfig": {
+        "labelWidth": 160,
+        "labelPosition": "left",
+        "starPostion": "left",
+        "class": "",
+        "exportName": "表单json",
+        "defaultClass": "default",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前：",
+        "bpmProps": {
+            "initPrefix": "/web/wf",
+            "actionPrefix": "/web/business",
+            "proxy": "",
+            "flowKey": "bpmFlowKey",
+            "instanceId": "",
+            "taskId": "",
+            "readOnly": ""
+        }
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "reportTitle": "",
+        "reportType": "",
+        "reportNature": "",
+        "reportFollowPlan": "",
+        "reportFollowPlanExplain": ""
+    }
+}

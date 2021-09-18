@@ -1,0 +1,48 @@
+
+server:
+  port: 2323
+eureka: 
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://111.13.111.170:8761/eureka/    
+      
+hystrix:    
+  command:    
+    default:    
+      execution:    
+        isolation:    
+          thread:    
+            timeoutInMilliseconds: 30000 #缺省为1000          
+
+# cdn db
+cdn.dbConfig: 
+  switch: true
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=utf-8
+  username: root
+  password: 1234@qwer
+  mapperLocations: 
+    - classpath*:sqlmap/cdn/*Mapper.xml
+    
+cdn.deviceserver.sync.interval: 30000    
+    
+# zabbix db      
+zabbix.dbConfig: 
+  switch: true
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=utf-8
+  username: root
+  password: 1234@qwer
+  mapperLocations: 
+    - classpath*:sqlmap/zabbix/*Mapper.xml      
+
+logging:
+  level:
+    org.springframework: info
+    com.alibaba.druid: info
+    com.aspire.ums: info
+

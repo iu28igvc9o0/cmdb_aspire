@@ -1,0 +1,78 @@
+#
+#\u4E1A\u52A1\u9700\u6C42\u914D\u7F6E\u6587\u4EF6
+#\u5982\u914D\u7F6E\u4E2D\u5FC3\u83B7\u53D6\u4E0D\u5230\u914D\u7F6E\uFF0C\u4EE5\u6B64\u5904\u4E3A\u51C6
+#
+server:
+  port: 2222
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+#jdbc
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.1.5.119:3306/cmdb?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    test-on-borrow: false
+    test-while-idle: true
+    time-between-eviction-runs-millis: 3600000
+
+mybatis:
+  configLocation: classpath:mybatis-config.xml
+#ftp
+ftp:
+  address: 10.12.12.139
+  port: 21
+  user: ftp
+  password: aspire+888
+
+#icon default max size
+iconSize: 300000
+
+logging:
+  level:
+    org.springframework: info
+    com.alibaba.druid: info
+
+local:
+  kafka:
+    bootstrap-servers: 10.1.5.119:9092
+    producer:
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: test-consumer-group
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 500
+      session.timeout.ms: 60000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #listener:
+      #concurrency: 3    # \u914D\u7F6Epartions\u5206\u533A\u6570, \u4FDD\u8BC1\u6BCF\u4E2A\u5206\u533A\u4E00\u4E2A\u6D88\u8D39\u7EBF\u7A0B
+    properties:
+      session.timeout.ms: 60000
+#     max.poll.records: 10
+
+spring.mail.default-encoding: UTF-8
+spring.mail.host: "smtp.163.com"
+#发送者的邮箱账号
+spring.mail.username: "15021314201@163.com"
+#发送者的邮箱密码
+spring.mail.password: "544357978"
+#端口
+spring.mail.port: 25
+#协议
+spring.mail.protocol: "smtp"
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: true
+spring.mail.properties.mail.smtp.starttls.required: true
+#alert-service接口地址
+cmdb.inferface.alert.insert: "http://10.1.5.120:28130/v1/alerts/create"

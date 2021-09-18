@@ -1,0 +1,23 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbIncrementStatistMapper" >
+
+    <select id="statistIncrementByTime" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbIncrementStatistRequest" resultType="java.util.HashMap">
+        select month(insert_time) month,count(1) count
+        from cmdb_instance
+        where 1=1 and year(insert_time) = #{year}
+        <include refid="where_sql"></include>
+        GROUP BY DATE_FORMAT(insert_time, '%Y-%m')
+    </select>
+
+    <sql id="where_sql">
+        <if test="resourcePool != null and resourcePool != ''">
+            and idcType = #{resourcePool}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            and bizSystem = #{bizSystem}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+    </sql>
+</mapper>

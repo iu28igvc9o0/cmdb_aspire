@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     longfeng
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.monitorHttp.MonitorHttpConfigDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpConfig" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="monitor_name" column="monitor_name" jdbcType="VARCHAR"/>
+        <result property="biz_system_id" column="biz_system_id" jdbcType="VARCHAR"/>
+        <result property="alert_level" column="alert_level" jdbcType="INTEGER"/>
+        <result property="test_period" column="test_period" jdbcType="INTEGER"/>
+        <result property="idcType" column="idcType" jdbcType="VARCHAR"/>
+        <result property="isIntranet" column="isIntranet" jdbcType="INTEGER"/>
+        <result property="intranet_idcType" column="intranet_idcType" jdbcType="VARCHAR"/>
+        <result property="extranet" column="extranet" jdbcType="VARCHAR"/>
+        <result property="create_staff" column="create_staff" jdbcType="VARCHAR"/>
+        <result property="update_staff" column="update_staff" jdbcType="VARCHAR"/>
+         <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="request_http_addr" column="request_http_addr" jdbcType="VARCHAR"/>
+        <result property="request_method" column="request_method" jdbcType="VARCHAR"/>
+        <result property="response_type" column="response_type" jdbcType="VARCHAR"/>
+        <result property="regular_check" column="regular_check" jdbcType="VARCHAR"/>
+         <result property="response_code" column="response_code" jdbcType="INTEGER"/>
+        <result property="request_parm" column="request_parm" jdbcType="VARCHAR"/>
+        <result property="json_attribute" column="json_attribute" jdbcType="VARCHAR"/>
+        <result property="json_value" column="json_value" jdbcType="VARCHAR"/>
+        <result property="json_operator" column="json_operator" jdbcType="VARCHAR"/>
+        <result property="time_out" column="time_out" jdbcType="INTEGER"/>
+        <result property="html_format" column="html_format" jdbcType="VARCHAR"/>
+        <result property="http_content_type" column="http_content_type" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="result" column="result" jdbcType="INTEGER"/>
+        <result property="hId" column="hId" jdbcType="INTEGER"/>
+        <result property="idcTypeUrl" column="idcTypeUrl" jdbcType="VARCHAR"/>
+        <!--  <association property="monitorHttpHis"
+                     select="com.aspire.mirror.alert.server.dao.monitorHttp.MonitorHttpHisDao.getLatestHis"
+                     column="id">
+        </association>-->
+    </resultMap>
+
+    <sql id="baseWhereClause">
+        <where>
+            1=1
+            <if test="biz_system_id != null and  biz_system_id != ''">
+                and biz_system_id = #{biz_system_id}
+            </if>
+            <if test="idcType != null and  idcType != ''">
+                and idcType = #{idcType}
+            </if>
+            <if test="monitor_name != null and  monitor_name != ''">
+                and monitor_name = like concat(concat('%',#{monitor_name}),'%')
+            </if>
+            <if test="request_http_addr != null and  request_http_addr != ''">
+                and request_http_addr like concat(concat('%',#{request_http_addr}),'%')
+            </if>
+            <if test="status != null ">
+                and status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="baseColumnList">
+    	id,monitor_name,biz_system_id,alert_level,test_period,idcType,isIntranet,intranet_idcType,
+    	extranet,create_staff,update_staff,create_time,update_time,request_http_addr,
+    	request_method,response_type,regular_check,response_code,request_parm
+    	,json_attribute,json_value,json_operator,time_out,html_format,http_content_type,status,idcTypeUrl
+	</sql>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpConfig" useGeneratedKeys="true" keyProperty="id">
+		insert into
+			monitor_http_config(monitor_name,biz_system_id,alert_level,test_period,idcType,isIntranet,intranet_idcType,
+    	extranet,create_staff,update_staff,create_time,request_http_addr,
+    	request_method,response_type,regular_check,response_code,request_parm
+    	,json_attribute,json_value,json_operator,time_out,html_format,http_content_type,status,idcTypeUrl)
+		values(
+			#{monitor_name,jdbcType=VARCHAR} ,
+			#{biz_system_id,jdbcType=VARCHAR} ,
+			#{alert_level,jdbcType=INTEGER} ,
+			#{test_period,jdbcType=INTEGER} ,
+			#{idcType,jdbcType=VARCHAR},
+			#{isIntranet,jdbcType=INTEGER},
+			#{intranet_idcType,jdbcType=VARCHAR},
+			#{extranet,jdbcType=VARCHAR},
+			#{create_staff,jdbcType=VARCHAR} ,
+			#{update_staff,jdbcType=VARCHAR} ,
+			#{create_time,jdbcType=TIMESTAMP} ,
+			#{request_http_addr,jdbcType=VARCHAR},
+			#{request_method,jdbcType=VARCHAR},
+			#{response_type,jdbcType=VARCHAR},
+			#{regular_check,jdbcType=VARCHAR},
+			#{response_code,jdbcType=INTEGER} ,
+			#{request_parm,jdbcType=VARCHAR} ,
+			#{json_attribute,jdbcType=VARCHAR} ,
+			#{json_value,jdbcType=VARCHAR} ,
+			#{json_operator,jdbcType=TIMESTAMP},
+			#{time_out,jdbcType=INTEGER},
+			#{html_format,jdbcType=VARCHAR},
+			#{http_content_type,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR} ,
+			#{idcTypeUrl,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	
+    <!-- 列表 -->
+    <select id="pageList" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpReq" resultMap="baseResultMap">
+      SELECT * from(
+		select cc.*,hh.result from (
+		select c.*,max(h.id) hId from (
+		    select <include refid="baseColumnList" />  from monitor_http_config 
+		       <include refid="baseWhereClause" />
+		        )c left join monitor_http_his h
+		       on c.id = h.http_config_id GROUP by c.id) cc left join monitor_http_his hh
+		on  hh.id = cc.hId)m 
+		where 1=1
+        <if test="runStatus != null ">
+                and m.result = #{runStatus}
+            </if>
+        order by update_time desc
+         <if test="pageNo != null and pageSize != null">
+        limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="pageListCount" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpReq" resultType="java.lang.Integer">
+        SELECT count(*) from(
+		select cc.*,hh.result from (
+		select c.*,max(h.id) hId from (
+		    select <include refid="baseColumnList" />  from monitor_http_config 
+		       <include refid="baseWhereClause" />
+		        )c left join monitor_http_his h
+		       on c.id = h.http_config_id GROUP by c.id) cc left join monitor_http_his hh
+		on  hh.id = cc.hId)m
+		where 1=1
+        <if test="runStatus != null ">
+                and m.result = #{runStatus}
+            </if>
+    </select>
+    <select id="getByName"  resultMap="baseResultMap">
+        select  <include refid="baseColumnList" />
+         from monitor_http_config
+        where monitor_name = #{name}
+    </select>
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from monitor_http_config  where id = #{id}
+    </select>
+    
+   
+   <!-- 修改 -->
+	<update id="update" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpConfig">
+		update monitor_http_config set 
+		monitor_name = #{monitor_name},
+		biz_system_id = #{biz_system_id},
+		alert_level = #{alert_level},
+		test_period = #{test_period},
+		idcType = #{idcType},
+		isIntranet = #{isIntranet},
+		intranet_idcType = #{intranet_idcType},
+		extranet = #{extranet},
+		update_staff = #{update_staff},
+		request_http_addr = #{request_http_addr},
+		request_method = #{request_method},
+		response_type = #{response_type},
+		regular_check = #{regular_check},
+		response_code = #{response_code},
+		request_parm = #{request_parm},
+		json_attribute = #{json_attribute},
+		json_value = #{json_value},
+		json_operator = #{json_operator},
+		time_out = #{time_out},
+		html_format = #{html_format},
+		http_content_type = #{http_content_type},
+		status = #{status},
+		idcTypeUrl = #{idcTypeUrl}
+		where id = #{id}
+	</update>
+	
+	<update id="updateStatus" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpConfig">
+		update monitor_http_config set 
+		update_staff = #{update_staff},
+		status = #{status}
+		where id = #{id}
+	</update>
+   
+    <delete id="deleteByPrimaryKey" parameterType="Integer">
+		DELETE FROM monitor_http_config WHERE id = #{id}
+	</delete>
+</mapper>

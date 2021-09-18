@@ -1,0 +1,31 @@
+/deep/ .el-menu--popup {
+    padding: 0;
+}
+.menu-text {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    &:hover {
+        color: #333;
+    }
+}
+.resourceManagement {
+    height: 100%;
+    width: 100%;
+    padding: 0 10px;
+
+    .managementRight {
+        float: left;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .form {
+        margin: 10px 10px 0 0;
+        background: #fff;
+        padding: 5px 0;
+        box-shadow: 0px 0px 8px 0px rgba(4, 0, 0, 0.13);
+        border-radius: 6px;
+    }
+}

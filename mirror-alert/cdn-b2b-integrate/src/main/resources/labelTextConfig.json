@@ -1,0 +1,3253 @@
+<<<<<reidx_overall_performance>>>>>
+	{
+		"conflicts":"proceed",
+	    "source":{
+	        "index":[
+	            "hn:cdn_performance_v1*"
+	        ],
+	        "type":[
+	
+	        ],
+	        "size":1000,
+	        "query":{
+	            "range":{
+	                "timestamp":{
+	                    "gte":"now-120s/m",
+	                    "lte":"now",
+	                    "boost":1
+	                }
+	            }
+	        }
+	    },
+	    "dest":{
+	        "index":"pgh_test_performance",
+	        "type":"doc",
+	        "op_type":"create",
+	        "version_type":"external"
+	    },
+	    "script":{
+	        "source":"
+	          Map theSrc = ctx['_source'];
+			  String reqDomain = theSrc.get("req_domain");
+			  if (reqDomain != null && reqDomain.trim().length() > 0) {
+			    boolean found = false;
+			    Map endWithMap = params.endwith;
+			    Map equalWithMap = params.equalwith;
+			    
+			    for (Map.Entry entry : endWithMap.entrySet()) {
+		      	if (reqDomain.trim().endsWith(entry.getKey())) {
+		      	  ctx._source.cp_name = entry.getValue();
+		      	  found = true;
+		      	  break;
+		    	  }
+			    }
+			    
+			    if (!found) {
+			      for (Map.Entry entry : endWithMap.entrySet()) {
+		        	if (reqDomain.trim().equalsIgnoreCase(entry.getKey())) {
+		        	  ctx._source.cp_name = entry.getValue();
+		        	  break;
+		      	  }
+		  	    }
+			  }
+			}",
+	        "lang":"painless",
+	        "params":{
+	            "endwith": {
+	              ".steampowered.com.8686c.com":"网宿科技"
+	            },
+	            "equalwith": {
+	              "023it168.com":"山东非TOP55"
+	            }
+	        }
+	  }
+	    
+	}
+<<<<<reidx_overall_performance>>>>>
+
+
+<<<<<script_reidx_performace>>>>>
+	  Map theSrc = ctx['_source'];
+	  String reqDomain = theSrc.get("req_domain");
+	  if (reqDomain != null && reqDomain.trim().length() > 0) {
+	    boolean found = false;
+	    Map endWithMap = params.endwith;
+	    Map equalWithMap = params.equalwith;
+	    
+	    for (Map.Entry entry : endWithMap.entrySet()) {
+      	if (reqDomain.trim().endsWith(entry.getKey())) {
+      	  	ctx._source.cp_name = entry.getValue();
+      	  	found = true;
+      	  	break;
+    	  }
+	    }
+	    
+	    if (!found) {
+	      for (Map.Entry entry : endWithMap.entrySet()) {
+        	if (reqDomain.trim().equalsIgnoreCase(entry.getKey())) {
+        	  ctx._source.cp_name = entry.getValue();
+        	  break;
+      	  }
+  	    }
+	  }
+	}
+<<<<<script_reidx_performace>>>>>
+
+<<<<<province_code_map_name>>>>>
+{"hi":"海南","xz":"西藏","jl":"吉林","ln":"辽宁","fj":"福建","hn":"湖南","bj":"北京","js":"江苏","nx":"宁夏","jx":"江西",
+"sc":"四川","sd":"山东","sh":"上海","yn":"云南","qh":"青海","sn":"陕西","gd":"广东","sx":"山西","hlj":"黑龙江","ah":"安徽",
+"gs":"甘肃","cq":"重庆","zj":"浙江","gx":"广西","xj":"新疆","gz":"贵州","tj":"天津","ha":"河南","hb":"湖北","he":"河北","nm":"内蒙古"}
+<<<<<province_code_map_name>>>>>
+
+<<<<<province_map_agentidSecret>>>>>
+	{
+	    "福建":{
+	        "agent_id":"1000015",
+	        "secret":"CMtVHipCALvOcuWsA6TEzcGoz4CTEXfTUKJMaAH2h2o"
+	    },
+	    "西藏":{
+	        "agent_id":"1000018",
+	        "secret":"JMxio7u29hBurHnKyve6jkBAYDs5XVGW4EC_TgmC5VQ"
+	    },
+	    "上海":{
+	        "agent_id":"1000023",
+	        "secret":"bU5BV9g59PkMUxT8tuCpMXlE0S7M15HgdxFcyCMaAXk"
+	    },
+	    "湖北":{
+	        "agent_id":"1000003",
+	        "secret":"1PNHguEygBkwUsuI8xSt-aXi05xZQWOimiOanQA0QSs"
+	    },
+	    "湖南":{
+	        "agent_id":"1000005",
+	        "secret":"kBlzwRp_QbGI2L_1--VtHe5Oovz80bRKlymRJckWiZk"
+	    },
+	    "广东":{
+	        "agent_id":"22",
+	        "secret":"t-EZRLlLg4hF66ZPiMf8eBVzU8KtYsgoo70lkh9Bet0"
+	    },
+	    "重庆":{
+	        "agent_id":"1000009",
+	        "secret":"X5zoKrvbnZpKyT4Dkik0EH7PuCp2sunoNv03K518heM"
+	    },
+	    "安徽":{
+	        "agent_id":"1000004",
+	        "secret":"NXOWV1yKU-33PaKXYzdpM37HtJDcqGKjNu9gw50nGg0"
+	    },
+	    "四川":{
+	        "agent_id":"20",
+	        "secret":"mPGvBLbxPiyRvaoayoiTwe64mBlI4O18vN3FpGg8aW8"
+	    },
+	    "广西":{
+	        "agent_id":"1000002",
+	        "secret":"iDNeAjlXCP9xY86okkV7p92ZMlU1BlxIMPTov_x2VlM"
+	    },
+	    "河南":{
+	        "agent_id":"1000014",
+	        "secret":"yex_WhdM9uo9KolUrp1gAq75amAqguaeyOADL-44zqs"
+	    },
+	    "河北":{
+	        "agent_id":"1000013",
+	        "secret":"vV52MlEiQ-mrwOsPplDdcYazITxjYucrcZEb0Yf8U_Y"
+	    },
+	    "海南":{
+	        "agent_id":"1000010",
+	        "secret":"ludPe9884SaPDInS_FOqsU7U0hDtab0RBqDJE9a49wg"
+	    },
+	    "新疆":{
+	        "agent_id":"1000012",
+	        "secret":"7Yy5uuyP2xLUI-RLLJT8TuqDIK8VZ3Z_Pfz7pF4N0T4"
+	    },
+	    "云南":{
+	        "agent_id":"1000031",
+	        "secret":"p4T0ojtI_v8qfrpb1eQUGiBvNOZO-KMrMy6IFMPLj3s"
+	    },
+	    "甘肃":{
+	        "agent_id":"1000008",
+	        "secret":"XMEcCQOA9FOlbbJd0AixfbWXjK0M5mdhbNXVl1OGPVc"
+	    },
+	    "陕西":{
+	        "agent_id":"1000021",
+	        "secret":"LJpF8niRyVhVKJqOlDUNkDND8vSv1MOMnfACRgznMbg"
+	    },
+	    "山东":{
+	        "agent_id":"1000016",
+	        "secret":"JLLp0pXwn9RXuC9ijYPIMpyufNQcfSsfGsOD5E0lwCs"
+	    },
+	    "浙江":{
+	        "agent_id":"1000019",
+	        "secret":"3d_ouQBUWucCZOwn2QtwDsMboy1RsBDgaVXo7rmFffE"
+	    },
+	    "内蒙古":{
+	        "agent_id":"1000025",
+	        "secret":"VTWbncb-VFTQYR5SCJufIjbJfAwcekCgw7pnxVkoUuY"
+	    },
+	    "天津":{
+	        "agent_id":"1000020",
+	        "secret":"Yqxnu2RnMDSU7_aZ-SmsUrbT72mJEAlOrpkMhniZb94"
+	    },
+	    "辽宁":{
+	        "agent_id":"1000024",
+	        "secret":"W-62g-Uyh3qx_EOGgR4JBJHwHEk8N2ss2d-Ru2QOCPI"
+	    },
+	    "黑龙江":{
+	        "agent_id":"1000030",
+	        "secret":"xjHwRX_kJ-ApY31Ky0LxwiI_GFVlTo0tLelh8C8wXdQ"
+	    },
+	    "宁夏":{
+	        "agent_id":"1000017",
+	        "secret":"xz5rqOQ1qzPSJZxYJVMnHnfiKNVitO5tVLkCk2ai3nk"
+	    },
+	    "山西":{
+	        "agent_id":"1000029",
+	        "secret":"x3CQPS6yTE1QOPu6MPG-jP98faD6rEW0MYzys-nSMhQ"
+	    }
+	}
+<<<<<province_map_secret>>>>>
+
+
+<<<<<compress_overall_by5min>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {"range": {"timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}},
+        		{"term": {"province_name": {"value": "${province_name}"}}}
+            ]
+        }
+    },
+    "aggs":{
+        "composite_group":{
+            "composite":{
+                "sources":[
+                    {"req_domain_group":{ "terms":{"field":"req_domain" }}},
+                    {"service_type_group":{ "terms":{ "field":"service_type" }}}
+                ],
+                "size":200
+            },
+            "aggs":{
+                "200_count":{
+                    "sum":{
+                        "field":"2xx_count"
+                    }
+                },
+                "206_count":{
+                    "sum":{
+                        "field":"206_count"
+                    }
+                },
+                "301_count":{
+                    "sum":{
+                        "field":"301_count"
+                    }
+                },
+                "302_count":{
+                    "sum":{
+                        "field":"302_count"
+                    }
+                },
+                "403_count":{
+                    "sum":{
+                        "field":"403_count"
+                    }
+                },
+                "404_count":{
+                    "sum":{
+                        "field":"404_count"
+                    }
+                },
+                "502_count":{
+                    "sum":{
+                        "field":"502_count"
+                    }
+                },
+                "503_count":{
+                    "sum":{
+                        "field":"503_count"
+                    }
+                },
+                "4xx_count":{
+                    "sum":{
+                        "field":"4xx_count"
+                    }
+                },
+                "1xx_count":{
+                    "sum":{
+                        "field":"1xx_count"
+                    }
+                },
+                "5xx_count":{
+                    "sum":{
+                        "field":"5xx_count"
+                    }
+                },
+                "req_count":{
+                    "sum":{
+                        "field":"req_count"
+                    }
+                },
+                "fbt_sum":{
+                    "sum":{
+                        "field":"fbt_sum"
+                    }
+                },
+                "send_time":{
+                    "sum":{
+                        "field":"send_time"
+                    }
+                },
+                "file_hit_count":{
+                    "sum":{
+                        "field":"file_hit_count"
+                    }
+                },
+                "over_all_file_size":{
+                    "sum":{
+                        "field":"over_all_file_size"
+                    }
+                },
+                "server_all_size":{
+                    "sum":{
+                        "field":"server_all_size"
+                    }
+                },
+                "unique_cp_name":{
+                    "terms":{
+                        "field":"cp_name",
+                        "size":1
+                    }
+                }
+            }
+        }
+    }
+}
+<<<<<compress_overall_by5min>>>>>
+
+<<<<<template_fetch_5xx_percent_rawalert>>>>>
+	{
+	  "size": 0, 
+	  "query": {
+	    "bool": {
+	      "must": [
+	      		{"range": {"timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}}
+	      ],
+	      "must_not": [
+	      	{
+	      	   "match": {
+	            "manufacturer": "烽火"
+	          }
+	      	},
+	        {
+	          "match": {
+	            "node_ip.keyword": "127.0.0.1"
+	          }
+	        }
+	      ]
+	    }
+	  },
+	  "aggs":{
+	        "composite_group":{
+	            "composite":{
+	                "sources":[
+	                	{"province_name_group":{"terms":{"field":"province_name"}}},
+	                    {"req_domain_group":{"terms":{"field":"req_domain"}}},
+	                    {"cp_name_group":{"terms":{"field":"cp_name"}}},
+	                    {"manufacture_group":{"terms":{"field":"manufacturer"}}}
+	                ],
+	                "size":500
+	            },
+	            "aggs":{
+	                "sum_5xx_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"5xx_count"
+	                    }
+	                },
+	                "sum_606_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"606_count"
+	                    }
+	                },
+	                "total_req_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"req_count"
+	                    }
+	                },
+	                "last_log_time":{
+	                    "max":{
+	                        "field":"timestamp"
+	                    }
+	                },
+	                "percent_5xx":{
+	                    "bucket_script":{
+	                        "buckets_path":{
+	                            "_sum_5xx_count":"sum_5xx_count",
+	                            "_total_req_count":"total_req_count"
+	                        },
+	                        "script":"params._total_req_count == 0 ? 0 : params._sum_5xx_count/params._total_req_count"
+	                    }
+	                },
+	                "percent_606":{
+	                    "bucket_script":{
+	                        "buckets_path":{
+	                            "_sum_606_count":"sum_606_count",
+	                            "_total_req_count":"total_req_count"
+	                        },
+	                        "script":"params._total_req_count == 0 ? 0 : params._sum_606_count/params._total_req_count"
+	                    }
+	                },
+	                "server_ip_list": {
+	                  "terms": {
+	                    "field": "server_ip.keyword",
+	                    "size": 10
+	                  }
+	                },
+	                "serviceThroughput": {
+		              "sum": {
+		                "field": "over_all_file_size"
+		              }
+		            },
+		            "bandwidth": {
+		              "bucket_script": {
+		                "buckets_path": {
+		                  "_overallsize": "serviceThroughput"
+		                },
+		                "script": "params._overallsize*8/${span_seconds}f"
+		              }
+		            },
+		            "sumDelayTime": {
+            		  "sum": {
+        		        "field": "fbt_sum"
+        		      }
+            		 },
+                    "initDelayValue": {
+                      "bucket_script": {
+                        "buckets_path": {
+                          "_sumDelayTime": "sumDelayTime",
+                          "_sumReqCount": "total_req_count"
+                        },
+                        "script": "params._sumDelayTime*1000/params._sumReqCount"
+                      }
+                    }
+	            }
+	        }
+	    }
+	}
+<<<<<template_fetch_5xx_percent_rawalert>>>>>
+
+<<<<<template_fetch_wholecountry_businessdomain_5xx_percent_rawalert>>>>>
+	{
+	  "size": 0, 
+	  "query": {
+	    "bool": {
+	      "must": [
+	      		{"range": {"timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}},
+	      		{"terms": {"req_domain": ["popup with business_req_domain_list"]}}
+	      ],
+	      "must_not": [
+	      	{
+	      	   "match": {
+	            "manufacturer": "烽火"
+	          }
+	      	},
+	        {
+	          "match": {
+	            "node_ip.keyword": "127.0.0.1"
+	          }
+	        }
+	      ]
+	    }
+	  },
+	  "aggs":{
+	        "composite_group":{
+	            "composite":{
+	                "sources":[
+	                    {"req_domain_group":{"terms":{"field":"req_domain"}}},
+	                    {"cp_name_group":{"terms":{"field":"cp_name"}}},
+	                    {"manufacture_group":{"terms":{"field":"manufacturer"}}}
+	                ],
+	                "size":500
+	            },
+	            "aggs":{
+	                "sum_5xx_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"5xx_count"
+	                    }
+	                },
+	                "total_req_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"req_count"
+	                    }
+	                },
+	                "last_log_time":{
+	                    "max":{
+	                        "field":"timestamp"
+	                    }
+	                },
+	                "percent_5xx":{
+	                    "bucket_script":{
+	                        "buckets_path":{
+	                            "_sum_5xx_count":"sum_5xx_count",
+	                            "_total_req_count":"total_req_count"
+	                        },
+	                        "script":"params._total_req_count == 0 ? 0 : params._sum_5xx_count/params._total_req_count"
+	                    }
+	                },
+	                "serviceThroughput": {
+		              "sum": {
+		                "field": "over_all_file_size"
+		              }
+		            },
+		            "bandwidth": {
+		              "bucket_script": {
+		                "buckets_path": {
+		                  "_overallsize": "serviceThroughput"
+		                },
+		                "script": "params._overallsize*8/${span_seconds}f"
+		              }
+		            }
+	            }
+	        }
+	    }
+	}
+<<<<<template_fetch_wholecountry_businessdomain_5xx_percent_rawalert>>>>>
+
+<<<<<template_fetch_focus_domain_404_percent_rawalert>>>>>
+	{
+	  "size": 0, 
+	  "query": {
+	    "bool": {
+	      "must": [
+	      		{"range": {"timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}},
+	      		{"terms": {"req_domain": ["popup with business_req_domain_list"]}}
+	      ],
+	      "must_not": [
+	      	{
+	      	   "match": {
+	            "manufacturer": "烽火"
+	          }
+	      	},
+	        {
+	          "match": {
+	            "node_ip.keyword": "127.0.0.1"
+	          }
+	        }
+	      ]
+	    }
+	  },
+	  "aggs":{
+	        "composite_group":{
+	            "composite":{
+	                "sources":[
+	                	{"province_name_group":{"terms":{"field":"province_name"}}},
+	                    {"req_domain_group":{"terms":{"field":"req_domain"}}},
+	                    {"cp_name_group":{"terms":{"field":"cp_name"}}},
+	                    {"manufacture_group":{"terms":{"field":"manufacturer"}}}
+	                ],
+	                "size":500
+	            },
+	            "aggs":{
+	                "sum_404_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"404_count"
+	                    }
+	                },
+	                "total_req_count":{
+	                    "sum":{
+	                        "missing":0,
+	                        "field":"req_count"
+	                    }
+	                },
+	                "last_log_time":{
+	                    "max":{
+	                        "field":"timestamp"
+	                    }
+	                },
+	                "percent_404":{
+	                    "bucket_script":{
+	                        "buckets_path":{
+	                            "_sum_404_count":"sum_404_count",
+	                            "_total_req_count":"total_req_count"
+	                        },
+	                        "script":"params._total_req_count == 0 ? 0 : params._sum_404_count/params._total_req_count"
+	                    }
+	                },
+	                "server_ip_list": {
+	                  "terms": {
+	                    "field": "server_ip.keyword",
+	                    "size": 10
+	                  }
+	                },
+	                "serviceThroughput": {
+		              "sum": {
+		                "field": "over_all_file_size"
+		              }
+		            },
+		            "bandwidth": {
+		              "bucket_script": {
+		                "buckets_path": {
+		                  "_overallsize": "serviceThroughput"
+		                },
+		                "script": "params._overallsize*8/${span_seconds}f"
+		              }
+		           	}
+	            }
+	        }
+	    }
+	}
+<<<<<template_fetch_focus_domain_404_percent_rawalert>>>>>
+
+<<<<<scroll_load_whole_idx_data>>>>>
+	{
+	  "size": 3000,
+	  "sort": [
+	    "_doc"
+	  ]
+	}
+<<<<<scroll_load_whole_idx_data>>>>>
+
+<<<<<scroll_fetch_data>>>>>
+{
+    "scroll" : "${timeout}", 
+    "scroll_id" : "${scrollId}" 
+}
+<<<<<scroll_fetch_data>>>>>
+
+<<<<<template_bytedance_domainReq_percent>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {"range": {"timestamp": {"gte": ${timestamp_gte}, "lt": ${timestamp_lt}}}},
+	        	{
+	        	  "bool": {
+	        	    "should": []
+	        	  }
+	        	}
+            ]
+        }
+    },
+    "aggs":{
+        "req_domain_group":{
+            "terms":{
+                "field":"req_domain",
+                "size": ${reqDomainSize}
+            },
+            "aggs":{
+                "sum_4xx_count":{
+                    "sum":{
+                        "missing":0,
+                        "field":"4xx_count"
+                    }
+                },
+                "sum_5xx_count":{
+                    "sum":{
+                        "missing":0,
+                        "field":"5xx_count"
+                    }
+                },
+                "total_req_count":{
+                    "sum":{
+                        "missing":0,
+                        "field":"req_count"
+                    }
+                },
+                "last_log_time":{
+                    "max":{
+                        "field":"timestamp"
+                    }
+                }
+            }
+        }
+    }
+}
+<<<<<template_bytedance_domainReq_percent>>>>>
+
+<<<<<bytedance_alert_notify_body>>>>>
+{
+    "cdn": "ksyun",
+    "domain": "${reqDomain}",
+    "product_line": "vod",
+    "alert_name": "edge_code",
+    "alert_baseline": ${baseline},
+    "history_value": "0",
+    "current_value": "${rate}",
+    "alert_value": ${rate},
+    "alert_time": "${alertTime}",
+    "ack_time": "0001-01-01T00:00:00Z",
+    "extra": "${classify}"
+}
+<<<<<bytedance_alert_notify_body>>>>>
+
+<<<<<readMetricAlertListByAlertkeyAndLevel>>>>>
+{
+    "size": 10, 
+    "query":{
+        "bool":{
+            "must":[
+            	{
+                    "match":{
+                        "alert_key":"${alert_key}"
+                    }
+                },
+                {
+				    "range":{
+				        "alert_level":{
+				            "gte": ${alert_level}
+				        }
+				    }
+				},
+				{
+				    "match":{
+				        "moni_result": ${moni_result}
+				    }
+				},
+                {
+                    "match":{
+                        "history_flag": ${history_flag}
+                    }
+                }
+            ]
+        }
+    },
+    "sort": [
+       {
+         "alert_level": {
+         "order": "asc"
+        }
+      }
+    ]
+}
+<<<<<readMetricAlertListByAlertkeyAndLevel>>>>>
+
+<<<<<updateActiveMetricAlertByDocId>>>>>
+{
+  "doc": {
+    "content": "${content}",
+    "last_alert_time": ${last_alert_time},
+    "step_count": ${step_count},
+    "scan_mark_time": ${scan_mark_time},
+    "value_float": ${value_float},
+    "value_integer": ${value_integer},
+    "value_text": "${value_text}"
+  }
+}
+<<<<<updateActiveMetricAlertByDocId>>>>>
+
+
+<<<<<readUmsAlertListFromSyncMark>>>>>
+{
+  "size": 500, 	
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "scan_mark_time": {
+              	"gt": ${syncMarkMill},
+        		"lte": ${syncMarkMillEnd}
+            }
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "reverse_sync": true
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "scan_mark_time": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+<<<<<readUmsAlertListFromSyncMark>>>>>
+
+<<<<<readWeixinB2BAlertListFromSyncMark>>>>>
+{
+  "size": 500, 	
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "scan_mark_time": {
+              "gt": ${syncMarkMill},
+        	  "lte": ${syncMarkMillEnd}
+            }
+          }
+        },
+        {
+          "match": {
+            "business_source": "B2B"
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "source_identity": "snssdk"
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "scan_mark_time": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+<<<<<readWeixinB2BAlertListFromSyncMark>>>>>
+
+<<<<<readAppMobileB2BAlertListFromSyncMark>>>>>
+{
+  "size": 500, 	
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "scan_mark_time": {
+                    "gt": ${syncMarkMill},
+        	          "lte": ${syncMarkMillEnd}
+                  }
+                }
+              },
+              {
+                "match": {
+                  "moni_result": 1
+                } 
+              },
+              {
+                "match": {
+                  "business_source": "B2B"
+                }
+              },
+              {
+                "range": {
+                  "alert_level": {
+                    "gt": 4
+                  }
+                }
+              }
+            ],
+            "must_not": [
+              {
+                "match": {
+                  "source_identity": "snssdk"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "scan_mark_time": {
+                    "gt": ${syncMarkMill},
+        	          "lte": ${syncMarkMillEnd}
+                  }
+                }
+              },
+              {
+                "match": {
+                  "moni_result": 1
+                } 
+              },
+              {
+                "match": {
+                  "business_source": "OTT"
+                }
+              },
+              {
+                "match": {
+                  "source_identity": "InternetTV"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "scan_mark_time": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+<<<<<readAppMobileB2BAlertListFromSyncMark>>>>>
+
+<<<<<b2bBandwidthReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "service_type": "服务流量"
+          }
+        },
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "serviceThroughput": {
+              "sum": {
+                "field": "over_all_file_size"
+              }
+            },
+            "bandwidth": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_overallsize": "serviceThroughput"
+                },
+                "script": "(params._overallsize*8/3600f)/1024/1024/1024"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<b2bBandwidthReportQuery>>>>>
+
+<<<<<b2bServiceSuccPercentReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "5xxCount": {
+              "sum": {
+                "field": "5xx_count"
+              }
+            },
+            "totalCount": {
+              "sum": {
+                "field": "req_count"
+              }
+            },
+            "okPercent": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_5xxCount": "5xxCount",
+                  "_totalCount": "totalCount"
+                },
+                "script": "1 - params._5xxCount/params._totalCount"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<b2bServiceSuccPercentReportQuery>>>>>
+
+<<<<<b2bFileHitsSuccPercentReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "fileHitCount": {
+              "sum": {
+                "field": "file_hit_count"
+              }
+            },
+            "totalCount": {
+              "sum": {
+                "field": "req_count"
+              }
+            },
+            "hitPercent": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_fileHitCount": "fileHitCount",
+                  "_totalCount": "totalCount"
+                },
+                "script": "params._fileHitCount/params._totalCount"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<b2bFileHitsSuccPercentReportQuery>>>>>
+
+<<<<<b2bRequestCountReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "totalCount": {
+              "sum": {
+                "field": "req_count"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<b2bRequestCountReportQuery>>>>>
+
+<<<<<returnStatusSucPercentQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "statusGroup": {
+		      "terms": {
+		        "field": "cmcc_cdn"
+		      }
+		    }
+          }
+        }
+      }
+    }
+  }
+}	
+<<<<<returnStatusSucPercentQuery>>>>>
+
+<<<<<initBitDelayAvgTimeQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "sumDelayTime": {
+    		  "sum": {
+		        "field": "fbt_sum"
+		      }
+    		 },
+		    "sumReqCount": {
+	          "sum": {
+	            "field": "req_count"
+	          }
+            },
+            "initDelayValue": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_sumDelayTime": "sumDelayTime",
+                  "_sumReqCount": "sumReqCount"
+                },
+                "script": "params._sumDelayTime*1000/params._sumReqCount"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<initBitDelayAvgTimeQuery>>>>>
+
+<<<<<wholeCountryHttpStatusQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lte": ${timestamp_lte}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+      "total200": {
+        "sum": {
+          "field": "200_count"
+        }
+      },
+      "total206": {
+        "sum": {
+          "field": "206_count"
+        }
+      },
+      "total301": {
+        "sum": {
+          "field": "301_count"
+        }
+      },
+      "total302": {
+        "sum": {
+          "field": "302_count"
+        }
+      },
+      "total4xx": {
+        "sum": {
+          "field": "4xx_count"
+        }
+      },
+      "total5xx": {
+        "sum": {
+          "field": "5xx_count"
+        }
+      }
+  	}
+}
+<<<<<wholeCountryHttpStatusQuery>>>>>
+
+<<<<<5xxPercentRankByProvince>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lte": ${timestamp_lte}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "5xx_total": {
+          "sum": {
+            "field": "5xx_count"
+          }
+        },
+        "req_total": {
+          "sum": {
+            "field": "req_count"
+          }
+        },
+        "percent_5xx": {
+          "bucket_script": {
+            "buckets_path": {
+              "_5xx_total": "5xx_total",
+              "_req_total": "req_total"
+            },
+            "script": "params._5xx_total/params._req_total"
+          }
+    	},
+        "5xx_sort": {
+          "bucket_sort": {
+            "sort": [
+              {
+                "percent_5xx": {
+                  "order": "asc"
+                }
+              }  
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<5xxPercentRankByProvince>>>>>
+
+<<<<<b2bDownloadRateByProvince>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "sumOverallFileSize": {
+		      "sum": {
+		        "field": "over_all_file_size"
+		      }
+		    },
+		    "sumSendTime": {
+		      "sum": {
+		        "field": "send_time"
+		      }
+		    },
+		    "downloadRate": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_sumOverallFileSize": "sumOverallFileSize",
+                  "_sumSendTime": "sumSendTime"
+                },
+                "script": "params._sumOverallFileSize*8/(params._sumSendTime*1024*1024)"
+              }
+        	}
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<b2bDownloadRateByProvince>>>>>
+
+
+<<<<<queryTermsByProvinceName>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      }
+    }
+  }
+}
+<<<<<queryTermsByProvinceName>>>>>
+
+<<<<<queryTermsByManufacture>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "termsManufacture": {
+      "terms": {
+        "field": "manufacturer",
+        "size": 100
+      }
+    }
+  }
+}
+<<<<<queryTermsByManufacture>>>>>
+
+<<<<<queryTermsByReqDomain>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "termsReqDomain": {
+      "terms": {
+        "field": "req_domain",
+        "size": 10000000
+      }
+    }
+  }
+}
+<<<<<queryTermsByReqDomain>>>>>
+
+<<<<<queryTermsByNodeIp>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "termsNodeIp": {
+      "terms": {
+        "field": "node_ip.keyword",
+        "size": 10000000
+      }
+    }
+  }
+}
+<<<<<queryTermsByNodeIp>>>>>
+
+<<<<<queryHourlyDatagramReqCount>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "aggsHours": {
+      "date_histogram": {
+        "field": "timestamp",
+        "interval": "hour"
+      },
+      "aggs": {
+        "totalCount": {
+          "sum": {
+            "field": "req_count"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<queryHourlyDatagramReqCount>>>>>
+
+<<<<<queryConcentrate5xxTotalReqCount>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "5xxCount": {
+      "sum": {
+        "field": "5xx_count"
+      }
+    },
+    "totalCount": {
+      "sum": {
+        "field": "req_count"
+      }
+    }
+  }
+}
+<<<<<queryConcentrate5xxTotalReqCount>>>>>
+
+<<<<<queryConcentrateDatagramFilesize>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "aggsHours": {
+      "date_histogram": {
+        "field": "timestamp",
+        "interval": "hour"
+      },
+      "aggs": {
+        "totalFileSize": {
+          "sum": {
+            "field": "over_all_file_size"
+          }
+        },
+        "humanReadFileSize": {
+          "bucket_script": {
+            "buckets_path": {
+              "_totalFileSize": "totalFileSize"
+            },
+            "script": "params._totalFileSize/1024/1024/1024/1024"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<queryConcentrateDatagramFilesize>>>>>
+
+
+<<<<<queryConcentrateFileHitsSuccPercent>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "fileHitCount": {
+      "sum": {
+        "field": "file_hit_count"
+      }
+    },
+    "totalCount": {
+      "sum": {
+        "field": "req_count"
+      }
+    }
+  } 
+}
+<<<<<queryConcentrateFileHitsSuccPercent>>>>>
+
+<<<<<queryProvinceCountry5xxPercent>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsProvince": {
+      "terms": {
+        "field": "province_name",
+        "size": 40
+      },
+      "aggs": {
+        "sum5xxCount": {
+          "sum": {
+            "field": "5xx_count"
+          }
+        }
+      }
+    },
+    "sumWholeCountry5xxCount": {
+      "sum_bucket": {
+        "buckets_path": "termsProvince>sum5xxCount"
+      }
+    }
+  } 
+}
+<<<<<queryProvinceCountry5xxPercent>>>>>
+
+<<<<<queryWholeCountryInHourServiceThroughout>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "service_type": "服务流量"
+          }
+        },
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "aggsHours": {
+      "date_histogram": {
+        "field": "timestamp",
+        "interval": "hour"
+      },
+      "aggs": {
+        "serviceThroughput": {
+          "sum": {
+            "field": "over_all_file_size"
+          }
+        },
+        "inHourServiceThroughput": {
+          "bucket_script": {
+            "buckets_path": {
+              "_overallsize": "serviceThroughput"
+            },
+            "script": "(params._overallsize*8/3600f)/1000/1000/1000"
+          }
+        },
+        "bandwidth": {
+          "bucket_script": {
+            "buckets_path": {
+              "_overallsize": "serviceThroughput"
+            },
+            "script": "(params._overallsize*8/3600f)/1024/1024/1024"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<queryWholeCountryInHourServiceThroughout>>>>>
+
+<<<<<queryTop10CpnameByServiceThroughout>>>>>
+{
+  "size": 0, 
+  "query": {
+     "bool": {
+       "must": [
+         {
+           "range": {
+             "timestamp": {
+               	"gte": ${timestamp_gte},
+              	"lt": ${timestamp_lt}
+             }
+           }
+         }
+       ],
+       "must_not": [
+         {
+           "match": {
+             "cp_name": "其他"
+           }
+         }
+       ]
+     }
+  },
+  "aggs": {
+    "termsCpname": {
+      "terms": {
+        "field": "cp_name",
+        "size": 10,
+        "order": {
+          "sumFilesize": "desc"
+        }
+      },
+      "aggs": {
+        "sumFilesize": {
+          "sum": {
+            "field": "over_all_file_size"
+          }
+        },
+        "sumFilesizeInGB": {
+          "bucket_script": {
+            "buckets_path": {
+              "_sumFilesize": "sumFilesize"
+            },
+            "script": "(params._sumFilesize*8/${timespan})/1000/1000/1000"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<queryTop10CpnameByServiceThroughout>>>>>
+
+<<<<<queryConcentrateInitBitDelayAvgTime>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "aggsHours": {
+      "date_histogram": {
+        "field": "timestamp",
+        "interval": "hour"
+      },
+      "aggs": {
+        "sumDelayTime": {
+		  "sum": {
+	        "field": "fbt_sum"
+	      }
+		 },
+	    "sumReqCount": {
+          "sum": {
+            "field": "req_count"
+          }
+        },
+        "initDelayValue": {
+          "bucket_script": {
+            "buckets_path": {
+              "_sumDelayTime": "sumDelayTime",
+              "_sumReqCount": "sumReqCount"
+            },
+            "script": "params._sumDelayTime*1000/params._sumReqCount"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<queryConcentrateInitBitDelayAvgTime>>>>>
+
+
+<<<<<queryConcentrateDayDownloadRateByHour>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "aggsHours": {
+      "date_histogram": {
+        "field": "timestamp",
+        "interval": "hour"
+      },
+      "aggs": {
+        "sumOverallFileSize": {
+	      "sum": {
+	        "field": "over_all_file_size"
+	      }
+	    },
+	    "sumSendTime": {
+	      "sum": {
+	        "field": "send_time"
+	      }
+	    },
+	    "downloadRate": {
+          "bucket_script": {
+            "buckets_path": {
+              "_sumOverallFileSize": "sumOverallFileSize",
+              "_sumSendTime": "sumSendTime"
+            },
+            "script": "params._sumOverallFileSize*8/(params._sumSendTime*1024*1024)"
+          }
+    	}
+      }
+    }
+  }
+}
+<<<<<queryConcentrateDayDownloadRateByHour>>>>>
+
+
+<<<<<citybaseServiceSuccPercent>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        },
+        {
+          "match": {
+            "province_name": "${provinceName}"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsCities": {
+      "terms": {
+        "field": "city_name",
+        "size": 100
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "5xxCount": {
+              "sum": {
+                "field": "5xx_count"
+              }
+            },
+            "totalCount": {
+              "sum": {
+                "field": "req_count"
+              }
+            },
+            "okPercent": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_5xxCount": "5xxCount",
+                  "_totalCount": "totalCount"
+                },
+                "script": "1 - params._5xxCount/params._totalCount"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<citybaseServiceSuccPercent>>>>>
+
+<<<<<citybaseFileHitsSuccPercentReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        },
+        {
+          "match": {
+            "province_name": "${provinceName}"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsCities": {
+      "terms": {
+        "field": "city_name",
+        "size": 100
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "fileHitCount": {
+              "sum": {
+                "field": "file_hit_count"
+              }
+            },
+            "totalCount": {
+              "sum": {
+                "field": "req_count"
+              }
+            },
+            "hitPercent": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_fileHitCount": "fileHitCount",
+                  "_totalCount": "totalCount"
+                },
+                "script": "params._fileHitCount/params._totalCount"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<citybaseFileHitsSuccPercentReportQuery>>>>>
+
+<<<<<citybaseBandwidthReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "service_type": "服务流量"
+          }
+        },
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        },
+        {
+          "match": {
+            "province_name": "${provinceName}"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsCities": {
+      "terms": {
+        "field": "city_name",
+        "size": 100
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "serviceThroughput": {
+              "sum": {
+                "field": "over_all_file_size"
+              }
+            },
+            "bandwidth": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_overallsize": "serviceThroughput"
+                },
+                "script": "(params._overallsize*8/3600f)/1024/1024/1024"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<citybaseBandwidthReportQuery>>>>>
+
+<<<<<citybaseDownloadRateByProvince>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        },
+        {
+          "match": {
+            "province_name": "${provinceName}"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsCities": {
+      "terms": {
+        "field": "city_name",
+        "size": 100
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "sumOverallFileSize": {
+		      "sum": {
+		        "field": "over_all_file_size"
+		      }
+		    },
+		    "sumSendTime": {
+		      "sum": {
+		        "field": "send_time"
+		      }
+		    },
+		    "downloadRate": {
+              "bucket_script": {
+                "buckets_path": {
+                  "_sumOverallFileSize": "sumOverallFileSize",
+                  "_sumSendTime": "sumSendTime"
+                },
+                "script": "params._sumOverallFileSize*8/(params._sumSendTime*1024*1024)"
+              }
+        	}
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<citybaseDownloadRateByProvince>>>>>
+
+<<<<<citybaseRequestCountReportQuery>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+              "lt": ${timestamp_lt}
+            }
+          }
+        },
+        {
+          "match": {
+            "province_name": "${provinceName}"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsCities": {
+      "terms": {
+        "field": "city_name",
+        "size": 100
+      },
+      "aggs": {
+        "aggsHours": {
+          "date_histogram": {
+            "field": "timestamp",
+            "interval": "hour"
+          },
+          "aggs": {
+            "totalCount": {
+              "sum": {
+                "field": "req_count"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<citybaseRequestCountReportQuery>>>>>
+
+
+<<<<<queryTop10AlertStatisticByReqDomain>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+      	{
+          "match": {
+            "source_identity": "B2BELK"
+          }
+        },
+        {
+          "match": {
+            "moni_result": "1"
+          }
+        },
+        {
+          "range": {
+            "scan_mark_time": {
+              "gt": 0
+            }
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "moni_target_refer_obj.cpName": "其他"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+      "termsReqDomain": {
+        "terms": {
+          "field": "moni_target_refer_obj.reqDomain",
+          "size": 10,
+          "order": {
+            "_count": "desc"
+          }
+        },
+        "aggs": {
+          "termsCpname": {
+            "terms": {
+              "field": "moni_target_refer_obj.cpName",
+              "size": 1
+            }
+          }
+        }
+      }  
+  }
+}
+<<<<<queryTop10AlertStatisticByReqDomain>>>>>
+
+
+<<<<<queryTop10AlertStatisticReport>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+            	{
+		          "match": {
+		            "source_identity": "B2BELK"
+		          }
+		        },
+                {
+                    "match":{
+                        "moni_result":"1"
+                    }
+                },
+                {
+                    "range":{
+                        "scan_mark_time":{
+                            "gt":0
+                        }
+                    }
+                }
+            ],
+            "must_not":[
+                {
+                    "match":{
+                        "moni_target_refer_obj.cpName":"其他"
+                    }
+                },
+                {
+                  "terms": {
+                    "item_key": [
+                      "province_es_cluster_unlink",
+                      "province_esdata_sync"
+                    ]
+                  }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "termsAlertKey":{
+            "terms":{
+                "field":"alert_key.keyword",
+                "size":10,
+                "order":{
+                    "_count":"desc"
+                }
+            },
+            "aggs":{
+                "termsProvince":{
+                    "terms":{
+                        "field":"province_name",
+                        "size":1
+                    }
+                },
+                "termsBusinessSource":{
+                    "terms":{
+                        "field":"moni_target_refer_obj.businessSource",
+                        "size":1
+                    }
+                },
+                "termsManufacture":{
+                    "terms":{
+                        "field":"moni_target_refer_obj.manufacturer",
+                        "size":1
+                    }
+                },
+                "termsCpname":{
+                    "terms":{
+                        "field":"moni_target_refer_obj.cpName",
+                        "size":1
+                    }
+                },
+                "termsReqDomain":{
+                    "terms":{
+                        "field":"moni_target_refer_obj.reqDomain",
+                        "size":1
+                    }
+                },
+                "termsAlertTheme":{
+                    "terms":{
+                        "field":"theme.keyword",
+                        "size":1
+                    }
+                }
+            }
+        }
+    }
+}
+<<<<<queryTop10AlertStatisticReport>>>>>
+
+
+<<<<<queryTop10AlertStatisticByManufacture>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+      	{
+          "match": {
+            "source_identity": "B2BELK"
+          }
+        },
+        {
+          "match": {
+            "moni_result": "1"
+          }
+        },
+        {
+          "range": {
+            "scan_mark_time": {
+              "gt": 0
+            }
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "moni_target_refer_obj.cpName": "其他"
+          }
+        },
+        {
+          "match": {
+            "moni_target_refer_obj.manufacturer": "-"
+          }	
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsManufacture": {
+      "terms": {
+        "field": "moni_target_refer_obj.manufacturer",
+        "size": 10,
+        "order": {
+          "_count": "desc"
+        }
+      }
+    }
+  }
+}
+<<<<<queryTop10AlertStatisticByManufacture>>>>>
+
+<<<<<queryProvinceCityKeyValList>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "province_name": "${provinceName}"
+          }
+        },
+        {
+          "range": {
+            "timestamp": {
+              "gte": "now-24h"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsCity": {
+      "terms": {
+        "field": "city_name",
+        "size": 100
+      }
+    }
+  }
+}	
+<<<<<queryProvinceCityKeyValList>>>>>
+
+<<<<<customOpsReport_template_bandwidth>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "service_type": "服务流量"
+          }
+        },
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+        "serviceThroughput": {
+          "sum": {
+            "field": "over_all_file_size"
+          }
+        },
+        "bandwidth": {
+          "bucket_script": {
+            "buckets_path": {
+              "_overallsize": "serviceThroughput"
+            },
+            "script": "(params._overallsize*8/${span_seconds})/1024/1024"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_bandwidth>>>>>
+
+<<<<<customOpsReport_template_serviceSuccPercent>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+    	"5xxCount": {
+          "sum": {
+            "field": "5xx_count"
+          }
+        },
+        "totalCount": {
+          "sum": {
+            "field": "req_count"
+          }
+        },
+        "okPercent": {
+          "bucket_script": {
+            "buckets_path": {
+              "_5xxCount": "5xxCount",
+              "_totalCount": "totalCount"
+            },
+            "script": "1 - params._5xxCount/params._totalCount"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_serviceSuccPercent>>>>>
+
+<<<<<customOpsReport_template_fileHitSucPercent>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+	    "fileHitCount": {
+	      "sum": {
+	        "field": "file_hit_count"
+	      }
+	    },
+	    "totalCount": {
+	      "sum": {
+	        "field": "req_count"
+	      }
+	    },
+	    "fileHitPercent": {
+	      "bucket_script": {
+	        "buckets_path": {
+	          "_fileHitCount": "fileHitCount",
+	          "_totalCount": "totalCount"
+	        },
+	        "script": "params._fileHitCount/params._totalCount"
+	      }
+	    }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_fileHitSucPercent>>>>>
+
+<<<<<customOpsReport_template_requestCount>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+        "totalCount": {
+          "sum": {
+            "field": "req_count"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_requestCount>>>>>
+
+<<<<<customOpsReport_template_returnStatusSucPercent>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+        "statusGroup": {
+	      "terms": {
+	        "field": "cmcc_cdn"
+	      }
+	    }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_returnStatusSucPercent>>>>>
+
+
+<<<<<customOpsReport_template_initBitDelayTime>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+        "sumDelayTime": {
+		  "sum": {
+	        "field": "fbt_sum"
+	      }
+		 },
+  	    "sumReqCount": {
+	        "sum": {
+	          "field": "req_count"
+	        }
+	      },
+        "initDelayValue": {
+          "bucket_script": {
+            "buckets_path": {
+              "_sumDelayTime": "sumDelayTime",
+              "_sumReqCount": "sumReqCount"
+            },
+            "script": "params._sumDelayTime*1000/params._sumReqCount"
+          }
+        }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_initBitDelayTime>>>>>
+
+
+<<<<<customOpsReport_template_downloadRate>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+        "sumOverallFileSize": {
+	      "sum": {
+	        "field": "over_all_file_size"
+	      }
+	    },
+	    "sumSendTime": {
+	      "sum": {
+	        "field": "send_time"
+	      }
+	    },
+	    "downloadRate": {
+          "bucket_script": {
+            "buckets_path": {
+              "_sumOverallFileSize": "sumOverallFileSize",
+              "_sumSendTime": "sumSendTime"
+            },
+            "script": "params._sumOverallFileSize*8/(params._sumSendTime*1024*1024)"
+          }
+    	}
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_downloadRate>>>>>
+
+<<<<<customOpsReport_template_httpStatusWeight>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        }
+        ${provinceMatchCondition}
+        ${cityMatchCondition}
+      ]
+    }
+  },
+  "aggs": {
+    "termsDistrict": {
+      "terms": {
+        "field": "${districtFiled}",
+        "size": 100
+      },
+      "aggs": {
+          "total200": {
+	        "sum": {
+	          "field": "200_count"
+	        }
+	      },
+	      "total206": {
+	        "sum": {
+	          "field": "206_count"
+	        }
+	      },
+	      "total301": {
+	        "sum": {
+	          "field": "301_count"
+	        }
+	      },
+	      "total302": {
+	        "sum": {
+	          "field": "302_count"
+	        }
+	      },
+	      "total4xx": {
+	        "sum": {
+	          "field": "4xx_count"
+	        }
+	      },
+	      "total5xx": {
+	        "sum": {
+	          "field": "5xx_count"
+	        }
+	      },
+	      "total_req": {
+          	 "sum": {
+             "field": "req_count"
+            }
+          }
+      }
+    }
+  }
+}
+<<<<<customOpsReport_template_httpStatusWeight>>>>>
+
+
+<<<<<query_domain_list_by_keyword>>>>>
+{
+  "size": 0, 
+  "query": {
+    "bool": {
+      "must": [
+      	{
+          "range": {
+            "timestamp": {
+              "gte": ${timestamp_gte},
+          	  "lt": ${timestamp_lt}
+            }
+          }
+        },
+        {
+          "regexp": {
+            "req_domain": ".*${query_keyword}.*"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "termsReqDomain": {
+      "terms": {
+        "field": "req_domain",
+        "size": 10
+      }
+    }
+  }
+}
+<<<<<query_domain_list_by_keyword>>>>>
+
+
+<<<<<query_reqdomainList_byHour_filesizeRate>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "terms":{
+                        "req_domain":[${join_reqDomain_list}]
+                    }
+                },
+                {
+                    "range":{
+                        "timestamp":{
+                            "gte": ${timestamp_gte},
+          	  				"lt": ${timestamp_lt}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "compositeGroup":{
+            "composite":{
+                "sources":[
+                    {
+                        "reqDomainGroup":{
+                            "terms":{
+                                "field":"req_domain"
+                            }
+                        }
+                    }
+                ]
+            },
+            "aggs":{
+                "aggsHours":{
+                    "date_histogram":{
+                        "field":"timestamp",
+                        "interval":"hour"
+                    },
+                    "aggs":{
+                        "totalFileSize":{
+                            "sum":{
+                                "field":"over_all_file_size"
+                            }
+                        },
+                        "filesizeRate":{
+                            "bucket_script":{
+                                "buckets_path":{
+                                    "_totalFileSize":"totalFileSize"
+                                },
+                                "script":"(params._totalFileSize*8)/3600/1024/1024/1024"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+<<<<<query_reqdomainList_byHour_filesizeRate>>>>>
+
+
+<<<<<query_reqdomainList_byHour_serviceSuccPercent>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "terms":{
+                        "req_domain":[${join_reqDomain_list}]
+                    }
+                },
+                {
+                    "range":{
+                        "timestamp":{
+                            "gte": ${timestamp_gte},
+          	  				"lt": ${timestamp_lt}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "compositeGroup":{
+            "composite":{
+                "sources":[
+                    {
+                        "reqDomainGroup":{
+                            "terms":{
+                                "field":"req_domain"
+                            }
+                        }
+                    }
+                ]
+            },
+            "aggs":{
+                "aggsHours":{
+                    "date_histogram":{
+                        "field":"timestamp",
+                        "interval":"hour"
+                    },
+                    "aggs": {
+			            "5xxCount": {
+			              "sum": {
+			                "field": "5xx_count"
+			              }
+			            },
+			            "totalCount": {
+			              "sum": {
+			                "field": "req_count"
+			              }
+			            },
+			            "serviceSuccPercent": {
+			              "bucket_script": {
+			                "buckets_path": {
+			                  "_5xxCount": "5xxCount",
+			                  "_totalCount": "totalCount"
+			                },
+			                "script": "(1 - params._5xxCount/params._totalCount)*100"
+			              }
+			            }
+		          	}
+                }
+            }
+        }
+    }
+}
+<<<<<query_reqdomainList_byHour_serviceSuccPercent>>>>>
+
+<<<<<query_reqdomainList_byHour_initBitDelayTime>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "terms":{
+                        "req_domain":[${join_reqDomain_list}]
+                    }
+                },
+                {
+                    "range":{
+                        "timestamp":{
+                            "gte": ${timestamp_gte},
+          	  				"lt": ${timestamp_lt}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "compositeGroup":{
+            "composite":{
+                "sources":[
+                    {
+                        "reqDomainGroup":{
+                            "terms":{
+                                "field":"req_domain"
+                            }
+                        }
+                    }
+                ]
+            },
+            "aggs":{
+                "aggsHours":{
+                    "date_histogram":{
+                        "field":"timestamp",
+                        "interval":"hour"
+                    },
+                    "aggs": {
+			            "sumDelayTime": {
+			    		  "sum": {
+					        "field": "fbt_sum"
+					      }
+			    		 },
+					    "sumReqCount": {
+				          "sum": {
+				            "field": "req_count"
+				          }
+			            },
+			            "initBitDelayTime": {
+			              "bucket_script": {
+			                "buckets_path": {
+			                  "_sumDelayTime": "sumDelayTime",
+			                  "_sumReqCount": "sumReqCount"
+			                },
+			                "script": "params._sumDelayTime*1000/params._sumReqCount"
+			              }
+			            }
+		          	}
+                }
+            }
+        }
+    }
+}
+<<<<<query_reqdomainList_byHour_initBitDelayTime>>>>>
+
+<<<<<query_reqdomainList_byHour_requestCount>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "terms":{
+                        "req_domain":[${join_reqDomain_list}]
+                    }
+                },
+                {
+                    "range":{
+                        "timestamp":{
+                            "gte": ${timestamp_gte},
+          	  				"lt": ${timestamp_lt}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "compositeGroup":{
+            "composite":{
+                "sources":[
+                    {
+                        "reqDomainGroup":{
+                            "terms":{
+                                "field":"req_domain"
+                            }
+                        }
+                    }
+                ]
+            },
+            "aggs":{
+                "aggsHours":{
+                    "date_histogram":{
+                        "field":"timestamp",
+                        "interval":"hour"
+                    },
+                    "aggs": {
+			            "requestCount": {
+			              "sum": {
+			                "field": "req_count"
+			              }
+			            }
+          			}
+                }
+            }
+        }
+    }
+}
+<<<<<query_reqdomainList_byHour_requestCount>>>>>
+
+<<<<<query_reqdomainList_byHour_returnStatusSucPercent>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "terms":{
+                        "req_domain":[${join_reqDomain_list}]
+                    }
+                },
+                {
+                    "range":{
+                        "timestamp":{
+                            "gte": ${timestamp_gte},
+          	  				"lt": ${timestamp_lt}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "compositeGroup":{
+            "composite":{
+                "sources":[
+                    {
+                        "reqDomainGroup":{
+                            "terms":{
+                                "field":"req_domain"
+                            }
+                        }
+                    }
+                ]
+            },
+            "aggs":{
+                "aggsHours":{
+                    "date_histogram":{
+                        "field":"timestamp",
+                        "interval":"hour"
+                    },
+                    "aggs": {
+			            "statusGroup": {
+					      "terms": {
+					        "field": "cmcc_cdn"
+					      }
+					    }
+	          		}
+                }
+            }
+        }
+    }
+}
+<<<<<query_reqdomainList_byHour_returnStatusSucPercent>>>>>
+
+<<<<<query_reqdomainList_byHour_fileHitSucPercent>>>>>
+{
+    "size":0,
+    "query":{
+        "bool":{
+            "must":[
+                {
+                    "terms":{
+                        "req_domain":[${join_reqDomain_list}]
+                    }
+                },
+                {
+                    "range":{
+                        "timestamp":{
+                            "gte": ${timestamp_gte},
+          	  				"lt": ${timestamp_lt}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "aggs":{
+        "compositeGroup":{
+            "composite":{
+                "sources":[
+                    {
+                        "reqDomainGroup":{
+                            "terms":{
+                                "field":"req_domain"
+                            }
+                        }
+                    }
+                ]
+            },
+            "aggs":{
+                "aggsHours":{
+                    "date_histogram":{
+                        "field":"timestamp",
+                        "interval":"hour"
+                    },
+                    "aggs": {
+			            "fileHitCount": {
+			              "sum": {
+			                "field": "file_hit_count"
+			              }
+			            },
+			            "totalCount": {
+			              "sum": {
+			                "field": "req_count"
+			              }
+			            },
+			            "fileHitSucPercent": {
+			              "bucket_script": {
+			                "buckets_path": {
+			                  "_fileHitCount": "fileHitCount",
+			                  "_totalCount": "totalCount"
+			                },
+			                "script": "(params._fileHitCount/params._totalCount)*100"
+			              }
+			            }
+		          	}
+                }
+            }
+        }
+    }
+}
+<<<<<query_reqdomainList_byHour_fileHitSucPercent>>>>>
+
+
+<<<<<TEST>>>>>
+{
+  "_source": "_id", 
+  "size": 3000, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+           "range": {
+             "timestamp": {
+               	"gte": 1608015300000,
+              	"lte": 1608015300000
+             }
+           }
+         }
+      ]
+    }
+  }
+}
+<<<<<TEST>>>>>

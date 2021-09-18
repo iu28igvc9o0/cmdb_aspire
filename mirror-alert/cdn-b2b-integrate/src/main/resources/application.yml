@@ -1,0 +1,280 @@
+server:
+  port: 29945
+  tomcat:  
+    max-threads: 100
+    min-spareThreads: 20
+    max-connections: 100
+    accept-count: 100
+  
+#spring.main.web-application-type: none   
+  
+spring: 
+  elasticsearch.rest: 
+    uris: https://111.12.83.145:9201
+    username: admin 
+    password: 8UHLr8_86_gg
+    connectionTimeout: PT2S
+    readTimeout: PT5M
+    
+#  elasticsearch.rest: 
+#    uris: http://10.12.70.63:9200
+#    connectionTimeout: PT2S
+#    readTimeout: PT5M
+
+  cloud:
+    config:
+      enabled: false
+
+
+  datasource.druid: 
+    url: jdbc:mysql://10.12.70.40:3306/DEPLOY_PROXY
+    username: root
+    password: 1234@qwer
+    useSSL: false
+    initial-size: 0
+    max-active: 8
+    min-idle: 0
+    max-wait: -1
+
+mybatis: 
+  mapper-locations: 
+    - 'classpath*:sqlmap/*Mapper.xml' 
+    
+
+middleware.configuration.switch.redis: false
+thirdpartyAlert.switch: false 
+
+opsReport: 
+  switch: false
+  customReportDefineList:  
+                          'bandwidth': '服务带宽'
+                          'serviceSuccPercent': '服务成功率'
+                          'fileHitSucPercent': '请求命中率'
+                          'requestCount': '请求数量'
+                          'returnStatusSucPercent': '回包成功率'
+                          'initBitDelayTime': '首包延迟'
+                          'downloadRate': '下载速率'
+                          'httpStatusWeight': '状态码占比'
+                          # 'top10AlertStatisticByReqDomain': '告警域名top10'
+                          # 'top10AlertStatistic': '告警top10'
+  domainReportDefineList: 
+                          'filesizeRate': '流量速率'
+                          'serviceSuccPercent': '服务成功率'
+                          'initBitDelayTime': '首包延迟'
+                          'requestCount': '请求数量'
+                          'returnStatusSucPercent': '回包成功率'
+                          'fileHitSucPercent': '请求命中率'
+
+####---  redisson配置, 部署时调整
+redisson:     
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    password: 'Ums$yjd2@19'
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://127.0.0.1:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: null
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+    - "redis://127.0.0.1:7004"
+    - "redis://127.0.0.1:7001"
+    - "redis://127.0.0.1:7000"
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false  
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"    
+
+local.config.selfalert.pastLimit: 4   # 计算告警时, 截止的过去偏移时间, 单位分钟  因为从省同步数据会存在延迟  
+    
+local: 
+  config:
+    es-run-action: 
+      req5xx-percent: 
+        switch: false
+        interval_minutes: 2                           # 扫描间隔,单位分钟
+        sum_total_count_floor: 1000                   # 总请求数下限, 少于该值则不参与计算
+        serious_level_floor_val: 0.2                  # 严重级别阈值
+        high_level_floor_val: 0.1                     # 高级别阈值
+        middle_level_floor_val: 0.05                  # 中级别阈值
+        low_level_floor_val: 0.02                     # 低级别阈值
+        focus_domain_floor_val: 0.02                  # 商业域名阈值
+        focus_domain_whole_country_floor_val: 0.0005  # 商业域名全网匹配阈值
+        
+      focus-domain-req404-percent: 
+        switch: true
+        interval_minutes: 2                           # 扫描间隔,单位分钟
+        sum_total_count_floor: 1000                   # 总请求数下限, 少于该值则不参与计算
+        focus_domain_floor_val: 0.02                  # 商业域名阈值
+        focus_domain_whole_country_floor_val: 0.0005  # 商业域名全网匹配阈值
+        focus_domain_alert_level_high: 
+          - hls.mgspvod.miguvideo.com
+          - hlsmgsplive.miguvideo.com
+          - hlsmgspvod.miguvideo.com
+          - hlsmgzblive.miguvideo.com
+          - iphone.cmvideo.cn
+          - hlsmgspvod.miguvideo.com
+          - live.hcs.cmvideo.cn
+          - ggvot.cmvideo.cn
+          - hlsmgspdl.miguvideo.com
+          - hlsmgsplive.miguvideo.com
+          - 315.live.cmvideo.cn
+          - iphone.cmvideo.cn
+          - mgsp.live.miguvideo.com
+          - upgrade.itv.cmvideo.cn
+          - mgsp.vod.miguvideo.com
+          - cache.ott.fifavod.itv.cmvideo.cn
+          - cache.ott.fifalive.itv.cmvideo.cn
+          
+      
+      focus_priority_domain_list:           # 指定的域名强制匹配    严重告警级别 
+          - "st.dl.pinyuncloud.com"
+          - "wlansysupwsdl.vivo.com.cn"
+          - "apkselfdl.vivo.com.cn"
+          - "bigswsdl.vivo.com.cn"
+          - "wlanapk-gamedefwsdl.vivo.com.cn"
+          - "wlanapk-appdefwsdl.vivo.com.cn"
+          - "apkapptopwsdl.vivo.com.cn  "
+          - "apkgametopwsdl.vivo.com.cn"
+          - "apkgamedefwsdl.vivo.com.cn"
+          - "apkappdefwsdl.vivo.com.cn"
+          - "gameapk.vivo.com.cn"
+          - "wlanapk-apptopwsdl2.vivo.com.cn"
+          - "wlanapk-txgametopwsdl.vivo.com.cn"
+          - "wlanapk-apptopwsdl1.vivo.com.cn"
+          - "voppo2.go2yd.com"
+          - "voppo3.go2yd.com"
+          - "v1.go2yd.com"
+          - "va1.go2yd.com"
+          - "voppo1.go2yd.com"
+          - "ltsyd.qq.com"
+          - "ugcyd.qq.com"
+          - "hls.mgspvod.miguvideo.com"
+          - "hlsmgsplive.miguvideo.com"
+          - "hlsmgspvod.miguvideo.com"
+          - "hlsmgzblive.miguvideo.com"
+          - "hlsmgzbvod.miguvideo.com"
+          - "ipad.cmvideo.cn"
+          - "iphone.cmvideo.cn"
+          - "pcvideocmnetzte.titan.mgtv.com"
+          - "ottvideocmnetzte.hifuntv.com"
+          - "pcdowncmnetzte.titan.mgtv.com"
+          - "pcvideocmnetzte-v6.titan.mgtv.com"
+          - "pcdowncmnet.titan.mgtv.com"
+          - "pcvideocmnet.titan.mgtv.com"
+          - "upmov.a.yximgs.com"
+          - "jsmov2.a.yximgs.com"
+          - "client05.pdl.wow.battlenet.com.cn"
+          - "sns-video-bs.xhscdn.com"
+          - "sns-img-bs.xhscdn.com"
+          - "vyd.yingshidq.com.cn"
+          - "lccdn.yingshidq.com.cn"
+          - "blzqndown.qiyou.cn"
+          - "v96-dy.ixigua.com"
+          - "valipl.cp31.ott.cibntv.net"
+          - "valipl.cp12.wasu.tv"
+          - "ykugc.cp31.ott.cibntv.net"
+          - "vali.cp31.ott.cibntv.net"
+          - "vali.cp12.wasu.tv"
+          - "vali-dns.cp31.ott.cibntv.net"
+          - "play2-download.cp31.ott.cibntv.net"
+          - "download.taobaocdn.com"
+          - "valipl-vip.cp12.wasu.tv"
+          - "valipl-vip.cp31.ott.cibntv.net"
+          - "valipl-dns.cp31.ott.cibntv.net"
+          - "valipl-dns-vip.cp31.ott.cibntv.net"
+          - "d.taobaocdn.com"
+          - "d.tbcdn.cn"
+          - "download.tbcache.com"
+          - "vodcdn.video.taobao.com"
+          - "hlsmgspvod.miguvideo.com"
+          - "live.hcs.cmvideo.cn"
+          - "ggvot.cmvideo.cn"
+          - "hlsmgspdl.miguvideo.com"
+          - "hlsmgsplive.miguvideo.com"
+          - "resource.ising.migu.cn"
+          - "315.live.cmvideo.cn"
+          - "mgcdn.vod.migucloud.com"
+          - "freetyst.nf.migu.cn"
+          - "iphone.cmvideo.cn"
+          - "ih.cdnle.com"
+          - "abc.ih.cdnle.com"
+      
+      province-es-unlink: 
+        switch: false
+        interval_minutes: 3             # 扫描间隔,单位分钟 
+      
+      
+      ums-alert-integrate: 
+        switch: false
+        run-interval: PT5M
+#        service-url: http://10.12.70.38:28130
+#        service-url: http://127.0.0.1:28130
+        service-url: http://127.0.0.1:28133
+      
+      alert-app-mobile-notify: 
+        switch: false
+        run-interval: PT1M
+      
+    mobile-notify: 
+      switch: false
+      appId: ZpD30C3I1Y5h3Wdl7XGt19
+      appKey: wWUITBbWFj5NLXEhBrlIF8
+      masterSecret: K52GaC4tXZ9uL94Vajwh96
+      url: http://api.getui.com/apiex.htm
+      logo: 
+        
+        
+cdnsnssdk:
+  switch: false
+  interval_minutes: 40
+  general_error_percent_therehold: 0.04   
+  first_frame_data_time_therehold: 400      # ms
+  url: 'http://cdnlog.snssdk.com/'
+  user_name: 'mobile_cdn'
+  token: '1ccac75d170146999971aa238a02fd92'
+  app_name_list: 
+    - "toutiao"
+        
+matric-alert: 
+  business-source: B2B
+  service-url: http://127.0.0.1:29920
+          
+logging: 
+  config: classpath:log4j2.yml
+  level:
+    org.springframework: info
+    com.aspire.cdn.esdatawrap: info  
+  

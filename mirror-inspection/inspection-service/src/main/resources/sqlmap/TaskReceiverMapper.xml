@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.inspection.server.dao.TaskReceiverDao">
+
+    <resultMap id="TaskReceiverResultMap" type="com.aspire.mirror.inspection.server.dao.po.TaskReceiver">
+        <result property="receiverId" column="receiver_id" jdbcType="VARCHAR"/>
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="TaskReceiver_Base_Column">
+        inspection_task_receiver.receiver_id,
+        inspection_task_receiver.task_id,
+        inspection_task_receiver.user_id
+    </sql>
+
+    <sql id="TaskReceiver_Query_List_Sharing">
+        <where>
+            <if test="receiverId != null ">
+                and inspection_task_receiver.receiver_id = #{receiverId}
+            </if>
+            <if test="taskId != null ">
+                and inspection_task_receiver.task_id = #{taskId}
+            </if>
+            <if test="userId != null ">
+                and inspection_task_receiver.user_id = #{userId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="receiverId"
+                 open="(" separator="," close=")">
+            #{receiverId}
+        </foreach>
+    </sql>
+    
+    <delete id="deleteByTaskId" parameterType="java.lang.String">
+    	DELETE FROM inspection_task_receiver WHERE task_id = #{taskId}
+    </delete>
+
+    <insert id="insert" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver" >
+        INSERT INTO inspection_task_receiver (
+        <include refid="TaskReceiver_Base_Column" />
+        ) VALUES (
+                #{receiverId,jdbcType=VARCHAR},
+                #{taskId,jdbcType=VARCHAR},
+                #{userId,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="receiverId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver" >
+        INSERT INTO inspection_task_receiver (
+        <include refid="TaskReceiver_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{item.receiverId,jdbcType=VARCHAR},
+                #{item.taskId,jdbcType=VARCHAR},
+                #{item.userId,jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM inspection_task_receiver WHERE receiver_id = #{receiverId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM inspection_task_receiver WHERE receiver_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+    
+    <delete id="deleteByTaskIds" parameterType="java.util.List" >
+        DELETE FROM inspection_task_receiver WHERE task_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver" >
+        DELETE FROM inspection_task_receiver WHERE receiver_id = #{receiverId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver" >
+        UPDATE inspection_task_receiver inspection_task_receiver
+        <set >
+                <if test="receiverId != null" >
+                inspection_task_receiver.receiver_id = #{receiverId},
+                </if>
+                <if test="taskId != null" >
+                inspection_task_receiver.task_id = #{taskId},
+                </if>
+                <if test="userId != null" >
+                inspection_task_receiver.user_id = #{userId},
+                </if>
+        </set>
+        WHERE receiver_id = #{receiverId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver" >
+        UPDATE inspection_task_receiver inspection_task_receiver
+        SET
+        inspection_task_receiver.receiver_id = #{receiverId},
+        inspection_task_receiver.task_id = #{taskId},
+        inspection_task_receiver.user_id = #{userId}
+        WHERE receiver_id = #{receiverId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="TaskReceiverResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="TaskReceiver_Base_Column" />
+        FROM inspection_task_receiver inspection_task_receiver
+        WHERE receiver_id = #{receiverId}
+    </select>
+    
+    <select id="selectByTaskId" resultType="java.lang.String" parameterType="java.lang.String">
+    	SELECT inspection_task_receiver.user_id
+    	FROM inspection_task_receiver inspection_task_receiver
+    	WHERE task_id = #{taskId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="TaskReceiverResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="TaskReceiver_Base_Column" />
+        FROM inspection_task_receiver inspection_task_receiver
+        WHERE receiver_id = #{receiverId}
+    </select>
+    <select id="select" resultMap="TaskReceiverResultMap" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver">
+        SELECT
+        <include refid="TaskReceiver_Base_Column" />
+        FROM inspection_task_receiver inspection_task_receiver
+        WHERE  <include refid="TaskReceiver_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskReceiver">
+        SELECT COUNT(*) FROM inspection_task_receiver inspection_task_receiver
+        <include refid="TaskReceiver_Query_List_Sharing" />
+    </select>
+
+</mapper>

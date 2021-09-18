@@ -1,0 +1,902 @@
+{
+    "list": [
+        {
+            "type": "form",
+            "label": "表单容器",
+            "columnName": "formCondition",
+            "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+            "width": "100%",
+            "list": [
+                {
+                    "type": "input",
+                    "label": "作战标题",
+                    "columnName": "twTitle",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "iconfont icondanhangwenben",
+                    "customLabelWidth": false,
+                    "classify": "form",
+                    "class": "",
+                    "props": {
+                        "placeholder": "请输入",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "clearableStatus": []
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "title"
+                },
+                {
+                    "type": "select",
+                    "label": "作战场景",
+                    "columnName": "twSence",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "confont iconxialakuang",
+                    "classify": "form",
+                    "needLabel": true,
+                    "defaultSetLabel": false,
+                    "customLabelWidth": false,
+                    "option-label": "name",
+                    "option-value": "order_num",
+                    "option-alias": "alias",
+                    "searchProps": {
+                        "need": "1",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "post+json",
+                        "apiParam": "{}",
+                        "separator": ",",
+                        "allLabel": "全选",
+                        "allValue": "000",
+                        "isUserAllValue": false
+                    },
+                    "class": "",
+                    "props": {
+                        "placeholder": "请选择",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": true,
+                        "remote": false,
+                        "collapse-tags": false,
+                        "clearableStatus": []
+                    },
+                    "options": [],
+                    "hidden": false,
+                    "isAddOption": false,
+                    "showOptions": [],
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "targetName": "label_select_1615445464031",
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": [],
+                    "oldColumnName": "scenes",
+                    "network$$$tag": false
+                },
+                {
+                    "label": "启动时间",
+                    "type": "AspDateRange",
+                    "required": false,
+                    "rules": [],
+                    "classify": "form",
+                    "class": "",
+                    "columnName": "twStartTime",
+                    "targetName": "twEndTime",
+                    "asideIcon": "iconfont iconriqi",
+                    "customLabelWidth": false,
+                    "icon": "",
+                    "operation": [],
+                    "hidden": false,
+                    "dateRangeType": 0,
+                    "props": {
+                        "type": "date",
+                        "format": "yyyy-MM-dd",
+                        "value-format": "yyyy-MM-dd",
+                        "range-separator": "至",
+                        "start-placeholder": "",
+                        "end-placeholder": "",
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "picker-options": {},
+                        "clearableStatus": []
+                    },
+                    "width": "100%",
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "oldColumnName": "startTime",
+                    "oldTargetName": "endTime",
+                    "isChangeDefault1": false
+                },
+                {
+                    "type": "select",
+                    "label": "作战状态",
+                    "columnName": "twStatus",
+                    "defaultValue": "",
+                    "icon": "",
+                    "width": "100%",
+                    "required": false,
+                    "rules": [],
+                    "asideIcon": "confont iconxialakuang",
+                    "classify": "form",
+                    "needLabel": true,
+                    "defaultSetLabel": false,
+                    "customLabelWidth": false,
+                    "option-label": "name",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "searchProps": {
+                        "need": "1",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "optionProps": {
+                        "optionType": "2",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "/v1/cmdb/configDict/getDictsByType?type=teamwork_status",
+                        "apiType": "get",
+                        "apiParam": "",
+                        "separator": ",",
+                        "allLabel": "全选",
+                        "allValue": "000",
+                        "isUserAllValue": false
+                    },
+                    "class": "",
+                    "props": {
+                        "placeholder": "请选择",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": true,
+                        "remote": false,
+                        "collapse-tags": false,
+                        "clearableStatus": []
+                    },
+                    "options": [
+                        {
+                            "label": "Option 1",
+                            "value": "1"
+                        },
+                        {
+                            "label": "Option 2",
+                            "value": "2"
+                        }
+                    ],
+                    "hidden": false,
+                    "isAddOption": false,
+                    "showOptions": [
+                        {
+                            "label": "Option 1",
+                            "value": "1",
+                            "disabled": false
+                        },
+                        {
+                            "label": "Option 2",
+                            "value": "2",
+                            "disabled": false
+                        }
+                    ],
+                    "hasParentForm": true,
+                    "labelWidth": 100,
+                    "targetName": "label_select_1615878031941",
+                    "network$$$tag": false,
+                    "oldColumnName": "select_1615878031941"
+                },
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "button-group_1615445514278",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [
+                        {
+                            "type": "button",
+                            "label": "查询",
+                            "columnName": "search",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "isEncrypt": false,
+                            "isVerifyTableRow": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "dialogConfig": {
+                                "bindName": "",
+                                "title": "",
+                                "subTitle": "",
+                                "titleClass": "dialog-title-default",
+                                "width": "",
+                                "height": "",
+                                "toolList": []
+                            },
+                            "props": {
+                                "icon": "el-icon-search",
+                                "type": "primary"
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "oldColumnName": "button_1615445535562",
+                            "formId": "formCondition",
+                            "event": "submit",
+                            "tableId": "table"
+                        },
+                        {
+                            "type": "button",
+                            "label": "重置",
+                            "columnName": "clear",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "isEncrypt": false,
+                            "isVerifyTableRow": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "dialogConfig": {
+                                "bindName": "",
+                                "title": "",
+                                "subTitle": "",
+                                "titleClass": "dialog-title-default",
+                                "width": "",
+                                "height": "",
+                                "toolList": []
+                            },
+                            "props": {
+                                "icon": "",
+                                "type": ""
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": true,
+                            "labelWidth": 100,
+                            "event": "reset-submit",
+                            "formId": "formCondition",
+                            "tableId": "table",
+                            "oldColumnName": "button_1615445542156"
+                        }
+                    ],
+                    "position": "left",
+                    "class": "",
+                    "isDialogFooterBtns": false,
+                    "classify": "layout",
+                    "hidden": false,
+                    "hasParentForm": true,
+                    "labelWidth": 100
+                }
+            ],
+            "classify": "layout",
+            "hidden": false
+        },
+        {
+            "type": "empty",
+            "label": "空容器",
+            "columnName": "empty_1596766569167",
+            "asideIcon": "iconfont iconkongkuang",
+            "width": "100%",
+            "list": [
+                {
+                    "type": "button-group",
+                    "label": "按钮容器",
+                    "columnName": "buttonGroup",
+                    "asideIcon": "iconfont iconanniuzu",
+                    "width": "100%",
+                    "list": [
+                        {
+                            "type": "button",
+                            "label": "新增",
+                            "columnName": "add",
+                            "icon": "icon-input",
+                            "width": "100%",
+                            "required": false,
+                            "hidden": false,
+                            "asideIcon": "iconfont iconanniu",
+                            "eventName": "",
+                            "props": {
+                                "icon": "",
+                                "type": "primary"
+                            },
+                            "class": "",
+                            "classify": "button",
+                            "hasParentForm": false,
+                            "labelWidth": 100,
+                            "oldColumnName": "button_1596766579689",
+                            "authSwitch": false,
+                            "authId": "PCC_order_010102",
+                            "event": "dialog-form",
+                            "routerType": "",
+                            "routerKey": "",
+                            "routerParamType": "query",
+                            "routerParamValue": "{sf_status: \"create\",sf_bpmStatus:\"startBpm_bizRequirementAdd\"}",
+                            "sf_routerId": "2588",
+                            "sf_pageType": "form",
+                            "sf_routerParam": "{sf_status: \"create\"}"
+                        }
+                    ],
+                    "classify": "layout",
+                    "hidden": false,
+                    "hasParentForm": false,
+                    "labelWidth": 100
+                },
+                {
+                    "type": "table",
+                    "label": "表格",
+                    "columnName": "table",
+                    "asideIcon": "iconfont icondashujukeshihuaico-",
+                    "width": "100%",
+                    "classify": "layout",
+                    "show-index": true,
+                    "show-single-selection": false,
+                    "show-multiple-selection": false,
+                    "show-operation": true,
+                    "show-pagination": true,
+                    "defaultSort": {
+                        "prop": "",
+                        "order": "asc",
+                        "ascending": "asc",
+                        "descending": "desc"
+                    },
+                    "props": {
+                        "border": true,
+                        "stripe": true,
+                        "highlight-current-row": false,
+                        "show-header": true,
+                        "default-sort": ""
+                    },
+                    "list": [
+                        {
+                            "label": "作战标题",
+                            "columnName": "twTitle",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "aa": "show",
+                            "authSwitch": false,
+                            "authId": "",
+                            "tooltip": true
+                        },
+                        {
+                            "label": "作战内容",
+                            "columnName": "twContent",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": true,
+                            "convertProps": {
+                                "type": "select",
+                                "optionType": "1",
+                                "options": [],
+                                "apiType": "post+json",
+                                "localProxy": "",
+                                "statusKey": "status",
+                                "statusValue": "200",
+                                "responseDataKey": "data",
+                                "option-value": "code",
+                                "option-label": "name",
+                                "separator": ",",
+                                "sessionKey": "codeData",
+                                "dicKey": "PCC_OPERATION_TYPE"
+                            },
+                            "tooltip": true
+                        },
+                        {
+                            "label": "作战场景",
+                            "columnName": "twSence",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": true,
+                            "convertProps": {
+                                "type": "select",
+                                "optionType": "1",
+                                "options": [
+                                    {
+                                        "code": "1",
+                                        "name": "商品新增",
+                                        "orderKey": 1,
+                                        "status": "1"
+                                    },
+                                    {
+                                        "code": "2",
+                                        "name": "变更商品信息",
+                                        "orderKey": 2,
+                                        "status": "1"
+                                    },
+                                    {
+                                        "code": "3",
+                                        "name": "变更能开渠道",
+                                        "orderKey": 3,
+                                        "status": "1"
+                                    },
+                                    {
+                                        "code": "4",
+                                        "name": "商品新增（无需省侧配置）",
+                                        "orderKey": 4,
+                                        "status": "1"
+                                    }
+                                ],
+                                "apiType": "post+json",
+                                "localProxy": "",
+                                "statusKey": "status",
+                                "statusValue": "200",
+                                "responseDataKey": "data",
+                                "option-value": "code",
+                                "option-label": "name",
+                                "separator": ",",
+                                "dicKey": "PCC_ORDER_TYPE",
+                                "sessionKey": "codeData"
+                            }
+                        },
+                        {
+                            "label": "作战编号",
+                            "columnName": "twCode",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": true,
+                            "convertProps": {
+                                "type": "select",
+                                "optionType": "1",
+                                "options": [],
+                                "apiType": "post+json",
+                                "localProxy": "",
+                                "statusKey": "status",
+                                "statusValue": "200",
+                                "responseDataKey": "data",
+                                "option-value": "code",
+                                "option-label": "name",
+                                "separator": ",",
+                                "dicKey": "PCC_TEMPLATE_TYPE",
+                                "sessionKey": "codeData"
+                            }
+                        },
+                        {
+                            "label": "协同状态",
+                            "columnName": "twStatus",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": true,
+                            "convertProps": {
+                                "type": "select",
+                                "optionType": "1",
+                                "options": [],
+                                "apiType": "post+json",
+                                "localProxy": "",
+                                "statusKey": "status",
+                                "statusValue": "200",
+                                "responseDataKey": "data",
+                                "option-value": "code",
+                                "option-label": "name",
+                                "separator": ",",
+                                "dicKey": "PCC_ORDER_STATUS",
+                                "sessionKey": "codeData"
+                            },
+                            "dy_data_column_list": [
+                                {
+                                    "target": {
+                                        "label": "协同状态",
+                                        "columnName": "status"
+                                    },
+                                    "dynamic": {
+                                        "type": "",
+                                        "paramObj": {},
+                                        "status": []
+                                    },
+                                    "condition": [],
+                                    "statusTag": "success"
+                                }
+                            ]
+                        },
+                        {
+                            "label": "作战启动时间",
+                            "columnName": "twStartTime",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "140",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "formatter": "yyyymmdd"
+                        },
+                        {
+                            "label": "作战结束时间",
+                            "columnName": "twEndTime",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "140",
+                            "canEdit": false,
+                            "editProps": {
+                                "type": "input",
+                                "rules": [],
+                                "required": false,
+                                "props": {}
+                            },
+                            "list": [],
+                            "show": true,
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "formatter": "yyyymmdd"
+                        },
+                        {
+                            "label": "内置可编辑参数",
+                            "columnName": "$asp_isEdit",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "200",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": false,
+                            "tooltip": true,
+                            "$_isBuiltInParams": true
+                        },
+                        {
+                            "label": "作战时长",
+                            "columnName": "twUseTime",
+                            "type": "text",
+                            "sort": false,
+                            "fixed": false,
+                            "width": "",
+                            "min-width": "",
+                            "canEdit": false,
+                            "mergeRows": false,
+                            "editProps": {
+                                "type": ""
+                            },
+                            "needConvertData": false,
+                            "convertProps": {},
+                            "list": [],
+                            "show": true,
+                            "tooltip": true
+                        }
+                    ],
+                    "operation": [
+                        {
+                            "status": "",
+                            "state": "show"
+                        },
+                        {
+                            "status": "",
+                            "state": "show"
+                        }
+                    ],
+                    "toolList": [
+                        {
+                            "type": "text",
+                            "columnName": "btn-operate-goRoom",
+                            "label": "进入作战室",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "defaultState": "show",
+                            "dataLinkage": [],
+                            "activeType": "",
+                            "apiMethod": "path",
+                            "authSwitch": false,
+                            "authId": "",
+                            "apiName": "/configureOrder/configureOrderDetail",
+                            "apiParamType": "query",
+                            "apiParam": "{status:\"csDetail\", flowStatusEnd:false, instanceId:\"$instanceId$\", orderId:\"$id$\", operatorType:\"$operatorType$\", orderTypeCode:\"$type$\"}",
+                            "confirmationStatus": [],
+                            "confirmationSwitch": false
+                        },
+                        {
+                            "type": "text",
+                            "timestamp": 1615876620342,
+                            "columnName": "btn-operate-fightRestart",
+                            "label": "重启作战",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": [],
+                            "confirmationStatus": []
+                        },
+                        {
+                            "type": "text",
+                            "timestamp": 1615876627494,
+                            "columnName": "btn-operate-fightHistory",
+                            "label": "作战历史",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": [],
+                            "confirmationStatus": []
+                        },
+                        {
+                            "type": "text",
+                            "timestamp": 1615876633430,
+                            "columnName": "btn-operate-goTemplates",
+                            "label": "标签汇总",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": [],
+                            "confirmationStatus": []
+                        },
+                        {
+                            "type": "text",
+                            "timestamp": 1615876648567,
+                            "columnName": "btn-operate-edit",
+                            "label": "编辑",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": [],
+                            "confirmationStatus": []
+                        },
+                        {
+                            "type": "text",
+                            "timestamp": 1615876652351,
+                            "columnName": "btn-operate-delete",
+                            "label": "删除",
+                            "align": "left",
+                            "class": "",
+                            "icon": "",
+                            "justShowIcon": false,
+                            "defaultState": "show",
+                            "state": "show",
+                            "dataLinkage": [],
+                            "confirmationStatus": []
+                        }
+                    ],
+                    "operation-width": "240",
+                    "pagination": {
+                        "layout": "total, sizes, prev, pager, next, jumpe",
+                        "pageSizes": [
+                            "10",
+                            "20",
+                            "30"
+                        ],
+                        "currentPage": 1,
+                        "pageSize": 10,
+                        "total": 0,
+                        "hide-on-single-page": false
+                    },
+                    "http": {
+                        "initHttp": true,
+                        "type": "post",
+                        "methods": "/v1/cmdb/teamword/pageList"
+                    },
+                    "hidden": false,
+                    "hasParentForm": false,
+                    "labelWidth": 100,
+                    "btnGroupDynamic": [
+                        {
+                            "label": "btn-operate-goRoom",
+                            "columnName": "btn-operate-goRoom",
+                            "authId": "",
+                            "statusList": [],
+                            "state": "show",
+                            "dataLinkage": [
+                                {
+                                    "columnName": "twStatus",
+                                    "compare": "=",
+                                    "compareType": "staticData",
+                                    "targetValue": "1",
+                                    "authSwitch": false,
+                                    "authId": "",
+                                    "if": "&&"
+                                }
+                            ]
+                        },
+                        {
+                            "label": "btn-operate-fightRestart",
+                            "columnName": "btn-operate-fightRestart",
+                            "authId": "",
+                            "statusList": [],
+                            "state": "show",
+                            "dataLinkage": [
+                                {
+                                    "columnName": "twStatus",
+                                    "compare": ">",
+                                    "compareType": "staticData",
+                                    "targetValue": "1",
+                                    "authSwitch": false,
+                                    "authId": "",
+                                    "if": "&&"
+                                }
+                            ]
+                        },
+                        {
+                            "label": "btn-operate-fightHistory",
+                            "columnName": "btn-operate-fightHistory",
+                            "authId": "",
+                            "statusList": [],
+                            "state": "show",
+                            "dataLinkage": [
+                                {
+                                    "columnName": "twStatus",
+                                    "compare": ">",
+                                    "compareType": "staticData",
+                                    "targetValue": "1",
+                                    "authSwitch": false,
+                                    "authId": "",
+                                    "if": "&&"
+                                }
+                            ]
+                        },
+                        {
+                            "label": "btn-operate-goTemplates",
+                            "columnName": "btn-operate-goTemplates",
+                            "authId": "",
+                            "statusList": [],
+                            "state": "show",
+                            "dataLinkage": [
+                                {
+                                    "columnName": "twStatus",
+                                    "compare": "=",
+                                    "compareType": "staticData",
+                                    "targetValue": "2",
+                                    "authSwitch": false,
+                                    "authId": "",
+                                    "if": "&&"
+                                }
+                            ]
+                        }
+                    ],
+                    "indexFixed": false,
+                    "singleSelectionFixed": true,
+                    "multipleSelectionFixed": true,
+                    "cacheMultipleSelection": false,
+                    "multipleSelectionColumnName": [],
+                    "operationFixed": false,
+                    "defaultSelectAll": false,
+                    "show-operation-status": [],
+                    "fixed-pagination": false,
+                    "router": {},
+                    "formId": "formCondition"
+                }
+            ],
+            "classify": "empty",
+            "hidden": false
+        }
+    ],
+    "model": {
+        "name": "",
+        "modelFlag": "",
+        "submitDateStart": "",
+        "submitDateEnd": "",
+        "flowStatus": "",
+        "orderTypeCode": "",
+        "input_1615445407768": "",
+        "AspDateRange_1615445444138": "",
+        "label_AspDateRange_1615445444138": "",
+        "select_1615445474424": "",
+        "twTitle": "",
+        "twSence": "",
+        "twStartTime": "",
+        "twEndTime": "",
+        "twStatus44": "",
+        "twStatus": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "project": "webbas",
+        "labelWidth": 100,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "exportName": "workOrderTable"
+    }
+}

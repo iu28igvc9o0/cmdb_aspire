@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.FormOptionsMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="default" property="isdefault" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="parentId" property="parentid" jdbcType="VARCHAR" />
+    <result column="formId" property="formid" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="OptionMap1" type="com.aspire.ums.cmdb.module.entity.OptionBean" >
+    <result column="name1" property="name" jdbcType="VARCHAR" />
+    <result column="value1" property="value" jdbcType="VARCHAR" />
+    <collection property="children" resultMap="OptionMap2"></collection>
+  </resultMap>
+  <resultMap id="OptionMap2" type="com.aspire.ums.cmdb.module.entity.OptionBean" >
+    <result column="name2" property="name" jdbcType="VARCHAR" />
+    <result column="value2" property="value" jdbcType="VARCHAR" />
+    <collection property="children" resultMap="OptionMap3"></collection>
+  </resultMap>
+  <resultMap id="OptionMap3" type="com.aspire.ums.cmdb.module.entity.OptionBean" >
+    <result column="name3" property="name" jdbcType="VARCHAR" />
+    <result column="value3" property="value" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name,value, default, color, parentId, formId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_form_options
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+   <select id="getOptionsMapByFormId" resultType="java.lang.String" parameterType="java.lang.String" >
+    select Name
+    from cmdb_form_options
+    where formId = #{formId,jdbcType=VARCHAR}
+  </select>
+  <select id="getByFormId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, `name`,`value`, `default`, color, parentId, formId
+    from cmdb_form_options
+    where formId = #{formId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getOptionBeanByFormId" resultMap="OptionMap1" parameterType="java.lang.String">
+select id1,name1,value1,parentId1,id2,name2,value2,parentId2,id3,name3,value3,parentId3 from (select c1.id id1,c1.name name1,c1.value value1,c1.parentId parentId1,
+c2.id id2,c2.name name2,c2.value value2,c2.parentId parentId2,
+c3.id id3,c3.name name3,c3.value value3,c3.parentId parentId3
+ from (select id,name,value,parentId from cmdb_form_options  where formId =#{formId}) c1
+left JOIN cmdb_form_options c2 on c1.id = c2.parentId  	left JOIN cmdb_form_options c3 on c2.id = c3.parentId)gg
+where gg.parentId1 is null
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_form_options
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByformId" parameterType="java.lang.String" >
+    delete from cmdb_form_options
+    where formId = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    insert into cmdb_form_options (id, name, 
+      default, color, parentId, 
+      formId)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{isdefault,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, #{parentid,jdbcType=VARCHAR}, 
+      #{formid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    insert into cmdb_form_options
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        id,
+      </if>
+      <if test="name != null and name !=''" >
+        name,
+      </if>
+      <if test="value != null and value !=''" >
+        value,
+      </if>
+      <if test="isdefault != null and isdefault !=''" >
+        `default`,
+      </if>
+      <if test="color != null and color !=''" >
+        color,
+      </if>
+      <if test="parentid != null and parentid !=''" >
+        parentId,
+      </if>
+      <if test="formid != null and formid !=''" >
+        formId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and name !=''" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null and value !=''" >
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefault != null and isdefault !=''" >
+        #{isdefault,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null and color !=''" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null and parentid !=''" >
+        #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="formid != null and formid !=''" >
+        #{formid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    update cmdb_form_options
+    <set >
+      
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        value = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="isdefault != null" >
+        `default` = #{isdefault,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        parentId = #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="formid != null" >
+        formId = #{formid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    update cmdb_form_options
+      name = #{name,jdbcType=VARCHAR},
+      default = #{isdefault,jdbcType=VARCHAR},
+      color = #{color,jdbcType=VARCHAR},
+      parentId = #{parentid,jdbcType=VARCHAR},
+      formId = #{formid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

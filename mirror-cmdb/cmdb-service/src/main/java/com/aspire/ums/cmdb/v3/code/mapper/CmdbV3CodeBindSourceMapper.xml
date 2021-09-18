@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeBindSourceMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="bind_source_type" property="bindSourceType" jdbcType="VARCHAR" />
+        <result column="dict_source" property="dictSource" jdbcType="VARCHAR" />
+        <result column="table_source" property="tableSource" jdbcType="VARCHAR" />
+        <result column="table_sql" property="tableSql" jdbcType="VARCHAR" />
+        <result column="ref_module_id" property="refModuleId" jdbcType="VARCHAR" />
+        <result column="ref_module_name" property="refModuleName" jdbcType="VARCHAR" />
+        <result column="show_module_code_id" property="showModuleCodeId" jdbcType="VARCHAR" />
+        <result column="show_module_code_name" property="showModuleCodeName" jdbcType="VARCHAR" />
+        <result column="ref_module_query" property="refModuleQuery" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        cbs.`id`,
+        cbs.`code_id`,
+        cbs.`bind_source_type`,
+        cbs.`dict_source`,
+        cbs.`table_source`,
+        cbs.`table_sql`,
+        cbs.`ref_module_id`,
+        m.name `ref_module_name`,
+        cbs.`show_module_code_id`,
+        c.filed_name `show_module_code_name`,
+        cbs.`ref_module_query`,
+        cbs.`is_delete`
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+       <include refid="baseColumn"/>
+        FROM cmdb_v3_code_bind_source cbs
+        left join cmdb_module m on cbs.ref_module_id =m.id
+        left join cmdb_code c on cbs.show_module_code_id =c.code_id
+        where  cbs.`is_delete` = '0'
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_v3_code_bind_source cbs
+        left join cmdb_module m on cbs.ref_module_id =m.id
+        left join cmdb_code c on cbs.show_module_code_id =c.code_id
+        where  cbs.`is_delete` = '0'
+        <if test="id != null and id != ''">
+        AND cbs.`id` = #{id}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND cbs.`code_id` = #{codeId}
+        </if>
+        <if test="bindSourceType != null and bindSourceType != ''">
+        AND cbs.`bind_source_type` = #{bindSourceType}
+        </if>
+        <if test="dictSource != null and dictSource != ''">
+        AND cbs.`dict_source` = #{dictSource}
+        </if>
+        <if test="tableSource != null and tableSource != ''">
+        AND cbs.`table_source` = #{tableSource}
+        </if>
+        <if test="tableSql != null and tableSql != ''">
+        AND cbs.`table_sql` = #{tableSql}
+        </if>
+        <if test="refModuleId != null and refModuleId != ''">
+        AND cbs.`ref_module_id` = #{refModuleId}
+        </if>
+        <if test="showModuleCodeId != null and showModuleCodeId != ''">
+        AND `cbs.show_module_code_id` = #{showModuleCodeId}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND cbs.`is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_v3_code_bind_source cbs
+        left join cmdb_module m on cbs.ref_module_id =m.id
+        left join cmdb_code c on cbs.show_module_code_id =c.code_id
+        where  cbs.`is_delete` = '0'
+        AND cbs.`id` = #{id}
+        AND cbs.`code_id` = #{codeId}
+    </select>
+
+    <select id="getByCodeId" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_v3_code_bind_source cbs
+        left join cmdb_module m on cbs.ref_module_id =m.id
+        left join cmdb_code c on cbs.show_module_code_id =c.code_id
+        where  cbs.`is_delete` = '0' AND cbs.`code_id` = #{codeId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource">
+        INSERT INTO cmdb_v3_code_bind_source
+        (
+            `id`,
+            `code_id`,
+            `bind_source_type`,
+            `dict_source`,
+            `table_source`,
+            `table_sql`,
+            `ref_module_id`,
+            `show_module_code_id`,
+            `ref_module_query`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{bindSourceType, jdbcType=VARCHAR},
+            #{dictSource, jdbcType=VARCHAR},
+            #{tableSource, jdbcType=VARCHAR},
+            #{tableSql, jdbcType=VARCHAR},
+            #{refModuleId, jdbcType=VARCHAR},
+            #{showModuleCodeId, jdbcType=VARCHAR},
+            #{refModuleQuery, jdbcType=VARCHAR},
+            0
+        )
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource">
+        INSERT INTO cmdb_v3_code_approve
+        (
+        `id`,
+        `code_id`,
+        `bind_source_type`,
+        `dict_source`,
+        `table_source`,
+        `table_sql`,
+        `ref_module_id`,
+        `show_module_code_id`,
+        `ref_module_query`,
+        `is_delete`
+        ) values
+        <foreach collection="bindSources" item="item" index="index" separator=",">
+            #{item.id, jdbcType=VARCHAR},
+            #{item.codeId, jdbcType=VARCHAR},
+            #{item.bindSourceType, jdbcType=VARCHAR},
+            #{item.dictSource, jdbcType=VARCHAR},
+            #{item.tableSource, jdbcType=VARCHAR},
+            #{item.tableSql, jdbcType=VARCHAR},
+            #{item.refModuleId, jdbcType=VARCHAR},
+            #{item.showModuleCodeId, jdbcType=VARCHAR},
+            #{item.refModuleQuery, jdbcType=VARCHAR},
+            0
+        </foreach>
+    </insert>
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource">
+        UPDATE cmdb_v3_code_bind_source SET
+        `bind_source_type` = #{bindSourceType},
+        `dict_source` = #{dictSource},
+        `table_source` = #{tableSource},
+        `table_sql` = #{tableSql},
+        `ref_module_id` = #{refModuleId},
+        `show_module_code_id` = #{showModuleCodeId},
+        `ref_module_query` = #{refModuleQuery},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id} and `code_id` = #{codeId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.code.payload.CmdbV3CodeBindSource">
+        DELETE FROM cmdb_v3_code_bind_source
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <delete id="deleteByCodeId">
+        UPDATE cmdb_v3_code_bind_source SET `is_delete` = 1
+        WHERE `code_id` = #{codeId}
+    </delete>
+</mapper>

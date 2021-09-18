@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.condication.mapper.CmdbV3CondicationSettingMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSetting" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="condication_code" property="condicationCode" jdbcType="VARCHAR" />
+        <result column="condication_name" property="condicationName" jdbcType="VARCHAR" />
+        <result column="condication_type" property="condicationType" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="access_user_id" property="accessUserId" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <association property="accessUser" column="access_user_id"
+                     select="com.aspire.ums.cmdb.v3.condication.mapper.CmdbV3AccessUserMapper.getById"></association>
+        <association property="simpleModule" column="module_id"
+                     select="com.aspire.ums.cmdb.v2.module.mapper.ModuleMapper.getSimpleModuleDetail"></association>
+        <collection property="settingRelationList" column="id"
+                    select="com.aspire.ums.cmdb.v3.condication.mapper.CmdbV3CondicationSettingRelationMapper.getSettingRelationByCondicationId">
+        </collection>
+        <collection property="returnRelationList" column="id"
+                    select="com.aspire.ums.cmdb.v3.condication.mapper.CmdbV3CondicationReturnRelationMapper.getReturnRelationByCondicationId"></collection>
+        <collection property="sortRelationList" column="id"
+                    select="com.aspire.ums.cmdb.v3.condication.mapper.CmdbV3CondicationSortRelationMapper.getSortRelationByCondicationId"></collection>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `condication_code`,
+        `module_id`,
+        `access_user_id`,
+        `condication_name`,
+        `condication_type`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_v3_condication_setting
+        where `is_delete` = 0
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSetting">
+        SELECT
+        `id`,
+        `condication_code`,
+        `module_id`,
+        `access_user_id`,
+        `condication_name`,
+        `condication_type`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_v3_condication_setting
+        WHERE 1=1 and `is_delete` = 0
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="condicationName != null and condicationName != ''">
+        AND `condication_name` = #{condicationName}
+        </if>
+        <if test="condicationType != null and condicationType != ''">
+        AND `condication_type` = #{condicationType}
+        </if>
+        <if test="remark != null and remark != ''">
+        AND `remark` = #{remark}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSetting" resultMap="resultMap">
+        SELECT
+        `id`,
+        `condication_code`,
+        `module_id`,
+        `access_user_id`,
+        `condication_name`,
+        `condication_type`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_v3_condication_setting
+        WHERE 1=1 and `is_delete` = 0
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="condicationName != null and condicationName != ''">
+            AND `condication_name` = #{condicationName}
+        </if>
+        <if test="condicationType != null and condicationType != ''">
+            AND `condication_type` = #{condicationType}
+        </if>
+        <if test="condicationCode != null and condicationCode != ''">
+            AND `condication_code` = #{condicationCode}
+        </if>
+        <if test="accessUserId != null and accessUserId != ''">
+            AND `access_user_id` = #{accessUserId}
+        </if>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSetting">
+        INSERT INTO cmdb_v3_condication_setting
+        (
+            `id`,
+            `condication_code`,
+            `module_id`,
+            `access_user_id`,
+            `condication_name`,
+            `condication_type`,
+            `remark`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{condicationCode, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{accessUserId, jdbcType=VARCHAR},
+            #{condicationName, jdbcType=VARCHAR},
+            #{condicationType, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR},
+            0
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSetting">
+        UPDATE cmdb_v3_condication_setting SET
+        `module_id` = #{moduleId},
+        `access_user_id` = #{accessUserId},
+        `condication_code` = #{condicationCode},
+        `condication_name` = #{condicationName},
+        `condication_type` = #{condicationType},
+        `remark` = #{remark}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSetting">
+        UPDATE cmdb_v3_condication_setting SET
+        `is_delete` = 1
+        WHERE
+        `id` = #{id}
+    </delete>
+
+    <sql id="selectCondicationSetting">
+        SELECT
+        `id`,
+        `condication_code`,
+        `module_id`,
+        `access_user_id`,
+        `condication_name`,
+        `condication_type`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_v3_condication_setting t
+    </sql>
+
+    <select id="getCondicationSettingListCount" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSettingQuery" resultType="java.lang.Integer">
+        SELECT
+        count(1) totalCount
+        FROM cmdb_v3_condication_setting
+        where 1=1 and `is_delete` = 0
+        <if test="condicationName != null and condicationName != ''">
+            and condication_name like concat('%',#{condicationName},'%')
+        </if>
+        <if test="condicationType != null and condicationType != ''">
+            and condication_type = #{condicationType}
+        </if>
+    </select>
+
+    <select id="getCondicationSettingList" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationSettingQuery" resultMap="resultMap">
+        <include refid="selectCondicationSetting"></include>
+        where 1=1 and `is_delete` = 0
+        <if test="condicationName != null and condicationName != ''">
+            and condication_name like concat('%',#{condicationName},'%')
+        </if>
+        <if test="condicationType != null and condicationType != ''">
+            and condication_type = #{condicationType}
+        </if>
+        <if test="pageSize != null and pageSize != '' and currentPage != null and currentPage != ''">
+            limit ${(currentPage -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+
+    <select id="getConditionListByCodeId" resultMap="resultMap">
+        <include refid="selectCondicationSetting"></include>
+        where EXISTS (select * from cmdb_v3_condication_setting_relation sr
+        where sr.condication_setting_id = t.id and sr.is_delete = '0' and sr.code_id=#{codeId})
+        and t.is_delete = '0'
+    </select>
+
+    <select id="validConditionUnique" resultType="java.lang.Integer">
+        SELECT
+        count(1) totalCount
+        FROM cmdb_v3_condication_setting
+        where 1=1 and `is_delete` = 0
+        <if test="code != null and code != ''">
+            and condication_code = #{code}
+        </if>
+        <if test="name != null and name != ''">
+            and condication_name = #{name}
+        </if>
+    </select>
+</mapper>

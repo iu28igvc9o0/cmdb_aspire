@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.bills.screen.mapper.CmdbBillsOperationScreenMapper">
+
+	<!-- 获取租户类型列表 -->
+	<select id="getDeptTypeList" resultType="HashMap">
+		select t.id, t.dict_note as name from ${tablePrefix}.t_cfg_dict t
+		where t.is_delete = 0 and t.col_name = 'department_type'
+		order by t.sort_index
+	</select>
+
+	<!-- 获取各租户类型费用总合计 -->
+	<select id="getTotalExpense" resultType="HashMap">
+		SELECT t.id AS deptTypeId, t.dict_note AS deptType,
+			   CONCAT(IFNULL(b.needPay,0)) AS needPay
+		FROM  ${tablePrefix}.t_cfg_dict t
+				 LEFT JOIN (
+				SELECT dict.id AS deptType,
+					   IFNULL(SUM(bill.need_pay), 0) AS needPay
+				FROM `cmdb_bills_month_bill` bill
+						 LEFT JOIN  ${tablePrefix}.cmdb_org_system sys ON bill.department_id = sys.id
+						 LEFT JOIN  ${tablePrefix}.t_cfg_dict dict ON dict.id = sys.department_type
+				WHERE bill.is_delete = 0 AND sys.is_delete = 0
+				  AND dict.col_name = 'department_type'
+				  AND bill.charge_time = #{chargeTime}
+				GROUP BY dict.id) b ON t.id = b.deptType
+		WHERE t.col_name = 'department_type' AND t.is_delete = 0
+		ORDER BY t.sort_index
+	</select>
+
+	<!-- 获取各类产品月度总账单 -->
+	<select id="getResourcesMonthBills" resultType="HashMap">
+		select t.dict_note as deviceType, p.dict_note parent,
+			concat(ifnull(q.need_pay, 0)) as totalMoney
+		from ${tablePrefix}.t_cfg_dict t
+		left join (
+			select dict.id, dict.dict_note,
+				sum(ifnull(record.need_pay, 0)) as need_pay
+			from cmdb_bills_month_record record
+		left join (
+			select id, dict_note from ${tablePrefix}.t_cfg_dict
+			where col_name = 'bills_device_type' and is_delete = 0
+		) dict on record.device_type_id = dict.id
+		left join ${tablePrefix}.cmdb_org_system sys on record.department_id = sys.id
+		where record.charge_time = #{chargeTime}
+			and record.idc_id = #{idcId}
+			and record.is_delete = 0
+			and sys.department_type = #{deptTypeId}
+		group by dict.id, dict.dict_note ) q on t.id = q.id
+		left join ${tablePrefix}.t_cfg_dict p on t.up_dict = p.id
+		where t.col_name = 'bills_device_type' and t.is_delete = 0
+	</select>
+
+	<!-- 获取租户月度账单列表 -->
+    <select id="getMonthBills" resultType="HashMap">
+        select sys.id as deptId, sys.orgName as deptName,
+        	concat(ifnull(assign.ljs,0)) as ljs,
+			concat(ifnull(assign.yzj,0)) as yzj,
+			concat(ifnull(assign.cczy,0)) as cczy,
+			concat(ifnull(pay.needPay,0)) as needPay
+		from ${tablePrefix}.cmdb_org_system sys
+		left join (
+			select sys.department_type as deptType,
+				sys.id as deptId, sys.orgName as deptName,
+				ifnull(sum(record.need_pay), 0) AS needPay
+			from cmdb_bills_month_bill record
+			left join ${tablePrefix}.cmdb_org_system sys on record.department_id = sys.id
+			left join ${tablePrefix}.t_cfg_dict dict on dict.id = sys.department_type
+			where record.is_delete = 0 and sys.is_delete = 0
+				and dict.col_name = 'department_type'
+				and record.charge_time = #{chargeTime}
+			group by sys.department_type, sys.id, sys.orgName ) pay
+			on sys.id = pay.deptId
+		left join ${tablePrefix}.cmdb_bills_assigned_view assign
+			on  sys.id = assign.deptId
+		where sys.is_delete = 0
+			and sys.department_type = #{deptTypeId}
+    </select>
+</mapper>

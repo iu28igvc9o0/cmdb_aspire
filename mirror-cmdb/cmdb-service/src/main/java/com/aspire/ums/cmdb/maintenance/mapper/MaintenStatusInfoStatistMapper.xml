@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.MaintenStatusInfoStatistMapper">
+
+    <sql id="where_sql">
+        <if test="resourcePool != null and resourcePool != ''">
+            and device_area like concat('%',#{resourcePool},'%')
+        </if>
+        <if test="maintenProjectType != null and maintenProjectType != ''">
+            and maintenance_project_type = #{maintenProjectType}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="serviceProduce != null and serviceProduce != ''">
+            and mainten_produce = #{serviceProduce}
+        </if>
+    </sql>
+
+    <sql id="time_sql">
+        <if test="timeStatus != null and timeStatus == '在建'">
+            and YEAR(service_start_time)='1970'
+        </if>
+        <if test="timeStatus != null and timeStatus == '已建'">
+            and IFNULL(service_start_time,'')!= '' and IFNULL(service_end_time,'')!= ''
+            and YEAR(service_end_time)!='1980' and YEAR(service_start_time)!='1970'
+        </if>
+        <if test="timeStatus != null and timeStatus == '出保'">
+            and IFNULL(service_start_time,'')!= '' and IFNULL(service_end_time,'')!= ''
+            and service_end_time <![CDATA[ < ]]> NOW()
+        </if>
+        <if test="timeStatus != null and timeStatus == '即将出保'">
+            and IFNULL(service_start_time,'')!= '' and IFNULL(service_end_time,'')!= '' and service_end_time <![CDATA[ >= ]]> NOW()
+            and NOW() <![CDATA[ >= ]]> DATE_SUB(service_end_time, INTERVAL 3 MONTH)
+        </if>
+    </sql>
+
+    <select id="statistMaintenStatusInfo" parameterType="com.aspire.ums.cmdb.maintenance.payload.MaintenStatusInfoStatistRequest" resultType="java.util.HashMap">
+        SELECT
+            maintenStatus,
+            COUNT(DISTINCT rs.projectId) maintenNum,
+            SUM(deviceNum) deviceNum
+        FROM(
+            SELECT
+                CASE
+                WHEN YEAR(t1.beginTime)='1970' THEN '在建'
+                WHEN IFNULL(t1.beginTime,'')!= '' and IFNULL(t1.endTime,'')!= '' and YEAR(t1.endTime)!='1980' and YEAR(t1.beginTime)!='1970' THEN '已建'
+                ELSE '未知' END AS maintenStatus,
+                t1.projectId,
+                t1.deviceNum
+            FROM(
+                SELECT
+                    a.id projectId,
+                    DATE_FORMAT(a.service_start_time,'%Y-%m-%d') beginTime,
+                    DATE_FORMAT(a.service_end_time,'%Y-%m-%d') endTime,
+                    COUNT(DISTINCT b.id) deviceNum
+                FROM cmdb_maintenance_project a
+                LEFT JOIN cmdb_maintenance_project_instance b on (a.id = b.project_id and b.is_delete = '0')
+                WHERE 1=1 AND a.is_delete = '0'
+                <include refid="where_sql"></include>
+                GROUP BY a.id
+            ) t1
+            UNION ALL
+            SELECT
+                CASE
+                WHEN IFNULL(t2.beginTime,'')!= '' and IFNULL(t2.endTime,'')!= '' and t2.endTime <![CDATA[ < ]]> NOW() THEN '出保'
+                WHEN IFNULL(t2.beginTime,'')!= '' and IFNULL(t2.endTime,'')!= '' and t2.endTime <![CDATA[ >= ]]> NOW() and NOW() <![CDATA[ >= ]]> DATE_SUB(t2.endTime, INTERVAL 3 MONTH) THEN '即将出保'
+                ELSE '未知' END AS maintenStatus,
+                t2.projectId,
+                t2.deviceNum
+            FROM(
+                SELECT
+                    a.id projectId,
+                    DATE_FORMAT(a.service_start_time,'%Y-%m-%d') beginTime,
+                    DATE_FORMAT(a.service_end_time,'%Y-%m-%d') endTime,
+                    COUNT(DISTINCT b.id) deviceNum
+                FROM cmdb_maintenance_project a
+                LEFT JOIN cmdb_maintenance_project_instance b on (a.id = b.project_id and b.is_delete = '0')
+                WHERE 1=1 AND a.is_delete = '0'
+                <include refid="where_sql"></include>
+                GROUP BY a.id
+            ) t2
+        ) rs
+        GROUP BY maintenStatus
+        ORDER BY maintenStatus
+    </select>
+
+    <select id="getMaintenProjectList" parameterType="com.aspire.ums.cmdb.maintenance.payload.MaintenStatusInfoStatistRequest" resultType="java.util.HashMap">
+        SELECT
+          rs.*,
+          GROUP_CONCAT(d.service_type) serviceType,
+          GROUP_CONCAT(d.service_num) serviceNum
+        FROM
+        (
+            SELECT
+                a.`id`,
+                `project_name`,
+                `project_no`,
+                a.`service_type`,
+                `service_start_time`,
+                `service_end_time`,
+                `maintenance_type`,
+                `device_area`,
+                `maintenance_project_type`,
+                `procure_type`,
+                `money`,
+                `device_type`,
+                `pre_tax`,
+                `tax_rate`,
+                `after_tax`,
+                `unit_price`,
+                `total_price`,
+                `pay_method`,
+                `discount_amount`,
+                `discount_rate`,
+                COUNT(DISTINCT b.id) deviceNum,
+                mainten_produce serviceProduce,
+                mainten_produce_name serviceNames,
+                mainten_produce_phone servicePhones,
+                mainten_produce_email serviceEmails,
+                contract_produce contractProduce,
+                contract_produce_name contractNames,
+                contract_produce_phone contractPhones,
+                contract_produce_email contractEmails
+            FROM
+              cmdb_maintenance_project a
+            LEFT JOIN cmdb_maintenance_project_instance b ON (
+              a.id = b.project_id AND b.is_delete = '0'
+            ) WHERE a.`is_delete` = '0'
+            <include refid="where_sql"></include>
+            <include refid="time_sql"></include>
+            GROUP BY a.id
+        ) rs
+        LEFT JOIN cmdb_maintenance_service_num d ON d.project_id = rs.id
+        GROUP BY rs.id
+        <if test="pageNo != null and pageSize != ''">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="countMaintenProjectList" parameterType="com.aspire.ums.cmdb.maintenance.payload.MaintenStatusInfoStatistRequest" resultType="java.lang.Integer">
+        select count(1)
+        from (
+            SELECT
+              a.id
+            FROM cmdb_maintenance_project a
+            LEFT JOIN cmdb_maintenance_project_instance b ON (a.id = b.project_id and b.is_delete = '0')
+            WHERE a.`is_delete` = '0'
+            <include refid="where_sql"></include>
+            <include refid="time_sql"></include>
+            GROUP BY a.id
+        ) rs
+    </select>
+</mapper>

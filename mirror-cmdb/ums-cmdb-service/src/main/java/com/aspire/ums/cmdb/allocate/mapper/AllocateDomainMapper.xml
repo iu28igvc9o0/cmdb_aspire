@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.allocate.mapper.AllocateDomainMapper">
+	    
+	<resultMap type="com.aspire.ums.cmdb.allocate.entity.AllocateDomain" id="allocateDomainMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="system_id" property="systemId" jdbcType="VARCHAR" />
+		<result column="hostnet" property="hostnet" jdbcType="VARCHAR" />
+		<result column="domain" property="domain" jdbcType="VARCHAR"/>
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+	    <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="netsegment" property="netSegment" jdbcType="VARCHAR" />
+		<result column="sum" property="sum" jdbcType="VARCHAR" />
+	 </resultMap>
+	 
+	 <sql id="baseColumnList">
+		id,system_id,hostnet,domain,user_name,telephone,description
+	 </sql>
+
+
+     <!-- 动态sql -->
+    <sql id="where_sql"> 
+        <if test="systemId != null and  systemId != '' and systemId!= 'null'  ">
+    		and domain.system_id = #{systemId}
+    	</if>
+    	<if test="hostnet != null and  hostnet != '' and hostnet!= 'null'  ">
+    		and domain.hostnet = #{hostnet}
+    	</if>
+        <if test="ipadress != null and  ipadress != '' and ipadress!= 'null'  ">
+    		and netseg.netsegment  like  CONCAT('%',#{ipadress},'%')
+    	</if>
+    	
+    	<if test="domain != null and  domain != '' and domain!= 'null'  ">
+    		and domain.domain  like  CONCAT('%',#{domain},'%')
+    	</if>
+    	  
+    </sql>
+
+
+	 <insert id="insertAllocateDomain" useGeneratedKeys="true" keyProperty="id"  parameterType="com.aspire.ums.cmdb.allocate.entity.AllocateDomain">
+	 
+	    INSERT INTO cmdb_allocate_domain(system_id,hostnet, domain,user_name,telephone,description ) 
+		values(
+		#{systemId,jdbcType=VARCHAR} ,
+		#{hostnet,jdbcType=VARCHAR} ,
+		#{domain,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR} ,
+		#{telephone,jdbcType=VARCHAR} ,
+		#{description,jdbcType=VARCHAR} 
+		)
+	 </insert>
+	 
+	 
+	 
+	 <update id="updateAllocateDomain" parameterType="com.aspire.ums.cmdb.allocate.entity.AllocateDomain">
+	 
+	    UPDATE cmdb_allocate_domain
+	     <set>
+		   
+		   <if test="domain != null ">
+		   		domain=#{domain},
+		   </if>
+		   
+		   <if test="userName != null ">
+		   		user_name=#{userName},
+		   </if>
+		   
+		   <if test="telephone != null ">
+		   		telephone=#{telephone},
+		   </if>
+		   
+		   <if test="description != null ">
+		   		description=#{description}
+		   </if>
+		  
+		  </set>
+		  where id = #{id}
+	     
+	 </update>
+	 
+	 
+	
+	 <select id="selectAllocateDomainById" parameterType="String" resultMap="allocateDomainMap">
+		 
+		select domain.* ,netseg.netsegment
+		from cmdb_allocate_domain domain 
+		LEFT JOIN ( SELECT   domain_id , GROUP_CONCAT( network_segment  SEPARATOR ',' )  AS netsegment  FROM  cmdb_allocate_netsegment where  flag=0 and domain_id = #{id}  GROUP BY domain_id )  netseg 
+		ON domain.id= netseg.domain_id 
+		where domain.id = #{id} and domain.flag=0
+			
+	 </select>
+	 
+	 
+	 <select id="selectAllocateDomainByName" parameterType="map" resultMap="allocateDomainMap">
+		select
+		<include refid="baseColumnList" />
+		from cmdb_allocate_domain t where flag=0 and  hostnet= #{hostnet}  and  domain = #{domain} 
+	 </select>
+	
+	 
+	 <!-- 删除 -->
+	 <delete id="deleteAllocateDomainById" parameterType="String">
+		update cmdb_allocate_domain set flag = 1 where id = #{id}
+		  
+	 </delete>
+	 
+	
+	 
+	 <!-- 分页数据个数 -->
+	 <select id="getDomainCount" resultType="Integer" parameterType="map">
+		select count(*) FROM  cmdb_allocate_domain  domain 
+	 	LEFT JOIN ( SELECT   domain_id , GROUP_CONCAT( network_segment  SEPARATOR ' ' )  AS netsegment  FROM  cmdb_allocate_netsegment where  flag=0  GROUP BY domain_id )  netseg
+        ON domain.id= netseg.domain_id  where 1=1 and domain.flag=0
+	    <include refid="where_sql" />    
+	 </select>
+	
+
+	<!-- 分页数据 -->
+	<select id="getDomainData" parameterType="map" resultMap="allocateDomainMap" >
+	 	SELECT  domain.* ,netseg.netsegment,ipaddress.sum   FROM  cmdb_allocate_domain  domain 
+	 	LEFT JOIN ( SELECT   domain_id , GROUP_CONCAT( network_segment  SEPARATOR ' ' )  AS netsegment  FROM  cmdb_allocate_netsegment where  flag=0  GROUP BY domain_id )  netseg
+        ON domain.id= netseg.domain_id 
+        LEFT JOIN ( SELECT vpn_id, COUNT( * ) AS `sum`  FROM  cmdb_allocate_ipaddress  where flag=0  GROUP BY vpn_id)  ipaddress 
+        ON  domain.id= ipaddress.vpn_id 
+        where 1=1 and domain.flag=0
+	    <include refid="where_sql" />  limit ${pageNo},${pageSize}
+	</select>
+	 
+	 
+	 
+	 
+	  
+	 
+</mapper>

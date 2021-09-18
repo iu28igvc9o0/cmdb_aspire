@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.pod.mapper.CmdbPodManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v2.pod.entity.CmdbPodManager" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="pod_code" property="podCode" jdbcType="VARCHAR" />
+        <result column="pod_name" property="podName" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `pod_code`,
+        `pod_name`,
+        `project_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_pod_manager
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v2.pod.entity.CmdbPodManager">
+        SELECT
+        `id`,
+        `pod_code`,
+        `pod_name`,
+        `project_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_pod_manager
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="podCode != null and podCode != ''">
+        AND `pod_code` = #{podCode}
+        </if>
+        <if test="podName != null and podName != ''">
+        AND `pod_name` = #{podName}
+        </if>
+        <if test="projectId != null and projectId != ''">
+        AND `project_id` = #{projectId}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v2.pod.entity.CmdbPodManager" resultMap="resultMap">
+        SELECT
+        `id`,
+        `pod_code`,
+        `pod_name`,
+        `project_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_pod_manager
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v2.pod.entity.CmdbPodManager">
+        INSERT INTO cmdb_pod_manager
+        (
+            `id`,
+            `pod_code`,
+            `pod_name`,
+            `project_id`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{podCode, jdbcType=VARCHAR},
+            #{podName, jdbcType=VARCHAR},
+            #{projectId, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            #{isDelete, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v2.pod.entity.CmdbPodManager">
+        UPDATE cmdb_pod_manager SET
+        `pod_code` = #{podCode},
+        `pod_name` = #{podName},
+        `project_id` = #{projectId},
+        `sort_index` = #{sortIndex},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v2.pod.entity.CmdbPodManager">
+        DELETE FROM cmdb_pod_manager
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

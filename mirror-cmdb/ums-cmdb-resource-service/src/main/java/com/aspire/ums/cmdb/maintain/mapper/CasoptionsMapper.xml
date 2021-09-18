@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.CasoptionsMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="default" property="isdefault" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="parentId" property="parentid" jdbcType="VARCHAR" />
+    <result column="formId" property="formid" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="OptionMap1" type="com.aspire.ums.cmdb.maintain.entity.CasoptionsBean" >
+    <result column="label1" property="label" jdbcType="VARCHAR" />
+    <result column="value1" property="value" jdbcType="VARCHAR" />
+    <collection property="children" resultMap="OptionMap2"></collection>
+  </resultMap>
+  <resultMap id="OptionMap2" type="com.aspire.ums.cmdb.maintain.entity.CasoptionsBean" >
+    <result column="label2" property="label" jdbcType="VARCHAR" />
+    <result column="value2" property="value" jdbcType="VARCHAR" />
+    <collection property="children" resultMap="OptionMap3"></collection>
+  </resultMap>
+  <resultMap id="OptionMap3" type="com.aspire.ums.cmdb.maintain.entity.CasoptionsBean" >
+    <result column="label3" property="label" jdbcType="VARCHAR" />
+    <result column="value3" property="value" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name, default, color, parentId, formId
+  </sql>
+
+  <select id="getOptionBeanByFormId" resultMap="OptionMap1" parameterType="java.lang.String">
+  	select id1,label1,value1,parentId1,id2,label2,value2,parentId2,id3,label3,value3,parentId3 from (select c1.id id1,c1.name label1,c1.value value1,c1.parentId parentId1,
+c2.id id2,c2.name label2,c2.value value2,c2.parentId parentId2,
+c3.id id3,c3.name label3,c3.value value3,c3.parentId parentId3
+ from (select id,name,parentId,`value` from cmdb_form_options  where formId =#{formId}) c1
+left JOIN cmdb_form_options c2 on c1.id = c2.parentId  	left JOIN cmdb_form_options c3 on c2.id = c3.parentId)gg
+where gg.parentId1 is null
+  </select>
+
+</mapper>

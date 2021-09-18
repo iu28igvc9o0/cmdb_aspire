@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.FormValueMapper" >
+
+    <resultMap type="com.aspire.ums.cmdb.module.entity.Form" id="FormResultMap">  
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="moduleId" property="moduleid" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="type" property="type" jdbcType="VARCHAR" />
+	    <result column="defaultValue" property="defaultvalue" jdbcType="VARCHAR" />
+	    <result column="required" property="required" jdbcType="VARCHAR" />
+	    <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+	    <result column="hidden" property="hidden" jdbcType="VARCHAR" />
+	    <result column="keyAttr" property="keyattr" jdbcType="VARCHAR" />
+	    <result column="rate" property="rate" jdbcType="VARCHAR" />
+	    <result column="unit" property="unit" jdbcType="VARCHAR" />
+	    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+	    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+	    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+	    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />  
+    </resultMap>
+    <resultMap type="com.aspire.ums.cmdb.module.entity.FormOptions" id="FormOptionsResultMap">  
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="value" property="value" jdbcType="VARCHAR" />
+	    <result column="default" property="isdefault" jdbcType="VARCHAR" />
+	    <result column="color" property="color" jdbcType="VARCHAR" />
+	    <result column="parentId" property="parentid" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap type="com.aspire.ums.cmdb.module.entity.FormFields" id="FormFieldsResultMap">  
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="key" property="key" jdbcType="VARCHAR" />
+	    <result column="name" property="name" jdbcType="VARCHAR" />
+	    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+	    <result column="formId" property="formid" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap type="com.aspire.ums.cmdb.module.entity.FormParam" id="FormParamResultMap">  
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+	    <result column="key" property="key" jdbcType="VARCHAR" />
+	    <result column="value" property="value" jdbcType="VARCHAR" />
+	    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="FormValueResultMap" type="com.aspire.ums.cmdb.maintain.entity.FormValue" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="formId" property="formId" jdbcType="VARCHAR" />
+        <result column="formCode" property="formCode" jdbcType="VARCHAR" />
+        <result column="formValue" property="formValue" jdbcType="VARCHAR"/>
+        <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+ 
+        <association property="form" javaType="com.aspire.ums.cmdb.module.entity.Form" column="formId"  select="getFormById"/>  
+        <collection property="formOptions" column="formId" javaType="ArrayList"  ofType="com.aspire.ums.cmdb.module.entity.FormOptions" select="getFormOptionsByFormId"/>
+        <collection property="formParams" column="formId" javaType="ArrayList"  ofType="com.aspire.ums.cmdb.module.entity.FormParam" select="getFormParamByFormId"/>
+        <collection property="formFields" column="formId" javaType="ArrayList"  ofType="com.aspire.ums.cmdb.module.entity.FormFields" select="getFormFieldsByFormId"/>
+    </resultMap>
+
+    <select id="getFormValues" parameterType="java.util.HashMap"  resultMap="FormValueResultMap" >
+         SELECT cifv.id, cf.id formId, cf.code formCode, cifv.instanceId, cifv.formValue FROM 
+                      (SELECT c1.*, c2.moduleId FROM cmdb_instance_form_value c1, cmdb_instance c2 WHERE c1.instanceId =  c2.id and c2.isDelete = 0 
+           <if test="instanceId!=null and instanceId!=''">
+                      AND c2.id= #{instanceId}
+            </if>             
+                       ) cifv 
+                      RIGHT JOIN (SELECT ff.* FROM cmdb_form ff, cmdb_instance cif WHERE ff.`moduleId` = cif.`moduleId` and ff.isDelete = 0 and cif.isDelete = 0 
+             <if test="instanceId!=null and instanceId!=''">         
+                       AND cif.`id` = #{instanceId}
+             </if>             
+                       )cf ON cifv.moduleId =  cf.moduleId AND cifv.formId = cf.id
+         WHERE 1 = 1 AND cf.isDelete = 0 AND cf.hidden = 'false'   
+          ORDER BY cf.sortIndex
+    </select>
+    
+    <select id="getFormValuesByModuleId" parameterType="java.util.HashMap"  resultMap="FormValueResultMap" >
+        
+        SELECT  cf.id formId, cf.code formCode, '' formValue  FROM  cmdb_form cf 
+         where  cf.moduleId =  #{moduleId}   and cf.isDelete = 0 and cf.hidden = 'false'
+          order by cf.sortIndex
+    </select>
+    
+    
+   <select id="getFormById"  parameterType="java.lang.String"  resultMap="FormResultMap" >
+        
+         select * from 
+    cmdb_form
+    where id = #{id} and isDelete = 0 
+    </select>
+
+    <select id="getFormOptionsByFormId"  parameterType="java.lang.String"  resultMap="FormOptionsResultMap" >
+        
+         select * from 
+    cmdb_form_options
+    where formId = #{formId}
+    </select>
+    
+   <select id="getFormParamByFormId"  parameterType="java.lang.String"  resultMap="FormParamResultMap" >
+        
+         select * from 
+    cmdb_form_param
+    where formId = #{formId}
+        order by sortIndex
+    </select>
+    
+   <select id="getFormFieldsByFormId"  parameterType="java.lang.String"  resultMap="FormFieldsResultMap" >
+        
+         select * from 
+     cmdb_form_fields
+    where formId = #{formId}
+    order by sortIndex
+    
+    </select>
+	
+	<select id="getFormValueMapByInstanceId" parameterType="java.lang.String" resultType="java.util.HashMap" >
+       SELECT fv.id, fv.formId, fv.formCode, cf.`name` formName, fv.formValue
+       FROM cmdb_instance_form_value fv
+       inner join cmdb_form cf on cf.id = fv.formId
+	   WHERE instanceId = #{instanceId}
+    </select>
+    
+
+    <insert id="insert" parameterType="java.util.List" >
+       INSERT INTO 
+       		cmdb_instance_form_value
+       		(id, formId, formCode, formValue, instanceId) 
+       	VALUES
+       	    <foreach collection="list" item="obj" index="index" separator="," >  
+       		(#{obj.id}, #{obj.formId}, #{obj.formCode}, #{obj.formValue}, #{obj.instanceId})
+       	   </foreach>  
+    </insert>
+
+    <insert id="insertSingle" parameterType="com.aspire.ums.cmdb.maintain.entity.FormValue" >
+        INSERT INTO
+        cmdb_instance_form_value
+        (id, formId, formCode, formValue, instanceId)
+        VALUES
+            (#{id}, #{formId}, #{formCode}, #{formValue}, #{instanceId})
+    </insert>
+     <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.FormValue" >
+       UPDATE
+       		cmdb_instance_form_value
+       SET
+            formValue = #{formValue}
+       WHERE
+       		id = #{id}
+    </update>
+
+    <update id="update2" parameterType="com.aspire.ums.cmdb.maintain.entity.FormValue" >
+        UPDATE
+            cmdb_instance_form_value
+        SET
+            formValue = #{formValue}
+        WHERE
+            instanceId = #{instanceId}
+        AND
+              formCode = #{formCode}
+    </update>
+
+
+    
+     <delete id="deleteByInstanceId" parameterType="java.lang.String" >
+       DELETE from 
+       		cmdb_instance_form_value 
+       WHERE 
+       		instanceId = #{instanceId}
+    </delete>
+    
+</mapper>

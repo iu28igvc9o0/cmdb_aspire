@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.ItemsDao">
+
+    <resultMap id="ItemsResultMap" type="com.aspire.mirror.template.server.dao.po.Items">
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="templateId" column="template_id" jdbcType="VARCHAR"/>
+        <result property="prototypeId" column="prototype_id" jdbcType="VARCHAR"/>
+        <result property="key" column="key" jdbcType="VARCHAR"/>
+        <result property="delay" column="delay" jdbcType="VARCHAR"/>
+        <result property="history" column="history" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+        <result property="units" column="units" jdbcType="VARCHAR"/>
+        <result property="error" column="error" jdbcType="VARCHAR"/>
+        <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
+        <result property="sysType" column="sys_type" jdbcType="VARCHAR"/>
+        <result property="calcType" column="calc_type" jdbcType="VARCHAR"/>
+        <result property="bizIndex" column="biz_index" jdbcType="VARCHAR"/>
+        <result property="bizCalcObj" column="biz_calc_obj" jdbcType="VARCHAR"/>
+        <result property="bizCalcExp" column="biz_calc_exp" jdbcType="VARCHAR"/>
+        <result property="bizThemeId" column="biz_theme_id" jdbcType="VARCHAR"/>
+        <result property="bizIsZero" column="biz_is_zero" jdbcType="VARCHAR"/>
+        <result property="bizGroup" column="biz_group" jdbcType="VARCHAR"/>
+        <result property="bizThemeExp" column="biz_theme_exp" jdbcType="VARCHAR"/>
+        <result property="groupFlag" column="group_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Items_Base_Column">
+        monitor_items.item_id,
+        monitor_items.name,
+        monitor_items.type,
+        monitor_items.template_id,
+        monitor_items.key,
+        monitor_items.delay,
+        monitor_items.history,
+        monitor_items.status,
+        monitor_items.value_type,
+        monitor_items.units,
+        monitor_items.error,
+        monitor_items.data_type,
+        monitor_items.sys_type,
+        monitor_items.calc_type,
+        monitor_items.biz_index,
+        monitor_items.biz_calc_obj,
+        monitor_items.biz_calc_exp,
+        monitor_items.biz_theme_id,
+        monitor_items.biz_is_zero,
+        monitor_items.biz_group,
+        monitor_items.biz_theme_exp,
+        monitor_items.group_flag
+    </sql>
+
+    <sql id="Items_Query_List_Sharing">
+        <where>
+            <if test="itemId != null ">
+                and monitor_items.item_id = #{itemId}
+            </if>
+            <if test="name != null ">
+                and monitor_items.name = #{name}
+            </if>
+            <if test="type != null ">
+                and monitor_items.type = #{type}
+            </if>
+            <if test="templateId != null ">
+                and monitor_items.template_id = #{templateId}
+            </if>
+            <if test="key != null ">
+                and monitor_items.key = #{key}
+            </if>
+            <if test="delay != null ">
+                and monitor_items.delay = #{delay}
+            </if>
+            <if test="history != null ">
+                and monitor_items.history = #{history}
+            </if>
+            <if test="status != null ">
+                and monitor_items.status = #{status}
+            </if>
+            <if test="valueType != null ">
+                and monitor_items.value_type = #{valueType}
+            </if>
+            <if test="units != null ">
+                and monitor_items.units = #{units}
+            </if>
+            <if test="error != null ">
+                and monitor_items.error = #{error}
+            </if>
+            <if test="dataType != null ">
+                and monitor_items.data_type = #{dataType}
+            </if>
+            <if test="sysType != null ">
+                and monitor_items.sys_type = #{sysType}
+            </if>
+            <if test="calcType != null ">
+                and monitor_items.calc_type = #{calcType}
+            </if>
+            <if test="bizIndex != null ">
+                and monitor_items.biz_index = #{bizIndex}
+            </if>
+            <if test="bizCalcObj != null ">
+                and monitor_items.biz_calc_obj = #{bizCalcObj}
+            </if>
+            <if test="bizCalcExp != null ">
+                and monitor_items.biz_calc_exp = #{bizCalcExp}
+            </if>
+            <if test="bizThemeId != null ">
+                and monitor_items.biz_theme_id = #{bizThemeId}
+            </if>
+            <if test="bizIsZero != null ">
+                and monitor_items.biz_is_zero = #{bizIsZero}
+            </if>
+            <if test="bizGroup != null ">
+                and monitor_items.biz_group = #{bizGroup}
+            </if>
+            <if test="bizThemeExp != null ">
+                and monitor_items.biz_theme_exp = #{bizThemeExp}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="itemId"
+                 open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.Items" >
+        INSERT INTO monitor_items (
+        <include refid="Items_Base_Column" />
+        ) VALUES (
+                #{itemId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR},
+                #{templateId,jdbcType=VARCHAR},
+                #{prototypeId,jdbcType=VARCHAR},
+                #{key,jdbcType=VARCHAR},
+                #{delay,jdbcType=INTEGER},
+                #{history,jdbcType=INTEGER},
+                #{status,jdbcType=VARCHAR},
+                #{valueType,jdbcType=VARCHAR},
+                #{units,jdbcType=VARCHAR},
+                #{error,jdbcType=VARCHAR},
+                #{dataType,jdbcType=VARCHAR},
+                #{sysType,jdbcType=VARCHAR},
+                #{calcType,jdbcType=VARCHAR},
+                #{bizIndex,jdbcType=VARCHAR},
+                #{bizCalcObj,jdbcType=VARCHAR},
+                #{bizCalcExp,jdbcType=VARCHAR},
+                #{bizThemeId,jdbcType=VARCHAR},
+                #{bizIsZero,jdbcType=VARCHAR},
+                #{bizGroup,jdbcType=VARCHAR},
+                #{bizThemeExp,jdbcType=VARCHAR},
+                #{groupFlag,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="itemId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.Items" >
+        INSERT INTO monitor_items (
+        <include refid="Items_Base_Column" />
+        ) (
+        <foreach collection="list" item="item" index="index" separator="union all">
+            select
+            #{item.itemId,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.type,jdbcType=VARCHAR},
+            #{item.templateId,jdbcType=VARCHAR},
+            #{item.prototypeId,jdbcType=VARCHAR},
+            #{item.key,jdbcType=VARCHAR},
+            #{item.delay,jdbcType=INTEGER},
+            #{item.history,jdbcType=INTEGER},
+            #{item.status,jdbcType=VARCHAR},
+            #{item.valueType,jdbcType=VARCHAR},
+            #{item.units,jdbcType=VARCHAR},
+            #{item.error,jdbcType=VARCHAR},
+            #{item.dataType,jdbcType=VARCHAR},
+            #{item.sysType,jdbcType=VARCHAR},
+            #{item.calcType,jdbcType=VARCHAR},
+            #{item.bizIndex,jdbcType=VARCHAR},
+            #{item.bizCalcObj,jdbcType=VARCHAR},
+            #{item.bizCalcExp,jdbcType=VARCHAR},
+            #{item.bizThemeId,jdbcType=VARCHAR},
+            #{item.bizIsZero,jdbcType=VARCHAR},
+            #{item.bizGroup,jdbcType=VARCHAR},
+            #{item.bizThemeExp,jdbcType=VARCHAR},
+            #{item.groupFlag,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+        )
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_items WHERE item_id = #{itemId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_items WHERE item_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.Items" >
+        DELETE FROM monitor_items WHERE item_id = #{itemId}
+    </delete>
+
+    <delete id="deleteByTemplateId" parameterType="java.lang.String" >
+          DELETE FROM monitor_items WHERE template_id = #{templateId}
+    </delete>
+    <delete id="deleteByTemplateIdArrays" parameterType="java.util.List">
+         DELETE FROM monitor_items WHERE template_id in
+        <foreach collection="array" index="index" item="templateId"
+                 open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.Items" >
+        UPDATE monitor_items monitor_items
+        <set >
+                <if test="itemId != null" >
+                monitor_items.item_id = #{itemId},
+                </if>
+                <if test="name != null" >
+                monitor_items.name = #{name},
+                </if>
+                <if test="type != null" >
+                monitor_items.type = #{type},
+                </if>
+                <if test="templateId != null" >
+                monitor_items.template_id = #{templateId},
+                </if>
+                <if test="key != null" >
+                monitor_items.key = #{key},
+                </if>
+                <if test="delay != null" >
+                monitor_items.delay = #{delay},
+                </if>
+                <if test="history != null" >
+                monitor_items.history = #{history},
+                </if>
+                <if test="status != null" >
+                monitor_items.status = #{status},
+                </if>
+                <if test="valueType != null" >
+                monitor_items.value_type = #{valueType},
+                </if>
+                <if test="units != null" >
+                monitor_items.units = #{units},
+                </if>
+                <if test="error != null" >
+                monitor_items.error = #{error},
+                </if>
+                <if test="dataType != null" >
+                monitor_items.data_type = #{dataType},
+                </if>
+                <if test="sysType != null" >
+                monitor_items.sys_type = #{sysType},
+                </if>
+                <if test="calcType != null" >
+                    monitor_items.calc_type = #{calcType},
+                </if>
+                <if test="bizIndex != null" >
+                    monitor_items.biz_index = #{bizIndex},
+                </if>
+                <if test="bizCalcObj != null" >
+                    monitor_items.biz_calc_obj = #{bizCalcObj},
+                </if>
+                <if test="bizCalcExp != null" >
+                    monitor_items.biz_calc_exp = #{bizCalcExp},
+                </if>
+                <if test="bizThemeId != null" >
+                    monitor_items.biz_theme_id = #{bizThemeId},
+                </if>
+                <if test="bizIsZero != null" >
+                    monitor_items.biz_is_zero = #{bizIsZero},
+                </if>
+                <if test="bizGroup != null ">
+                     monitor_items.biz_group = #{bizGroup},
+                </if>
+                <if test="bizThemeExp != null ">
+                     monitor_items.biz_theme_exp = #{bizThemeExp},
+                </if>
+                <if test="groupFlag != null ">
+                    monitor_items.group_flag = #{groupFlag},
+                </if>
+        </set>
+        WHERE item_id = #{itemId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.Items" >
+        UPDATE monitor_items monitor_items
+        SET
+        monitor_items.item_id = #{itemId},
+        monitor_items.name = #{name},
+        monitor_items.type = #{type},
+        monitor_items.template_id = #{templateId},
+        monitor_items.key = #{key},
+        monitor_items.delay = #{delay},
+        monitor_items.history = #{history},
+        monitor_items.status = #{status},
+        monitor_items.value_type = #{valueType},
+        monitor_items.units = #{units},
+        monitor_items.error = #{error},
+        monitor_items.data_type = #{dataType},
+        monitor_items.sys_type = #{sysType},
+        monitor_items.calc_type = #{calcType},
+        monitor_items.biz_index = #{bizIndex},
+        monitor_items.biz_calc_obj = #{bizCalcObj},
+        monitor_items.biz_calc_exp = #{bizCalcExp},
+        monitor_items.biz_theme_id = #{bizThemeId},
+        monitor_items.biz_is_zero = #{bizIsZero},
+        monitor_items.biz_group = #{bizGroup},
+        monitor_items.biz_theme_exp = #{bizThemeExp},
+        monitor_items.group_flag = #{groupFlag}
+        WHERE item_id = #{itemId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="ItemsResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Items_Base_Column" />
+        FROM monitor_items monitor_items
+        WHERE item_id = #{itemId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="ItemsResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Items_Base_Column" />
+        FROM monitor_items monitor_items
+        WHERE item_id in
+        <foreach collection="array" index="index" item="itemId"
+                 open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </select>
+    <select id="select" resultMap="ItemsResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Items">
+        SELECT
+        <include refid="Items_Base_Column" />
+        FROM monitor_items monitor_items
+        <include refid="Items_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.Items">
+        SELECT COUNT(*) FROM monitor_items monitor_items
+        <include refid="Items_Query_List_Sharing" />
+    </select>
+    <select id="selectByTemplateIdArrays" resultMap="ItemsResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Items_Base_Column" />
+        FROM monitor_items monitor_items
+        where  monitor_items.template_id in
+        <foreach collection="array" index="index" item="templateId"
+                 open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </select>
+    <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(*) FROM monitor_items monitor_items
+        left join monitor_template monitor_template on monitor_items.template_id = monitor_template.template_id
+        <include refid="Page_List_Params"/>
+    </select>
+    <sql id="Page_List_Params">
+        <where>
+            <if test="params['funType'] != null and  params['funType'] != ''">
+                and monitor_template.fun_type = #{params.funType}
+            </if>
+            <if test="params['templateName'] != null and  params['templateName'] != ''">
+                and monitor_template.name like CONCAT('%', #{params.templateName}, '%')
+            </if>
+            <if test="params['name'] != null and  params['name'] != ''">
+                and monitor_items.name like CONCAT('%', #{params.name}, '%')
+            </if>
+            <if test="params['key'] != null and  params['key'] != ''">
+                and monitor_items.key = #{params.key}
+            </if>
+            <if test="params['templateId'] != null and  params['templateId'] != ''">
+                and monitor_items.template_id = #{params.templateId}
+            </if>
+            <if test="params['themeCode'] != null and  params['themeCode'] != ''">
+                and monitor_items.biz_theme_id = (select theme_id from monitor_biz_theme where theme_code = #{params.themeCode})
+            </if>
+        </where>
+    </sql>
+
+
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.template.server.dao.po.Items">
+        select * from
+        (SELECT
+        monitor_items.item_id itemId,
+        monitor_items.name name,
+        monitor_items.type type,
+        monitor_items.template_id templateId,
+        monitor_items.key `key`,
+        monitor_items.delay delay,
+        monitor_items.history history,
+        monitor_items.status status,
+        monitor_items.value_type valueType,
+        monitor_items.units units,
+        monitor_items.error error,
+        monitor_items.data_type dataType,
+        monitor_items.sys_type sysType,
+        monitor_items.calc_type calcType,
+        monitor_items.biz_index bizIndex,
+        monitor_items.biz_calc_obj bizCalcObj,
+        monitor_items.biz_calc_exp bizCalcExp,
+        monitor_items.biz_theme_id bizThemeId,
+        monitor_items.biz_is_zero bizIsZero,
+        monitor_items.biz_group bizGroup,
+        monitor_items.biz_theme_exp bizThemeExp,
+        monitor_items.group_flag groupFlag,
+        monitor_template.name templateName,
+        ROWNUM nm
+            FROM monitor_items monitor_items
+        left join monitor_template monitor_template on monitor_items.template_id = monitor_template.template_id
+        <include refid="Page_List_Params"/>
+        AND ROWNUM  <![CDATA[<=]]> #{begin}+#{pageSize}
+        ) aa
+        where aa.nm  &gt; #{begin}
+        order by name
+        /*        order by monitor_items.name
+        limit #{begin},#{pageSize}*/
+    </select>
+</mapper>

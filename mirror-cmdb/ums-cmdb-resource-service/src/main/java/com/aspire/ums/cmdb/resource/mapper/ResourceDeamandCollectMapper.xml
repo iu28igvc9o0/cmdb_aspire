@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ResourceDeamandCollectMapper">
+    <resultMap id="resourceDemandCollectMap" type="com.aspire.ums.cmdb.resource.entity.ResourceDemandCollect">
+        <result property="id" column="ID" />
+        <result property="resource_pool" column="RESOURCE_POOL" />
+        <result property="primary_department"
+                column="PRIMARY_DEPARTMENT" />
+        <result property="secondary_department"
+                column="SECONDARY_DEPARTMENT" />
+        <result property="app_system" column="APP_SYSTEM" />
+        <result property="estimate_id" column="ESTIMATE_ID" />
+        <result property="is_project" column="IS_PROJECT" />
+        <result property="project_time" column="PROJECT_TIME" />
+        <result property="resource_put_date" column="RESOURCE_PUT_DATE" />
+        <result property="resource_produce_date"
+                column="RESOURCE_PRODUCE_DATE" />
+        <result property="system_description"
+                column="SYSTEM_DESCRIPTION" />
+        <result property="vm_model1" column="VM_MODEL1" />
+        <result property="vm_model2" column="VM_MODEL2" />
+        <result property="vm_model3" column="VM_MODEL3" />
+        <result property="vm_model4" column="VM_MODEL4" />
+        <result property="vm_model5" column="VM_MODEL5" />
+        <result property="vm_model6" column="VM_MODEL6" />
+        <result property="vm_model7" column="VM_MODEL7" />
+        <result property="vm_model8" column="VM_MODEL8" />
+        <result property="pm_low_app_server" column="PM_LOW_APP_SERVER" />
+        <result property="pm_analytical_server"
+                column="PM_ANALYTICAL_SERVER" />
+        <result property="pm_distributed_server"
+                column="PM_DISTRIBUTED_SERVER" />
+        <result property="pm_cache_server" column="PM_CACHE_SERVER" />
+        <result property="pm_high_app_server"
+                column="PM_HIGH_APP_SERVER" />
+        <result property="storage_distributd_file_capacity"
+                column="STORAGE_DISTRIBUTD_FILE_CAPACITY" />
+        <result property="storage_distributd_block_performance"
+                column="STORAGE_DISTRIBUTD_BLOCK_PERFORMANCE" />
+        <result property="storage_object_capacity"
+                column="STORAGE_OBJECT_CAPACITY" />
+        <result property="storage_fc_san_capacity"
+                column="STORAGE_FC_SAN_CAPACITY" />
+        <result property="storage_ip_san_capacity"
+                column="STORAGE_IP_SAN_CAPACITY" />
+        <result property="storage_fc_san_naked"
+                column="STORAGE_FC_SAN_NAKED" />
+        <result property="storage_ip_san_naked"
+                column="STORAGE_IP_SAN_NAKED" />
+        <result property="storage_back_up" column="STORAGE_BACK_UP" />
+        <result property="cmnet_address" column="CMNET_ADDRESS" />
+        <result property="bandwidth_gbps_cmnet"
+                column="BANDWIDTH_GBPS_CMNET" />
+        <result property="ip_address" column="IP_ADDRESS" />
+        <result property="bandwidth_gbps_ip" column="BANDWIDTH_GBPS_IP" />
+        <result property="db_mysql" column="DB_MYSQL" />
+        <result property="db_mongodb" column="DB_MONGODB" />
+        <result property="db_postgresql" column="DB_POSTGRESQL" />
+        <result property="db_memory" column="DB_MEMORY" />
+        <result property="db_other" column="DB_OTHER" />
+        <result property="cache_redis" column="CACHE_REDIS" />
+        <result property="cache_memcached" column="CACHE_MEMCACHED" />
+        <result property="info_middleware_activemq"
+                column="INFO_MIDDLEWARE_ACTIVEMQ" />
+        <result property="info_middleware_kafka"
+                column="INFO_MIDDLEWARE_KAFKA" />
+        <result property="info_middleware_rocketmq"
+                column="INFO_MIDDLEWARE_ROCKETMQ" />
+        <result property="app_middleware_apache"
+                column="APP_MIDDLEWARE_APACHE" />
+        <result property="app_middleware_jboos"
+                column="APP_MIDDLEWARE_JBOOS" />
+        <result property="app_middleware_tomcat"
+                column="APP_MIDDLEWARE_TOMCAT" />
+        <result property="balancer_nginx" column="BALANCER_NGINX" />
+        <result property="balancer_haproxy" column="BALANCER_HAPROXY" />
+        <result property="server_zookeeper" column="SERVER_ZOOKEEPER" />
+        <result property="server_etcd" column="SERVER_ETCD" />
+        <result property="search_middleware_es"
+                column="SEARCH_MIDDLEWARE_ES" />
+        <result property="server_docker_registry"
+                column="SERVER_DOCKER_REGISTRY" />
+        <result property="stream_jbpm" column="STREAM_JBPM" />
+        <result property="stream_activity" column="STREAM_ACTIVITY" />
+        <result property="image_openjdk" column="IMAGE_OPENJDK" />
+        <result property="image_python" column="IMAGE_PYTHON" />
+        <result property="image_go" column="IMAGE_GO" />
+        <result property="image_nodejs" column="IMAGE_NODEJS" />
+        <result property="image_ruby" column="IMAGE_RUBY" />
+        <result property="image_net" column="IMAGE_NET" />
+        <result property="cicd_jenkins" column="CICD_JENKINS" />
+        <result property="framework_springcloud"
+                column="FRAMEWORK_SPRINGCLOUD" />
+        <result property="framework_other" column="FRAMEWORK_OTHER" />
+        <result property="special_requirement"
+                column="SPECIAL_REQUIREMENT" />
+        <result property="address_requirement"
+                column="ADDRESS_REQUIREMENT" />
+        <result property="department_head" column="DEPARTMENT_HEAD" />
+        <result property="inter_contact" column="INTER_CONTACT" />
+        <result property="phone" column="PHONE" />
+        <result property="email" column="EMAIL" />
+        <result property="status" column="STATUS" />
+        <result property="create_time" column="CREATE_TIME" />
+        <result property="remark" column="REMARK" />
+    </resultMap>
+
+    <select id="getResourceCollectList" resultMap="resourceDemandCollectMap"
+            parameterType="com.aspire.ums.cmdb.resource.entity.ResourceBuildManageQueryEntity">
+        SELECT * FROM resource_demand_collect rdc
+        WHERE 1=1
+        <!-- <if test="null != resourcePool and '' != resourcePool"> and rdc.resource_pool
+            like '%${resourcePool}%' </if> -->
+        <if test="null != paramsDto.primaryDepartment and '' != paramsDto.primaryDepartment">
+            and rdc.primary_department like '%${paramsDto.primaryDepartment}%'
+        </if>
+        <if test="null != paramsDto.secondaryDepartment and '' != paramsDto.secondaryDepartment">
+            and rdc.secondary_department like '%${paramsDto.secondaryDepartment}%'
+        </if>
+        <if test="null != paramsDto.appSystem and '' != paramsDto.appSystem">
+            and rdc.app_system like '%${paramsDto.appSystem}%'
+        </if>
+        ORDER BY rdc.create_time desc
+        <if test="null != paramsDto.startIndex and null != paramsDto.pageSize">
+            limit #{paramsDto.startIndex},#{paramsDto.pageSize}
+        </if>
+    </select>
+
+    <select id="getResourceCollectCount" resultMap="resourceDemandCollectMap"
+            parameterType="com.aspire.ums.cmdb.resource.entity.ResourceBuildManageQueryEntity">
+        SELECT * FROM resource_demand_collect rdc
+        WHERE 1=1
+        <!-- <if test="null != resourcePool and '' != resourcePool"> and rdc.resource_pool
+            like '%${resourcePool}%' </if> -->
+        <if test="null != paramsDto.primaryDepartment and '' != paramsDto.primaryDepartment">
+            and rdc.primary_department like '%${paramsDto.primaryDepartment}%'
+        </if>
+        <if test="null != paramsDto.secondaryDepartment and '' != paramsDto.secondaryDepartment">
+            and rdc.secondary_department like '%${paramsDto.secondaryDepartment}%'
+        </if>
+        <if test="null != paramsDto.appSystem and '' != paramsDto.appSystem">
+            and rdc.app_system like '%${paramsDto.appSystem}%'
+        </if>
+        ORDER BY rdc.create_time desc
+    </select>
+
+    <!--导出Excel-->
+    <select id="getResourceCollectCountXls" resultType="map"
+            parameterType="com.aspire.ums.cmdb.resource.entity.ResourceBuildManageQueryEntity">
+        SELECT * FROM resource_demand_collect rdc
+        WHERE 1=1
+        <!-- <if test="null != resourcePool and '' != resourcePool"> and rdc.resource_pool
+            like '%${resourcePool}%' </if> -->
+        <if test="null != paramsDto.primaryDepartment and '' != paramsDto.primaryDepartment">
+            and rdc.primary_department like '%${paramsDto.primaryDepartment}%'
+        </if>
+        <if test="null != paramsDto.secondaryDepartment and '' != paramsDto.secondaryDepartment">
+            and rdc.secondary_department like '%${paramsDto.secondaryDepartment}%'
+        </if>
+        <if test="null != paramsDto.appSystem and '' != paramsDto.appSystem">
+            and rdc.app_system like '%${paramsDto.appSystem}%'
+        </if>
+        ORDER BY rdc.create_time desc
+    </select>
+
+    <select id="getCollectList" resultMap="resourceDemandCollectMap" parameterType="java.util.Map">
+        select * from resource_demand_collect where estimate_id is null
+        <if test="null != startIndex and null != limit">
+            limit #{startIndex}, #{limit}
+        </if>
+    </select>
+
+    <select id="getCollectList_count" resultType="java.util.Map">
+        select count(1) as total from resource_demand_collect where estimate_id is null
+    </select>
+
+    <select id="isClosedByPoolName" parameterType="string" resultType="int">
+        select count(1) from resource_estimate where status != '0' and resource_pool = #{resourcePool}
+    </select>
+
+    <insert id="saveResourceCollectExcelData" parameterType="map">
+        INSERT INTO resource_demand_collect
+        (PRIMARY_DEPARTMENT,SECONDARY_DEPARTMENT,APP_SYSTEM,IS_PROJECT,PROJECT_TIME,RESOURCE_PUT_DATE,RESOURCE_PRODUCE_DATE,SYSTEM_DESCRIPTION,VM_MODEL1,VM_MODEL2,VM_MODEL3,VM_MODEL4,VM_MODEL5,VM_MODEL6,VM_MODEL7,VM_MODEL8,PM_LOW_APP_SERVER,PM_ANALYTICAL_SERVER,PM_DISTRIBUTED_SERVER,PM_CACHE_SERVER,PM_HIGH_APP_SERVER,STORAGE_DISTRIBUTD_FILE_CAPACITY,STORAGE_DISTRIBUTD_BLOCK_PERFORMANCE,STORAGE_OBJECT_CAPACITY,STORAGE_FC_SAN_CAPACITY,
+        STORAGE_IP_SAN_CAPACITY,STORAGE_FC_SAN_NAKED,STORAGE_IP_SAN_NAKED,STORAGE_BACK_UP,CMNET_ADDRESS,BANDWIDTH_GBPS_CMNET,IP_ADDRESS,BANDWIDTH_GBPS_IP,DB_MYSQL,DB_MONGODB,DB_POSTGRESQL,DB_MEMORY,DB_OTHER,CACHE_REDIS,CACHE_MEMCACHED,
+        INFO_MIDDLEWARE_ACTIVEMQ,INFO_MIDDLEWARE_KAFKA,INFO_MIDDLEWARE_ROCKETMQ,APP_MIDDLEWARE_APACHE,APP_MIDDLEWARE_JBOOS,APP_MIDDLEWARE_TOMCAT,BALANCER_NGINX,BALANCER_HAPROXY,SERVER_ZOOKEEPER,SERVER_ETCD,SEARCH_MIDDLEWARE_ES,
+        SERVER_DOCKER_REGISTRY,STREAM_JBPM,STREAM_ACTIVITY,IMAGE_OPENJDK,IMAGE_PYTHON,IMAGE_GO,IMAGE_NODEJS,IMAGE_RUBY,IMAGE_NET,CICD_JENKINS,FRAMEWORK_SPRINGCLOUD,FRAMEWORK_OTHER,SPECIAL_REQUIREMENT,ADDRESS_REQUIREMENT,
+        DEPARTMENT_HEAD,INTER_CONTACT,PHONE,EMAIL,CREATE_TIME)
+        VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item.primary_department},#{item.secondary_department},#{item.app_system},#{item.is_project},#{item.project_time},#{item.resource_put_date},#{item.resource_produce_date},
+            #{item.system_description},#{item.vm_model1},#{item.vm_model2},#{item.vm_model3},#{item.vm_model4},#{item.vm_model5},#{item.vm_model6},#{item.vm_model7},#{item.vm_model8},#{item.pm_low_app_server},#{item.pm_analytical_server},
+            #{item.pm_distributed_server},#{item.pm_cache_server},#{item.pm_high_app_server},#{item.storage_distributd_file_capacity},#{item.storage_distributd_block_performance},#{item.storage_object_capacity},#{item.storage_fc_san_capacity},
+            #{item.storage_ip_san_capacity},#{item.storage_fc_san_naked},#{item.storage_ip_san_naked},#{item.storage_back_up},#{item.cmnet_address},#{item.bandwidth_gbps_cmnet},#{item.ip_address},#{item.bandwidth_gbps_ip},#{item.db_mysql},
+            #{item.db_mongodb},#{item.db_postgresql},#{item.db_memory},#{item.db_other},#{item.cache_redis},#{item.cache_memcached},#{item.info_middleware_activemq},#{item.info_middleware_kafka},#{item.info_middleware_rocketmq},#{item.app_middleware_apache},
+            #{item.app_middleware_jboos},#{item.app_middleware_tomcat},#{item.balancer_nginx},#{item.balancer_haproxy},#{item.server_zookeeper},#{item.server_etcd},#{item.search_middleware_es},#{item.server_docker_registry},#{item.stream_jbpm},
+            #{item.stream_activity},#{item.image_openjdk},#{item.image_python},#{item.image_go},#{item.image_nodejs},#{item.image_ruby},#{item.image_net},#{item.cicd_jenkins},#{item.framework_springcloud},#{item.framework_other},#{item.special_requirement},#{item.address_requirement},
+            #{item.department_head},#{item.inter_contact},#{item.phone},#{item.email},SYSDATE())
+        </foreach>
+    </insert>
+
+    <select id="getCollectAll" resultMap="resourceDemandCollectMap" parameterType="String">
+        select * from resource_demand_collect where estimate_id is null or estimate_id = #{estimateId}
+        <if test="null != startIndex and null != pageSize">
+            limit #{startIndex}, #{pageSize}
+        </if>
+    </select>
+    <select id="getCollectAll_count" resultType="java.util.Map" parameterType="String">
+        select count(1) as total from resource_demand_collect where estimate_id is null or estimate_id = #{estimateId}
+    </select>
+</mapper>

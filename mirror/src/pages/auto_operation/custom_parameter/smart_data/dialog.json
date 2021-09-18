@@ -1,0 +1,451 @@
+{
+    "formList": [
+      {
+        "label": "栅格布局",
+        "type": "row",
+        "columnName": "row_1608536041249",
+        "icon-dev": "iconfont iconicon-editor-grid",
+        "operation": [],
+        "hidden": false,
+        "rowTypeFlex": false,
+        "formFields": [
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "参数编码",
+                "type": "input",
+                "columnName": "param_code",
+                "defaultValue": "",
+                "isModel": true,
+                "class": "",
+                "required": true,
+                "rules": [
+                  {
+                    "required": true,
+                    "message": "参数编码不能为空",
+                    "trigger": "blur"
+                  }
+                ],
+                "label-width": "",
+                "isLabelWidth": false,
+                "icon-dev": "iconfont icondanhangwenben",
+                "icon": "",
+                "hidden": false,
+                "props": {
+                  "placeholder": "",
+                  "maxlength": "",
+                  "show-word-limit": false,
+                  "clearable": true,
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "operation": [],
+                "button": false,
+                "slot": "",
+                "button-name": "",
+                "span": 24,
+                "width": "100%",
+                "isCompare": true,
+                "isDisabledRequired": false,
+                "isReadonlyRequired": false,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "参数名称",
+                "type": "input",
+                "columnName": "param_name",
+                "defaultValue": "",
+                "isModel": true,
+                "class": "",
+                "required": true,
+                "rules": [
+                  {
+                    "required": true,
+                    "message": "参数名称不能为空",
+                    "trigger": "blur"
+                  }
+                ],
+                "label-width": "",
+                "isLabelWidth": false,
+                "icon-dev": "iconfont icondanhangwenben",
+                "icon": "",
+                "hidden": false,
+                "props": {
+                  "placeholder": "",
+                  "maxlength": "",
+                  "show-word-limit": false,
+                  "clearable": true,
+                  "disabled": false,
+                  "readonly": false
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "operation": [],
+                "button": false,
+                "slot": "",
+                "button-name": "",
+                "span": 24,
+                "width": "100%",
+                "isCompare": true,
+                "isDisabledRequired": false,
+                "isReadonlyRequired": false,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "参数类型",
+                "type": "select",
+                "isLabelWidth": false,
+                "icon-dev": "iconfont iconxialakuang",
+                "icon": "",
+                "required": true,
+                "rules": [
+                  {
+                    "required": true,
+                    "message": "参数类型不能为空",
+                    "trigger": "blur"
+                  }
+                ],
+                "columnName": "param_type",
+                "targetName": "label_select_1608536093032",
+                "defaultValue": "",
+                "defaultContent": "",
+                "isModel": true,
+                "operation": [],
+                "option-label": "param_type_label",
+                "option-value": "param_type",
+                "option-alias": "alias",
+                "option-disabled": "disabled",
+                "searchProps": {
+                  "need": "0",
+                  "apiName": "",
+                  "isShowInput": false,
+                  "labelAlias": "",
+                  "remotePropName": "condition"
+                },
+                "hidden": false,
+                "props": {
+                  "placeholder": "",
+                  "multiple": false,
+                  "clearable": true,
+                  "disabled": false,
+                  "readonly": false,
+                  "filterable": false,
+                  "remote": false,
+                  "text": ""
+                },
+                "optionProps": {
+                  "optionType": "2",
+                  "sessionKey": "",
+                  "dicKey": "",
+                  "apiName": "/v1/ops-service/opsManage/loadAllParamTypeList",
+                  "apiType": "get",
+                  "apiParam": "",
+                  "separator": ","
+                },
+                "options": [],
+                "allItemSwitch": false,
+                "span": 24,
+                "width": "100%",
+                "isCompare": true,
+                "isDisabledRequired": false,
+                "isReadonlyRequired": false,
+                "name": "basic",
+                "showOptions": [],
+                "labelWidth": 160,
+                "filterOptionStatus": [],
+                "disabledOptionStatus": [],
+                "loading": true,
+                "disabled": true,
+                "dynamic": {}
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "参数描述",
+                "type": "input",
+                "columnName": "param_desc",
+                "defaultValue": "",
+                "isModel": true,
+                "class": "",
+                "required": false,
+                "rules": [],
+                "label-width": "",
+                "isLabelWidth": false,
+                "icon-dev": "iconfont icondanhangwenben",
+                "icon": "",
+                "hidden": false,
+                "props": {
+                  "placeholder": "",
+                  "maxlength": "",
+                  "show-word-limit": false,
+                  "clearable": true,
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "operation": [],
+                "button": false,
+                "slot": "",
+                "button-name": "",
+                "span": 24,
+                "width": "100%",
+                "isCompare": true,
+                "isDisabledRequired": false,
+                "isReadonlyRequired": false,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "参数分组",
+                "type": "customArea",
+                "columnName": "group_id_list",
+                "isModel": true,
+                "icon-dev": "iconfont iconquyu",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "",
+                "slotName": "param-grouping",
+                "operation": [],
+                "required": true,
+                "rules": [
+                  {
+                    "required": true,
+                    "message": "参数分组不能为空",
+                    "trigger": "blur"
+                  }
+                ],
+                "hidden": false,
+                "props": {
+                  "disabled": false,
+                  "readonly": false
+                },
+                "isCompare": true,
+                "name": "advance",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "参数默认值",
+                "type": "textarea",
+                "columnName": "param_default_value",
+                "defaultValue": "",
+                "isModel": true,
+                "class": "",
+                "required": false,
+                "rules": [],
+                "label-width": "",
+                "isLabelWidth": false,
+                "icon-dev": "iconfont icondanhangwenben",
+                "icon": "",
+                "hidden": false,
+                "props": {
+                  "placeholder": "",
+                  "maxlength": "",
+                  "show-word-limit": false,
+                  "clearable": true,
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "operation": [],
+                "button": false,
+                "slot": "",
+                "button-name": "",
+                "span": 24,
+                "width": "100%",
+                "isCompare": true,
+                "isDisabledRequired": false,
+                "isReadonlyRequired": false,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160,
+                "operations": [
+                  {
+                    "status": [
+                      "hideA"
+                    ],
+                    "attr": "hidden",
+                    "formatter": ""
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "name": "layout",
+        "labelWidth": 160
+      },
+      {
+        "label": "按钮组",
+        "type": "buttonGroup",
+        "isLabelWidth": false,
+        "columnName": "buttonGroup_1608536046730",
+        "icon-dev": "iconfont iconanniu",
+        "span": 24,
+        "hidden": false,
+        "bpmSwitchFlag": false,
+        "align": null,
+        "position": "center",
+        "operation": [],
+        "toolList": [
+          {
+            "columnName": "save-submit",
+            "type": "primary",
+            "icon": "",
+            "label": "保存",
+            "interactive": "",
+            "validateProp": "",
+            "apiName": "",
+            "class": "",
+            "default": "show",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "confirmStatus": []
+          },
+          {
+            "columnName": "cacel",
+            "type": "",
+            "icon": "",
+            "label": "取消",
+            "interactive": "",
+            "validateProp": "",
+            "apiName": "",
+            "class": "",
+            "default": "show",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "confirmStatus": []
+          }
+        ],
+        "name": "layout",
+        "labelWidth": 160
+      },
+      {
+        "label": "空容器",
+        "type": "empty",
+        "isLabelWidth": false,
+        "columnName": "empty_1608536703081",
+        "icon-dev": "iconfont icontabs1",
+        "child-type": "inline-block",
+        "span": 24,
+        "hidden": false,
+        "class": "",
+        "formFields": [],
+        "marginTop": "",
+        "marginBottom": "",
+        "marginLeft": "",
+        "marginRight": "",
+        "isFontWeightBold": true,
+        "name": "layout",
+        "labelWidth": 160
+      }
+    ],
+    "formConfig": {
+      "labelWidth": 160,
+      "labelPosition": "left",
+      "starPostion": "left",
+      "class": "",
+      "exportName": "表单json",
+      "defaultClass": "default",
+      "size": "small",
+      "statusList": [
+        "showA",
+        "hideA"
+      ],
+      "serverProps": {
+        "localProxy": "",
+        "nigxProxy": "",
+        "statusKey": "status",
+        "statusValue": "200",
+        "dataKey": "data",
+        "requestDataKey": ""
+      },
+      "bpmProps": {
+        "bpmOpenSwitchFlag": false,
+        "initPrefix": "/web/wf",
+        "actionPrefix": "/web/business",
+        "proxy": "",
+        "bpmFlowKey": "bpmFlowKey",
+        "instanceId": "",
+        "taskId": "",
+        "list": [
+          {
+            "flowKey": "bpmFlowKey",
+            "flowKeyName": "bpmFlowKey",
+            "flowActionList": [
+              {
+                "bpmActionTypeKey": "",
+                "bpmActionType": "",
+                "readOnly": false
+              }
+            ]
+          }
+        ]
+      },
+      "compareStatusList": [],
+      "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+      "param_code": "",
+      "param_name": "",
+      "param_type": "",
+      "param_desc": "",
+      "param_default_value": ""
+    }
+  }
+        
+  
+      

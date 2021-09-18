@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleBusinessQuotaMapper" >
+    <select id="getAllBusinessQuotaInfo" resultType="java.util.HashMap">
+      SELECT
+        b.department1,
+        b.department2,
+        q.owner_biz_system bizSystem,
+        q.idcType,
+        q.pod,
+        q.ljs_allocation_amount,
+        q.yyfwq_allocation_amount,
+        q.fxxfwq_allocation_amount,
+        q.fbsfwq_allocation_amount,
+        q.hcxfwq_allocation_amount,
+        q.gdyyfwq_allocation_amount,
+        q.djdfwq_allocation_amount,
+        q.yzj_allocation_amount yzj,
+        q.yzj_vcpu_allocation_amount,
+        q.yzj_memory_allocation_amount,
+        q.fcsan_allocation_amount,
+        q.ipsan_allocation_amount,
+        q.kcc_allocation_amount,
+        q.wjcc_allocation_amount,
+        q.dxcc_allocation_amount,
+        q.bfcc_allocation_amount
+      FROM cmdb_business_quota q
+		LEFT JOIN cmdb_business_system b ON (q.owner_biz_system = b.id AND b.is_delete = 0)
+      WHERE q.is_delete = 0
+    </select>
+
+  <select id="getNeedChargeBusinessQuotaInfo" resultType="java.util.HashMap">
+    SELECT
+      b.department1,
+      b.department2,
+      q.owner_biz_system bizSystem,
+      q.idcType,
+      q.pod,
+      q.ljs_allocation_amount,
+      q.yyfwq_allocation_amount,
+      q.fxxfwq_allocation_amount,
+      q.fbsfwq_allocation_amount,
+      q.hcxfwq_allocation_amount,
+      q.gdyyfwq_allocation_amount,
+      q.djdfwq_allocation_amount,
+      q.yzj_allocation_amount yzj,
+      q.yzj_vcpu_allocation_amount,
+      q.yzj_memory_allocation_amount,
+      q.fcsan_allocation_amount,
+      q.ipsan_allocation_amount,
+      q.kcc_allocation_amount,
+      q.wjcc_allocation_amount,
+      q.dxcc_allocation_amount,
+      q.bfcc_allocation_amount
+    FROM cmdb_business_quota q
+           LEFT JOIN cmdb_business_system b ON (q.owner_biz_system = b.id AND b.is_delete = 0)
+    WHERE q.is_delete = 0 and b.system_status !='72441905366d4a82997f2d71abf4d994' and q.is_charge='11462'
+  </select>
+</mapper>

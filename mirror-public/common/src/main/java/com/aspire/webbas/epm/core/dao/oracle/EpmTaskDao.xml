@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.webbas.epm.core.dao.EpmTaskDao">
+	<resultMap id="baseResultMap" type="com.aspire.webbas.epm.core.entity.EpmTask">
+		<id column="task_id" property="taskId" jdbcType="VARCHAR" />
+		<result column="process_id" property="processId" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="root_id" property="rootId" jdbcType="VARCHAR" />
+		<result column="role" property="role" jdbcType="VARCHAR" />
+		<result column="owner_type" property="ownerType" jdbcType="VARCHAR" />
+		<result column="owner_id" property="ownerId" jdbcType="VARCHAR" />
+		<result column="dealer" property="dealer" jdbcType="VARCHAR" />
+		<result column="choice" property="choice" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="deal_result" property="dealResult" jdbcType="VARCHAR" />
+		<result column="file_group_id" property="fileGroupId" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="is_deal" property="isDeal" jdbcType="VARCHAR" />
+		<result column="is_finish" property="isFinish" jdbcType="VARCHAR" />
+		<result column="deal_type" property="dealType" jdbcType="VARCHAR" />
+		<result column="viewer" property="viewer" jdbcType="VARCHAR" />
+		<result column="reviewer" property="reviewer" jdbcType="VARCHAR" />
+		<result column="extra1" property="extra1" jdbcType="VARCHAR" />
+		<result column="extra2" property="extra2" jdbcType="VARCHAR" />
+		<result column="extra3" property="extra3" jdbcType="VARCHAR" />
+
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="deal_time" property="dealTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<!-- 列表 -->
+	<select id="list" parameterType="com.aspire.webbas.epm.core.entity.EpmTask" resultMap="baseResultMap">
+		select * from epm_task where 1=1
+		<if test="taskId != null" >
+			and task_id = #{taskId}
+		</if>
+		<if test="processId != null" >
+			and process_id = #{processId}
+		</if>
+		<if test="parentId != null" >
+			and parent_id = #{parentId}
+		</if>
+		<if test="rootId != null" >
+			and root_id = #{rootId}
+		</if>
+		<if test="role != null" >
+			and role = #{role}
+		</if>
+		<if test="ownerId != null" >
+			and owner_id = #{ownerId}
+		</if>
+		<if test="ownerType != null" >
+			and owner_type = #{ownerType}
+		</if>
+		<if test="dealer != null" >
+			and dealer = #{dealer}
+		</if>
+		<if test="choice != null" >
+			and choice = #{choice}
+		</if>
+		<if test="status != null" >
+			and status = #{status}
+		</if>
+		<if test="choice != null" >
+			and deal_result = #{dealResult}
+		</if>
+		<if test="isDeal != null" >
+			and is_deal = #{isDeal}
+		</if>
+		<if test="dealType != null" >
+			and deal_type = #{dealType}
+		</if>
+		<if test="isFinish != null" >
+			and is_finish = #{isFinish}
+		</if>
+
+		<if test="dealResult != null" >
+			and deal_result = #{deal_result}
+		</if>
+		<if test="viewer != null" >
+			and viewer = #{viewer}
+		</if>
+		<if test="reviewer != null" >
+			and reviewer = #{reviewer}
+		</if>
+		<if test="extra1 != null" >
+			and extra1 = #{extra1}
+		</if>
+		<if test="extra2 != null" >
+			and extra2 = #{extra2}
+		</if>
+		<if test="extra3 != null" >
+			and extra3 = #{extra3}
+		</if>
+
+		<if test="createTimeStart != null and  createTimeStart != ''">
+			<![CDATA[
+			and create_time >= to_date('${createTimeStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="createTimeEnd != null and  createTimeEnd != ''">
+			<![CDATA[
+			and create_time <= to_date('${createTimeEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="dealTimeStart != null and  dealTimeStart != ''">
+			<![CDATA[
+			and deal_time >= to_date('${dealTimeStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="dealTimeEnd != null and  dealTimeEnd != ''">
+			<![CDATA[
+			and deal_time <= to_date('${dealTimeEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+
+		<if test="dynamicFields['roleList'] != null">
+			and role in
+			<foreach item="item" index="index" collection="dynamicFields.roleList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+		 <if test="dynamicFields['dealerList'] != null">
+			and dealer in
+			<foreach item="item" index="index" collection="dynamicFields.dealerList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+
+		<if test="order == null or order == ''" >
+			order by create_time desc
+		</if>
+		<if test="order != null and order != '' and orderName != null and orderName !=''" >
+			order by ${orderName} ${order}
+		</if>
+	</select>
+	<!-- 列表数 -->
+	<select id="count" parameterType="com.aspire.webbas.epm.core.entity.EpmTask" resultType="java.lang.Integer">
+		select count(*) from epm_task where 1=1
+		<if test="taskId != null" >
+			and task_id = #{taskId}
+		</if>
+		<if test="processId != null" >
+			and process_id = #{processId}
+		</if>
+		<if test="parentId != null" >
+			and parent_id = #{parentId}
+		</if>
+		<if test="rootId != null" >
+			and root_id = #{rootId}
+		</if>
+		<if test="role != null" >
+			and role = #{role}
+		</if>
+		<if test="ownerId != null" >
+			and owner_id = #{ownerId}
+		</if>
+		<if test="ownerType != null" >
+			and owner_type = #{ownerType}
+		</if>
+		<if test="dealer != null" >
+			and dealer = #{dealer}
+		</if>
+		<if test="choice != null" >
+			and choice = #{choice}
+		</if>
+		<if test="status != null" >
+			and status = #{status}
+		</if>
+		<if test="choice != null" >
+			and deal_result = #{dealResult}
+		</if>
+		<if test="isDeal != null" >
+			and is_deal = #{isDeal}
+		</if>
+		<if test="dealType != null" >
+			and deal_type = #{dealType}
+		</if>
+		<if test="isFinish != null" >
+			and is_finish = #{isFinish}
+		</if>
+		<if test="dealResult != null" >
+			and deal_result = #{deal_result}
+		</if>
+		<if test="viewer != null" >
+			and viewer = #{viewer}
+		</if>
+		<if test="reviewer != null" >
+			and reviewer = #{reviewer}
+		</if>
+		<if test="extra1 != null" >
+			and extra1 = #{extra1}
+		</if>
+		<if test="extra2 != null" >
+			and extra2 = #{extra2}
+		</if>
+		<if test="extra3 != null" >
+			and extra3 = #{extra3}
+		</if>
+		<if test="createTimeStart != null and  createTimeStart != ''">
+			<![CDATA[
+			and create_time >= to_date('${createTimeStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="createTimeEnd != null and  createTimeEnd != ''">
+			<![CDATA[
+			and create_time <= to_date('${createTimeEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="dealTimeStart != null and  dealTimeStart != ''">
+			<![CDATA[
+			and deal_time >= to_date('${dealTimeStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="dealTimeEnd != null and  dealTimeEnd != ''">
+			<![CDATA[
+			and deal_time <= to_date('${dealTimeEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="dynamicFields['roleList'] != null">
+			and role in
+			<foreach item="item" index="index" collection="dynamicFields.roleList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+		 <if test="dynamicFields['dealerList'] != null">
+			and dealer in
+			<foreach item="item" index="index" collection="dynamicFields.dealerList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+	</select>
+
+	<!-- 详情 -->
+	<select id="get" parameterType="java.lang.String" resultMap="baseResultMap">
+		select * from epm_task where task_id = #{taskId}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="add" parameterType="com.aspire.webbas.epm.core.entity.EpmTask">
+		insert into epm_task(task_id,
+		<if test="processId != null" >
+			process_id,
+		</if>
+		<if test="parentId != null" >
+			parent_id,
+		</if>
+		<if test="rootId != null" >
+			root_id,
+		</if>
+		<if test="role != null" >
+			role,
+		</if>
+		<if test="status != null" >
+			status,
+		</if>
+		<if test="isDeal != null" >
+			is_deal,
+		</if>
+		<if test="isFinish != null" >
+			is_finish,
+		</if>
+		<if test="dealType != null" >
+			deal_type,
+		</if>
+		<if test="dealer != null" >
+			dealer,
+		</if>
+		<if test="dealResult != null" >
+			deal_result,
+		</if>
+		<if test="fileGroupId != null" >
+			file_group_id,
+		</if>
+		<if test="remark != null" >
+			remark,
+		</if>
+		<if test="dealTime != null" >
+			deal_time,
+		</if>
+		<if test="viewer != null" >
+			viewer,
+		</if>
+		<if test="reviewer != null" >
+			reviewer,
+		</if>
+		<if test="extra1 != null" >
+			extra1,
+		</if>
+		<if test="extra2 != null" >
+			extra2,
+		</if>
+		<if test="extra3 != null" >
+			extra3,
+		</if>
+		owner_type, owner_id,
+		create_time )
+		values(#{taskId},
+		<if test="processId != null" >
+			#{processId},
+		</if>
+		<if test="parentId != null" >
+			#{parentId},
+		</if>
+		<if test="rootId != null" >
+			#{rootId},
+		</if>
+		<if test="role != null" >
+			#{role},
+		</if>
+		<if test="status != null" >
+			#{status},
+		</if>
+		<if test="isDeal != null" >
+			#{isDeal},
+		</if>
+		<if test="isFinish != null" >
+			#{isFinish},
+		</if>
+		<if test="dealType != null" >
+			#{dealType},
+		</if>
+		<if test="dealer != null" >
+			#{dealer},
+		</if>
+		<if test="dealResult != null" >
+			#{dealResult},
+		</if>
+		<if test="fileGroupId != null" >
+			#{fileGroupId},
+		</if>
+		<if test="remark != null" >
+			#{remark},
+		</if>
+		<if test="dealTime != null" >
+			#{dealTime},
+		</if>
+		<if test="viewer != null" >
+			#{viewer},
+		</if>
+		<if test="reviewer != null" >
+			#{reviewer},
+		</if>
+		<if test="extra1 != null" >
+			#{extra1},
+		</if>
+		<if test="extra2 != null" >
+			#{extra2},
+		</if>
+		<if test="extra3 != null" >
+			#{extra3},
+		</if>
+		#{ownerType},
+		#{ownerId},
+		#{createTime})
+	</insert>
+
+	<!-- 修改 -->
+	<update id="mod" parameterType="com.aspire.webbas.epm.core.entity.EpmTask">
+		update epm_task
+		<set>
+			<if test="dealer != null" >
+				dealer = #{dealer},
+			</if>
+			<if test="choice != null" >
+				choice = #{choice},
+			</if>
+			<if test="dealTime != null" >
+				deal_time = #{dealTime},
+			</if>
+			<if test="dealResult != null" >
+				deal_result = #{dealResult},
+			</if>
+			<if test="fileGroupId != null" >
+				file_group_id = #{fileGroupId},
+			</if>
+			<if test="remark != null" >
+				remark = #{remark},
+			</if>
+			<if test="isDeal != null" >
+				is_deal = #{isDeal},
+			</if>
+			<if test="isFinish != null" >
+				is_finish = #{isFinish},
+			</if>
+			<if test="dealType != null" >
+				deal_type = #{dealType},
+			</if>
+			<if test="status != null" >
+				status = #{status},
+			</if>
+			<if test="viewer != null" >
+				viewer = #{viewer},
+			</if>
+			<if test="reviewer != null" >
+				reviewer = #{reviewer},
+			</if>
+			<if test="extra1 != null" >
+				extra1 = #{extra1},
+			</if>
+			<if test="extra2 != null" >
+				extra2 = #{extra2},
+			</if>
+			<if test="extra3 != null" >
+				extra3 = #{extra3},
+			</if>
+		</set>
+		where task_id = #{taskId}
+	</update>
+
+	<!-- 删除 -->
+	<insert id="del" parameterType="java.lang.String">
+		delete from epm_task where task_id = #{taskId}
+	</insert>
+
+	<!-- 获取最后一个任务 -->
+	<select id="getLastTask" parameterType="com.aspire.webbas.epm.core.entity.EpmTask" resultMap="baseResultMap">
+  	select * from (
+		select
+		*
+		from
+		epm_task
+		where
+		OWNER_ID=#{ownerId}
+		and OWNER_TYPE=#{ownerType}
+		order by CREATE_TIME desc
+		)
+	where
+	rownum = 1
+  </select>
+</mapper>

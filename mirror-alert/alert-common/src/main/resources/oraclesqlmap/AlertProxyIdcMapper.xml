@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.common.AlertProxyIdcDao">
+	<resultMap type="com.aspire.mirror.alert.server.dao.common.po.AlertProxyIdc" id="alertProxyIdcResultMap">
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="proxyName" column="proxy_name" jdbcType="VARCHAR"/>
+		<result property="idc" column="idc" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="selectAllProxyIdc" resultMap="alertProxyIdcResultMap">
+		select id, proxy_name, idc, remark from alert_proxy_idc
+	</select>
+
+</mapper>

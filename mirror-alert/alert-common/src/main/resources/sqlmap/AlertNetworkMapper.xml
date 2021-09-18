@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    描述：网络端口视图
+    author：hewang
+    data：2021-03-03
+-->
+<mapper namespace="com.aspire.mirror.alert.server.dao.monitor.AlertNetworkMapper">
+
+    <insert id="insertIndicators" parameterType="java.util.List">
+        insert into monitor_indicator
+        (
+        user_name,
+        indicator_name,
+        indicator_key,
+        is_sort,
+        is_delete
+        )
+        VALUES
+        <foreach collection="params" item="item" index="index" separator=",">
+            (#{item.userName,jdbcType=VARCHAR}, #{item.indicatorName,jdbcType=VARCHAR},
+            #{item.indicatorKey,jdbcType=VARCHAR}, 0, 0)
+        </foreach>
+    </insert>
+    <update id="updateIndicators" parameterType="list">
+
+        update monitor_indicator
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="is_sort =case" suffix="end,">
+                <foreach collection="params" item="item" index="index">
+                    when id=#{item.id} then #{item.isSort}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="params" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+
+    </update>
+    <delete id="deleteIndicators">
+        update monitor_indicator
+        set is_delete=1
+        where
+        id=#{id}
+    </delete>
+
+
+    <select id="selectIndicatorsConfig"
+            resultType="com.aspire.mirror.alert.server.dao.monitor.po.AlertNorm">
+        SELECT
+        indicator_name indicatorName,
+        indicator_key indicatorKey
+        FROM monitor_indicator_config
+        where is_delete=0
+        <if test="indicatorName !=null">
+            indicator_name like concat('%',#{indicatorName},'%')
+        </if>
+        limit #{pageNum},#{pageSize}
+    </select>
+
+    <select id="selectIndicatorsByName" resultType="com.aspire.mirror.alert.server.dao.monitor.po.AlertNorm">
+        select id,
+        user_name      userName,
+        indicator_name indicatorName,
+        indicator_key  indicatorKey,
+        is_sort        isSort,
+        is_delete      isDelete
+        from monitor_indicator
+        where is_delete = 0
+        and user_name = #{name}
+    </select>
+
+    <select id="selectIndicatorsByCount" resultType="java.lang.Integer">
+        select count(is_delete)
+        from monitor_indicator
+        where is_delete = 1
+        and user_name = #{name}
+
+    </select>
+
+</mapper>

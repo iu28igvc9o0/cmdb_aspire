@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="4.7412mm" height="8.4666mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 474 847"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#00CCFF;stroke-width:33.86;animation:myfirst .6s;animation-iteration-count: infinite;}
+    .fil0 {fill:none}
+    @keyframes myfirst
+    {
+     0% {stroke:red;}
+     50% {stroke:none;}
+     100%{stroke:red;}
+    }
+   ]]>
+  </style>
+ </defs>
+ <g id="图层_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <circle class="fil0 str0" cx="237" cy="266" r="218"/>
+  <circle class="fil0 str0" cx="237" cy="578" r="218"/>
+  <line class="fil0 str0" x1="237" y1="652" x2="237" y2= "541" />
+  <polyline class="fil0 str0" points="304,716 237,649 170,716 "/>
+  <polygon class="fil0 str0" points="237,160 276,228 315,295 237,295 159,295 198,228 "/>
+  <line class="fil0 str0" x1="237" y1="48" x2="237" y2= "-1" />
+  <line class="fil0 str0" x1="237" y1="846" x2="237" y2= "797" />
+ </g>
+	
+</svg>

@@ -1,0 +1,728 @@
+{
+    "list": [
+      {
+        "type": "form",
+        "label": "表单容器",
+        "columnName": "form_1607421774751",
+        "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+        "width": "100%",
+        "list": [
+          {
+            "type": "input",
+            "label": "主设备IP：",
+            "columnName": "masterIp",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请输入",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": false,
+              "disabled": false,
+              "readonly": false
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "input_1607421779998"
+          },
+          {
+            "type": "input",
+            "label": "备设备IP：",
+            "columnName": "backupIp",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请输入",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": false,
+              "disabled": false,
+              "readonly": false
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "input_1607421781808"
+          },
+          {
+            "label": "比对开始时间：",
+            "type": "datePicker",
+            "columnName": "datePicker_1607421808689",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "asideIcon": "iconfont iconriqi",
+            "customLabelWidth": true,
+            "required": false,
+            "rules": [],
+            "classify": "form",
+            "class": "",
+            "aspProps": {
+              "dateRange": 0
+            },
+            "props": {
+              "type": "datetime",
+              "placeholder": "请选择",
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "value-format": "yyyy-MM-dd HH:mm:ss",
+              "range-separator": "至",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": false,
+              "picker-options": {}
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 110
+          },
+          {
+            "label": "对比结束时间：",
+            "type": "datePicker",
+            "columnName": "compareTimeTo",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "asideIcon": "iconfont iconriqi",
+            "customLabelWidth": true,
+            "required": false,
+            "rules": [],
+            "classify": "form",
+            "class": "",
+            "aspProps": {
+              "dateRange": 0
+            },
+            "props": {
+              "type": "datetime",
+              "placeholder": "请选择",
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "value-format": "yyyy-MM-dd HH:mm:ss",
+              "range-separator": "至",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": false,
+              "picker-options": {}
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 110,
+            "oldColumnName": "datePicker_1609147052994"
+          },
+          {
+            "type": "select",
+            "label": "结果类型：",
+            "columnName": "compareType",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": false,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false
+            },
+            "options": [
+              {
+                "label": "全部",
+                "value": ""
+              },
+              {
+                "label": "新增未同步",
+                "value": "1"
+              },
+              {
+                "label": "修改未同步",
+                "value": "2"
+              },
+              {
+                "label": "删除未同步",
+                "value": "3"
+              }
+            ],
+            "hidden": false,
+            "isAddOption": false,
+            "showOptions": [
+              {
+                "label": "全部",
+                "value": "",
+                "disabled": false
+              },
+              {
+                "label": "新增未同步",
+                "value": "1",
+                "disabled": false
+              },
+              {
+                "label": "修改",
+                "value": "2",
+                "disabled": false
+              },
+              {
+                "label": "删除",
+                "value": "3",
+                "disabled": false
+              }
+            ],
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1607421836785",
+            "filterOptionStatus": [],
+            "oldColumnName": "select_1607421836785"
+          },
+          {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1607421888085",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+              {
+                "type": "button",
+                "label": "查询",
+                "columnName": "button_1607421885247",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "type": "primary"
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "submit"
+              },
+              {
+                "type": "button",
+                "label": "重置",
+                "columnName": "button_1607421878171",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {},
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "reset-submit"
+              }
+            ],
+            "position": "left",
+            "class": "",
+            "isDialogFooterBtns": false,
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          }
+        ],
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "button-group",
+        "label": "按钮容器",
+        "columnName": "button-group_1607479510033",
+        "asideIcon": "iconfont iconanniuzu",
+        "width": "100%",
+        "list": [
+          {
+            "type": "button",
+            "label": "导出清单",
+            "columnName": "export-list",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": false,
+            "labelWidth": 100,
+            "oldColumnName": "export-detailed",
+            "event": "",
+            "exportType": "request",
+            "apiMethod": "post+arraybuffer"
+          },
+          {
+            "type": "button",
+            "label": "导出明细",
+            "columnName": "export-detail",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": false,
+            "labelWidth": 100,
+            "oldColumnName": "button_1607479514452"
+          },
+          {
+            "type": "button",
+            "label": "导入主备清单",
+            "columnName": "import-list",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": false,
+            "labelWidth": 100,
+            "oldColumnName": "button_1607479516326"
+          }
+        ],
+        "position": "left",
+        "class": "",
+        "isDialogFooterBtns": false,
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "table",
+        "label": "表格",
+        "columnName": "table_1607479557915",
+        "asideIcon": "iconfont icondashujukeshihuaico-",
+        "width": "100%",
+        "classify": "layout",
+        "show-index": false,
+        "indexFixed": true,
+        "show-single-selection": false,
+        "singleSelectionFixed": true,
+        "show-multiple-selection": true,
+        "multipleSelectionFixed": true,
+        "cacheMultipleSelection": false,
+        "multipleSelectionColumnName": [],
+        "show-operation": true,
+        "operationFixed": true,
+        "show-pagination": true,
+        "defaultSelectAll": false,
+        "defaultSort": {
+          "prop": "",
+          "order": "",
+          "ascending": "asc",
+          "descending": "desc"
+        },
+        "props": {
+          "border": true,
+          "stripe": true,
+          "highlight-current-row": false,
+          "show-header": true,
+          "default-sort": ""
+        },
+        "btnGroupDynamic": [],
+        "list": [
+          {
+            "timeStamp": 1607479589166,
+            "label": "表格可编辑参数",
+            "columnName": "$asp_isEdit",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": false,
+            "tooltip": true,
+            "$_isBuiltInParams": true
+          },
+          {
+            "label": "资源池",
+            "columnName": "idcType",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "120",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "主设备IP",
+            "columnName": "masterIp",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "120",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "备设备IP",
+            "columnName": "backupIp",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "120",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "厂商",
+            "columnName": "brand",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "120",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "新增未同步数量",
+            "columnName": "addCount",
+            "type": "link",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "修改未同步数量",
+            "columnName": "modifyCount",
+            "type": "link",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "删除未同步数量",
+            "columnName": "delCount",
+            "type": "link",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "100",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "比对时间",
+            "columnName": "compareTime",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true,
+            "canSortConvert": false,
+            "formatter": "yyyymmddhhmmss"
+          },
+          {
+            "label": "创建时间",
+            "columnName": "createTime",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true,
+            "formatter": "yyyymmddhhmmss"
+          },
+          {
+            "label": "创建人",
+            "columnName": "createUser",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          }
+        ],
+        "operation": [],
+        "toolList": [
+          {
+            "type": "text",
+            "timestamp": 1607479743099,
+            "columnName": "row-contrast",
+            "label": "对比",
+            "align": "left",
+            "class": "",
+            "icon": "",
+            "justShowIcon": false,
+            "defaultState": "show",
+            "state": "show",
+            "dataLinkage": [],
+            "confirmationStatus": []
+          },
+          {
+            "type": "text",
+            "timestamp": 1607479748376,
+            "columnName": "row-recound",
+            "label": "对比记录",
+            "align": "left",
+            "class": "",
+            "icon": "",
+            "justShowIcon": false,
+            "defaultState": "show",
+            "state": "show",
+            "dataLinkage": [],
+            "confirmationStatus": []
+          }
+        ],
+        "operation-width": "110",
+        "pagination": {
+          "layout": "total, sizes, prev, pager, next, jumpe",
+          "pageSizes": [
+            10,
+            20,
+            30
+          ],
+          "currentPage": 1,
+          "pageSize": 10,
+          "total": 0,
+          "hide-on-single-page": false
+        },
+        "http": {
+          "initHttp": true,
+          "type": "get",
+          "methods": "/v1/configCompare/list"
+        },
+        "hidden": false,
+        "tableTipDesc": "",
+        "tableTipClass": "",
+        "showTableTip": false,
+        "show-operation-status": [],
+        "multipleSelectionStatus": []
+      }
+    ],
+    "model": {
+      "datePicker_1607421808689": "",
+      "masterIp": "",
+      "backupIp": "",
+      "compareTimeTo": "",
+      "compareType": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+      "exportName": "",
+      "project": "webbas",
+      "labelWidth": 100,
+      "labelPosition": "left",
+      "size": "mini",
+      "class": "",
+      "layoutType": "flex",
+      "statusList": [],
+      "localProxy": "",
+      "nigxProxy": "",
+      "serverProps": {
+        "statusKey": "",
+        "statusValue": "",
+        "dataKey": "",
+        "requestDataKey": ""
+      }
+    }
+  }
+        
+  
+      
+  

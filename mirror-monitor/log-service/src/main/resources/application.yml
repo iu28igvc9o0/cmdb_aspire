@@ -1,0 +1,50 @@
+#server:
+#  port: 8150
+#
+#
+#eureka:
+#  instance:
+#    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+#    prefer-ip-address: true
+#  client:
+#    registryFetchIntervalSeconds: 5
+#    instanceInfoReplicationIntervalSeconds: 5
+#    initialInstanceInfoReplicationIntervalSeconds: 5
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+#
+#druid:
+#  url: jdbc:mysql://127.0.0.1:3306/test
+#  username: root
+#  password: root
+#  useUnicode: true
+#  characterEncoding: UTF8
+#  useSSL: false
+#
+#mybatis:
+#  mapperLocations:
+#    - classpath*:sqlmap/*/*Mapper.xml
+#  type-aliases-package:
+#     org.springboot.sample.entity
+#
+#elasticsearch.ip: 10.12.70.40
+#elasticsearch.port: 9300
+#elasticsearch.nodeType: client
+#elasticsearch.clusterName: elasticsearch
+#elasticsearch.index: mirror-theme
+#elasticsearch.index.fields.limit: 10000
+elasticsearch:
+  cluster:
+    indexs: #跨集群索引，正则history.+,lldp-network.+,stp-network.+,route-network.+,log-network.+,config-network.+,fw-rule-policy-.+
+      - history.+
+      - fw-rule-policy.+
+    queryKeywords:
+      es-index-cluster-huchi:
+        - 呼和浩特资源池
+      es-index-cluster-xxg:
+        - 信息港资源池
+    indexKeywords:
+      es-index-cluster-huchi:
+        - huchi
+      es-index-cluster-xxg:
+            - xxg

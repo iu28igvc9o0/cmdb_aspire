@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.UserClassifyPageConfigDao" >
+  <resultMap id="BaseResultMap" type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.UserClassifyPageConfig" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="user_classify_uuid" property="userClassifyUuid" jdbcType="VARCHAR" />
+    <result column="customizedview_id" property="customizedviewId" jdbcType="VARCHAR" />
+    <result column="system_id" property="systemId" jdbcType="VARCHAR" />
+    <result column="page_code" property="pageCode" jdbcType="VARCHAR" />
+    <result column="page_alias" property="pageAlias" jdbcType="VARCHAR" />
+    <result column="page_custom_config" property="pageCustomConfig" jdbcType="VARCHAR" />
+    <result column="namespace" property="namespace" jdbcType="VARCHAR" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_user_classify_page_config
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.UserClassifyPageConfig" >
+    insert into t_user_classify_page_config (uuid, user_classify_uuid, customizedview_id, system_id,
+      page_code, page_alias, page_custom_config, namespace, creator,
+      last_update_time)
+    values (#{uuid,jdbcType=VARCHAR}, #{userClassifyUuid,jdbcType=VARCHAR}, #{customizedviewId,jdbcType=VARCHAR}, #{systemId,jdbcType=VARCHAR},
+      #{pageCode,jdbcType=VARCHAR}, #{pageAlias,jdbcType=VARCHAR}, #{pageCustomConfig,jdbcType=VARCHAR}, 
+      #{namespace,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR},
+      #{lastUpdateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.UserClassifyPageConfig" >
+    update t_user_classify_page_config
+    set user_classify_uuid = #{userClassifyUuid,jdbcType=VARCHAR},
+      customizedview_id = #{customizedviewId,jdbcType=VARCHAR},
+      system_id = #{systemId,jdbcType=VARCHAR},
+      page_code = #{pageCode,jdbcType=VARCHAR},
+      page_alias = #{pageAlias,jdbcType=VARCHAR},
+      page_custom_config = #{pageCustomConfig,jdbcType=VARCHAR},
+      namespace = #{namespace,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select uuid, user_classify_uuid, customizedview_id, system_id, page_code, page_alias, page_custom_config,
+    namespace, creator, last_update_time
+    from t_user_classify_page_config
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select uuid, user_classify_uuid, customizedview_id, system_id, page_code, page_alias, page_custom_config,
+    namespace, creator, last_update_time
+    from t_user_classify_page_config
+  </select>
+  <delete id="deleteByUserClassifyId">
+    delete from t_user_classify_page_config where user_classify_uuid = #{userClassifyId}
+  </delete>
+  <update id="updatePageConfig" parameterType="java.lang.String" >
+    update t_user_classify_page_config
+    set
+      page_custom_config = #{content,jdbcType=VARCHAR}
+    where customizedview_id = #{customizedviewId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,113 @@
+.theServerContent {
+    overflow: hidden;
+}
+
+.tcback {
+    display: flex;
+    height: 430px;
+    .titleName {
+        padding-top: 6px;
+        width: 68px;
+        height: 38px;
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: bold;
+        color: rgba(51, 51, 51, 1);
+    }
+    .litteName {
+        width: 100%;
+        height: 48px;
+        padding: 0 0 0 10px;
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        color: rgba(51, 58, 66, 1);
+        line-height: 48px;
+        background: linear-gradient(
+            0deg,
+            rgba(224, 232, 237, 1),
+            rgba(243, 246, 248, 1)
+        );
+        // opacity:0.35;
+        z-index: 1;
+        font-size: 16px;
+        span {
+            opacity: 1;
+            z-index: 10;
+        }
+    }
+    h4 {
+        color: #333333;
+        font-size: 16px;
+        margin: 5px 0 17px 0;
+    }
+
+    .tcLeft {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        width: 80%;
+        background: #fafafc;
+    }
+    .tcRight {
+        display: flex;
+        flex-direction: column;
+        width: 20%;
+        padding: 10px;
+        background: #fafafc;
+    }
+
+    .boxShadow {
+        flex: auto;
+        overflow-y: auto;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px 0px 8px 0px rgba(4, 0, 0, 0.13);
+    }
+    .tableTran {
+        width: calc(50% - 37px);
+        .tableTranList {
+            padding: 10px;
+        }
+    }
+    .tableTranContent {
+        display: flex;
+        flex: 1;
+    }
+    .search-arrow {
+        width: 30px;
+        height: 30px;
+        border: 1px solid rgb(83, 96, 128);
+        border-radius: 50%;
+        margin: 180px 15px 0 18px;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+        .el-icon-right {
+            font-size: 18px;
+            margin-top: 5px;
+        }
+        &:hover {
+            border: 1px solid #46bafe;
+            .el-icon-right {
+                color: #46bafe;
+            }
+        }
+    }
+    .selectWidth div.el-select {
+        float: left;
+        width: 22%;
+    }
+    .selectWidth .vue-treeselect {
+        float: left;
+        width: 39%;
+    }
+    .selectWidth .el-input {
+        width: 39%;
+    }
+    /deep/.yw-treeselect.vue-treeselect
+        .vue-treeselect__control
+        .vue-treeselect__placeholder {
+        color: #c0c4cc;
+    }
+}

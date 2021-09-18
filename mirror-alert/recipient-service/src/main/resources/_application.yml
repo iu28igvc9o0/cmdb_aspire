@@ -1,0 +1,46 @@
+server:
+  port: 8188
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: debug
+  file: recipient-service.log ##日志文件,绝对路径或相对路径
+
+druid:
+  url: jdbc:mysql://192.168.183.131:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: root
+  useSSL: false
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+spring:
+  kafka:
+    listener:
+      concurrency: 10 #并发消费线程数 一般小于等于分区数
+    bootstrap-servers: 192.168.183.131:9092
+    producer:
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: mail-substance-group
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 60000
+      session.timeout.ms: 60000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto.commit.interval.ms: 300000
+    properties:
+      session.timeout.ms: 60000
+      max.poll.records: 10
+      max.poll.interval.ms: 300000
+
+kafka:
+  topic:
+    alert_mail_substance: ALERT_MAIL_SUBSTANCE

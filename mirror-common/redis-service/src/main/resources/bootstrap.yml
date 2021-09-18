@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: redis-service
+  cloud:
+    config:
+      enabled: true
+      name: ms-redis
+      profile: ${ENV_TYPE:dev}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}

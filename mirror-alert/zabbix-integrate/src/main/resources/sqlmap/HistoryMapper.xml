@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.zabbixintegrate.dao.HistoryMapper">
+
+    <select id="selectBySql" resultType="java.util.Map" parameterType="java.lang.String">
+        ${sql}
+    </select>
+
+    <select id="selectKpi" resultType="java.util.Map" parameterType="java.util.Map">
+        select h.itemid, ite.key_, min(ite.ip) ip, AVG(h.VALUE) `avg`, MAX(h.value) `max`, MIN(h.value) `min`
+         from ${table} h INNER JOIN
+        (SELECT i.itemid, i.key_, it.ip  from items i INNER JOIN interface it on it.hostid=i.hostid
+        <where>
+            ${keys}
+            <if test="valueType != null">
+                and i.value_type= #{valueType, jdbcType=INTEGER}
+            </if>
+        </where>
+        ) ite
+        on ite.itemid=h.itemid
+        where  h.clock <![CDATA[>=]]> UNIX_TIMESTAMP(#{fromTime}) AND h.clock <![CDATA[<]]> UNIX_TIMESTAMP(#{toTime})
+        GROUP BY
+            h.itemid
+    </select>
+
+    <select id="selectKpiByHosts" resultType="java.util.Map" parameterType="java.util.Map">
+        select h.itemid, ite.key_, min(ite.ip) ip, AVG(h.VALUE) `avg`, MAX(h.value) `max`, MIN(h.value) `min`
+        from ${table} h INNER JOIN
+        (SELECT i.itemid, i.key_, it.host ip  from items i INNER JOIN hosts it on it.hostid=i.hostid
+        <where>
+            ${keys}
+            <if test="valueType != null">
+                and i.value_type= #{valueType, jdbcType=INTEGER}
+            </if>
+        </where>
+        ) ite
+        on ite.itemid=h.itemid
+        where  h.clock <![CDATA[>=]]> UNIX_TIMESTAMP(#{fromTime}) AND h.clock <![CDATA[<]]> UNIX_TIMESTAMP(#{toTime})
+        GROUP BY
+        h.itemid
+    </select>
+
+    <select id="selectKpiByHostsName" resultType="java.util.Map" parameterType="java.util.Map">
+        select h.itemid, ite.key_, min(ite.ip) ip, AVG(h.VALUE) `avg`, MAX(h.value) `max`, MIN(h.value) `min`
+        from ${table} h INNER JOIN
+        (SELECT i.itemid, i.key_, it.name ip  from items i INNER JOIN hosts it on it.hostid=i.hostid
+        <where>
+            ${keys}
+            <if test="valueType != null">
+                and i.value_type= #{valueType, jdbcType=INTEGER}
+            </if>
+        </where>
+        ) ite
+        on ite.itemid=h.itemid
+        where  h.clock <![CDATA[>=]]> UNIX_TIMESTAMP(#{fromTime}) AND h.clock <![CDATA[<]]> UNIX_TIMESTAMP(#{toTime})
+        GROUP BY
+        h.itemid
+    </select>
+
+    <select id="selectKpiByDay" resultType="java.util.Map" parameterType="java.util.Map">
+      select h.itemid, ite.key_, min(ite.ip) ip, AVG(h.VALUE) `avg`, MAX(h.value) `max`, MIN(h.value) `min`
+        from ${table} h INNER JOIN
+        (SELECT i.itemid, i.key_, it.ip  from items i INNER JOIN interface it on it.hostid=i.hostid
+        <where>
+            ${keys}
+            <if test="valueType != null">
+                and i.value_type= #{valueType, jdbcType=INTEGER}
+            </if>
+        </where>
+        ) ite
+        on ite.itemid=h.itemid
+        where  h.clock BETWEEN UNIX_TIMESTAMP(CAST(now()AS DATE) - INTERVAL 1 DAY) and UNIX_TIMESTAMP(CAST(now()AS DATE) - INTERVAL 1 SECOND)
+        GROUP BY
+        h.itemid
+    </select>
+</mapper>

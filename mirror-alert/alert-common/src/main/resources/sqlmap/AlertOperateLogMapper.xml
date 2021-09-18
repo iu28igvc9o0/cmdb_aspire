@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.operateLog.AlertOperateLogMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.operateLog.po.AlertOperateLog">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="relation_id" property="relationId" jdbcType="VARCHAR"/>
+        <result column="operate_model" property="operateModel" jdbcType="VARCHAR"/>
+        <result column="operate_model_desc" property="operateModelDesc" jdbcType="VARCHAR"/>
+        <result column="operate_type" property="operateType" jdbcType="VARCHAR"/>
+        <result column="operate_type_desc" property="operateTypeDesc" jdbcType="VARCHAR"/>
+        <result column="operater" property="operater" jdbcType="VARCHAR"/>
+        <result column="operate_time" property="operateTime" jdbcType="TIMESTAMP"/>
+        <result column="operate_content" property="operateContent" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, relation_id, operate_model, operate_model_desc, operate_type, operate_type_desc, operater, operate_time, operate_content, remark
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_operate_log
+    </select>
+
+    <sql id="findPageWithWhere">
+        <where>
+            <if test="id != null and id != ''">
+                `id` = #{id}
+            </if>
+            <if test="relationId != null and relationId != ''">
+                AND `relation_id` = #{relationId}
+            </if>
+            <if test="operateModel != null and operateModel != ''">
+                AND `operate_model` = #{operateModel}
+            </if>
+            <if test="operateType != null and operateType != ''">
+                AND `operate_type` = #{operateType}
+            </if>
+            <if test="operater != null and operater != ''">
+                AND `operater` = #{operater}
+            </if>
+            <if test="operateTime != null and operateTime != ''">
+                AND `operate_time` = #{operateTime}
+            </if>
+            <if test="operateContent != null and operateContent != ''">
+                AND `operate_content` = #{operateContent}
+            </if>
+            <if test="remark != null and remark != ''">
+                AND `remark` = #{remark}
+            </if>
+        </where>
+    </sql>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap"
+            parameterType="com.aspire.mirror.alert.server.dao.operateLog.po.AlertOperateLog">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_operate_log
+        <include refid="findPageWithWhere"/>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="java.lang.Long" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_operate_log
+        WHERE `id` = #{id}
+    </select>
+    <!--    分页查询    -->
+    <select id="findPageWithResult" parameterType="com.aspire.mirror.alert.server.vo.operateLog.AlertOperateLogDTO"
+            resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alert_operate_log
+        <include refid="findPageWithWhere"/> order by operate_time desc
+        limit #{begin},#{pageSize}
+    </select>
+
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.vo.operateLog.AlertOperateLogDTO"
+            resultType="Integer">
+        select count(1)
+        from alert_operate_log
+        <include refid="findPageWithWhere"/>
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.operateLog.po.AlertOperateLog">
+        INSERT INTO alert_operate_log
+        (
+            `relation_id`,
+            `operate_model`,
+            `operate_model_desc`,
+            `operate_type`,
+            `operate_type_desc`,
+            `operater`,
+            `operate_time`,
+            `operate_content`,
+            `remark`
+        ) VALUES (
+            #{relationId, jdbcType=VARCHAR},
+            #{operateModel, jdbcType=VARCHAR},
+            #{operateModelDesc, jdbcType=VARCHAR},
+            #{operateType, jdbcType=VARCHAR},
+            #{operateTypeDesc, jdbcType=VARCHAR},
+            #{operater, jdbcType=VARCHAR},
+            #{operateTime, jdbcType=TIMESTAMP},
+            #{operateContent, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 批量新增记录 -->
+    <insert id="insertBatch" parameterType="com.aspire.mirror.alert.server.dao.operateLog.po.AlertOperateLog">
+        INSERT INTO alert_operate_log
+        (
+        `relation_id`,
+        `operate_model`,
+        `operate_model_desc`,
+        `operate_type`,
+        `operate_type_desc`,
+        `operater`,
+        `operate_time`,
+        `operate_content`,
+        `remark`
+        ) VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (
+            #{item.relationId, jdbcType=VARCHAR},
+            #{item.operateModel, jdbcType=VARCHAR},
+            #{item.operateModelDesc, jdbcType=VARCHAR},
+            #{item.operateType, jdbcType=VARCHAR},
+            #{item.operateTypeDesc, jdbcType=VARCHAR},
+            #{item.operater, jdbcType=VARCHAR},
+            #{item.operateTime, jdbcType=TIMESTAMP},
+            #{item.operateContent, jdbcType=VARCHAR},
+            #{item.remark, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.mirror.alert.server.dao.operateLog.po.AlertOperateLog">
+        UPDATE alert_operate_log SET
+        `relation_id` = #{relationId},
+        `operate_model` = #{operateModel},
+        `operate_model_desc` = #{operateModelDesc},
+        `operate_type` = #{operateType},
+        `operate_type_desc` = #{operateTypeDesc},
+        `operater` = #{operater},
+        `operate_time` = #{operateTime},
+        `operate_content` = #{operateContent},
+        `remark` = #{remark}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM alert_operate_log
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleRefRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRefRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="ref_module_id" property="refModuleId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `module_id`,
+        `ref_module_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_module_ref_relation
+        where is_delete = 0
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRefRelation">
+        SELECT
+        `id`,
+        `module_id`,
+        `ref_module_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_module_ref_relation
+        WHERE 1=1 and is_delete = 0
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+        AND `module_id` = #{moduleId}
+        </if>
+        <if test="refModuleId != null and refModuleId != ''">
+        AND `ref_module_id` = #{refModuleId}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRefRelation" resultMap="resultMap">
+        SELECT
+        `id`,
+        `module_id`,
+        `ref_module_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_module_ref_relation
+        WHERE 1=1 and is_delete = 0
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRefRelation">
+        INSERT INTO cmdb_v3_module_ref_relation
+        (
+            `id`,
+            `module_id`,
+            `ref_module_id`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{refModuleId, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRefRelation">
+        UPDATE cmdb_v3_module_ref_relation SET
+        `module_id` = #{moduleId},
+        `ref_module_id` = #{refModuleId},
+        `sort_index` = #{sortIndex},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+           and is_delete = 0
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRefRelation">
+        UPDATE  cmdb_v3_module_ref_relation
+        SET is_delete = 1
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+            AND `module_id` = #{moduleId}
+        </if>
+    </delete>
+</mapper>

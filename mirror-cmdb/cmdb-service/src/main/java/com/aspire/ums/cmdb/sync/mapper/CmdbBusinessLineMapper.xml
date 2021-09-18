@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.sync.mapper.CmdbBusinessLineMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine" >
+        <result column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="BUSINESS_NAME" property="businessName" jdbcType="VARCHAR" />
+        <result column="PARENT_BUSINESS_NAME" property="parentBusinessName" jdbcType="VARCHAR" />
+        <result column="PARENT_ID" property="parentId" jdbcType="VARCHAR" />
+        <result column="BUSINESS_GROUP" property="businessGroup" jdbcType="VARCHAR" />
+        <result column="BUSINESS_CODE" property="businessCode" jdbcType="VARCHAR" />
+        <result column="DEL_FLAG" property="delFlag" jdbcType="VARCHAR" />
+        <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+        <result column="PARENT_CODE" property="parentCode" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `ID`,
+        `BUSINESS_NAME`,
+        `PARENT_BUSINESS_NAME`,
+        `PARENT_ID`,
+        `BUSINESS_GROUP`,
+        `BUSINESS_CODE`,
+        `DEL_FLAG`,
+        `DISABLED`,
+        `PARENT_CODE`
+        FROM cmdb_business_attach
+    </select>
+
+    <!-- list查询 -->
+    <select id="aloneList_bak" resultMap="resultMap">
+        SELECT
+            `ID`,
+            `BUSINESS_NAME`,
+            `PARENT_BUSINESS_NAME`,
+            `PARENT_ID`,
+            `BUSINESS_GROUP`,
+            `BUSINESS_CODE`,
+            `DEL_FLAG`,
+            `DISABLED`,
+            `PARENT_CODE`
+        FROM
+            cmdb_business_attach
+        WHERE
+            PARENT_ID IS NULL
+    </select>
+
+    <!-- list查询 -->
+    <select id="aloneList" resultMap="resultMap">
+        SELECT
+            `id`,
+            business_name AS `BUSINESS_NAME`,
+            parentBusiness AS `PARENT_ID`,
+            business_code AS `BUSINESS_CODE`,
+            is_delete AS `DEL_FLAG`
+        FROM
+            cmdb_business_line
+        WHERE
+            parentBusiness IS NULL AND is_delete = 0 ORDER BY business_name
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity_bak" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine">
+        SELECT
+        `ID`,
+        `BUSINESS_NAME`,
+        `PARENT_BUSINESS_NAME`,
+        `PARENT_ID`,
+        `BUSINESS_GROUP`,
+        `BUSINESS_CODE`,
+        `DEL_FLAG`,
+        `DISABLED`,
+        `PARENT_CODE`
+        FROM cmdb_business_attach
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `ID` = #{ID}
+        </if>
+        <if test="businessName != null and businessName != ''">
+        AND `BUSINESS_NAME` = #{businessName}
+        </if>
+        <if test="parentBusinessName != null and parentBusinessName != ''">
+        AND `PARENT_BUSINESS_NAME` = #{parentBusinessName}
+        </if>
+        <if test="parentId != null and parentId != ''">
+        AND `PARENT_ID` = #{parentId}
+        </if>
+        <if test="businessGroup != null and businessGroup != ''">
+        AND `BUSINESS_GROUP` = #{businessGroup}
+        </if>
+        <if test="businessCode != null and businessCode != ''">
+        AND `BUSINESS_CODE` = #{businessCode}
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+        AND `DEL_FLAG` = #{delFlag}
+        </if>
+        <if test="disabled != null and disabled != ''">
+        AND `DISABLED` = #{disabled}
+        </if>
+        <if test="parentCode != null and parentCode != ''">
+        AND `PARENT_CODE` = #{parentCode}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine">
+        SELECT
+        `id`,
+        business_name AS `BUSINESS_NAME`,
+        parentBusiness AS `PARENT_ID`,
+        business_code AS `BUSINESS_CODE`,
+        is_delete AS `DEL_FLAG`
+        FROM cmdb_business_line
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{ID}
+        </if>
+        <if test="businessName != null and businessName != ''">
+            AND `business_name` = #{businessName}
+        </if>
+        <if test="parentId != null and parentId != ''">
+            AND `parentBusiness` = #{parentId}
+        </if>
+        <if test="businessCode != null and businessCode != ''">
+            AND `business_code` = #{businessCode}
+        </if>
+        <if test="delFlag != null and delFlag != ''">
+            AND `is_delete` = #{delFlag}
+        </if>
+        ORDER BY business_name
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine" resultMap="resultMap">
+        SELECT
+        `ID`,
+        `BUSINESS_NAME`,
+        `PARENT_BUSINESS_NAME`,
+        `PARENT_ID`,
+        `BUSINESS_GROUP`,
+        `BUSINESS_CODE`,
+        `DEL_FLAG`,
+        `DISABLED`,
+        `PARENT_CODE`
+        FROM cmdb_business_attach
+        WHERE 1=1
+        AND `ID` = #{id}
+    </select>
+
+    <select id="getByBusinessCode" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        `ID`,
+        `BUSINESS_NAME`,
+        `PARENT_BUSINESS_NAME`,
+        `PARENT_ID`,
+        `BUSINESS_GROUP`,
+        `BUSINESS_CODE`,
+        `DEL_FLAG`,
+        `DISABLED`,
+        `PARENT_CODE`
+        FROM cmdb_business_attach
+        WHERE 1=1
+        AND `BUSINESS_CODE` = #{businessCode}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine">
+        INSERT INTO cmdb_business_attach
+        (
+            `ID`,
+            `BUSINESS_NAME`,
+            `PARENT_BUSINESS_NAME`,
+            `PARENT_ID`,
+            `BUSINESS_GROUP`,
+            `BUSINESS_CODE`,
+            `DEL_FLAG`,
+            `DISABLED`,
+            `PARENT_CODE`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{businessName, jdbcType=VARCHAR},
+            #{parentBusinessName, jdbcType=VARCHAR},
+            #{parentId, jdbcType=VARCHAR},
+            #{businessGroup, jdbcType=VARCHAR},
+            #{businessCode, jdbcType=VARCHAR},
+            #{delFlag, jdbcType=VARCHAR},
+            #{disabled, jdbcType=VARCHAR},
+            #{parentCode, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine">
+        UPDATE cmdb_business_attach
+        <set>
+            <if test="businessName!=null">
+                `BUSINESS_NAME` = #{businessName},
+            </if>
+            <if test="parentId!=null">
+                `PARENT_ID` = #{parentId},
+            </if>
+            <if test="businessCode!=null">
+                `BUSINESS_CODE` = #{businessCode},
+            </if>
+            <if test="delFlag!=null">
+                `DEL_FLAG` = #{delFlag},
+            </if>
+            <if test="disabled!=null">
+                `DISABLED` = #{disabled},
+            </if>
+            <if test="parentCode!=null">
+                `PARENT_CODE` = #{parentCode}
+            </if>
+        </set>
+        WHERE
+        `ID` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbBusinessLine">
+        DELETE FROM cmdb_business_attach
+        WHERE
+         `ID` = #{id}
+    </delete>
+
+    <update id="deleteByBusinessCode" parameterType="java.lang.String">
+        update cmdb_business_attach
+        set DEL_FLAG='1'
+        WHERE
+         `BUSINESS_CODE` = #{businessCode}
+    </update>
+
+    <!-- 获取所有未删除的独立业务线 新增 fanwenhui 20200619 -->
+    <select id="getAllBusiness" resultMap="resultMap">
+        SELECT
+            `ID`,
+            CASE WHEN (select (SUBSTR(BUSINESS_NAME FROM 1 FOR 1) REGEXP '[^0-9.]')) = 0 THEN CONCAT('_', BUSINESS_NAME)
+            ELSE BUSINESS_NAME END AS BUSINESS_NAME,
+            `PARENT_BUSINESS_NAME`,
+            `PARENT_ID`,
+            `BUSINESS_GROUP`,
+            `BUSINESS_CODE`,
+            `DEL_FLAG`,
+            `DISABLED`,
+            `PARENT_CODE`
+        FROM
+            cmdb_business_attach
+        <where>
+            AND DEL_FLAG = 0 AND DISABLED = 0
+            <if test="null != pid and '' != pid">
+                AND PARENT_ID IS NULL
+            </if>
+            <if test="null == pid or '' == pid">
+                AND PARENT_ID IS NOT NULL
+            </if>
+        </where>
+    </select>
+
+    <!-- 获取所有的独立业务子模块 -->
+    <select id="subBusinessList" resultMap="resultMap">
+        SELECT
+            `id`,
+            business_name AS `BUSINESS_NAME`,
+            parentBusiness AS `PARENT_ID`,
+            business_code AS `BUSINESS_CODE`,
+            is_delete AS `DEL_FLAG`
+        FROM
+            cmdb_business_line
+        WHERE
+            parentBusiness IS NOT NULL AND is_delete = 0 ORDER BY business_name
+    </select>
+
+</mapper>

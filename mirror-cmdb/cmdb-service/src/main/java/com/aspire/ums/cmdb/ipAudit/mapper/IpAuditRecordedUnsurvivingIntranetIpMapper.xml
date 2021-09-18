@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipAudit.mapper.IpAuditRecordedUnsurvivingIntranetIpMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="dc" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="DATE" />
+        <result column="ip_type" property="ipType" jdbcType="VARCHAR" />
+        <result column="device_ip" property="deviceIp" jdbcType="VARCHAR" />
+        <result column="last_survive_time" property="lastSurviveTime" jdbcType="DATE" />
+        <result column="is_notify" property="isNotify" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="DATE" />
+        <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
+        <result column="check_num" property="checkNum" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="respMap" type="com.aspire.ums.cmdb.ipAudit.payload.RecordedUnsurvivingIntranetIpResp" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="dc" property="dc" jdbcType="VARCHAR" />
+        <result column="check_time" property="checkTime" jdbcType="DATE" />
+        <result column="use_status" property="useStatus" jdbcType="VARCHAR" />
+        <result column="device_ip" property="deviceIp" jdbcType="VARCHAR" />
+        <result column="is_notify" property="isNotify" jdbcType="VARCHAR" />
+        <result column="processing_status" property="processingStatus" jdbcType="VARCHAR" />
+        <result column="processing_status_desc" property="processingStatusDesc" jdbcType="VARCHAR" />
+        <result column="reason" property="reason" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operating_time" property="operatingTime" jdbcType="DATE" />
+        <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
+        <result column="check_num" property="checkNum" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <result column="ip_type" property="ipType" jdbcType="VARCHAR" />
+        <result column="host_backup" property="hostBackup" jdbcType="VARCHAR" />
+        <result column="mgr_by_pool" property="mgrByPool" jdbcType="VARCHAR" />
+        <result column="bizSystem" property="businessLevel1" jdbcType="VARCHAR" />
+        <result column="business_level2" property="businessLevel2" jdbcType="VARCHAR" />
+        <result column="survive_status" property="surviveStatus" jdbcType="VARCHAR" />
+        <result column="last_survive_time" property="lastSurviveTime" jdbcType="VARCHAR" />
+        <result column="unsurvived_duration" property="unsurvivedDuration" jdbcType="VARCHAR" />
+        <result column="device_status" property="deviceStatus" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="reqParam">
+        <if test="checkTimeBegin != null and checkTimeBegin != ''">
+            AND a.check_time <![CDATA[>=]]> #{checkTimeBegin}
+        </if>
+        <if test="checkTimeEnd != null and checkTimeEnd != ''">
+            AND a.check_time <![CDATA[<=]]> #{checkTimeEnd}
+        </if>
+        <if test="ips != null and ips.size() > 0">
+            and
+            <foreach collection="ips" item="ip" index="index" open="(" separator=" or " close=")">
+                a.ip LIKE CONCAT('%', #{ip}, '%')
+            </foreach>
+        </if>
+        <if test="dcList != null and dcList.size() > 0">
+            and a.dc in
+            <foreach collection="dcList" item="dc" index="index" open="(" separator="," close=")">
+                #{dc}
+            </foreach>
+        </if>
+        <if test="ipType != null and ipType != ''">
+            AND a.ip_type = #{ipType}
+        </if>
+        <if test="deviceIp != null and deviceIp != ''">
+            AND a.device_ip LIKE CONCAT('%', #{deviceIp}, '%')
+        </if>
+        <if test="isNotify != null and isNotify != ''">
+            AND a.`is_notify` = #{isNotify}
+        </if>
+        <if test="processingStatus != null and processingStatus != ''">
+            AND a.`processing_status` = #{processingStatus}
+        </if>
+        <if test="reason != null and reason != ''">
+            AND a.`reason` LIKE CONCAT('%', #{reason}, '%')
+        </if>
+        <if test="operator != null and operator != ''">
+            AND a.`operator` LIKE CONCAT('%', #{operator}, '%')
+        </if>
+        <if test="operatingTimeBegin != null and operatingTimeBegin != ''">
+            AND a.`operating_time` <![CDATA[>=]]> #{operatingTimeBegin}
+        </if>
+        <if test="operatingTimeEnd != null and operatingTimeEnd != ''">
+            AND a.`operating_time` <![CDATA[<=]]> #{operatingTimeEnd}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+            AND a.`order_num` LIKE CONCAT('%', #{orderNum}, '%')
+        </if>
+        <if test="lastSurviveTimeBegin != null and lastSurviveTimeBegin != ''">
+            AND a.last_survive_time <![CDATA[>=]]> #{lastSurviveTimeBegin}
+        </if>
+        <if test="lastSurviveTimeEnd != null and lastSurviveTimeEnd != ''">
+            AND a.last_survive_time <![CDATA[<=]]> #{lastSurviveTimeEnd}
+        </if>
+        <if test="hostBackup != null and hostBackup != ''">
+            AND c.host_backup = #{hostBackup}
+        </if>
+        <if test="mgrByPool != null and mgrByPool != ''">
+            AND c.mgr_by_pool = #{mgrByPool}
+        </if>
+        <if test="businessLevel1 != null and businessLevel1 != ''">
+            and c.bizSystem = #{businessLevel1}
+        </if>
+        <if test="businessLevel2 != null and businessLevel2 != ''">
+            and c.business_level2 = #{businessLevel2}
+        </if>
+        <if test="unsurvivedDurationBegin != null and unsurvivedDurationBegin != ''">
+            AND DATEDIFF(NOW(),DATE_FORMAT(a.last_survive_time,'%Y-%m-%d %T'))*24 <![CDATA[>=]]> #{unsurvivedDurationBegin}
+        </if>
+        <if test="unsurvivedDurationEnd != null and unsurvivedDurationEnd != ''">
+            AND DATEDIFF(NOW(),DATE_FORMAT(a.last_survive_time,'%Y-%m-%d %T'))*24 <![CDATA[<=]]> #{unsurvivedDurationEnd}
+        </if>
+        <if test="deviceStatus != null and deviceStatus != ''">
+            and a.device_status = #{deviceStatus}
+        </if>
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `dc`,
+        `check_time`,
+        `ip_type`,
+        `device_ip`,
+        `last_survive_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_recorded_unsurviving_intranet_ip
+    </select>
+
+    <select id="getListByIds" resultMap="resultMap" parameterType="java.lang.String">
+        SELECT *
+        FROM ip_audit_recorded_unsurviving_intranet_ip
+        WHERE id in
+        <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp">
+        SELECT
+        `id`,
+        `ip`,
+        `dc`,
+        `check_time`,
+        `ip_type`,
+        `device_ip`,
+        `last_survive_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_recorded_unsurviving_intranet_ip
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="ip != null and ip != ''">
+            AND `ip` = #{ip}
+        </if>
+        <if test="dc != null and dc != ''">
+            AND `dc` = #{dc}
+        </if>
+        <if test="checkTime != null and checkTime != ''">
+            AND `check_time` = #{checkTime}
+        </if>
+        <if test="ipType != null and ipType != ''">
+            AND `ip_type` = #{ipType}
+        </if>
+        <if test="deviceIp != null and deviceIp != ''">
+            AND `device_ip` = #{deviceIp}
+        </if>
+        <if test="lastSurviveTime != null and lastSurviveTime != ''">
+            AND `last_survive_time` = #{lastSurviveTime}
+        </if>
+        <if test="isNotify != null and isNotify != ''">
+            AND `is_notify` = #{isNotify}
+        </if>
+        <if test="processingStatus != null and processingStatus != ''">
+            AND `processing_status` = #{processingStatus}
+        </if>
+        <if test="reason != null and reason != ''">
+            AND `reason` = #{reason}
+        </if>
+        <if test="operator != null and operator != ''">
+            AND `operator` = #{operator}
+        </if>
+        <if test="operatingTime != null and operatingTime != ''">
+            AND `operating_time` = #{operatingTime}
+        </if>
+        <if test="orderNum != null and orderNum != ''">
+            AND `order_num` = #{orderNum}
+        </if>
+        <if test="checkNum != null and checkNum != ''">
+            AND `check_num` = #{checkNum}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+            AND `update_time` = #{updateTime}
+        </if>
+        <if test="updatePerson != null and updatePerson != ''">
+            AND `update_person` = #{updatePerson}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp" resultMap="resultMap">
+        SELECT
+        `id`,
+        `ip`,
+        `dc`,
+        `check_time`,
+        `ip_type`,
+        `device_ip`,
+        `last_survive_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`
+        FROM ip_audit_recorded_unsurviving_intranet_ip
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp">
+        INSERT INTO ip_audit_recorded_unsurviving_intranet_ip
+        (
+            `id`,
+            `ip`,
+            `dc`,
+            `check_time`,
+            `ip_type`,
+            `device_ip`,
+            `last_survive_time`,
+            `is_notify`,
+            `processing_status`,
+            `reason`,
+            `operator`,
+            `operating_time`,
+            `order_num`,
+            `check_num`,
+            `is_delete`,
+            `update_time`,
+            `update_person`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{ip, jdbcType=VARCHAR},
+            #{dc, jdbcType=VARCHAR},
+            #{checkTime, jdbcType=TIMESTAMP},
+            #{ipType, jdbcType=VARCHAR},
+            #{deviceIp, jdbcType=VARCHAR},
+            #{lastSurviveTime, jdbcType=TIMESTAMP},
+            #{isNotify, jdbcType=VARCHAR},
+            #{processingStatus, jdbcType=VARCHAR},
+            #{reason, jdbcType=VARCHAR},
+            #{operator, jdbcType=VARCHAR},
+            #{operatingTime, jdbcType=TIMESTAMP},
+            #{orderNum, jdbcType=VARCHAR},
+            #{checkNum, jdbcType=TINYINT},
+            #{isDelete, jdbcType=TINYINT},
+            #{updateTime, jdbcType=TIMESTAMP},
+            #{updatePerson, jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="batchInsertIp" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp">
+        INSERT INTO ip_audit_recorded_unsurviving_intranet_ip
+        (
+        `id`,
+        `ip`,
+        `dc`,
+        `check_time`,
+        `ip_type`,
+        `device_ip`,
+        `last_survive_time`,
+        `is_notify`,
+        `processing_status`,
+        `reason`,
+        `operator`,
+        `operating_time`,
+        `order_num`,
+        `check_num`,
+        `is_delete`,
+        `update_time`,
+        `update_person`,
+        `device_status`
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.ip, jdbcType=VARCHAR},
+            #{item.dc, jdbcType=VARCHAR},
+            #{item.checkTime, jdbcType=TIMESTAMP},
+            #{item.ipType, jdbcType=VARCHAR},
+            #{item.deviceIp, jdbcType=VARCHAR},
+            #{item.lastSurviveTime, jdbcType=TIMESTAMP},
+            #{item.isNotify, jdbcType=VARCHAR},
+            #{item.processingStatus, jdbcType=VARCHAR},
+            #{item.reason, jdbcType=VARCHAR},
+            #{item.operator, jdbcType=VARCHAR},
+            #{item.operatingTime, jdbcType=TIMESTAMP},
+            #{item.orderNum, jdbcType=VARCHAR},
+            #{item.checkNum, jdbcType=TINYINT},
+            #{item.isDelete, jdbcType=TINYINT},
+            #{item.updateTime, jdbcType=TIMESTAMP},
+            #{item.updatePerson, jdbcType=VARCHAR},
+            #{item.deviceStatus, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp">
+        UPDATE ip_audit_recorded_unsurviving_intranet_ip SET
+        `ip` = #{ip},
+        `dc` = #{dc},
+        `check_time` = #{checkTime},
+        `ip_type` = #{ipType},
+        `device_ip` = #{deviceIp},
+        `last_survive_time` = #{lastSurviveTime},
+        `is_notify` = #{isNotify},
+        `processing_status` = #{processingStatus},
+        `reason` = #{reason},
+        `operator` = #{operator},
+        `operating_time` = #{operatingTime},
+        `order_num` = #{orderNum},
+        `check_num` = #{checkNum},
+        `is_delete` = #{isDelete},
+        `update_time` = #{updateTime},
+        `update_person` = #{updatePerson}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateProcess"
+            parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        update `ip_audit_recorded_unsurviving_intranet_ip`
+        <set>
+            `processing_status` = #{handleStatus},
+            `reason` = #{notHandleReason},
+            <if test="operator != null and operator != ''">
+                `operator` = #{operator},
+                `update_person` = #{operator},
+            </if>
+            `update_time` = NOW(),
+            `operating_time` = NOW()
+        </set>
+        where `id` in
+        <foreach collection="mainId" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.ipAudit.entity.IpAuditRecordedUnsurvivingIntranetIp">
+        DELETE FROM ip_audit_recorded_unsurviving_intranet_ip
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <select id="getMaxCheckNum" resultType="java.lang.Long">
+        SELECT MAX(check_num) FROM ip_audit_recorded_unsurviving_intranet_ip
+    </select>
+    <select id="getListByPage" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RecordedUnsurvivingIntranetIpReq"
+            resultMap="respMap">
+        SELECT
+        a.id,
+        a.ip,
+        DATE_FORMAT(a.check_time,'%Y-%m-%d %T') as check_time,
+        a.ip_type,
+        IFNULL(d.dict_note, a.dc) AS dc,
+        a.device_ip,
+        DATE_FORMAT(a.last_survive_time,'%Y-%m-%d %T') as last_survive_time,
+        '未存活' AS survive_status,
+        DATEDIFF(NOW(), DATE_FORMAT(a.last_survive_time,'%Y-%m-%d %T'))*24 AS unsurvived_duration,
+        IFNULL(d2.dict_note, c.host_backup) AS host_backup,
+        IFNULL(d3.dict_note, c.mgr_by_pool) AS mgr_by_pool,
+        IFNULL(l.business_name, c.bizSystem) AS bizSystem,
+        IFNULL(l2.business_name, c.business_level2) AS business_level2,
+        a.processing_status,
+        CASE a.processing_status
+        WHEN '0' THEN '待处理' WHEN '1' THEN '暂不处理'
+        WHEN '2' THEN '处理中' WHEN '3' THEN '已处理'
+        ELSE a.processing_status END processing_status_desc,
+        a.reason,
+        a.operator,
+        DATE_FORMAT(a.operating_time,'%Y-%m-%d %T') as operating_time,
+        IFNULL(d5.dict_note, a.device_status) AS device_status
+        FROM ip_audit_recorded_unsurviving_intranet_ip a
+        LEFT JOIN t_cfg_dict d ON a.dc = d.id AND d.col_name = 'idcType2'
+        LEFT JOIN cmdb_instance c
+        ON c.ip = a.device_ip AND c.idcType = a.dc
+        LEFT JOIN t_cfg_dict d2 ON c.host_backup = d2.id AND d2.col_name = 'hostBackup'
+        LEFT JOIN t_cfg_dict d3 ON c.mgr_by_pool = d3.id AND d3.col_name = 'booleanYesNo'
+        LEFT JOIN cmdb_business_line l ON c.bizSystem = l.id
+        LEFT JOIN cmdb_business_line l2 ON c.business_level2 = l2.id
+        LEFT JOIN t_cfg_dict d5 ON a.device_status = d5.id AND d5.col_name = 'deviceStatus'
+        <where>
+            <include refid="reqParam" />
+        </where>
+        <if test="pageNo != null and pageSize != null">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+    <select id="getListCountByPage" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RecordedUnsurvivingIntranetIpReq"
+            resultType="int">
+        SELECT
+        COUNT(*)
+        FROM ip_audit_recorded_unsurviving_intranet_ip a
+        LEFT JOIN cmdb_instance c
+        ON c.ip = a.device_ip AND c.idcType = a.dc
+        <where>
+            <include refid="reqParam" />
+        </where>
+    </select>
+    <select id="getStatisticsData" parameterType="com.aspire.ums.cmdb.ipAudit.payload.RecordedUnsurvivingIntranetIpReq"
+            resultType="java.util.HashMap">
+        SELECT
+        MAX(z.numOfProblemAsset) AS numOfProblemAsset,
+        MAX(z.numOfToBeProcessAsset) AS numOfToBeProcessAsset
+        FROM
+        (SELECT
+        COUNT(DISTINCT a.device_ip) AS numOfProblemAsset,
+        -1 AS numOfToBeProcessAsset
+        FROM ip_audit_recorded_unsurviving_intranet_ip a
+        LEFT JOIN cmdb_instance c
+        ON c.ip = a.device_ip AND c.idcType = a.dc
+        <where>
+            <include refid="reqParam" />
+        </where>
+        UNION
+        SELECT
+        -1 AS numOfProblemAsset,
+        COUNT(DISTINCT a.device_ip) AS numOfToBeProcessAsset
+        FROM ip_audit_recorded_unsurviving_intranet_ip a
+        LEFT JOIN cmdb_instance c
+        ON c.ip = a.device_ip AND c.idcType = a.dc
+        <where>
+            a.processing_status = '0'
+            <include refid="reqParam" />
+        </where>
+        )z
+    </select>
+</mapper>

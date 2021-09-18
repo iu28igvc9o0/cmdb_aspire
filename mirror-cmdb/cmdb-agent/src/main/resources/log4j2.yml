@@ -1,0 +1,46 @@
+configutation:
+  name: Default
+  Properties:
+    Property:
+    - name: log-path
+      value: "G:/aspire/logs"
+  Appenders:
+    #输出到控制台
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        #        pattern: "%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %X{X-B3-TraceId} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx"
+        pattern: "%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%c}{cyan} %clr{:}{faint} %m%n%xwEx"
+    # 输出到文件
+    RollingFile:
+    - name: FILE
+      fileName: ${log-path}/cmdb-agent.log
+      filePattern: "${log-path}/cmdb-agent.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%t] [%X{traceId}] %logger Line:%-3L - %msg%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 100MB
+      DefaultRollOverStrategy:
+        max: 1
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+      - ref: FILE
+      - ref: CONSOLE
+    Logger:
+    # 测试Sleuth的打印
+    - name: org.springframework.web.servlet.DispatcherServlet
+      # additivity: false
+      level: debug
+      AppenderRef:
+      - ref: FILE
+      - ref: CONSOLE
+    - name: com.aspire
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: CONSOLE
+      - ref: FILE

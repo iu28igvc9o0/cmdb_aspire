@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipCollect.mapper.CmdbIpConfPoolMapper">
+
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpConfPoolEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="iptype" property="iptype" jdbcType="VARCHAR"/>
+        <result column="mac" property="mac" jdbcType="VARCHAR"/>
+        <result column="resource" property="resource" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="TIMESTAMP"/>
+        <result column="srcip" property="srcip" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="findColumn">
+        `id`,
+        `instance_id`,
+        `ip`,
+        `iptype`,
+        `mac`,
+        `resource`,
+        `time`,
+        `srcip`
+    </sql>
+    <sql id="commonColumn">
+        `id`,
+        `instance_id`,
+        `ip`,
+        `iptype`,
+        `mac`,
+        `resource`,
+        `time`,
+        `srcip`,
+        `event_id`,
+        `src_creator`,
+        `src_create_time`,
+        `src_opt_time`,
+        `src_pre_opt_time`,
+        `version`,
+        `create_time`
+    </sql>
+
+    <insert id="add" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpConfPoolEntity">
+        INSERT INTO `cmdb_ip_conf_pool`
+        (<include refid="commonColumn"></include>)
+        VALUES
+        (
+        #{id,jdbcType=VARCHAR},
+        #{instanceId,jdbcType=VARCHAR},
+        #{ip,jdbcType=VARCHAR},
+        #{iptype,jdbcType=VARCHAR},
+        #{mac,jdbcType=VARCHAR},
+        #{resource,jdbcType=VARCHAR},
+        #{time,jdbcType=TIMESTAMP},
+        #{srcip,jdbcType=VARCHAR},
+        #{eventId,jdbcType=VARCHAR},
+        #{srcCreator,jdbcType=VARCHAR},
+        #{srcCreateTime,jdbcType=TIMESTAMP},
+        #{srcOptTime,jdbcType=TIMESTAMP},
+        #{srcPreOptTime,jdbcType=TIMESTAMP},
+        #{version,jdbcType=INTEGER},
+        NOW()
+        )
+    </insert>
+
+    <insert id="batchAdd" parameterType="list">
+        INSERT INTO `cmdb_ip_conf_pool`
+        (<include refid="commonColumn"></include>)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},
+            #{item.instanceId,jdbcType=VARCHAR},
+            #{item.ip,jdbcType=VARCHAR},
+            #{item.iptype,jdbcType=VARCHAR},
+            #{item.mac,jdbcType=VARCHAR},
+            #{item.resource,jdbcType=VARCHAR},
+            #{item.time,jdbcType=TIMESTAMP},
+            #{item.srcip,jdbcType=VARCHAR},
+            #{item.eventId,jdbcType=VARCHAR},
+            #{item.srcCreator,jdbcType=VARCHAR},
+            #{item.srcCreateTime,jdbcType=TIMESTAMP},
+            #{item.srcOptTime,jdbcType=TIMESTAMP},
+            #{item.srcPreOptTime,jdbcType=TIMESTAMP},
+            #{item.version,jdbcType=INTEGER},
+            NOW()
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpConfPoolEntity">
+        UPDATE `cmdb_ip_conf_pool`
+        <set>
+            <if test="ip != null and ip != ''">
+                `ip` = #{ip},
+            </if>
+            <if test="iptype != null and iptype != ''">
+                `iptype` = #{iptype},
+            </if>
+            <if test="mac != null and mac != ''">
+                `mac` = #{mac},
+            </if>
+            <if test="resource != null and resource != ''">
+                `resource` = #{resource},
+            </if>
+            <if test="time != null">
+                `time` = #{time},
+            </if>
+            <if test="srcip != null and srcip != ''">
+                `srcip` = #{srcip},
+            </if>
+            <if test="eventId != null and eventId != ''">
+                `event_id` = #{eventId},
+            </if>
+            <if test="srcCreator != null and srcCreator != ''">
+                `src_creator` = #{srcCreator},
+            </if>
+            <if test="srcCreateTime != null">
+                `src_create_time` = #{srcCreateTime},
+            </if>
+            <if test="srcOptTime != null">
+                `src_opt_time` = #{srcOptTime},
+            </if>
+            <if test="srcPreOptTime != null">
+                `src_pre_opt_time` = #{srcPreOptTime},
+            </if>
+            <if test="version != null and version != ''">
+                `version` = #{version},
+            </if>
+        </set>
+        WHERE
+        `instance_id` = #{instanceId} AND `time` > date(NOW()) AND del_flag = '0'
+    </update>
+
+    <!--    物理删除-->
+    <delete id="batchDeleteByInstanceIdw" parameterType="list">
+        delete from cmdb_ip_conf_pool where del_flag = '1' and `instance_id` in
+        <foreach collection="list" item="instanceId" index="index" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+    </delete>
+
+
+    <!--    逻辑删除-->
+    <update id="batchDeleteByInstanceId" parameterType="list">
+        update cmdb_ip_conf_pool set del_flag = '1' where `instance_id` in
+        <foreach collection="list" item="instanceId" index="index" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        AND `time` > date(NOW())
+    </update>
+
+    <update id="updateByInstanceId" parameterType="map">
+        UPDATE `cmdb_ip_conf_pool`
+        <set>
+            <if test="_parameter.containsKey('ip')">
+                `ip` = #{ip},
+            </if>
+            <if test="_parameter.containsKey('iptype')">
+                `iptype` = #{iptype},
+            </if>
+            <if test="_parameter.containsKey('mac')">
+                `mac` = #{mac},
+            </if>
+            <if test="_parameter.containsKey('resource')">
+                `resource` = #{resource},
+            </if>
+            <if test="_parameter.containsKey('time')">
+                `time` = #{time},
+            </if>
+            <if test="_parameter.containsKey('srcip')">
+                `srcip` = #{srcip},
+            </if>
+            <if test="_parameter.containsKey('eventId')">
+                `event_id` = #{eventId},
+            </if>
+            <if test="_parameter.containsKey('srcCreator')">
+                `src_creator` = #{srcCreator},
+            </if>
+            <if test="_parameter.containsKey('srcCreateTime')">
+                `src_create_time` = #{srcCreateTime},
+            </if>
+            <if test="_parameter.containsKey('srcOptTime')">
+                `src_opt_time` = #{srcOptTime},
+            </if>
+            <if test="_parameter.containsKey('srcPreOptTime')">
+                `src_pre_opt_time` = #{srcPreOptTime},
+            </if>
+            <if test="_parameter.containsKey('version')">
+                `version` = #{version},
+            </if>
+        </set>
+        WHERE
+        `instance_id` = #{instanceId} AND `time` > date(NOW()) AND del_flag = '0'
+    </update>
+
+    <select id="getAllInstanceId" resultType="java.lang.String">
+        select distinct instance_id from cmdb_ip_conf_pool where del_flag = '0' AND `time` > date(NOW())
+    </select>
+
+    <select id="findByInstanceids" resultMap="resultMap" parameterType="java.util.List">
+        select
+        <include refid="commonColumn"/>
+        from `cmdb_ip_conf_pool` a
+        INNER JOIN
+        (
+        SELECT instance_id AS instanceId2,MAX(version) AS maxVersion FROM cmdb_ip_conf_pool
+        WHERE `time` > DATE(now())
+        AND `del_flag` = '0'
+        AND instance_id IN
+        <foreach collection="list" item="instanceId" index="index" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        GROUP BY instance_id
+        ) b ON a.instance_id = b.instanceId2 AND a.version = b.maxVersion
+        where `del_flag` = '0' and `instance_id` in
+        <foreach collection="list" item="instanceId" index="index" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        AND `time` > date(NOW())
+    </select>
+
+    <!--    据IP批量查询-->
+    <select id="findDataByIpList" parameterType="list" resultMap="resultMap">
+        SELECT
+        <include refid="commonColumn"/>
+        FROM
+        cmdb_ip_conf_pool a
+        INNER JOIN
+        (
+        SELECT ip AS ip2,MAX(version) AS maxVersion FROM cmdb_ip_conf_pool
+        WHERE `time` > DATE(now())
+        AND `del_flag` = '0'
+        AND ip IN
+        <foreach collection="list" item="ip" index="index" open="(" separator="," close=")">
+            #{ip}
+        </foreach>
+        GROUP BY ip
+        ) b ON a.ip = b.ip2 AND a.version = b.maxVersion
+        <where>
+            del_flag = '0'
+            and ip in
+            <foreach collection="list" separator="," item="ip" open="(" close=")">
+                #{ip,jdbcType=VARCHAR}
+            </foreach>
+            AND `time` > date(NOW())
+        </where>
+    </select>
+
+</mapper>

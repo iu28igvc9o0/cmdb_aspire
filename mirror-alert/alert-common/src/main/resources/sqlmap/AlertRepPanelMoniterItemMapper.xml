@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     龙凤
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.dashboard.AlertRepPanelMoniterItemDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.dashboard.po.AlertRepPanelMoniterItem" id="baseResultMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="item_id" column="item_id" jdbcType="VARCHAR"/>
+        <result property="resource_device" column="resource_device" jdbcType="VARCHAR"/>
+        <result property="moniter_item" column="moniter_item" jdbcType="VARCHAR"/>
+        <result property="view_name" column="view_name" jdbcType="VARCHAR"/>
+        <result property="count_type" column="count_type" jdbcType="VARCHAR"/>
+        <result property="resource_type" column="resource_type" jdbcType="INTEGER"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="mointer_index" column="mointer_index" jdbcType="VARCHAR"/>
+        <result property="resource_device_ipStr" column="resource_device_ipStr" jdbcType="VARCHAR"/>
+        <result property="device_class" column="device_class" jdbcType="VARCHAR"/>
+        <result property="device_type" column="device_type" jdbcType="VARCHAR"/>
+        <result property="subclass" column="subclass" jdbcType="VARCHAR"/>
+        <result property="moniter_item_name" column="moniter_item_name" jdbcType="VARCHAR"/>
+        <result property="sub_moniter_items" column="sub_moniter_items" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="baseColumnList">
+    	id,item_id,resource_device,moniter_item,view_name,count_type,resource_type,unit
+    	,mointer_index,resource_device_ipStr,device_class,device_type,subclass,moniter_item_name,sub_moniter_items
+	</sql>
+
+    <!-- 新增 -->
+     <insert id="batchInsert" parameterType="com.aspire.mirror.alert.server.dao.dashboard.po.AlertRepPanelMoniterItem" useGeneratedKeys="true" keyProperty="id">
+		insert into
+			alert_rep_panel_moniteritem(item_id,resource_device,moniter_item,view_name,count_type
+			,resource_type,unit,mointer_index,resource_device_ipStr,device_class,device_type,
+			subclass,moniter_item_name,sub_moniter_items)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+          ( #{item.item_id,jdbcType=VARCHAR} ,
+			#{item.resource_device,jdbcType=VARCHAR} ,
+			#{item.moniter_item,jdbcType=VARCHAR} ,
+			#{item.view_name,jdbcType=VARCHAR} ,
+			#{item.count_type,jdbcType=INTEGER},
+			#{item.resource_type,jdbcType=INTEGER},
+			#{item.unit,jdbcType=VARCHAR},
+			#{item.mointer_index,jdbcType=VARCHAR},
+			#{item.resource_device_ipStr,jdbcType=VARCHAR},
+			#{item.device_class,jdbcType=VARCHAR},
+			#{item.device_type,jdbcType=VARCHAR},
+			#{item.subclass,jdbcType=VARCHAR},
+			#{item.moniter_item_name,jdbcType=VARCHAR},
+			#{item.sub_moniter_items,jdbcType=VARCHAR}
+			)
+      </foreach> 
+	</insert>
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_rep_panel_moniteritem  where id = #{id}
+    </select>
+    
+   
+   <!-- 修改 -->
+	<update id="update" parameterType="com.aspire.mirror.alert.server.dao.dashboard.po.AlertRepPanelItem">
+		update alert_rep_panel_moniteritem  
+		<trim prefix="set" suffixOverrides=",">
+		 <if test="resource_device != null and resource_device != ''">
+              resource_device = #{resource_device},
+          </if>
+          <if test="moniter_item != null and moniter_item != ''">
+              moniter_item = #{moniter_item},
+          </if>
+          <if test="count_type != null">
+              time_value = #{time_value},
+          </if>
+          <if test="resource_type != null">
+              resource_type = #{resource_type},
+          </if>
+           <if test="view_name != null and view_name != ''">
+              view_name = #{view_name},
+          </if>
+          <if test="unit != null and unit != ''">
+              unit = #{unit},
+          </if>
+          <if test="mointer_index != null and mointer_index != ''">
+              mointer_index = #{mointer_index},
+          </if>
+           <if test="device_class != null and device_class != ''">
+              device_class = #{device_class},
+          </if>
+           <if test="device_type != null and device_type != ''">
+              device_type = #{device_type},
+          </if>
+           <if test="subclass != null and subclass != ''">
+              subclass = #{subclass},
+          </if>
+           <if test="moniter_item_name != null and moniter_item_name != ''">
+              moniter_item_name = #{moniter_item_name},
+          </if>
+          <if test="sub_moniter_items != null and sub_moniter_items != ''">
+              sub_moniter_items = #{sub_moniter_items},
+          </if>
+         </trim>
+		where id = #{id}
+	</update>
+   
+    <delete id="deleteByPrimaryKey" parameterType="String">
+		delete from alert_rep_panel_moniteritem where id = #{id}
+	</delete>
+	
+	<delete id="deleteByItemId" parameterType="String">
+		delete from alert_rep_panel_moniteritem where  
+		  item_id = #{itemId}
+	</delete>
+	
+	<delete id="deleteByPanelId" parameterType="String">
+		delete from alert_rep_panel_moniteritem where  
+		  item_id in (select id from alert_rep_panel_item i 
+		  where i.panel_id =  #{panelId})
+	</delete>
+	
+	 <select id="getMonitersByItemId"  parameterType="String" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_rep_panel_moniteritem 
+        where item_id = #{id}
+    </select>
+</mapper>

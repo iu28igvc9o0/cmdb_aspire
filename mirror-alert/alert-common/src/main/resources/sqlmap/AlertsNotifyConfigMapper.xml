@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.AlertNotifyConfigDao">
+
+    <resultMap id="AlertNotifyConfigDetail" type="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigDetail">
+        <id column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="is_open" property="isOpen" jdbcType="INTEGER"/>
+        <result column="alert_filter_id" property="alertFilterId" jdbcType="INTEGER"/>
+        <result column="alert_filter_scene_id" property="alertFilterSceneId" jdbcType="INTEGER"/>
+        <result column="notify_alert_type" property="notifyAlertType" jdbcType="VARCHAR"/>
+        <result column="is_recurrence_interval" property="isRecurrenceInterval" jdbcType="INTEGER"/>
+        <result column="recurrence_interval" property="recurrenceInterval" jdbcType="VARCHAR"/>
+        <result column="recurrence_interval_util" property="recurrenceIntervalUtil" jdbcType="VARCHAR"/>
+        <result column="recurrence_count" property="recurrenceCount" jdbcType="INTEGER"/>
+        <result column="email_type" property="emailType" jdbcType="INTEGER"/>
+        <result column="send_operation" property="sendOperation" jdbcType="VARCHAR"/>
+        <result column="cur_send_time" property="curSendTime" jdbcType="TIMESTAMP"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="period" property="period" jdbcType="VARCHAR"/>
+        <result column="start_period" property="startPeriod" jdbcType="VARCHAR"/>
+        <result column="end_period" property="endPeriod" jdbcType="VARCHAR"/>
+        <collection column="uuid" property="notifyObjInfo"
+                    select="com.aspire.mirror.alert.server.dao.notify.AlertNotifyConfigDao.getAlertNotifyConfigReceiverDetail" />
+        <collection column="alert_filter_scene_id" property="alertFilterSceneInfo"
+                    select="com.aspire.mirror.alert.server.dao.notify.AlertNotifyConfigDao.getAlertFilterSceneData" />
+    </resultMap>
+    <resultMap id="AlertNotifyConfigReceiverDetail" type="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigReceiverDetail">
+        <id column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="alert_notify_config_id" property="alertNotifyConfigId" jdbcType="VARCHAR"/>
+        <result column="notify_obj_type" property="notifyObjType" jdbcType="VARCHAR"/>
+        <result column="notify_obj_info" property="notifyObjInfo" jdbcType="VARCHAR"/>
+        <result column="notify_type" property="notifyType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="createAlertNotifyConfig" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigReqDTO">
+        INSERT INTO alert_notify_config (
+            uuid,
+            name,
+            is_open,
+            alert_filter_id,
+            alert_filter_scene_id,
+            notify_alert_type,
+            is_recurrence_interval,
+            recurrence_interval,
+            recurrence_interval_util,
+            recurrence_count,
+            email_type,
+            create_time,
+            creator,
+            period,
+            start_period,
+            end_period
+        )
+        VALUES
+            (#{uuid}, #{name}, #{isOpen}, #{alertFilterId}, #{alertFilterSceneId},#{notifyAlertType}, #{isRecurrenceInterval},
+             #{recurrenceInterval}, #{recurrenceIntervalUtil}, #{recurrenceCount}, #{emailType}, NOW(),#{creator},#{period},#{startPeriod},#{endPeriod})
+    </insert>
+
+    <insert id="createAlertNotifyConfigReceiver" parameterType="map" >
+        INSERT INTO alert_notify_config_receiver (
+            uuid,
+            alert_notify_config_id,
+            notify_obj_type,
+            notify_obj_info,
+            notify_type
+        )
+        VALUES
+        <foreach collection="list" item="item" separator="," >
+            (#{item.uuid},#{item.alertNotifyConfigId},#{item.notifyObjType},#{item.notifyObjInfo},#{item.notifyType})
+        </foreach>
+    </insert>
+
+    <select id="getAlertNotifyConfigList" parameterType="map" resultType="map">
+        SELECT
+            anc.uuid,
+            anc.name,
+            CASE anc.is_open WHEN 0 THEN '关闭' WHEN 1 THEN '启用' END isOpen,
+            anc.alert_filter_id alertFilterId,
+            af.name alertFilterName,
+            anc.is_recurrence_interval isRecurrenceInterval,
+            anc.recurrence_interval recurrenceInterval,
+            anc.recurrence_interval_util recurrenceIntervalUtil,
+            anc.recurrence_count recurrenceCount,
+            anc.send_operation sendOperation,
+            date_format(anc.cur_send_time,'%Y-%c-%d %H:%i:%s') as curSendTime,
+            anc.creator
+        FROM
+            alert_notify_config anc
+        INNER JOIN alert_filter af on af.id = anc.alert_filter_id
+        INNER JOIN (
+            SELECT DISTINCT
+              alert_notify_config_id
+            FROM
+              alert_notify_config_receiver ancr
+            WHERE
+              1 = 1
+              <if test="notifyObj != null and notifyObj != ''">
+                 AND ancr.notify_obj_info LIKE CONCAT (CONCAT ('%',#{notifyObj}),'%')
+              </if>
+              <if test="notifyType != null and notifyType != ''">
+                 AND ancr.notify_type = #{notifyType}
+              </if>
+            ) ar on ar.alert_notify_config_id = anc.uuid
+        WHERE
+            1 = 1
+            <if test="uuid != null and uuid != ''">
+                AND anc.alert_filter_id = #{uuid}
+            </if>
+            <if test="name != null and name != ''">
+                  AND anc.name LIKE CONCAT (CONCAT('%',#{name}),'%')
+            </if>
+            <if test="isOpen != -1">
+                AND anc.is_open = #{isOpen}
+            </if>
+            <if test="alertFilter != 0">
+                AND anc.alert_filter_id = #{alertFilter}
+            </if>
+            <if test="isRecurrenceInterval != -1">
+                AND anc.is_recurrence_interval = #{isRecurrenceInterval}
+            </if>
+            <if test="sendTime != -1">
+                AND anc.cur_send_time BETWEEN #{sendTimeStart} AND #{sendTimeEnd}
+            </if>
+        ORDER BY anc.create_time DESC
+        <if test="isPage != -1">
+            LIMIT #{begin},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getAlertNotifyConfigDetail" resultMap="AlertNotifyConfigDetail" parameterType="java.lang.String">
+        SELECT
+            uuid,
+            name,
+            is_open,
+            alert_filter_id,
+            alert_filter_scene_id,
+            notify_alert_type,
+            is_recurrence_interval,
+            recurrence_interval,
+            recurrence_interval_util,
+            recurrence_count,
+            email_type,
+            send_operation,
+            cur_send_time,
+            creator,
+            period,
+            start_period,
+            end_period
+        FROM
+            alert_notify_config
+        WHERE
+            uuid = #{uuid}
+    </select>
+    <select id="getAlertNotifyConfigReceiverDetail" resultMap="AlertNotifyConfigReceiverDetail" parameterType="map">
+        SELECT
+            uuid,
+            alert_notify_config_id,
+            CASE notify_obj_type WHEN '1' THEN '团队' WHEN '2' THEN '个人' END notify_obj_type,
+            notify_obj_info,
+            notify_type
+        FROM
+            alert_notify_config_receiver
+        WHERE
+            alert_notify_config_id = #{alertNotifyConfigId}
+    </select>
+
+    <delete id="deleteAlertNotifyConfig" parameterType="java.util.List">
+        DELETE FROM alert_notify_config WHERE uuid IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAlertNotifyConfigReceiver" parameterType="java.util.List">
+        DELETE FROM alert_notify_config_receiver WHERE alert_notify_config_id IN
+        <foreach collection="list" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </delete>
+
+    <update id="updateAlertNotifyConfigForOpen" parameterType="map" >
+        UPDATE alert_notify_config SET is_open = #{isOpen} WHERE uuid IN
+        <foreach collection="uuidList" item="uuid" open="(" close=")" separator=",">
+            #{uuid}
+        </foreach>
+    </update>
+
+    <select id="getAlertFilterSceneData" parameterType="java.lang.Integer" resultType="map">
+        SELECT
+            id,
+            name,
+            filter_id filterId,
+            option_condition optionCondition
+        FROM
+            alert_filter_scene
+        WHERE
+            id = #{alert_filter_scene_id}
+    </select>
+    <select id="getAlertNotifyConfig" resultMap="AlertNotifyConfigDetail" parameterType="map">
+        SELECT
+            uuid,
+            name,
+            is_open,
+            alert_filter_id,
+            alert_filter_scene_id,
+            notify_alert_type,
+            is_recurrence_interval,
+            recurrence_interval,
+            recurrence_interval_util,
+            recurrence_count,
+            email_type,
+            send_operation,
+            cur_send_time,
+            period,
+            start_period,
+            end_period
+        FROM
+            alert_notify_config
+        WHERE
+            is_open = 1
+            <if test="resend != '' and resend != null ">
+                AND is_recurrence_interval = 1
+            </if>
+    </select>
+
+    <select id="getAlertsFromOperationRecord" parameterType="map" resultType="map">
+        SELECT
+            aor.alert_id alertId,
+            aa.cur_moni_time curMoniTime,
+            aor.operation_type operationType
+        FROM
+            alert_operation_record aor
+        INNER JOIN alert_alerts aa ON aa.alert_id = aor.alert_id AND aa.cur_moni_time BETWEEN #{startTime} AND #{endTime}
+        INNER JOIN (select alert_id
+                    from alert_alerts
+                    WHERE cur_moni_time BETWEEN #{startTime} AND #{endTime}
+                    <if test="condition != null and condition != ''">
+                        and  ${condition}
+                    </if>
+                    ) filterAlert ON filterAlert.alert_id = aor.alert_id
+        WHERE
+            aor.operation_time BETWEEN #{startTime} AND #{endTime}
+            AND aor.operation_status = 1
+            AND aor.operation_type IN
+            <foreach collection="typeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            <!--AND aor.alert_id IN-->
+            <!--<foreach collection="alertIds" item="item" open="(" close=")" separator=",">-->
+                <!--#{item.alertId}-->
+            <!--</foreach>-->
+    </select>
+
+    <insert id="insertAlertNotifyConfigLog" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyConfigLog">
+        INSERT INTO alert_notify_config_log (
+        alert_notify_config_id,
+        send_status,
+        receiver,
+        send_time,
+        send_content,
+        send_ype,
+        is_resend,
+        send_alert_id
+        )
+        VALUES
+        <foreach collection="list" item="item" separator="," >
+            (#{item.alertNotifyConfigId},#{item.sendStatus},#{item.receiver},#{item.sendTime},#{item.sendContent},#{item.sendType},#{item.isResend},#{item.sendAlertId})
+        </foreach>
+    </insert>
+
+    <update id="updateAlertNotifyConfig" parameterType="map">
+        update alert_notify_config
+        set cur_send_time = DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%S')
+        where uuid = #{alertNotifyConfigId}
+    </update>
+
+    <select id="getResendData" resultType="map">
+        SELECT
+            ancl.alert_notify_config_id alertNotifyConfigId,
+            ancl.send_content sendContent,
+            ancl.send_ype sendType,
+            ancl.receiver,
+            ancl.send_alert_id alertId,
+            anc.recurrence_interval recurrenceInterval,
+            anc.recurrence_interval_util recurrenceIntervalUtil,
+            anc.recurrence_count recurrenceCount,
+            anc.notify_alert_type notifyAlertType,
+            date_format(
+                aa.cur_moni_time,
+                '%Y-%c-%d %H:%i:%s'
+            ) AS curMoniTime
+        FROM
+            alert_notify_config_log ancl
+        INNER JOIN alert_notify_config anc ON anc.uuid = ancl.alert_notify_config_id AND anc.is_open = 1 AND anc.is_recurrence_interval = 1
+        INNER JOIN alert_alerts aa ON aa.alert_id = ancl.send_alert_id
+        UNION
+        SELECT
+            ancl.alert_notify_config_id alertNotifyConfigId,
+            ancl.send_content sendContent,
+            ancl.send_ype sendType,
+            ancl.receiver,
+            ancl.send_alert_id alertId,
+            anc.recurrence_interval recurrenceInterval,
+            anc.recurrence_interval_util recurrenceIntervalUtil,
+            anc.recurrence_count recurrenceCount,
+            anc.notify_alert_type notifyAlertType,
+            date_format(
+                aah.cur_moni_time,
+                '%Y-%c-%d %H:%i:%s'
+            ) AS curMoniTime
+        FROM
+            alert_notify_config_log ancl
+        INNER JOIN alert_notify_config anc ON anc.uuid = ancl.alert_notify_config_id AND anc.is_open = 1 AND anc.is_recurrence_interval = 1
+        INNER JOIN alert_alerts_his aah ON aah.alert_id = ancl.send_alert_id
+        WHERE
+            ancl.is_resend = '1' AND ancl.send_ype != '3'
+    </select>
+
+    <select id="getHisAlerts" parameterType="java.lang.String" resultType="map">
+        SELECT
+        aa.*
+        FROM
+            alert_alerts_his aa
+        WHERE
+            aa.alert_end_time BETWEEN #{startTime} AND #{endTime}
+            <if test="condition != null and condition != ''">
+                and  ${condition}
+            </if>
+    </select>
+
+    <select id="getAlertNotifyConfigRule" resultType="map">
+        SELECT
+            id,
+            rule_name ruleName,
+            rule_cron ruleCron
+        FROM
+            alert_notify_config_rule
+    </select>
+
+    <update id="updateAlertNotifyConfigRule" parameterType="map">
+        UPDATE alert_notify_config_rule
+        SET rule_cron = #{ruleCron}
+        WHERE
+            rule_name = #{ruleName}
+    </update>
+
+    <select id="getSendAlertNotify" parameterType="map" resultType="map">
+        SELECT
+            *
+        FROM
+            alert_notify_config_log
+        WHERE
+            receiver = #{receiver} AND send_alert_id = #{alertId} AND send_ype = #{sendType}
+    </select>
+    <select id="getReSendAlerts" parameterType="java.util.Map" resultType="java.util.Map">
+        select a.*, al.receiver_tmp, al.send_time_tmp from (
+        select alert_id from alert_alerts
+        <where>
+            <if test="condition != null and condition != ''">
+                ${condition}
+            </if>
+            <if test="orderId != null and orderId != ''">
+                and order_id is not null
+            </if>
+        </where>
+        ) a JOIN
+        (select send_alert_id, receiver receiver_tmp, MAX(send_time) send_time_tmp, COUNT(1) log_count from alert_notify_config_log
+        where alert_notify_config_id= #{alertNotifyConfigId}
+        GROUP BY send_alert_id, receiver) al on a.alert_id=al.send_alert_id
+        <where>
+            <if test="recurrenceCount != null and recurrenceCount > 0">
+                log_count is null or log_count <![CDATA[<]]> #{recurrenceCount}
+            </if>
+        </where>
+    </select>
+</mapper>
+
+   
+
+ 

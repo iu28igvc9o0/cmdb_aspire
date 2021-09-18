@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.ResourceSchemaDao">
+
+	<resultMap id="ResourceSchemaResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchema">
+		<result column="resource" property="resource" />
+		<result column="general" property="general" />
+		<result column="created_at" property="createdAt" />
+		<result column="parent_resource" property="parentResource" />
+		<result column="name" property="name" />
+		<collection property="actions" javaType="list"
+			ofType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchemaActions">
+			<result column="resource" property="resource" />
+			<result column="action" property="action" />
+			<result column="action_name" property="actionName" />
+			<result column="action_type" property="actionType" />
+		</collection>
+		<collection property="constraints" javaType="list"
+			ofType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchemaConstraints">
+			<result column="resource" property="resource" />
+			<result column="const_key" property="constKey" />
+			<result column="const_value" property="constValue" />
+		</collection>
+	</resultMap>
+
+	<resultMap id="ResourceSchemaActionsResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchemaActions">
+		<result column="id" property="id" />
+		<result column="resource" property="resource" />
+		<result column="action" property="action" />
+	</resultMap>
+
+	<select id="fetchResourceSchemaList" resultMap="ResourceSchemaResultMap">
+		SELECT
+		rs.resource, general, rsa.action,rsa.action_name,rsa.action_type, const_key, const_value,name,parent_resource
+		FROM resource_schema rs
+		LEFT JOIN resource_schema_actions rsa ON(rs.resource = rsa.resource)
+		LEFT
+		JOIN resource_schema_constraints rsc ON(rs.resource = rsc.resource)
+	</select>
+	
+	<select id="fetchChildrenResourceSchemaList" resultMap="ResourceSchemaResultMap">
+		SELECT
+		rs.resource, general, action,action_type, const_key, const_value,name,parent_resource
+		FROM resource_schema rs
+		LEFT JOIN resource_schema_actions rsa ON(rs.resource = rsa.resource)
+		LEFT
+		JOIN resource_schema_constraints rsc ON(rs.resource = rsc.resource)
+		where 1=1
+		 <choose>
+	        <when test="parentResource != null and parentResource != ''">
+	            and rs.parent_resource=#{parentResource}
+	        </when>
+	        <otherwise>
+	            and rs.parent_resource is null
+	        </otherwise>
+	    </choose>
+	</select>
+
+	<select id="fetchResourceSchemaDetail" resultMap="ResourceSchemaResultMap">
+		SELECT
+		rs.resource, general, rsa.action,rsa.action_name,rsa.action_type, const_key, const_value,name,parent_resource
+		FROM resource_schema rs
+		LEFT JOIN resource_schema_actions rsa ON(rs.resource = rsa.resource
+			<if test="actionType != null and actionType != ''">
+				and rsa.action_type=#{actionType}
+			</if>
+		)
+		LEFT
+		JOIN resource_schema_constraints rsc ON(rs.resource = rsc.resource)
+		WHERE rs.resource = #{resourceType}
+	</select>
+	<insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchema">
+		insert into resource_schema
+		(resource, general, created_at, parent_resource, name)
+		values (
+		#{resource},
+		#{general},
+		#{createdAt},
+		#{parentResource},
+		#{name}
+		)
+	</insert>
+	<update id="updateName" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchema">
+		update resource_schema set name = #{name} where resource = #{resource}
+	</update>
+	<select id="selectByResource" parameterType="java.lang.String" resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ResourceSchema">
+		select resource, general, created_at createdAt, parent_resource parentResource, name
+		from resource_schema
+		where resource = #{resource}
+	</select>
+	<delete id="deleteByResource" parameterType="java.lang.String">
+		delete from resource_schema where resource = #{resource}
+	</delete>
+
+</mapper>

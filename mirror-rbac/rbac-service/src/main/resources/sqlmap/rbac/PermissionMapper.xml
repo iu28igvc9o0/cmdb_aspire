@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.PermissionDao">
+
+	<resultMap id="PermissionResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Permission">
+		<id column="uuid" property="uuid" />
+		<result column="role_uuid" property="roleUuid" />
+		<result column="actions" property="actions" />
+		<result column="resources" property="resources" />
+		<result column="constraints" property="constraints" />
+	</resultMap>
+
+	<select id="fetchPermissionList" resultMap="PermissionResultMap">
+		SELECT
+		uuid, role_uuid, actions, resources, constraints
+		FROM
+		permissions
+		WHERE role_uuid = #{roleUuid}
+	</select>
+
+	<select id="listOfPermission" resultMap="PermissionResultMap">
+		SELECT
+		uuid, role_uuid, actions, resources, constraints
+		FROM permissions
+		WHERE role_uuid in
+		<foreach collection="roleUuidList" index="index" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<select id="listOfPermissionByIdsAndType" resultMap="PermissionResultMap">
+		SELECT
+		p.uuid, p.role_uuid, p.actions, p.resources, p.constraints
+		FROM permissions p
+		join role r on p.role_uuid=r.uuid and r.role_type=#{roleType}
+		WHERE role_uuid in
+		<foreach collection="roleUuidList" index="index" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<delete id="deletePermissionsByRoleUuid">
+		DELETE
+		FROM permissions WHERE role_uuid = #{roleUuid}
+	</delete>
+
+	<delete id="deletePermissionsByUuid">
+		DELETE FROM
+		permissions WHERE uuid = #{uuid} and role_uuid = #{roleUuid}
+	</delete>
+
+	<insert id="createPermission">
+		INSERT INTO
+		permissions(uuid, role_uuid, actions, resources, constraints)
+		VALUES(#{uuid},#{roleUuid},#{actions},#{resources},#{constraints})
+	</insert>
+
+	<insert id="createPermissionBatch">
+		INSERT INTO permissions(uuid, role_uuid, actions, resources,
+		constraints)
+		VALUES
+		<foreach collection="permissionList" index="index" item="item"
+			separator=",">
+			(#{item.uuid},#{item.roleUuid},#{item.actions},#{item.resources},#{item.constraints})
+		</foreach>
+	</insert>
+
+	<select id="hasFetchPermissionByUuid" resultType="int">
+		SELECT count(*)
+		FROM permissions
+		WHERE uuid = #{uuid}
+	</select>
+
+	<update id="updatePermissionByUuid">
+		UPDATE permissions SET actions=#{actions},
+		resources=#{resources}, constraints=#{constraints}
+		WHERE uuid = #{uuid} and role_uuid = #{roleUuid}
+	</update>
+
+</mapper>

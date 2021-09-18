@@ -1,0 +1,2292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsDataDao">
+
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsScript" id="script">
+        <result property="scriptId" column="script_id" jdbcType="BIGINT"/>
+        <result property="scriptName" column="script_name" jdbcType="VARCHAR"/>
+        <result property="scriptContent" column="script_content" jdbcType="VARCHAR"/>
+        <result property="contentType" column="content_type" jdbcType="INTEGER"/>
+        <result property="stepId" column="step_id" jdbcType="BIGINT"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="pipelineName" column="pipeline_name" jdbcType="VARCHAR"/>
+        <result property="isPublic" column="is_public" jdbcType="INTEGER"/>
+        <result property="labelId" column="label_id" jdbcType="VARCHAR"/>
+        <result property="labelName" column="label_name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="scriptUseDesc" column="script_use_desc" jdbcType="VARCHAR"/>
+        <result property="opsParamCode" column="ops_param_code" jdbcType="VARCHAR"/>
+        <result property="packagePassword" column="package_password" jdbcType="VARCHAR"/>
+        <result property="auditStatus" column="audit_status" jdbcType="VARCHAR"/>
+        <result property="auditDesc" column="audit_desc" jdbcType="VARCHAR"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="currentVersion" column="current_version" jdbcType="VARCHAR"/>
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="opsParamReferenceList" ofType="com.aspire.mirror.ops.api.domain.OpsParamReference">
+            <result property="entityId" column="entity_id" jdbcType="BIGINT"/>
+            <result property="entityParamCode" column="entity_param_code" jdbcType="VARCHAR"/>
+            <result property="paramId" column="param_id" jdbcType="BIGINT"/>
+            <result property="paramValue" column="param_value" jdbcType="VARCHAR"/>
+            <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsScriptHis" id="scriptHis">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="stepHisId" column="step_his_id" jdbcType="BIGINT"/>
+        <result property="scriptId" column="script_id" jdbcType="BIGINT"/>
+        <result property="scriptName" column="script_name" jdbcType="VARCHAR"/>
+        <result property="scriptContent" column="script_content" jdbcType="VARCHAR"/>
+        <result property="contentType" column="content_type" jdbcType="INTEGER"/>
+        <result property="stepId" column="step_id" jdbcType="BIGINT"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="pipelineName" column="pipeline_name" jdbcType="VARCHAR"/>
+        <result property="isPublic" column="is_public" jdbcType="INTEGER"/>
+        <result property="labelId" column="label_id" jdbcType="VARCHAR"/>
+        <result property="labelName" column="label_name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="scriptUseDesc" column="script_use_desc" jdbcType="VARCHAR"/>
+        <result property="opsParamCode" column="ops_param_code" jdbcType="VARCHAR"/>
+        <result property="packagePassword" column="package_password" jdbcType="VARCHAR"/>
+        <result property="auditStatus" column="audit_status" jdbcType="VARCHAR"/>
+        <result property="auditDesc" column="audit_desc" jdbcType="VARCHAR"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="currentVersion" column="current_version" jdbcType="VARCHAR"/>
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsPipelineHis" id="pipelineHis">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="pipelineName" column="name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="labelId" column="label_id" jdbcType="VARCHAR"/>
+        <result property="labelName" column="label_name" jdbcType="VARCHAR"/>
+        <result property="stepCount" column="step_count" jdbcType="INTEGER"/>
+        <result property="auditStatus" column="audit_status" jdbcType="VARCHAR"/>
+        <result property="auditDesc" column="audit_desc" jdbcType="VARCHAR"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="currentVersion" column="current_version" jdbcType="VARCHAR"/>
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.domain.OpsPipeline" id="pipeline">
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="pipelineName" column="name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="labelId" column="label_id" jdbcType="VARCHAR"/>
+        <result property="labelName" column="label_name" jdbcType="VARCHAR"/>
+        <result property="stepCount" column="step_count" jdbcType="INTEGER"/>
+        <result property="auditStatus" column="audit_status" jdbcType="VARCHAR"/>
+        <result property="auditDesc" column="audit_desc" jdbcType="VARCHAR"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="currentVersion" column="current_version" jdbcType="VARCHAR"/>
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.domain.OpsPipelineInstance" id="pipelineInstance">
+        <result property="pipelineInstanceId" column="pipeline_instance_id" jdbcType="BIGINT"/>
+        <result property="pipelineInstanceName" column="name" jdbcType="VARCHAR"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="operator" column="operator" jdbcType="VARCHAR"/>
+        <result property="triggerWay" column="trigger_way" jdbcType="INTEGER"/>
+        <result property="currStepId" column="current_step_id" jdbcType="BIGINT"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="totalTime" column="total_time" jdbcType="FLOAT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="instanceClassify" column="instance_classify" jdbcType="INTEGER"/>
+        <result property="bizClassify" column="biz_classify" jdbcType="INTEGER"/>
+        <result property="bizMetaJson" column="biz_meta" jdbcType="VARCHAR"/>
+        <result property="labelId" column="label_id" jdbcType="VARCHAR"/>
+        <result property="labelName" column="label_name" jdbcType="VARCHAR"/>
+        <result property="reviewApplyTime" column="review_apply_time" jdbcType="TIMESTAMP"/>
+        <result property="reviewApplicant" column="review_applicant" jdbcType="VARCHAR"/>
+        <result property="aspNodeResult" column="aspnode_result" jdbcType="INTEGER"/>
+        <result property="outputPath" column="output_path" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.ops.domain.OpsStep" id="step">
+        <result property="stepId" column="step_id" jdbcType="BIGINT"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="stepName" column="name" jdbcType="VARCHAR"/>
+        <result property="opsType" column="ops_type" jdbcType="INTEGER"/>
+        <result property="ord" column="ord" jdbcType="INTEGER"/>
+        <result property="blockOrd" column="block_ord" jdbcType="INTEGER"/>
+        <result property="blockName" column="block_name" jdbcType="VARCHAR"/>
+        <result property="targetOpsUser" column="target_ops_user" jdbcType="VARCHAR"/>
+        <result property="targetHostsJson" column="target_hosts" jdbcType="VARCHAR"/>
+        <result property="scriptId" column="script_id" jdbcType="BIGINT"/>
+        <result property="scriptParam" column="script_param" jdbcType="VARCHAR"/>
+        <result property="scriptSudo" column="script_sudo" jdbcType="INTEGER"/>
+        <result property="opsTimeout" column="ops_timeout" jdbcType="INTEGER"/>
+        <result property="fileSourceJson" column="file_source" jdbcType="VARCHAR"/>
+        <result property="fileTargetPath" column="file_target_path" jdbcType="VARCHAR"/>
+        <result property="fileStoreSourceJson" column="file_store_source" jdbcType="VARCHAR"/>
+        <result property="tipText" column="tip_text" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="pauseFlag" column="pause_flag" jdbcType="INTEGER"/>
+        <result property="paramSensiveFlag" column="param_sensive_flag" jdbcType="INTEGER"/>
+        <result property="replaceAttrListJson" column="replace_attrs" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="INTEGER"/>
+        <result property="fileStoreConvergeType" column="file_store_converge_type" jdbcType="INTEGER"/>
+        <result property="fileStoreSafety" column="file_store_safety" jdbcType="INTEGER"/>
+        <result property="targetExecObjectJson" column="target_exec_object" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsStepHis" id="stepHis">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="pipelineHisId" column="pipeline_his_id" jdbcType="BIGINT"/>
+        <result property="scriptHisId" column="script_his_id" jdbcType="BIGINT"/>
+        <result property="stepId" column="step_id" jdbcType="BIGINT"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="stepName" column="name" jdbcType="VARCHAR"/>
+        <result property="opsType" column="ops_type" jdbcType="INTEGER"/>
+        <result property="ord" column="ord" jdbcType="INTEGER"/>
+        <result property="blockOrd" column="block_ord" jdbcType="INTEGER"/>
+        <result property="blockName" column="block_name" jdbcType="VARCHAR"/>
+        <result property="targetOpsUser" column="target_ops_user" jdbcType="VARCHAR"/>
+        <result property="targetHostsJson" column="target_hosts" jdbcType="VARCHAR"/>
+        <result property="scriptId" column="script_id" jdbcType="BIGINT"/>
+        <result property="scriptParam" column="script_param" jdbcType="VARCHAR"/>
+        <result property="scriptSudo" column="script_sudo" jdbcType="INTEGER"/>
+        <result property="opsTimeout" column="ops_timeout" jdbcType="INTEGER"/>
+        <result property="fileSourceJson" column="file_source" jdbcType="VARCHAR"/>
+        <result property="fileTargetPath" column="file_target_path" jdbcType="VARCHAR"/>
+        <result property="fileStoreSourceJson" column="file_store_source" jdbcType="VARCHAR"/>
+        <result property="tipText" column="tip_text" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="pauseFlag" column="pause_flag" jdbcType="INTEGER"/>
+        <result property="paramSensiveFlag" column="param_sensive_flag" jdbcType="INTEGER"/>
+        <result property="replaceAttrListJson" column="replace_attrs" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="INTEGER"/>
+        <result property="fileStoreConvergeType" column="file_store_converge_type" jdbcType="INTEGER"/>
+        <result property="fileStoreSafety" column="file_store_safety" jdbcType="INTEGER"/>
+        <result property="targetExecObjectJson" column="target_exec_object" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.domain.OpsStepInstance" id="stepInstance">
+        <result property="stepInstanceId" column="step_instance_id" jdbcType="BIGINT"/>
+        <result property="stepId" column="step_id" jdbcType="BIGINT"/>
+        <result property="pipelineInstanceId" column="pipeline_instance_id" jdbcType="BIGINT"/>
+        <result property="stepInstanceName" column="name" jdbcType="VARCHAR"/>
+        <result property="opsType" column="ops_type" jdbcType="INTEGER"/>
+        <result property="ord" column="ord" jdbcType="INTEGER"/>
+        <result property="blockOrd" column="block_ord" jdbcType="INTEGER"/>
+        <result property="blockName" column="block_name" jdbcType="VARCHAR"/>
+        <result property="targetOpsUser" column="target_ops_user" jdbcType="VARCHAR"/>
+        <result property="targetHostsJson" column="target_hosts" jdbcType="VARCHAR"/>
+        <result property="badHostsJson" column="bad_hosts" jdbcType="VARCHAR"/>
+        <result property="scriptContent" column="script_content" jdbcType="VARCHAR"/>
+        <result property="scriptContentType" column="script_content_type" jdbcType="INTEGER"/>
+        <result property="scriptParam" column="script_param" jdbcType="VARCHAR"/>
+        <result property="scriptSudo" column="script_sudo" jdbcType="INTEGER"/>
+        <result property="opsTimeout" column="ops_timeout" jdbcType="INTEGER"/>
+        <result property="fileSourceJson" column="file_source" jdbcType="VARCHAR"/>
+        <result property="fileTargetPath" column="file_target_path" jdbcType="VARCHAR"/>
+        <result property="fileStoreSourceJson" column="file_store_source" jdbcType="VARCHAR"/>
+        <result property="tipText" column="tip_text" jdbcType="VARCHAR"/>
+        <result property="operator" column="operator" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="totalTime" column="total_time" jdbcType="FLOAT"/>
+        <result property="totalHostsNum" column="total_hosts_num" jdbcType="INTEGER"/>
+        <result property="badHostsNum" column="bad_hosts_num" jdbcType="INTEGER"/>
+        <result property="runHostsNum" column="run_hosts_num" jdbcType="INTEGER"/>
+        <result property="successHostsNum" column="success_hosts_num" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="pauseFlag" column="pause_flag" jdbcType="INTEGER"/>
+        <result property="paramSensiveFlag" column="param_sensive_flag" jdbcType="INTEGER"/>
+        <result property="fileType" column="file_type" jdbcType="INTEGER"/>
+        <result property="aspNodeResult" column="aspnode_result" jdbcType="INTEGER"/>
+        <result property="opsParamCode" column="ops_param_code" jdbcType="VARCHAR"/>
+        <result property="packagePassword" column="package_password" jdbcType="VARCHAR"/>
+        <result property="targetExecObjectJson" column="target_exec_object" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsAgentStepInstanceResult" id="agentStepResult">
+        <result property="stepInstanceId" column="step_instance_id" jdbcType="BIGINT"/>
+        <result property="targetHost" column="target_host" jdbcType="VARCHAR"/>
+        <result property="pool" column="pool" jdbcType="VARCHAR"/>
+        <result property="agentIp" column="agent_ip" jdbcType="INTEGER"/>
+        <result property="opsType" column="ops_type" jdbcType="INTEGER"/>
+        <result property="exitCode" column="exit_code" jdbcType="INTEGER"/>
+        <result property="opsLog" column="ops_log" jdbcType="VARCHAR"/>
+        <result property="aspNodeResult" column="aspnode_result" jdbcType="INTEGER"/>
+        <result property="aspNodeMessage" column="aspnode_msg" jdbcType="VARCHAR"/>
+        <result property="totalTime" column="total_time" jdbcType="FLOAT"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsPipelineRunJob" id="pipelineRunJob">
+        <result property="jobId" column="job_id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="pipelineName" column="pipeline_name" jdbcType="VARCHAR"/>
+        <result property="cronExpression" column="cron_expression" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsParam" id="opsParam">
+    	<id property="paramId" column="param_id" jdbcType="BIGINT"/>
+    	<result property="paramCode" column="param_code" jdbcType="VARCHAR"/>
+    	<result property="paramName" column="param_name" jdbcType="VARCHAR"/>
+    	<result property="paramType" column="param_type" jdbcType="VARCHAR"/>
+    	<result property="paramDesc" column="param_desc" jdbcType="VARCHAR"/>
+    	<result property="paramDefaultValue" column="param_default_value" jdbcType="VARCHAR"/>
+        <result property="length" column="length" jdbcType="INTEGER"/>
+    	<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    	<result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+    	<association property="paramTypeDef" resultMap="opsParamType" columnPrefix="t_" />
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    
+	<resultMap type="com.aspire.mirror.ops.api.domain.OpsParamType" id="opsParamType">
+    	<id property="paramType" column="param_type" jdbcType="VARCHAR"/>
+    	<result property="paramTypeLabel" column="param_type_label" jdbcType="VARCHAR"/>
+    	<result property="autoPopupFlag" column="auto_popup_flag" jdbcType="VARCHAR"/>
+    	<result property="paramTypeDesc" column="param_type_desc" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsParamReference" id="opsParamRefer">
+    	<result property="entityId" column="entity_id" jdbcType="BIGINT"/>
+    	<result property="entityParamCode" column="entity_param_code" jdbcType="VARCHAR"/>
+    	<result property="paramId" column="param_id" jdbcType="BIGINT"/>
+    	<result property="paramValue" column="param_value" jdbcType="VARCHAR"/>
+    	<association property="referParam" resultMap="opsParam" columnPrefix="r_" />
+    </resultMap>
+
+    <sql id="scriptAllColumns">
+		s.script_id, s.script_name, s.script_content, s.content_type, s.step_id, 
+		s.is_public, s.label_id, s.creater, s.create_time, s.updater, s.update_time, s.script_use_desc, s.ops_param_code, s.package_password, s.audit_status, s.audit_desc, s.reviewer, s.review_time, s.current_version
+	</sql>
+
+    <sql id="stepAllColumns">
+		step_id, pipeline_id, name, ops_type, ord, block_ord, block_name, target_ops_user, target_hosts, 
+		script_id, script_param, script_sudo, ops_timeout, file_source, file_target_path, file_store_source, tip_text, 
+		creater, create_time, updater, update_time, pause_flag, param_sensive_flag, replace_attrs, file_type, file_store_converge_type, file_store_safety, target_exec_object
+	</sql>
+
+    <sql id="pipelineAllColumns">
+		p.pipeline_id, p.name, p.creater, p.create_time, p.updater, p.update_time, p.label_id, p.step_count, p.audit_status, p.audit_desc, p.reviewer, p.review_time, p.current_version
+	</sql>
+
+    <sql id="pipelineInstanceAllColumns">
+		pipeline_instance_id, pipeline_id, name, operator, trigger_way, current_step_id, status, 
+		start_time, end_time, total_time, create_time, instance_classify, biz_classify, biz_meta, 
+		label_id, review_apply_time, review_applicant, aspnode_result, output_path
+	</sql>
+
+    <sql id="stepInstanceAllColumns">
+		step_instance_id, step_id, pipeline_instance_id, name, ops_type, ord, block_ord, block_name, 
+		target_ops_user, target_hosts, bad_hosts, script_content, script_content_type, script_param, script_sudo,
+		ops_timeout, file_source, file_target_path, file_store_source, tip_text, operator, status, 
+		start_time, end_time, total_time, total_hosts_num, bad_hosts_num, run_hosts_num, success_hosts_num, 
+		create_time, pause_flag, param_sensive_flag, file_type, aspnode_result, ops_param_code, package_password, target_exec_object
+	</sql>
+
+    <sql id="pipelineRunJobAllColumns">
+		j.job_id, j.name, j.pipeline_id, j.cron_expression, j.status, j.creater, j.create_time, j.updater, j.update_time
+	</sql>
+
+    <select id="queryAccountByName" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.ops.api.domain.OpsAccount">
+		select account_name accountName, creater, create_time createTime
+		  from ops_account
+		 where account_name = #{accountName}
+	</select>
+
+    <insert id="insertOpsAccount" parameterType="com.aspire.mirror.ops.api.domain.OpsAccount">
+		insert into ops_account (account_name, creater, create_time) 
+		values (#{accountName}, #{creater}, #{createTime})
+	</insert>
+
+    <select id="queryOpsAccountList" parameterType="com.aspire.mirror.ops.api.domain.OpsAccountQueryModel"
+            resultType="com.aspire.mirror.ops.api.domain.OpsAccount">
+        select account_name accountName, creater, create_time createTime
+        from ops_account
+        where 1 = 1
+        <if test="accountNameLike != null and accountNameLike != ''">
+            and account_name like CONCAT('%', #{accountNameLike}, '%')
+        </if>
+        <if test="createrLike != null and createrLike != ''">
+            and creater like CONCAT('%', #{createrLike}, '%')
+        </if>
+        <if test="createStartTime != null">
+            and create_time &gt;= #{createStartTime}
+        </if>
+        <if test="createEndTime != null">
+            and create_time &lt;= #{createEndTime}
+        </if>
+    </select>
+
+    <delete id="removeOpsAccount" parameterType="java.lang.String">
+		delete from ops_account where account_name = #{accountName}
+	</delete>
+
+    <select id="queryOpsLabelReferCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(labelCount) from 
+		(
+		select count(label_id) labelCount from ops_pipeline where label_id = #{code}
+		union all
+		select count(label_id) labelCount from ops_pipeline_instance where label_id = #{code}
+		union all
+		select count(label_id) labelCount from ops_script where label_id = #{code}
+		) a 
+		where a.labelCount > 0 
+	</select>
+
+    <insert id="insertOpsLabel" parameterType="com.aspire.mirror.ops.api.domain.OpsLabel">
+		insert into ops_label 
+		(code, label, description) values (#{code}, #{label}, #{description})
+	</insert>
+
+    <update id="updateOpsLabel" parameterType="com.aspire.mirror.ops.api.domain.OpsLabel">
+        update ops_label set code = #{code}
+        <if test="label != null and label != ''">
+            ,label = #{label}
+        </if>
+        <if test="description != null and description != ''">
+            ,description = #{description}
+        </if>
+        where code = #{code}
+    </update>
+
+    <delete id="removeOpsLabel" parameterType="java.lang.String">
+		delete from ops_label where code = #{code}
+	</delete>
+
+    <select id="queryOpsLabelList" parameterType="com.aspire.mirror.ops.api.domain.OpsLabel$OpsLabelQueryModel"
+            resultType="com.aspire.mirror.ops.api.domain.OpsLabel">
+        select code, label, description from ops_label
+        where 1 = 1
+        <if test="code != null and code != ''">
+            and code = #{code}
+        </if>
+        <if test="labelLike != null and labelLike != ''">
+            and label like CONCAT('%', #{labelLike}, '%')
+        </if>
+        <if test="descriptionLike != null and descriptionLike != ''">
+            and description like CONCAT('%', #{descriptionLike}, '%')
+        </if>
+    </select>
+
+    <select id="queryOpsLabelByCode" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.ops.api.domain.OpsLabel">
+		select code, label, description from ops_label where code = #{code}
+	</select>
+
+    <select id="queryOpsScriptCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*) from ops_script
+		 where script_name = #{scriptName}
+	</select>
+
+    <insert id="insertOpsScript" useGeneratedKeys="true" keyColumn="script_id" keyProperty="scriptId"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsScript">
+		insert into ops_script (
+			script_name, 
+			script_content, 
+			content_type, 
+			step_id, 
+			is_public,
+			label_id,
+			creater, 
+			create_time, 
+			updater, 
+			update_time,
+			script_use_desc,
+			ops_param_code,
+			package_password,
+            audit_status,
+            current_version
+		) values (
+			#{scriptName},
+			#{scriptContent},
+			#{contentType},
+			#{stepId},
+			#{isPublic},
+			#{labelId},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime},
+			#{scriptUseDesc},
+			#{opsParamCode},
+			#{packagePassword},
+            '0',
+            #{currentVersion}
+<!--            #{auditStatus}-->
+		)
+	</insert>
+    <insert id="insertOpsScriptHis" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsScriptHis">
+        insert into ops_script_his (
+        script_id,
+        script_name,
+        script_content,
+        content_type,
+        step_id,
+        step_his_id,
+        is_public,
+        label_id,
+        creater,
+        create_time,
+        updater,
+        update_time,
+        script_use_desc,
+        ops_param_code,
+        package_password,
+        audit_status,
+        audit_desc,
+        current_version
+        ) values (
+        #{scriptId},
+        #{scriptName},
+        #{scriptContent},
+        #{contentType},
+        #{stepId},
+        #{stepHisId},
+        #{isPublic},
+        #{labelId},
+        #{creater},
+        #{createTime},
+        #{updater},
+        #{updateTime},
+        #{scriptUseDesc},
+        #{opsParamCode},
+        #{packagePassword},
+        #{auditStatus},
+        #{auditDesc},
+        #{currentVersion}
+        <!--            #{auditStatus}-->
+        )
+    </insert>
+    <update id="updateOpsScriptHis" parameterType="com.aspire.mirror.ops.api.domain.OpsScriptHis">
+        update ops_script_his set step_his_id = #{stepHisId} where id = #{id}
+    </update>
+    <update id="updateOpsScript" parameterType="com.aspire.mirror.ops.api.domain.OpsScript">
+        update ops_script
+        set script_id = #{scriptId}, audit_status = '0', audit_desc = '', reviewer = '', review_time = null
+        <if test="scriptName != null and scriptName != ''">
+            , script_name = #{scriptName}
+        </if>
+        <if test="currentVersion != null and currentVersion != ''">
+            , current_version = #{currentVersion}
+        </if>
+        <if test="scriptContent != null and scriptContent != ''">
+            , script_content = #{scriptContent}
+        </if>
+        <if test="scriptUseDesc != null and scriptUseDesc != ''">
+            , script_use_desc = #{scriptUseDesc}
+        </if>
+        <if test="contentType != null and contentType != ''">
+            , content_type = #{contentType}
+        </if>
+        <if test="stepId != null">
+            , step_id = #{stepId}
+        </if>
+        <if test="isPublic != null">
+            , is_public = #{isPublic}
+        </if>
+        <if test="labelId != null and labelId != ''">
+            , label_id = #{labelId}
+        </if>
+        <if test="updater != null">
+            , updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            , update_time = #{updateTime}
+        </if>
+        <if test="opsParamCode != null">
+            , ops_param_code = #{opsParamCode}
+        </if>
+        <if test="packagePassword != null">
+            , package_password = #{packagePassword}
+        </if>
+<!--        <if test="auditStatus != null and auditStatus != ''">-->
+<!--            , audit_status = #{auditStatus}-->
+<!--        </if>-->
+        where script_id = #{scriptId}
+    </update>
+
+    <select id="queryOpsScriptById" parameterType="java.lang.Long" resultMap="script">
+        select<include refid="scriptAllColumns"/>, p.pipeline_id, p.name pipeline_name, b.label label_name,gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id,g.group_name,
+        pr.entity_id, pr.entity_param_code, pr.param_id, pr.param_value
+        from ops_script s left join ops_step t on t.step_id = s.step_id
+        left join ops_pipeline p on p.pipeline_id = t.pipeline_id
+        left join ops_label b on s.label_id = b.code
+        left join ops_group_relation gr on s.script_id = gr.object_id and gr.object_type = 'script'
+        left join ops_group g on g.group_id = gr.group_id
+        left join ops_param_reference pr on pr.entity_id = s.script_id
+        where s.script_id = #{scriptId}
+    </select>
+    <select id="queryOpsScriptHisById" parameterType="java.lang.Long" resultMap="scriptHis">
+        select<include refid="scriptAllColumns"/>,s.id, s.step_his_id, p.pipeline_id, p.name pipeline_name, b.label label_name,gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+        from ops_script_his s left join ops_step t on t.step_id = s.step_id
+        left join ops_pipeline p on p.pipeline_id = t.pipeline_id
+        left join ops_label b on s.label_id = b.code
+        left join ops_group_relation gr on s.script_id = gr.object_id and gr.object_type = 'script'
+        left join ops_group g on g.group_id = gr.group_id
+        where s.id = #{scriptHisId}
+    </select>
+    <select id="queryOpsScriptListByPipelineId" parameterType="java.lang.Long" resultMap="script">
+        select<include refid="scriptAllColumns"/>, p.pipeline_id, p.name pipeline_name, b.label label_name
+        from ops_script s left join ops_step t on t.step_id = s.step_id
+        left join ops_pipeline p on p.pipeline_id = t.pipeline_id
+        left join ops_label b on s.label_id = b.code
+        where t.pipeline_id = #{pipelineId}
+    </select>
+    <sql id="resFilterPipelineInstanceTemplate">
+        <if test="resFilterMap != null">
+            <if test="resFilterMap.authAccounts != null and resFilterMap.authAccounts .size > 0">
+                and operator in (
+                <foreach collection="resFilterMap.authAccounts" item="item" index="index" separator=",">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>
+                )
+            </if>
+        </if>
+    </sql>
+    <sql id="resFilterPipelineTemplate">
+        <if test="resFilterMap != null">
+            <if test="resFilterMap.authAccounts != null and resFilterMap.authAccounts .size > 0">
+                and p.creater in (
+                <foreach collection="resFilterMap.authAccounts" item="item" index="index" separator=",">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>
+                )
+            </if>
+            <choose>
+                <when test="resFilterMap.opsPipeline != null and resFilterMap.opsPipeline.size > 0 and resFilterMap.opsGroup != null and resFilterMap.opsGroup.size > 0">
+                    and ( p.pipeline_id in (
+                    <foreach collection="resFilterMap.opsPipeline" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>
+                    )
+                    or gr.group_id in (
+                    <foreach collection="resFilterMap.opsGroup" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>
+                    )
+                    )
+                </when>
+                <otherwise>
+                    <if test="resFilterMap.opsPipeline != null and resFilterMap.opsPipeline.size > 0">
+                        and p.pipeline_id in (
+                        <foreach collection="resFilterMap.opsPipeline" item="item" index="index" separator=",">
+                            #{item, jdbcType=VARCHAR}
+                        </foreach>
+                        )
+                    </if>
+                    <if test="resFilterMap.opsGroup != null and resFilterMap.opsGroup.size > 0">
+                        and gr.group_id in (
+                        <foreach collection="resFilterMap.opsGroup" item="item" index="index" separator=",">
+                            #{item, jdbcType=VARCHAR}
+                        </foreach>
+                        )
+                    </if>
+                </otherwise>
+            </choose>
+        </if>
+    </sql>
+    <sql id="resFilterTemplate">
+		<if test="resFilterMap != null">
+            <if test="resFilterMap.authAccounts != null and resFilterMap.authAccounts.size > 0">
+                and s.creater in (
+                <foreach collection="resFilterMap.authAccounts" item="item" index="index" separator=",">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>
+                )
+            </if>
+			<choose>
+	            <when test="resFilterMap.opsScript != null and resFilterMap.opsScript.size > 0 
+	            			and resFilterMap.opsGroup != null and resFilterMap.opsGroup.size > 0">
+	                and ( s.script_id in (
+	                <foreach collection="resFilterMap.opsScript" item="item" index="index" separator=",">
+	                    #{item, jdbcType=VARCHAR}
+	                </foreach>
+	                )
+	                or gr.group_id in (
+	                <foreach collection="resFilterMap.opsGroup" item="item" index="index" separator=",">
+	                    #{item, jdbcType=VARCHAR}
+	                </foreach>
+	                )
+	                )
+	            </when>
+	            <otherwise>
+	                <if test="resFilterMap.opsScript != null and resFilterMap.opsScript.size > 0">
+	                    and s.script_id in (
+	                    <foreach collection="resFilterMap.opsScript" item="item" index="index" separator=",">
+	                        #{item, jdbcType=VARCHAR}
+	                    </foreach>
+	                    )
+	                </if>
+	                <if test="resFilterMap.opsGroup != null and resFilterMap.opsGroup.size > 0">
+	                    and gr.group_id in (
+	                    <foreach collection="resFilterMap.opsGroup" item="item" index="index" separator=",">
+	                        #{item, jdbcType=VARCHAR}
+	                    </foreach>
+	                    )
+	                </if>
+	            </otherwise>
+	        </choose>
+		</if>    
+    </sql>
+    <select id="queryScriptHisListByScriptId" resultMap="scriptHis">
+        select<include refid="scriptAllColumns"/>, s.id, s.step_his_id, p.pipeline_id, p.name pipeline_name, b.label label_name,gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id, g.group_name
+        from ops_script_his s left join ops_step t on t.step_id = s.step_id
+        left join ops_pipeline p on p.pipeline_id = t.pipeline_id
+        left join ops_label b on s.label_id = b.code
+        left join ops_group_relation gr on s.script_id = gr.object_id and gr.object_type = 'script'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1 = 1 and s.script_id = #{scriptId}
+    </select>
+    <select id="queryOpsScriptList" resultMap="script">
+        select <include refid="scriptAllColumns"/>, p.pipeline_id, p.name pipeline_name, b.label label_name,gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id,g.group_name,
+        pr.entity_id, pr.entity_param_code, pr.param_id, pr.param_value
+        from ops_script s left join ops_step t on t.step_id = s.step_id
+        left join ops_pipeline p on p.pipeline_id = t.pipeline_id
+        left join ops_label b on s.label_id = b.code
+        left join ops_group_relation gr on s.script_id = gr.object_id and gr.object_type = 'script'
+        left join ops_group g on g.group_id = gr.group_id
+        left join ops_param_reference pr on pr.entity_id = s.script_id
+        where 1 = 1
+        <if test="param.scriptId != null">
+            and s.script_id = #{param.scriptId}
+        </if>
+        <if test="param.scriptNameLike != null and param.scriptNameLike != ''">
+            and s.script_name like CONCAT('%', #{param.scriptNameLike}, '%')
+        </if>
+        <if test="param.contentType != null and param.contentType != ''">
+            and s.content_type = #{param.contentType}
+        </if>
+        <if test="param.scriptContentLike != null and param.scriptContentLike != ''">
+            and s.script_content like CONCAT('%', #{param.scriptContentLike}, '%')
+        </if>
+        <if test="param.pipelineNameLike != null and param.pipelineNameLike != ''">
+            and p.name like CONCAT('%', #{param.pipelineNameLike}, '%')
+        </if>
+        <if test="param.isPublic != null">
+            and s.is_public = #{param.isPublic}
+        </if>
+        <if test="param.stepScriptFlag != null and param.stepScriptFlag == 'Y'">
+            and s.step_id is not null
+        </if>
+        <if test="param.stepScriptFlag != null and param.stepScriptFlag == 'N'">
+            and s.step_id is null
+        </if>
+        <if test="param.labelId != null and param.labelId != ''">
+            and s.label_id = #{param.labelId}
+        </if>
+        <if test="param.creater != null and param.creater != ''">
+            and s.creater = #{param.creater}
+        </if>
+        <if test="param.createTimeStart != null">
+            and s.create_time &gt;= #{param.createTimeStart}
+        </if>
+        <if test="param.createTimeEnd != null">
+            and s.create_time &lt;= #{param.createTimeEnd}
+        </if>
+        <if test="param.updater != null and param.updater != ''">
+            and s.updater = #{param.updater}
+        </if>
+        <if test="param.auditStatus != null and param.auditStatus != ''">
+            and s.audit_status = #{param.auditStatus}
+        </if>
+        <if test="param.groupNameLike != null and param.groupNameLike != ''">
+            and g.group_name like CONCAT('%', #{param.groupNameLike}, '%')
+        </if>
+        <if test="param.groupIds != null and param.groupIds !=''">
+            and gr.group_id in (
+                <foreach collection="param.groupIds.split(',')" item="item" index="index" separator=",">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>
+            )
+        </if>
+        <include refid="resFilterTemplate" />
+        <if test="param.pageSize != null and param.pageSize > 0 ">
+            order by s.script_id desc
+            limit #{param.startIdx}, #{param.pageSize}
+        </if>
+    </select>
+
+    <select id="queryOpsScriptListTotalSize" resultType="java.lang.Integer">
+        select count(s.script_id)
+        from ops_script s left join ops_step t on t.step_id = s.step_id
+        left join ops_pipeline p on p.pipeline_id = t.pipeline_id
+        left join ops_group_relation gr on s.script_id = gr.object_id and gr.object_type = 'script'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1 = 1
+        <if test="param.scriptId != null">
+            and s.script_id = #{param.scriptId}
+        </if>
+        <if test="param.scriptNameLike != null and param.scriptNameLike != ''">
+            and s.script_name like CONCAT('%', #{param.scriptNameLike}, '%')
+        </if>
+        <if test="param.contentType != null and param.contentType != ''">
+            and s.content_type = #{param.contentType}
+        </if>
+        <if test="param.scriptContentLike != null and param.scriptContentLike != ''">
+            and s.script_content like CONCAT('%', #{param.scriptContentLike}, '%')
+        </if>
+        <if test="param.pipelineNameLike != null and param.pipelineNameLike != ''">
+            and p.name like CONCAT('%', #{param.pipelineNameLike}, '%')
+        </if>
+        <if test="param.isPublic != null">
+            and s.is_public = #{param.isPublic}
+        </if>
+        <if test="param.labelId != null and param.labelId != ''">
+            and s.label_id = #{param.labelId}
+        </if>
+        <if test="param.creater != null and param.creater != ''">
+            and s.creater = #{param.creater}
+        </if>
+        <if test="param.createTimeStart != null">
+            and s.create_time &gt;= #{param.createTimeStart}
+        </if>
+        <if test="param.createTimeEnd != null">
+            and s.create_time &lt;= #{param.createTimeEnd}
+        </if>
+        <if test="param.updater != null and param.updater != ''">
+            and s.updater = #{param.updater}
+        </if>
+        <if test="param.auditStatus != null and param.auditStatus != ''">
+            and s.audit_status = #{param.auditStatus}
+        </if>
+        <if test="param.groupNameLike != null and param.groupNameLike != ''">
+            and g.group_name like CONCAT('%', #{param.groupNameLike}, '%')
+        </if>
+        <if test="param.groupIds != null and param.groupIds !=''">
+            and gr.group_id in (
+            <foreach collection="param.groupIds.split(',')" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <include refid="resFilterTemplate" />
+    </select>
+
+    <delete id="removeOpsScriptById" parameterType="java.lang.Long">
+		delete from ops_script where script_id = #{scriptId}
+	</delete>
+
+    <delete id="removeOpsScriptByStepId" parameterType="java.lang.Long">
+		delete from ops_script where step_id = #{stepId}
+	</delete>
+
+    <delete id="removeOpsScriptByPipelineId" parameterType="java.lang.Long">
+		delete from ops_script 
+		 where exists (select 1 from ops_pipeline, ops_step
+						where ops_pipeline.pipeline_id = ops_step.pipeline_id
+				  		  and ops_script.step_id = ops_step.step_id
+				          and ops_pipeline.pipeline_id = #{pipelineId}
+				   	  )
+	</delete>
+    <insert id="insertOpsPipelineHis" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineHis">
+        insert into ops_pipeline_his (
+        pipeline_id,
+        name,
+        creater,
+        create_time,
+        updater,
+        update_time,
+        label_id,
+        step_count,
+        audit_status,
+        current_version
+        ) values (
+        #{pipelineId},
+        #{pipelineName},
+        #{creater},
+        #{createTime},
+        #{updater},
+        #{updateTime},
+        #{labelId},
+        #{stepCount},
+        #{auditStatus},
+        #{currentVersion}
+        <!--            #{audit_status}-->
+        )
+    </insert>
+    <insert id="insertOpsPipeline" useGeneratedKeys="true" keyColumn="pipeline_id" keyProperty="pipelineId"
+            parameterType="com.aspire.mirror.ops.domain.OpsPipeline">
+	 	insert into ops_pipeline (
+			name, 
+			creater, 
+			create_time, 
+			updater, 
+			update_time, 
+			label_id,
+			step_count,
+            audit_status,
+            current_version
+		) values (
+			#{pipelineName},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime},
+			#{labelId},
+			#{stepCount},
+            '0',
+            #{currentVersion}
+<!--            #{audit_status}-->
+		)
+	</insert>
+
+    <update id="updateOpsPipeline" parameterType="com.aspire.mirror.ops.domain.OpsPipeline">
+        update ops_pipeline
+        set pipeline_id = #{pipelineId} , audit_status = '0', audit_desc = '', reviewer = '', review_time = null
+        <if test="pipelineName != null and pipelineName != ''">
+            ,name = #{pipelineName}
+        </if>
+        <if test="updater != null and updater != ''">
+            ,updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            ,update_time = #{updateTime}
+        </if>
+        <if test="labelId != null and labelId != ''">
+            ,label_id = #{labelId}
+        </if>
+        <if test="stepCount != null">
+            ,step_count = #{stepCount}
+        </if>
+        <if test="currentVersion != null and currentVersion != ''">
+            , current_version = #{currentVersion}
+        </if>
+<!--        <if test="auditStatus != null and auditStatus != ''">-->
+<!--            ,audit_status = #{auditStatus}-->
+<!--        </if>-->
+        where pipeline_id = #{pipelineId}
+    </update>
+
+    <select id="queryPipelineById" parameterType="java.lang.Long" resultMap="pipeline">
+        select<include refid="pipelineAllColumns"/>,gr.object_id, gr.object_type, gr.group_relation_id,
+        gr.group_id,g.group_name
+        from ops_pipeline p
+        left join ops_group_relation gr on p.pipeline_id = gr.object_id and gr.object_type = 'pipeline'
+        left join ops_group g on g.group_id = gr.group_id
+        where p.pipeline_id = #{pipelineId}
+    </select>
+
+    <delete id="removePipelineById" parameterType="java.lang.Long">
+		delete from ops_pipeline where pipeline_id = #{pipelineId}
+	</delete>
+    <select id="queryPipelineHisListByPipelineId" resultMap="pipelineHis" parameterType="java.lang.Long">
+        select <include refid="pipelineAllColumns"/>, p.id, gr.object_id, gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+        from ops_pipeline_his p
+        left join ops_group_relation gr on p.pipeline_id = gr.object_id and gr.object_type = 'pipeline'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1 = 1 and p.pipeline_id = #{pipelineId}
+    </select>
+    <select id="queryOpsPipelineHisById" resultMap="pipelineHis" parameterType="java.lang.Long">
+        select <include refid="pipelineAllColumns"/>,p.id, gr.object_id, gr.object_type, gr.group_relation_id,
+        gr.group_id,g.group_name
+        from ops_pipeline_his p
+        left join ops_group_relation gr on p.pipeline_id = gr.object_id and gr.object_type = 'pipeline'
+        left join ops_group g on g.group_id = gr.group_id
+        where p.id = #{pipelineHisId}
+    </select>
+    <select id="queryOpsPipelineList" resultMap="pipeline">
+
+        select
+        <include refid="pipelineAllColumns"/>
+        ,gr.object_id, gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+        from ops_pipeline p
+        left join ops_group_relation gr on p.pipeline_id = gr.object_id and gr.object_type = 'pipeline'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1 = 1
+        <if test="param.pipelineId != null">
+            and p.pipeline_id = #{param.pipelineId}
+        </if>
+        <if test="param.pipelineName != null and param.pipelineName != ''">
+            and p.name = #{param.pipelineName}
+        </if>
+        <if test="param.pipelineNameLike != null and param.pipelineNameLike != ''">
+            and p.name like CONCAT('%', #{param.pipelineNameLike}, '%')
+        </if>
+        <if test="param.createrLike != null and param.createrLike != ''">
+            and p.creater like CONCAT('%', #{param.createrLike}, '%')
+        </if>
+        <if test="param.updaterLike != null and param.updaterLike != ''">
+            and p.updater like CONCAT('%', #{param.updaterLike}, '%')
+        </if>
+        <if test="param.creater != null and param.creater != ''">
+            and p.creater = #{param.creater}
+        </if>
+        <if test="param.updater != null and param.updater != ''">
+            and p.updater = #{param.updater}
+        </if>
+        <if test="param.labelId != null and param.labelId != ''">
+            and p.label_id = #{param.labelId}
+        </if>
+        <if test="param.updateTimeStart != null">
+            and p.update_time &gt;= #{param.updateTimeStart}
+        </if>
+        <if test="param.updateTimeEnd != null">
+            and p.update_time &lt;= #{param.updateTimeEnd}
+        </if>
+        <if test="param.createTimeStart != null">
+            and p.create_time &gt;= #{param.createTimeStart}
+        </if>
+        <if test="param.createTimeEnd != null">
+            and p.create_time &lt;= #{param.createTimeEnd}
+        </if>
+        <if test="param.auditStatus != null and param.auditStatus != ''">
+            and p.audit_status = #{param.auditStatus}
+        </if>
+        <include refid="resFilterPipelineTemplate" />
+        <if test="param.pageSize != null and param.pageSize > 0 ">
+            order by p.pipeline_id desc
+            limit #{param.startIdx}, #{param.pageSize}
+        </if>
+    </select>
+
+    <select id="queryOpsPipelineTotalCount" resultType="java.lang.Integer">
+        select count(distinct p.pipeline_id)
+        from ops_pipeline p
+        left join ops_group_relation gr on p.pipeline_id = gr.object_id and gr.object_type = 'pipeline'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1 = 1
+        <if test="param.pipelineId != null">
+            and p.pipeline_id = #{param.pipelineId}
+        </if>
+        <if test="param.pipelineName != null and param.pipelineName != ''">
+            and p.name = #{param.pipelineName}
+        </if>
+        <if test="param.pipelineNameLike != null and param.pipelineNameLike != ''">
+            and p.name like CONCAT('%', #{param.pipelineNameLike}, '%')
+        </if>
+        <if test="param.createrLike != null and param.createrLike != ''">
+            and p.creater like CONCAT('%', #{param.createrLike}, '%')
+        </if>
+        <if test="param.updaterLike != null and param.updaterLike != ''">
+            and p.updater like CONCAT('%', #{param.updaterLike}, '%')
+        </if>
+        <if test="param.creater != null and param.creater != ''">
+            and p.creater = #{param.creater}
+        </if>
+        <if test="param.updater != null and param.updater != ''">
+            and p.updater = #{param.updater}
+        </if>
+        <if test="param.labelId != null and param.labelId != ''">
+            and p.label_id = #{param.labelId}
+        </if>
+        <if test="param.updateTimeStart != null">
+            and p.update_time &gt;= #{param.updateTimeStart}
+        </if>
+        <if test="param.updateTimeEnd != null">
+            and p.update_time &lt;= #{param.updateTimeEnd}
+        </if>
+        <if test="param.createTimeStart != null">
+            and p.create_time &gt;= #{param.createTimeStart}
+        </if>
+        <if test="param.createTimeEnd != null">
+            and p.create_time &lt;= #{param.createTimeEnd}
+        </if>
+        <if test="param.auditStatus != null and param.auditStatus != ''">
+            and p.audit_status = #{param.auditStatus}
+        </if>
+        <include refid="resFilterPipelineTemplate" />
+<!--        <choose>-->
+<!--            <when test="authPipelineIdList != null and authPipelineIdList.size > 0 and authGroupIdList != null and authGroupIdList.size > 0">-->
+<!--                and ( p.pipeline_id in (-->
+<!--                <foreach collection="authPipelineIdList" item="item" index="index" separator=",">-->
+<!--                    #{item, jdbcType=VARCHAR}-->
+<!--                </foreach>-->
+<!--                )-->
+<!--                or gr.group_id in (-->
+<!--                <foreach collection="authGroupIdList" item="item" index="index" separator=",">-->
+<!--                    #{item, jdbcType=VARCHAR}-->
+<!--                </foreach>-->
+<!--                )-->
+<!--                )-->
+<!--            </when>-->
+<!--            <otherwise>-->
+<!--                <if test="authPipelineIdList != null and authPipelineIdList.size > 0">-->
+<!--                    and p.pipeline_id in (-->
+<!--                    <foreach collection="authPipelineIdList" item="item" index="index" separator=",">-->
+<!--                        #{item, jdbcType=VARCHAR}-->
+<!--                    </foreach>-->
+<!--                    )-->
+<!--                </if>-->
+<!--                <if test="authGroupIdList != null and authGroupIdList.size > 0">-->
+<!--                    and gr.group_id in (-->
+<!--                    <foreach collection="authGroupIdList" item="item" index="index" separator=",">-->
+<!--                        #{item, jdbcType=VARCHAR}-->
+<!--                    </foreach>-->
+<!--                    )-->
+<!--                </if>-->
+<!--            </otherwise>-->
+<!--        </choose>-->
+    </select>
+
+    <select id="queryPipelineInstanceById" parameterType="java.lang.Long" resultMap="pipelineInstance">
+        select
+        <include refid="pipelineInstanceAllColumns"/>
+        from ops_pipeline_instance
+        where pipeline_instance_id = #{pipelineInstanceId}
+    </select>
+
+    <select id="queryOpsPipelineInstanceList"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineInstanceQueryParam" resultMap="pipelineInstance">
+        select
+        <include refid="pipelineInstanceAllColumns"/>
+        from ops_pipeline_instance
+        where 1 = 1
+        <if test="param.pipelineInstanceIdList != null and param.pipelineInstanceIdList.size > 0">
+        	and pipeline_instance_id in 
+        	<foreach collection="param.pipelineInstanceIdList" item="pipeInstId" index="index" separator="," open="(" close=")">
+	            #{pipeInstId}
+	        </foreach>
+        </if>
+        <if test="param.pipelineInstanceId != null">
+            and pipeline_instance_id = #{param.pipelineInstanceId}
+        </if>
+        <if test="param.pipelineInstanceName != null and param.pipelineInstanceName != ''">
+            and name like CONCAT ('%', #{param.pipelineInstanceName}, '%')
+        </if>
+        <if test="param.operator != null and param.operator != ''">
+            and operator like CONCAT ('%', #{param.operator}, '%')
+        </if>
+        <if test="param.triggerWay != null and param.triggerWay != ''">
+            and trigger_way = #{param.triggerWay}
+        </if>
+        <if test="param.status != null">
+            and status = #{param.status}
+        </if>
+        <if test="param.bizClassify != null">
+            and biz_classify = #{param.bizClassify}
+        </if>
+        <if test="param.startTime != null">
+            and start_time &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null">
+            and end_time &lt;= #{param.endTime}
+        </if>
+        <include refid="resFilterPipelineInstanceTemplate" />
+        <if test="param.pageSize != null and param.pageSize > 0 ">
+            order by `${param.orderColumn}` ${param.orderType}
+            limit #{param.startIdx}, #{param.pageSize}
+        </if>
+    </select>
+
+    <select id="queryOpsPipelineInstanceTotalSize" resultType="java.lang.Integer"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineInstanceQueryParam">
+
+        select count(pipeline_instance_id)
+        from ops_pipeline_instance
+        where 1 = 1
+        <if test="param.pipelineInstanceIdList != null and param.pipelineInstanceIdList.size > 0">
+        	and pipeline_instance_id in 
+        	<foreach collection="param.pipelineInstanceIdList" item="pipeInstId" index="index" separator="," open="(" close=")">
+	            #{pipeInstId}
+	        </foreach>
+        </if>
+        <if test="param.pipelineInstanceId != null">
+            and pipeline_instance_id = #{param.pipelineInstanceId}
+        </if>
+        <if test="param.pipelineInstanceName != null and param.pipelineInstanceName != ''">
+            and name like CONCAT ('%', #{param.pipelineInstanceName}, '%')
+        </if>
+        <if test="param.operator != null and param.operator != ''">
+            and operator = #{param.operator}
+        </if>
+        <if test="param.triggerWay != null and param.triggerWay != ''">
+            and trigger_way = #{param.triggerWay}
+        </if>
+        <if test="param.status != null">
+            and status = #{param.status}
+        </if>
+        <if test="param.bizClassify != null">
+            and biz_classify = #{param.bizClassify}
+        </if>
+        <if test="param.startTime != null">
+            and start_time &gt;= #{param.startTime}
+        </if>
+        <if test="param.endTime != null">
+            and end_time &lt;= #{param.endTime}
+        </if>
+        <include refid="resFilterPipelineInstanceTemplate" />
+    </select>
+
+    <insert id="insertPipelineInstance" useGeneratedKeys="true" keyColumn="pipeline_instance_id"
+            keyProperty="pipelineInstanceId"
+            parameterType="com.aspire.mirror.ops.domain.OpsPipelineInstance">
+		insert into ops_pipeline_instance (
+			pipeline_id,
+			name,
+			operator,
+			trigger_way,
+			current_step_id,
+			status,
+			start_time,
+			end_time,
+			total_time,
+			create_time,
+			instance_classify,
+			biz_classify,
+			biz_meta,
+			label_id,
+			aspnode_result
+		) values (
+			#{pipelineId},
+			#{pipelineInstanceName},
+			#{operator},
+			#{triggerWay},
+			#{currStepId},
+			#{status},
+			#{startTime},
+			#{endTime},
+			#{totalTime},
+			#{createTime},
+			#{instanceClassify},
+			#{bizClassify},
+			#{bizMetaJson},
+			#{labelId},
+			#{aspNodeResult}
+		)
+	</insert>
+
+    <update id="updatePipelineInstance" parameterType="com.aspire.mirror.ops.domain.OpsPipelineInstance">
+        update ops_pipeline_instance
+        set pipeline_instance_id = #{pipelineInstanceId}
+        <if test="currStepId != null">
+            , current_step_id = #{currStepId}
+        </if>
+        <if test="status != null">
+            , status = #{status}
+        </if>
+        <if test="startTime != null">
+            , start_time = #{startTime}
+        </if>
+        <if test="endTime != null">
+            , end_time = #{endTime}
+        </if>
+        <if test="totalTime != null">
+            , total_time = #{totalTime}
+        </if>
+        <if test="reviewApplyTime != null">
+            , review_apply_time = #{reviewApplyTime}
+        </if>
+        <if test="reviewApplicant != null">
+            , review_applicant = #{reviewApplicant}
+        </if>
+        <if test="aspNodeResult != null">
+            , aspnode_result = #{aspNodeResult}
+        </if>
+        <if test="outputPath != null">
+            , output_path = #{outputPath}
+        </if>
+        where pipeline_instance_id = #{pipelineInstanceId}
+    </update>
+    <insert id="insertOpsStepHis" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsStepHis">
+        insert into ops_step_his (
+        step_id,
+        pipeline_id,
+        pipeline_his_id,
+        name,
+        ops_type,
+        ord,
+        block_ord,
+        block_name,
+        target_ops_user,
+        target_hosts,
+        script_id,
+        script_his_id,
+        script_param,
+        script_sudo,
+        ops_timeout,
+        file_source,
+        file_target_path,
+        file_store_source,
+        tip_text,
+        creater,
+        create_time,
+        updater,
+        update_time,
+        pause_flag,
+        param_sensive_flag,
+        replace_attrs,
+        file_type,
+        file_store_converge_type,
+        file_store_safety,
+        target_exec_object
+        ) values (
+        #{stepId},
+        #{pipelineId},
+        #{pipelineHisId},
+        #{stepName},
+        #{opsType},
+        #{ord},
+        #{blockOrd},
+        #{blockName},
+        #{targetOpsUser},
+        #{targetHostsJson},
+        #{scriptId},
+        #{scriptHisId},
+        #{scriptParam},
+        #{scriptSudo},
+        #{opsTimeout},
+        #{fileSourceJson},
+        #{fileTargetPath},
+        #{fileStoreSourceJson},
+        #{tipText},
+        #{creater},
+        #{createTime},
+        #{updater},
+        #{updateTime},
+        #{pauseFlag},
+        #{paramSensiveFlag},
+        #{replaceAttrListJson},
+        #{fileType},
+        #{fileStoreConvergeType},
+        #{fileStoreSafety},
+        #{targetExecObjectJson}
+        )
+    </insert>
+    <insert id="insertOpsStep" useGeneratedKeys="true" keyColumn="step_id" keyProperty="stepId"
+            parameterType="com.aspire.mirror.ops.domain.OpsStep">
+		insert into ops_step (
+			pipeline_id,
+			name,
+			ops_type,
+			ord,
+			block_ord,
+			block_name,
+			target_ops_user,
+			target_hosts,
+			script_id,
+			script_param,
+			script_sudo,
+			ops_timeout,
+			file_source,
+			file_target_path,
+			file_store_source,
+			tip_text,
+			creater,
+			create_time,
+			updater,
+			update_time,
+			pause_flag,
+			param_sensive_flag,
+			replace_attrs,
+			file_type,
+			file_store_converge_type,
+			file_store_safety,
+            target_exec_object
+		) values (
+			#{pipelineId},
+			#{stepName},
+			#{opsType},
+			#{ord},
+			#{blockOrd},
+			#{blockName},
+			#{targetOpsUser},
+			#{targetHostsJson},
+			#{scriptId},
+			#{scriptParam},
+			#{scriptSudo},
+			#{opsTimeout},
+			#{fileSourceJson},
+			#{fileTargetPath},
+			#{fileStoreSourceJson},
+			#{tipText},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime},
+			#{pauseFlag},
+			#{paramSensiveFlag},
+			#{replaceAttrListJson},
+			#{fileType},
+			#{fileStoreConvergeType},
+			#{fileStoreSafety},
+            #{targetExecObjectJson}
+		)
+	</insert>
+
+    <update id="updateOpsStep" parameterType="com.aspire.mirror.ops.domain.OpsStep">
+        update ops_step
+        set step_id = #{stepId}
+        <if test="stepName != null and stepName != ''">
+            , name = #{stepName}
+        </if>
+        <if test="ord != null">
+            , ord = #{ord}
+        </if>
+        <if test="blockOrd != null">
+            , block_ord = #{blockOrd}
+        </if>
+        <if test="blockName != null and blockName != ''">
+            , block_name = #{blockName}
+        </if>
+        <if test="targetOpsUser != null and targetOpsUser != ''">
+            , target_ops_user = #{targetOpsUser}
+        </if>
+        <if test="targetHostsJson != null and targetHostsJson != ''">
+            , target_hosts = #{targetHostsJson}
+        </if>
+        <if test="scriptId != null">
+            , script_id = #{scriptId}
+        </if>
+        <if test="scriptParam != null and scriptParam != ''">
+            , script_param = #{scriptParam}
+        </if>
+        <if test="scriptSudo != null">
+            , script_sudo = #{scriptSudo}
+        </if>
+        <if test="opsTimeout != null">
+            , ops_timeout = #{opsTimeout}
+        </if>
+        <if test="fileSourceJson != null and fileSourceJson != ''">
+            , file_source = #{fileSourceJson}
+        </if>
+        <if test="fileTargetPath != null and fileTargetPath != ''">
+            , file_target_path = #{fileTargetPath}
+        </if>
+        <if test="fileStoreSourceJson != null and fileStoreSourceJson != ''">
+            , file_store_source = #{fileStoreSourceJson}
+        </if>
+        <if test="tipText != null and tipText != ''">
+            , tip_text = #{tipText}
+        </if>
+        <if test="pauseFlag != null">
+            , pause_flag = #{pauseFlag}
+        </if>
+        <if test="paramSensiveFlag != null">
+            , param_sensive_flag = #{paramSensiveFlag}
+        </if>
+        <if test="replaceAttrListJson != null and replaceAttrListJson != ''">
+            , replace_attrs = #{replaceAttrListJson}
+        </if>
+        <if test="fileType != null">
+            , file_type = #{fileType}
+        </if>
+        <if test="fileStoreConvergeType != null">
+            , file_store_converge_type = #{fileStoreConvergeType}
+        </if>
+        <if test="fileStoreSafety != null">
+            , file_store_safety = #{fileStoreSafety}
+        </if>
+        <if test="targetExecObjectJson != null">
+            , target_exec_object = #{targetExecObjectJson}
+        </if>
+        where step_id = #{stepId}
+    </update>
+
+    <select id="queryOpsStepListByPipelineId" parameterType="java.lang.Long" resultMap="step">
+        select
+        <include refid="stepAllColumns"/>
+        from ops_step
+        where pipeline_id = #{pipelineId}
+        order by block_ord asc, ord asc
+    </select>
+    <select id="queryOpsStepHisListByPipelineHisId" parameterType="java.lang.Long" resultMap="stepHis">
+        select
+        <include refid="stepAllColumns"/>,id, pipeline_his_id, script_his_id
+        from ops_step_his
+        where pipeline_his_id = #{pipelineHisId}
+        order by block_ord asc, ord asc
+    </select>
+    <select id="queryOpsStepById" parameterType="java.lang.Long" resultMap="step">
+        select
+        <include refid="stepAllColumns"/>
+        from ops_step where step_id = #{stepId}
+    </select>
+    <select id="queryOpsStepCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+    	select count(step_id) from ops_step where name = #{stepName}
+    </select>
+
+    <delete id="removeOpsStepById" parameterType="java.lang.Long">
+    	delete from ops_step where step_id = #{stepId}
+    </delete>
+
+    <delete id="removeAllOpsStepsByPipelineId" parameterType="java.lang.Long">
+		delete from ops_step where pipeline_id = #{pipelineId}
+	</delete>
+
+    <insert id="insertStepInstance" useGeneratedKeys="true" keyColumn="step_instance_id" keyProperty="stepInstanceId"
+            parameterType="com.aspire.mirror.ops.domain.OpsStepInstance">
+    	insert into ops_step_instance(
+    		step_id, pipeline_instance_id, name, ops_type, ord, block_ord, block_name, 
+    		target_ops_user, target_hosts, bad_hosts, script_content, script_content_type, script_param, script_sudo, 
+    		ops_timeout, file_source, file_target_path, file_store_source, tip_text, operator, status, 
+    		start_time, end_time, total_time, total_hosts_num, bad_hosts_num, run_hosts_num, success_hosts_num, 
+    		create_time, pause_flag, param_sensive_flag, file_type, aspnode_result, ops_param_code, package_password, target_exec_object
+    	) values (
+    		#{stepId}, #{pipelineInstanceId}, #{stepInstanceName}, #{opsType}, #{ord}, #{blockOrd}, #{blockName}, 
+    		#{targetOpsUser}, #{targetHostsJson}, #{badHostsJson}, #{scriptContent}, #{scriptContentType}, #{scriptParam}, 
+    		#{scriptSudo}, #{opsTimeout}, #{fileSourceJson}, #{fileTargetPath}, #{fileStoreSourceJson}, #{tipText}, #{operator}, 
+    		#{status}, #{startTime}, #{endTime}, #{totalTime}, #{totalHostsNum}, #{badHostsNum}, #{runHostsNum}, 
+    		#{successHostsNum}, #{createTime}, #{pauseFlag}, #{paramSensiveFlag}, #{fileType}, #{aspNodeResult}, #{opsParamCode}, #{packagePassword}, #{targetExecObjectJson}
+    	)
+    </insert>
+
+    <select id="queryStepInstanceById" parameterType="java.lang.Long" resultMap="stepInstance">
+        select
+        <include refid="stepInstanceAllColumns"/>
+        from ops_step_instance
+        where step_instance_id = #{stepInstanceId}
+    </select>
+
+    <select id="queryStepInstanceByPipelineOrder" parameterType="java.util.Map" resultMap="stepInstance">
+        select
+        <include refid="stepInstanceAllColumns"/>
+        from ops_step_instance
+        where pipeline_instance_id = #{pipelineInstanceId}
+        and ord = #{order}
+    </select>
+
+    <select id="queryStepInstListByPipelineInstId" parameterType="java.lang.Long" resultMap="stepInstance">
+        select
+        <include refid="stepInstanceAllColumns"/>
+        from ops_step_instance
+        where pipeline_instance_id = #{pipelineInstanceId}
+    </select>
+
+    <select id="queryTimeoutStepInstanceList" parameterType="java.lang.Long" resultMap="stepInstance">
+        select
+        <include refid="stepInstanceAllColumns"/>
+        from ops_step_instance
+        where ops_timeout > 0
+        and status = 100
+        and FROM_UNIXTIME(#{checkTime} - ops_timeout) >= start_time
+    </select>
+
+    <update id="updateStepInstance" parameterType="com.aspire.mirror.ops.domain.OpsStepInstance">
+        update ops_step_instance
+        set step_instance_id = #{stepInstanceId}
+        <if test="badHostsJson != null">
+            , bad_hosts = #{badHostsJson}
+        </if>
+        <if test="status != null">
+            , status = #{status}
+        </if>
+        <if test="startTime != null">
+            , start_time = #{startTime}
+        </if>
+        <if test="endTime != null">
+            , end_time = #{endTime}
+        </if>
+        <if test="totalTime != null">
+            , total_time = #{totalTime}
+        </if>
+        <if test="totalHostsNum != null">
+            , total_hosts_num = #{totalHostsNum}
+        </if>
+        <if test="badHostsNum != null">
+            , bad_hosts_num = #{badHostsNum}
+        </if>
+        <if test="runHostsNum != null">
+            , run_hosts_num = #{runHostsNum}
+        </if>
+        <if test="successHostsNum != null">
+            , success_hosts_num = #{successHostsNum}
+        </if>
+        <if test="fileType != null">
+            , file_type = #{fileType}
+        </if>
+        <if test="aspNodeResult != null">
+            , aspnode_result = #{aspNodeResult}
+        </if>
+        <if test="opsParamCode != null">
+            , ops_param_code = #{opsParamCode}
+        </if>
+        <if test="packagePassword != null">
+            , package_password = #{packagePassword}
+        </if>
+        where step_instance_id = #{stepInstanceId}
+    </update>
+
+
+    <insert id="insertAgentStepInstanceResult"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsAgentStepInstanceResult">
+    	insert into ops_host_step_operate_log(
+    		step_instance_id,
+    		target_host, 
+    		status, 
+    		exit_code, 
+    		ops_log,
+    		aspnode_result,
+    		aspnode_msg,
+    		mark_time,
+    		total_time
+    	  ) values (
+    	    #{stepInstanceId},
+    	  	#{targetHost},
+    	  	#{status},
+    	  	#{exitCode},
+    	  	#{opsLog},
+    	  	#{aspNodeResult},
+    	  	#{aspNodeMessage},
+    	  	#{markTime},
+    	  	#{totalTime}
+    	  )
+    </insert>
+
+    <update id="updateAgentStepInstanceResult"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsAgentStepInstanceResult">
+        update ops_host_step_operate_log
+        set step_instance_id = #{stepInstanceId}, target_host = #{targetHost}
+        <if test="status != null ">
+            ,status = #{status}
+        </if>
+        <if test="exitCode != null ">
+            ,exit_code = #{exitCode}
+        </if>
+        <if test="opsLog != null and opsLog != '' ">
+            ,ops_log = #{opsLog}
+        </if>
+        <if test="aspNodeResult != null">
+            ,aspnode_result = #{aspNodeResult}
+        </if>
+        <if test="aspNodeMessage != null and aspNodeMessage != '' ">
+            ,aspnode_msg = #{aspNodeMessage}
+        </if>
+        <if test="markTime != null">
+            ,mark_time = #{markTime}
+        </if>
+        <if test="totalTime != null">
+            ,total_time = #{totalTime}
+        </if>
+        where step_instance_id = #{stepInstanceId} and target_host = #{targetHost}
+    </update>
+
+    <select id="queryAgentStepInstanceResultByKeys" parameterType="java.util.Map" resultMap="agentStepResult">
+    	select g.step_instance_id, g.target_host, g.status, g.exit_code, g.ops_log, g.aspnode_result, 
+    	       g.aspnode_msg, g.total_time, t.ops_type, a.pool, a.agent_ip
+		  from ops_host_step_operate_log g
+		       inner join ops_step_instance t on t.step_instance_id = g.step_instance_id
+		       left join (select p.pool, p.id, h.agent_ip from ops_spectre_proxy p, ops_spectre_host h where h.proxy_id = p.id) a 
+		       on g.target_host = CONCAT(a.id, ':', a.agent_ip)
+		 where g.step_instance_id = #{stepInstanceId} and g.target_host = #{targetHost} 
+    </select>
+
+    <select id="queryOpsStepAgentRunResultList" resultMap="agentStepResult"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsAgentStepInstanceResult$OpsAgentStepInstanceResultQueryModel">
+        select g.step_instance_id, g.target_host, g.status, g.exit_code, g.ops_log, g.aspnode_result, 
+    	       g.aspnode_msg, g.total_time, t.ops_type, a.pool, a.agent_ip
+		  from ops_host_step_operate_log g
+		       inner join ops_step_instance t on t.step_instance_id = g.step_instance_id
+		       left join (select p.pool, p.id, h.agent_ip from ops_spectre_proxy p, ops_spectre_host h where h.proxy_id = p.id) a 
+		       on g.target_host = CONCAT(a.id, ':', a.agent_ip)
+         where 1 = 1
+        <if test="stepInstanceId != null ">
+            and g.step_instance_id = #{stepInstanceId}
+        </if>
+        <if test="targetHost != null and targetHost != '' ">
+            and g.target_host = #{targetHost}
+        </if>
+        <if test="status != null ">
+            and g.status = #{status}
+        </if>
+        <if test="exitCode != null ">
+            and g.exit_code = #{exitCode}
+        </if>
+        <if test="opsLog != null and opsLog != '' ">
+            and g.ops_log like CONCAT ('%', #{opsLog}, '%')
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by g.mark_time asc, g.target_host asc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="queryOpsStepAgentRunResultTotalSize" resultType="java.lang.Integer"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsAgentStepInstanceResult">
+        select count(target_host)
+        from ops_host_step_operate_log
+        where 1 = 1
+        <if test="stepInstanceId != null ">
+            and step_instance_id = #{stepInstanceId}
+        </if>
+        <if test="targetHost != null and targetHost != '' ">
+            and target_host = #{targetHost}
+        </if>
+        <if test="status != null ">
+            and status = #{status}
+        </if>
+        <if test="exitCode != null ">
+            and exit_code = #{exitCode}
+        </if>
+        <if test="opsLog != null and opsLog != '' ">
+            and ops_log like CONCAT ('%', #{opsLog}, '%')
+        </if>
+    </select>
+
+    <insert id="insertOpsPipelineRunJob" parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineRunJob"
+            useGeneratedKeys="true" keyColumn="job_id" keyProperty="jobId">
+		insert into ops_pipeline_run_job (
+			name,
+			pipeline_id,
+			cron_expression,
+			status,
+			creater,
+			create_time,
+			updater,
+			update_time
+		) values (
+			#{name},
+			#{pipelineId},
+			#{cronExpression},
+			#{status},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime}
+		) 
+	</insert>
+    <insert id="insertPipelineInstanceLog" parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineInstanceLog">
+      insert into ops_pipeline_instance_log (
+        pipeline_instance_id,
+        log_path,
+        status
+      ) values (
+        #{pipelineInstanceId},
+        #{logPath},
+        #{status}
+      )
+    </insert>
+    <update id="updatePipelineInstanceLog" parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineInstanceLog">
+        update ops_pipeline_instance_log set log_path = #{logPath}, status = #{status}
+        where pipeline_instance_id = #{pipelineInstanceId}
+    </update>
+    <update id="updateOpsPipelineRunJob" parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineRunJob">
+        update ops_pipeline_run_job
+        set job_id = #{jobId}
+        <if test="name != null and name != ''">
+            ,name = #{name}
+        </if>
+        <if test="pipelineId != null">
+            ,pipeline_id = #{pipelineId}
+        </if>
+        <if test="cronExpression != null and cronExpression != ''">
+            ,cron_expression = #{cronExpression}
+        </if>
+        <if test="status != null">
+            ,status = #{status}
+        </if>
+        <if test="updater != null and updater != ''">
+            ,updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            ,update_time = #{updateTime}
+        </if>
+        where job_id = #{jobId}
+    </update>
+
+    <delete id="removeOpsPipelineRunJob" parameterType="java.lang.Long">
+		delete from ops_pipeline_run_job where job_id = #{jobId}
+	</delete>
+    <select id="getPipelineInstanceLog" parameterType="java.lang.Long" resultType="com.aspire.mirror.ops.api.domain.OpsPipelineInstanceLog">
+        select
+        pipeline_instance_id pipelineInstanceId,
+        log_path logPath,
+        status
+        from ops_pipeline_instance_log where pipeline_instance_id = #{pipelineInstanceId}
+    </select>
+    <select id="queryOpsPipelineRunJobById" parameterType="java.lang.Long" resultMap="pipelineRunJob">
+        select
+        <include refid="pipelineRunJobAllColumns"/>
+        , p.name pipeline_name
+        from ops_pipeline_run_job j left join ops_pipeline p on j.pipeline_id = p.pipeline_id
+        where j.job_id = #{jobId}
+    </select>
+
+    <select id="queryOpsPipelineRunJobList" resultMap="pipelineRunJob"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineRunJob$OpsPipelineRunJobQueryModel">
+        select
+        <include refid="pipelineRunJobAllColumns"/>
+        , p.name pipeline_name
+        from ops_pipeline_run_job j left join ops_pipeline p on j.pipeline_id = p.pipeline_id
+        where 1 = 1
+        <if test="name != null and name !=''">
+            and j.name = #{name}
+        </if>
+        <if test="nameLike != null and nameLike !=''">
+            and j.name like CONCAT ('%', #{nameLike}, '%')
+        </if>
+        <if test="createrLike != null and createrLike !=''">
+            and j.creater like CONCAT ('%', #{createrLike}, '%')
+        </if>
+        <if test="updaterLike != null and updaterLike !=''">
+            and j.updater like CONCAT ('%', #{updaterLike}, '%')
+        </if>
+        <if test="createTimeStart != null">
+            and j.create_time &gt;= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null">
+            and j.create_time &lt;= #{createTimeEnd}
+        </if>
+        <if test="updateTimeStart != null">
+            and j.update_time &gt;= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            and j.update_time &lt;= #{updateTimeEnd}
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by j.job_id desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="queryOpsPipelineRunJobTotalSize" resultType="java.lang.Integer"
+            parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineRunJob$OpsPipelineRunJobQueryModel">
+        select count(job_id)
+        from ops_pipeline_run_job
+        where 1 = 1
+        <if test="name != null and name !=''">
+            and name = #{name}
+        </if>
+        <if test="nameLike != null and nameLike !=''">
+            and name like CONCAT ('%', #{nameLike}, '%')
+        </if>
+        <if test="createrLike != null and createrLike !=''">
+            and creater like CONCAT ('%', #{createrLike}, '%')
+        </if>
+        <if test="updaterLike != null and updaterLike !=''">
+            and updater like CONCAT ('%', #{updaterLike}, '%')
+        </if>
+        <if test="createTimeStart != null">
+            and create_time &gt;= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null">
+            and create_time &lt;= #{createTimeEnd}
+        </if>
+        <if test="updateTimeStart != null">
+            and update_time &gt;= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            and update_time &lt;= #{updateTimeEnd}
+        </if>
+    </select>
+    <select id="queryPipelineScenesCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(*) from ops_pipeline_scenes where scenes_name = #{scenesName}
+	</select>
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsPipelineScenes" id="scenes">
+        <result property="pipelineScenesId" column="pipeline_scenes_id" jdbcType="BIGINT"/>
+        <result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+        <result property="scenesName" column="scenes_name" jdbcType="VARCHAR"/>
+        <result property="scenesDesc" column="scenes_desc" jdbcType="VARCHAR"/>
+        <result property="scenesPicture" column="scenes_picture" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <select id="queryPipelineScenesByIds" resultMap="scenes">
+        select ps.pipeline_scenes_id,
+        ps.pipeline_id,
+        ps.scenes_name,
+        ps.scenes_desc,
+        ps.scenes_picture,
+        ps.creater,
+        ps.create_time,
+        ps.updater,
+        ps.update_time,
+        gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+        from ops_pipeline_scenes ps
+        left join ops_group_relation gr on ps.pipeline_scenes_id = gr.object_id and gr.object_type = 'scenes'
+        left join ops_group g on g.group_id = gr.group_id
+        where
+        ps.pipeline_scenes_id in (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+        order by ps.pipeline_scenes_id desc
+    </select>
+    <select id="pipelineScenesById" resultMap="scenes" parameterType="java.lang.Long">
+        select ps.pipeline_scenes_id,
+		ps.pipeline_id,
+		ps.scenes_name,
+		ps.scenes_desc,
+		ps.scenes_picture,
+		ps.creater,
+		ps.create_time,
+		ps.updater,
+		ps.update_time,
+		gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+        from ops_pipeline_scenes ps
+        left join ops_group_relation gr on ps.pipeline_scenes_id = gr.object_id and gr.object_type = 'scenes'
+        left join ops_group g on g.group_id = gr.group_id
+        where
+        ps.pipeline_scenes_id = #{pipelineScenesId}
+    </select>
+    <select id="queryPipelineScenesByPipelineId" resultMap="scenes" parameterType="java.lang.Long">
+         select ps.pipeline_scenes_id,
+                ps.pipeline_id,
+                ps.scenes_name,
+                ps.scenes_desc,
+                ps.scenes_picture,
+                ps.creater,
+                ps.create_time,
+                ps.updater,
+                ps.update_time
+                from ops_pipeline_scenes ps
+                where ps.pipeline_id = #{pipelineId}
+    </select>
+    <insert id="insertPipelineScences" parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineScenes"
+            useGeneratedKeys="true" keyColumn="pipeline_scenes_id" keyProperty="pipelineScenesId">
+		insert into ops_pipeline_scenes (
+		pipeline_id,
+		scenes_name,
+		scenes_desc,
+		scenes_picture,
+		creater,
+		create_time,
+		updater,
+		update_time
+		) values (
+			#{pipelineId},
+			#{scenesName},
+			#{scenesDesc},
+			#{scenesPicture},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime}
+		)
+	</insert>
+    <update id="updatePipelineScences" parameterType="com.aspire.mirror.ops.api.domain.OpsPipelineScenes">
+        update ops_pipeline_scenes set pipeline_scenes_id = #{pipelineScenesId}
+        <if test="pipelineId != null">
+            , pipeline_id = #{pipelineId}
+        </if>
+        <if test="scenesName != null and scenesName !=''">
+            , scenes_name = #{scenesName}
+        </if>
+        <if test="scenesDesc != null and scenesDesc !=''">
+            , scenes_desc = #{scenesDesc}
+        </if>
+        <if test="scenesPicture != null and scenesPicture !=''">
+            , scenes_picture = #{scenesPicture}
+        </if>
+        <if test="updater != null and updater !=''">
+            , updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            , update_time = #{updateTime}
+        </if>
+        where pipeline_scenes_id = #{pipelineScenesId}
+    </update>
+    <delete id="deletePipelineScenesByIds">
+        delete from ops_pipeline_scenes where pipeline_scenes_id in (
+        <foreach collection="scenesIds.split(',')" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+    
+    <select id="loadAllParamTypeList" resultMap="opsParamType">
+    	select param_type, param_type_label, auto_popup_flag, param_type_desc 
+    	  from ops_param_type
+    </select>
+    
+    <select id="getParamList" parameterType="com.aspire.mirror.ops.api.domain.OpsParamQueryModel" resultMap="opsParam">
+         select p.param_id,
+		        p.param_code,
+		        p.param_name,
+		        p.param_type,
+		        p.param_desc,
+		        p.param_default_value,
+                p.create_time,
+                p.last_update_time,
+		        t.param_type t_param_type,
+				t.param_type_label t_param_type_label, 
+				t.auto_popup_flag t_auto_popup_flag, 
+				t.param_type_desc t_param_type_desc,gr.object_id,
+                gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+		   from ops_param p inner join ops_param_type t on t.param_type = p.param_type
+            left join ops_group_relation gr on p.param_id = gr.object_id and gr.object_type = 'param'
+            left join ops_group g on g.group_id = gr.group_id
+          where 1 = 1
+	        <if test="paramCode != null and paramCode !=''">
+	            and p.param_code = #{paramCode}
+	        </if>
+	        <if test="paramName != null and paramName !=''">
+	            and p.param_name = #{paramName}
+	        </if>
+            <if test="paramNameLike != null and paramNameLike !=''">
+                and p.param_name like CONCAT ('%', #{paramNameLike}, '%')
+            </if>
+	        <if test="paramDesc != null and paramDesc !=''">
+	            and p.param_desc like CONCAT ('%', #{paramDesc}, '%')
+	        </if>
+	        <if test="paramType != null and paramType !=''">
+	            and p.param_type = #{paramType}
+	        </if>
+            <if test="createTimeStart != null">
+                and p.create_time &gt;= #{createTimeStart}
+            </if>
+            <if test="createTimeEnd != null">
+                and p.create_time &lt;= #{createTimeEnd}
+            </if>
+            <if test="updateTimeStart != null">
+                and p.last_update_time &gt;= #{updateTimeStart}
+            </if>
+            <if test="updateTimeEnd != null">
+                and p.last_update_time &lt;= #{updateTimeEnd}
+            </if>
+	        <if test="paramCodeArr != null and paramCodeArr != ''">
+	            and p.param_code in (
+	            <foreach collection="paramCodeArr.split(',')" item="item" index="index" separator=",">
+	                #{item}
+	            </foreach>
+	            )
+	        </if>
+            <if test="paramIdArr != null and paramIdArr != ''">
+                and p.param_id in (
+                <foreach collection="paramIdArr.split(',')" item="item" index="index" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+	        <if test="pageSize != null and pageSize > 0 ">
+	            order by p.param_id desc
+	            limit #{startIdx}, #{pageSize}
+	        </if>
+    </select>
+<select id="getParamListTotalSize" parameterType="com.aspire.mirror.ops.api.domain.OpsParamQueryModel" resultType="java.lang.Integer">
+    select count(*)
+    from ops_param p inner join ops_param_type t on t.param_type = p.param_type
+    where 1 = 1
+    <if test="paramCode != null and paramCode !=''">
+        and p.param_code = #{paramCode}
+    </if>
+    <if test="paramName != null and paramName !=''">
+        and p.param_name like CONCAT ('%', #{paramName}, '%')
+    </if>
+    <if test="paramNameLike != null and paramNameLike !=''">
+        and p.param_name like CONCAT ('%', #{paramNameLike}, '%')
+    </if>
+    <if test="paramDesc != null and paramDesc !=''">
+        and p.param_desc like CONCAT ('%', #{paramDesc}, '%')
+    </if>
+    <if test="paramType != null and paramType !=''">
+        and p.param_type = #{paramType}
+    </if>
+    <if test="createTimeStart != null">
+        and p.create_time &gt;= #{createTimeStart}
+    </if>
+    <if test="createTimeEnd != null">
+        and p.create_time &lt;= #{createTimeEnd}
+    </if>
+    <if test="updateTimeStart != null">
+        and p.last_update_time &gt;= #{updateTimeStart}
+    </if>
+    <if test="updateTimeEnd != null">
+        and p.last_update_time &lt;= #{updateTimeEnd}
+    </if>
+    <if test="paramCodeArr != null and paramCodeArr != ''">
+        and p.param_code in (
+        <foreach collection="paramCodeArr.split(',')" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </if>
+</select>
+	<select id="queryOpsParamById" parameterType="java.lang.Long" resultMap="opsParam">
+		select p.param_id,
+		        p.param_code,
+		        p.param_name,
+		        p.param_type,
+		        p.param_desc,
+		        p.param_default_value,
+                p.length,
+		        t.param_type t_param_type,
+				t.param_type_label t_param_type_label, 
+				t.auto_popup_flag t_auto_popup_flag, 
+				t.param_type_desc t_param_type_desc,gr.object_id,
+        gr.object_type, gr.group_relation_id, gr.group_id,g.group_name
+		   from ops_param p inner join ops_param_type t on t.param_type = p.param_type
+            left join ops_group_relation gr on p.param_id = gr.object_id and gr.object_type = 'param'
+            left join ops_group g on g.group_id = gr.group_id
+          where p.param_id = #{paramId}
+	</select>
+	
+	<select id="queryOpsParamByCode" parameterType="java.lang.String" resultMap="opsParam">
+		select p.param_id,
+		        p.param_code,
+		        p.param_name,
+		        p.param_type,
+		        p.param_desc,
+		        p.param_default_value, 
+		        t.param_type t_param_type,
+				t.param_type_label t_param_type_label, 
+				t.auto_popup_flag t_auto_popup_flag, 
+				t.param_type_desc t_param_type_desc
+		   from ops_param p inner join ops_param_type t on t.param_type = p.param_type
+          where p.param_code = #{paramCode}
+	</select>
+	
+    <insert id="insertOpsParam" useGeneratedKeys="true" keyColumn="param_id" keyProperty="paramId" 
+    		parameterType="com.aspire.mirror.ops.api.domain.OpsParam">
+    	insert into ops_param
+    	(   param_code, 
+			param_name, 
+			param_desc, 
+			param_type, 
+			length, 
+			param_default_value,
+			create_time,
+			last_update_time
+    	) values (
+    		#{paramCode},
+    		#{paramName},
+    		#{paramDesc},
+    		#{paramType},
+    		#{length},
+    		#{paramDefaultValue},
+    		#{createTime},
+    		#{lastUpdateTime}
+    	)
+    </insert>
+    
+    <update id="updateOpsParam" parameterType="com.aspire.mirror.ops.api.domain.OpsParam">
+    	update ops_param 
+    	   set last_update_time = #{lastUpdateTime}
+    	    <if test="paramCode != null and paramCode != ''">
+	            , param_code = #{paramCode}
+	        </if>   
+			<if test="paramName != null and paramName != ''">
+	            , param_name = #{paramName}
+	        </if>
+	        <if test="paramDesc != null and paramDesc != ''">
+	            , param_desc = #{paramDesc}
+	        </if>
+	        <if test="paramType != null and paramType != ''">
+	            , param_type = #{paramType}
+	        </if>
+	        <if test="length != null">
+	            , length = #{length}
+	        </if>
+	        <if test="paramDefaultValue != null and paramDefaultValue != ''">
+	            , param_default_value = #{paramDefaultValue}
+	        </if>
+	    where param_id = #{paramId}  
+    </update>
+    
+    <select id="queryOpsParamReferCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    	select count(r.param_id) 
+    	  from ops_param_reference r
+		 where exists (select 1 from ops_param p where p.param_id = r.param_id and r.param_id = #{paramId})
+    </select>
+    
+    <delete id="deleteOpsParamById" parameterType="java.lang.Long">
+    	delete from ops_param where param_id = #{paramId}
+    </delete>
+    
+    <select id="queryReferParamListByEntityId" parameterType="java.lang.Long" resultMap="opsParamRefer">
+    	 select m.entity_id, 
+		        m.entity_param_code, 
+		        m.param_id, 
+		        m.param_value,
+		        r.param_id r_param_id,
+				r.param_code r_param_code,
+				r.param_name r_param_name,
+				r.param_type r_param_type,
+				r.param_desc r_param_desc,
+				r.param_default_value r_param_default_value, 
+				t.param_type t_param_type,
+				t.param_type_label t_param_type_label, 
+				t.auto_popup_flag t_auto_popup_flag, 
+				t.param_type_desc t_param_type_desc
+		   from ops_param_reference m, 
+			    ops_param r, 
+			    ops_param_type t 
+		  where m.param_id = r.param_id 
+		    and r.param_type = t.param_type
+		    and m.entity_id = #{entityId}
+    </select>
+    
+    <delete id="cleanEntityParamRefers" parameterType="java.lang.Long">
+    	delete from ops_param_reference where entity_id = #{entityId}
+    </delete>
+    
+    <insert id="insertEntityParamRefer" parameterType="com.aspire.mirror.ops.api.domain.OpsParamReference">
+    	insert into ops_param_reference (
+    		entity_id, 
+			entity_param_code, 
+			param_id, 
+			param_value,
+			last_update_time
+    	) values (
+    		#{entityId},
+    		#{entityParamCode}, 
+    		#{paramId}, 
+    		#{paramValue},
+    		#{lastUpdateTime}
+    	) 
+    </insert> 
+    
+    <insert id="batchInsertParamValue" parameterType="com.aspire.mirror.ops.api.domain.OpsParamValue">
+      insert into ops_param_value (
+		param_code,
+		param_value,
+		step_instance_id,
+		pipeline_instance_id,
+		is_valid,
+		agent_ip,
+        old_param_value,
+        device_user_name
+		) values
+        <foreach collection="list" item="item"  index="index" separator=",">
+        (
+        #{item.paramCode},
+        #{item.paramValue},
+        #{item.stepInstanceId},
+        #{item.pipelineInstanceId},
+        #{item.isValid},
+        #{item.agentIp},
+        #{item.oldParamValue},
+        #{item.deviceUserName}
+        )
+        </foreach>
+    </insert>
+    <update id="updateValidByHostAndStepInstId" parameterType="com.aspire.mirror.ops.api.domain.OpsParamValue">
+        update ops_param_value set is_valid=#{isValid} where step_instance_id=#{stepInstanceId} and agent_ip=#{agentIp}
+    </update>
+    <select id="queryParamValueList" parameterType="com.aspire.mirror.ops.api.domain.OpsParamValue" resultType="com.aspire.mirror.ops.api.domain.OpsParamValueDetail">
+        select
+        opv.param_code paramCode,
+        opv.param_value paramValue,
+        opv.step_instance_id stepInstanceId,
+        opv.pipeline_instance_id pipelineInstanceId,
+        opv.is_valid isValid,
+        opv.old_param_value oldParamValue,
+        opv.agent_ip agentIp,
+        SUBSTRING_INDEX(opv.agent_ip,':',-1) ip,
+        opi.name pipelineName,
+        opi.end_time updateTime,
+        opi.operator operator,
+        (select name from ops_step_instance where step_instance_id=opv.step_instance_id) stepName,
+        (select param_name from ops_param where param_code = opv.param_code) paramName,
+        (select script_param from ops_step_instance where step_instance_id=opv.step_instance_id) scriptParam,
+        (select target_ops_user from ops_step_instance where step_instance_id=opv.step_instance_id) targetOpsUser,
+        (select pool from ops_spectre_proxy where id = SUBSTRING_INDEX(agent_ip,':',1)) pool
+        from ops_param_value  opv
+        left join ops_pipeline_instance opi on opi.pipeline_instance_id = opv.pipeline_instance_id
+        where 1=1
+        <if test="isExportEffective != null and isExportEffective">
+            and opv.param_value_id in (select max(param_value_id) from ops_param_value where is_valid = 1 group by agent_ip, device_user_name)
+        </if>
+        <if test="agentIpList != null and agentIpList.size() > 0">
+            and opv.agent_ip in
+            <foreach item="item" index="index" collection="agentIpList"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="paramCode != null and paramCode !=''">
+            and opv.param_code = #{paramCode}
+        </if>
+        <if test="stepInstanceId != null">
+            and opv.step_instance_id = #{stepInstanceId}
+        </if>
+        <if test="pipelineInstanceId != null">
+            and opv.pipeline_instance_id = #{pipelineInstanceId}
+        </if>
+        <if test="isValid != null and isValid !=''">
+            and opv.is_valid = #{isValid}
+        </if>
+        <if test="agentIp != null and agentIp !=''">
+            and opv.agent_ip = #{agentIp}
+        </if>
+        order by opv.agent_ip, opv.device_user_name
+    </select>
+    <select id="queryLastValidParamValueByIpAndPipelineIdAndParam" resultType="com.aspire.mirror.ops.api.domain.OpsParamValue">
+        SELECT
+        opv.param_code paramCode,
+        opv.param_value paramValue,
+        opv.step_instance_id stepInstanceId,
+        opv.pipeline_instance_id pipelineInstanceId,
+        opv.is_valid isValid,
+        opv.device_user_name deviceUserName
+        FROM ops_param_value opv
+        left join ops_step_instance osi on osi.step_instance_id = opv.step_instance_id
+        WHERE opv.pipeline_instance_id IN (
+        SELECT pipeline_instance_id
+        FROM ops_pipeline_instance
+        WHERE pipeline_id = #{pipelineId})  AND opv.is_valid = 1 and opv.agent_ip=#{agentIp} and osi.script_param=#{scriptParam}  order by opv.param_value_id desc limit 1
+    </select>
+    <update id="auditPipeline" >
+        update ops_pipeline set audit_status = #{auditStatus} , audit_desc = #{auditDesc}, reviewer = #{reviewer}, review_time = #{reviewTime} where pipeline_id = #{pipelineId}
+    </update>
+    <update id="auditScript" >
+        update ops_script set audit_status = #{auditStatus} , audit_desc = #{auditDesc}, reviewer = #{reviewer}, review_time = #{reviewTime} where script_id = #{scriptId}
+    </update>
+    <select id="queryUsernameListByAgentIp" resultType="java.lang.String">
+        select distinct device_user_name from ops_param_value where agent_ip = #{agentIp}
+    </select>
+</mapper>
+

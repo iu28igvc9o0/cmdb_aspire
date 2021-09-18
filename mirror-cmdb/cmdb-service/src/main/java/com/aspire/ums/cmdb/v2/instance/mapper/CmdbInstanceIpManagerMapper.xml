@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.instance.mapper.CmdbInstanceIpManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager" >
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="ip_type" property="ipType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `instance_id`,
+        `code_id`,
+        `ip`,
+        `ip_type`
+        FROM cmdb_instance_ip_manager
+    </select>
+
+    <select id="getAllIpManagerList" resultType="java.util.HashMap">
+        SELECT
+        CONCAT(`instance_id`, '_', `ip`) as id,
+        `instance_id`,
+        `code_id`,
+        `ip`,
+        `ip_type`
+        FROM cmdb_instance_ip_manager
+        where 1=1
+        <if test="instanceId != null and instanceId != ''">
+            and `instance_id` = #{instanceId}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager">
+        SELECT
+        `instance_id`,
+        `code_id`,
+        `ip`,
+        `ip_type`
+        FROM cmdb_instance_ip_manager
+        WHERE 1=1
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="ip != null and ip != ''">
+        AND `ip` = #{ip}
+        </if>
+        <if test="ipType != null and ipType != ''">
+        AND `ip_type` = #{ipType}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager" resultMap="resultMap">
+        SELECT
+        `instance_id`,
+        `code_id`,
+        `ip`,
+        `ip_type`
+        FROM cmdb_instance_ip_manager
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager">
+        INSERT INTO cmdb_instance_ip_manager
+        (
+            `instance_id`,
+            `code_id`,
+            `ip`,
+            `ip_type`
+        ) VALUES (
+            #{instanceId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{ip, jdbcType=VARCHAR},
+            #{ipType, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager">
+        INSERT INTO cmdb_instance_ip_manager (`instance_id`,`code_id`,`ip`,`ip_type`) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+          #{item.instanceId, jdbcType=VARCHAR},
+          #{item.codeId, jdbcType=VARCHAR},
+          #{item.ip, jdbcType=VARCHAR},
+          #{item.ipType, jdbcType=VARCHAR}
+        )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        ip = VALUES(ip),ip_type = VALUES(ip_type)
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager">
+        UPDATE cmdb_instance_ip_manager SET
+        `ip` = #{ip},
+        `ip_type` = #{ipType}
+        WHERE
+            `instance_id` = #{item.instanceId}
+          AND
+            `code_id` = #{item.codeId};
+    </update>
+
+    <!-- 修改记录 -->
+    <update id="updateByBatch" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager">
+        <foreach collection="list" item="item">
+            UPDATE cmdb_instance_ip_manager SET
+            `ip` = #{item.ip},
+            `ip_type` = #{item.ipType}
+            WHERE
+            `instance_id` = #{item.instanceId}
+                  AND
+            `code_id` = #{item.codeId};
+        </foreach>
+
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceIpManager">
+        DELETE FROM cmdb_instance_ip_manager
+        WHERE
+            `instance_id` = #{instanceId}
+        <if test="codeId != null and codeId != ''">
+            AND
+            `code_id` = #{codeId};
+        </if>
+    </delete>
+</mapper>

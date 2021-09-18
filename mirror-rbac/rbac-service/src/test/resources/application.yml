@@ -1,0 +1,78 @@
+server:
+  port: 28199
+
+spring: #配置mvc,resource用来处理请求404抛出NoHandlerFoundException异常
+  mvc: 
+    throw-exception-if-no-handler-found: true #当出现404错误时,是否直接抛出异常
+  resources:  
+    add-mappings: false #是否开启默认的资源处理
+    
+  redis:
+    expiration: 3600 #设置缓存到期时间,单位秒
+    usable: false #是否使用缓存
+    redisKeyPrefixPermission: rbac-service-permission #用户权限缓存KEY前缀
+    redisKeyPrefixResourceSchemaHash: rbac-service-resource-schema-hash #资源模式Hash缓存KEY前缀
+    redisKeyPrefixResourceSchemaList: rbac-service-resource-schema-list #资源模式List缓存KEY前缀
+    redisKeySplit: "~" #缓存KEY分割标识
+    password: 
+    database: 0
+    timeout: 100000 #客户端超时时间：单位是毫秒
+    pool: 
+      max-active: 50 #最大连接数：能够同时建立的“最大链接个数”
+      max-idle: 20 #最大空闲数：空闲链接数大于maxIdle时，将进行回收
+      min-idle: 5 #最小空闲数
+      max-wait: 1000 #最大等待时间：单位ms
+    #单节点方式
+    host: localhost
+    port: 6379
+    #集群方式
+#    cluster: 
+#      max-redirects: 3
+#      nodes:
+#      - 172.30.150.26:6381
+#      - 172.30.150.32:7381
+#      - 172.30.150.35:7381
+            
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      
+druid:
+  #h2缓存数据库;兼容MySQL数据库;初始化SQL脚本
+  url: jdbc:h2:mem:test;MODE=MySQL;INIT=RUNSCRIPT FROM 'classpath:db/init_table_architect.sql'\;RUNSCRIPT FROM 'classpath:db/init_table_rbac.sql'\;RUNSCRIPT FROM 'classpath:db/init_data_rbac.sql'
+  username: sa
+  password: sa
+  useUnicode: true
+  characterEncoding: UTF8
+  useSSL: false
+  
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*/*Mapper.xml
+  type-aliases-package: 
+     org.springboot.sample.entity
+  
+logging:
+  level: 
+    org.springframework.web.servlet.DispatcherServlet: debug
+    com.migu.tsg.microservice.atomicservice: debug #输出rbac-service日志
+    tk.mybatis.mapper.common.base.select: debug #输出mybatis select SQL
+    tk.mybatis.mapper.common.base.update: debug #输出mybatis update SQL
+    tk.mybatis.mapper.common.base.insert: debug #输出mybatis insert SQL
+    tk.mybatis.mapper.common.base.delete: debug #输出mybatis delete SQL
+  file: rbacService.log ##日志文件,绝对路径或相对路径
+  
+# 解决第一次请求报超时异常的方案：
+# hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 5000
+# 或者：
+hystrix.command.default.execution.timeout.enabled: false
+# 或者：
+#feign.hystrix.enabled: false ## 索性禁用feign的hystrix
+  

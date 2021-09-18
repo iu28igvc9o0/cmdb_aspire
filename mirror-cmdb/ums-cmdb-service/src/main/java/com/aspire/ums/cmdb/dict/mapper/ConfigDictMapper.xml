@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.dict.mapper.ConfigDictMapper" >
+
+    <sql id="baseWhereClause">
+        <where>
+            cd1.delete_flag=0
+            <if test="dictCode != null and dictCode != ''">
+              and dict_code like '%${dictCode}%'
+            </if>
+            <if test="dictNote != null and dictNote != ''">
+              and dict_note like '%${dictNote}%'
+            </if>
+            <if test="colName != null and colName != ''">
+              and col_name like '%${colName}%'
+            </if>
+            <if test="pcode != null and pcode != ''">
+                and exists (select 1 from t_cfg_dict cd2 where cd2.dict_id=cd1.up_dict and cd2.dict_code like '%${pcode}%')
+            </if>
+        </where>
+    </sql>
+
+    <sql id="baseColumnList">
+        dict_id,dict_code,dict_note,col_name,up_dict,description,create_date,update_date
+    </sql>
+
+    <resultMap id="dict" type="com.aspire.ums.cmdb.dict.entity.Dict">
+        <result column="dict_id" property="dictId" />
+        <result column="dict_code" property="dictCode" />
+        <result column="dict_note" property="dictNote" />
+        <result column="col_name" property="colName" />
+        <result column="up_dict" property="upDict" />
+        <result column="pname" property="pname" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <resultMap id="configDict" type="com.aspire.ums.cmdb.dict.entity.ConfigDict">
+        <result column="dict_id" property="id" />
+        <result column="dict_code" property="name" />
+        <result column="dict_note" property="value" />
+        <result column="col_name" property="type" />
+        <result column="up_dict" property="pid" />
+        <result column="pname" property="pname" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <insert id="insertAddLog" parameterType="java.lang.String">
+        INSERT into t_cfg_dict_log SELECT t.* from (select d.*,'新增' action from t_cfg_dict d where d.dict_id=#{id}) t
+    </insert>
+    <insert id="insertEditLog">
+        INSERT into t_cfg_dict_log SELECT t.* from (select d.*,'编辑' action from t_cfg_dict d where d.dict_id=#{id}) t
+    </insert>
+    <insert id="insertDeleteLog">
+        INSERT into t_cfg_dict_log SELECT t.* from (select d.*,'删除' action from t_cfg_dict d where d.dict_id in ${id}) t
+    </insert>
+
+    <select id="getConfigDictDataCount"
+            parameterType="com.aspire.ums.cmdb.dict.entity.DictListReq"
+            resultType="java.lang.Integer">
+        select count(1) from t_cfg_dict cd1
+        <include refid="baseWhereClause"></include>
+    </select>
+    <select id="getConfigDictData"
+            parameterType="com.aspire.ums.cmdb.dict.entity.DictListReq"
+            resultMap="dict">
+        select <include refid="baseColumnList" /> ,(SELECT dict_code from  t_cfg_dict cd2 where cd2.dict_id=cd1.up_dict) pname from t_cfg_dict cd1 <include refid="baseWhereClause"></include>
+        <if test="startPageNum !=-1" >
+            LIMIT #{startPageNum},#{pageSize}
+        </if>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="dictId" parameterType="com.aspire.ums.cmdb.dict.entity.Dict">
+        insert into t_cfg_dict(dict_id,dict_code,dict_note,col_name,up_dict,description,create_date,delete_flag)
+        values (#{dictId},#{dictCode},#{dictNote},#{colName},#{upDict},#{description},now(),0)
+    </insert>
+
+    <select id="getDictById" parameterType="java.lang.String" resultMap="dict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where dict_id=#{dictId}
+    </select>
+    <select id="getDictByIds" parameterType="java.util.List" resultMap="dict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where
+        dict_id  in (
+        <foreach collection="dictIds" item="item" index="index" separator=",">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+        )
+    </select>
+    <update id="updateByPrimaryKey">
+        update t_cfg_dict
+        <set>
+            <if test="dictCode != null">
+                dict_code=#{dictCode},
+            </if>
+            <if test="dictNote != null">
+                dict_note=#{dictNote},
+            </if>
+            <if test="colName != null">
+                col_name=#{colName},
+            </if>
+            <if test="upDict != null">
+                up_dict=#{upDict},
+            </if>
+            <if test="description != null">
+                description=#{description},
+            </if>
+            update_date=now()
+        </set>
+        where dict_id = #{dictId}
+    </update>
+
+    <update id="deleteByPrimaryKey">
+        update t_cfg_dict set delete_flag=1,update_date=now() where dict_id in ${dictId}
+    </update>
+
+    <select id="getDictAll" resultMap="dict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where delete_flag=0
+        <if test="dictId != null and dictId != ''">
+            and dict_id != #{dictId}
+        </if>
+
+    </select>
+
+    <select id="getDictByCode" parameterType="java.lang.String" resultMap="configDict">
+        select <include refid="baseColumnList" />,(SELECT dict_code from  t_cfg_dict cd2 where cd2.dict_id=cd1.up_dict) pname from t_cfg_dict cd1 where cd1.dict_code=#{code}
+    </select>
+
+    <select id="getDictExportData" resultType="java.util.Map">
+        select cd1.dict_code dictCode,cd1.dict_note dictNote,cd1.col_name colName,cd1.up_dict pid,cd1.description,(SELECT dict_code from  t_cfg_dict cd2 where cd2.dict_id=cd1.up_dict) pname from t_cfg_dict cd1
+        <include refid="baseWhereClause"></include>
+    </select>
+
+    <select id="selectDicts" resultMap="configDict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where col_name='rootModel'
+    </select>
+    <select id="selectDictsByType" parameterType="java.lang.String"
+            resultMap="configDict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where delete_flag=0 and col_name=#{colName}
+        <if test="pid != null and pid != ''">
+            and up_dict=#{pid}
+        </if>
+    </select>
+    <select id="selectDictsByTypeAndIds" resultMap="configDict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where delete_flag=0 and col_name=#{colName}
+        <if test="ids != null and ids.length > 0">
+            and dict_id in (
+            <foreach collection="ids" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+    <select id="selectDictsByUpDictAndIds" resultMap="configDict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where delete_flag=0 and up_dict=#{pid}
+        <if test="ids != null and ids.length > 0">
+            and dict_id in (
+            <foreach collection="ids" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+    <select id="selectDictsByUpDict"  parameterType="java.lang.Integer" resultMap="configDict">
+        select <include refid="baseColumnList" /> from t_cfg_dict where delete_flag=0 and up_dict=#{id}
+
+    </select>
+    <select id="selectDictDataByValue" resultMap="configDict" parameterType="java.lang.String">
+        select <include refid="baseColumnList"/> from t_cfg_dict  tcd
+        INNER JOIN (select distinct formValue from cmdb_instance_form_value a INNER JOIN
+        (select instanceId from cmdb_instance_form_value where formCode=#{pType} and formValue=#{pValue}) b on a.instanceId=b.instanceId
+        where a.formCode=#{type}) v ON v.formValue = tcd.dict_note
+    </select>
+
+    <select id="getDictType" resultType="java.lang.String">
+        select DISTINCT(col_name) type from t_cfg_dict ;
+    </select>
+</mapper>

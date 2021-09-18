@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsTransferDao">
+
+	    
+	<resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsTransfer" id="alertsTransferMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="alert_id" property="alertId" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="confirm_user_id" property="confirmUserId" jdbcType="VARCHAR" />
+		<result column="confirm_user_name" property="confirmUserName" jdbcType="VARCHAR" />
+		<result column="operation_time" property="operationTime" jdbcType="TIMESTAMP" />
+		 
+	 </resultMap>
+
+
+	 <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.alert.po.AlertsTransfer">
+	 
+	   INSERT INTO alert_transfer ( alert_id, user_name, confirm_user_name ) 
+	   values(
+		#{alertId,jdbcType=VARCHAR} ,
+		#{userName,jdbcType=VARCHAR} ,
+		#{confirmUserName,jdbcType=VARCHAR} 
+		)
+	   
+	</insert>
+	<select id="selectByAlertId" parameterType="String" resultMap="alertsTransferMap">
+		select
+		*
+		from alert_transfer t where alert_id = #{alertId}
+	</select>
+	  
+	 
+</mapper>
+
+
+ 

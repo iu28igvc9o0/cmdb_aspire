@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.DepartmentUserDao">
+    <insert id="insertBatch" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.DepartmentUser">
+        insert into department_user
+        (dept_id, user_id
+        )values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.deptId,jdbcType=VARCHAR} ,
+            #{item.userId,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <delete id="deleteByUserId" parameterType="java.lang.String">
+        delete from department_user where user_id = #{userId}
+    </delete>
+    <update id="modifyDeptIdBatchByUserIdArrays">
+      update department_user set dept_id = #{deptId} where
+        user_id in (
+        <foreach collection="userIdList" item="item" index="index" separator=",">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+        )
+    </update>
+    <delete id="deleteByUserIdArrays">
+        delete from department_user  where user_id in  (
+        <foreach collection="userIdList" item="item" index="index" separator=",">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+        )
+    </delete>
+</mapper>

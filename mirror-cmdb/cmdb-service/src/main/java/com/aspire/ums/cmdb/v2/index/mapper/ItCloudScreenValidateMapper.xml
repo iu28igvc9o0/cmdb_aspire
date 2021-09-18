@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenValidateMapper">
+
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.index.payload.ScreenValidate">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="systemTitleId" column="system_title_id" jdbcType="INTEGER"/>
+        <result property="validateType" column="validate_type" jdbcType="VARCHAR"/>
+        <result property="validateResult" column="validate_result" jdbcType="VARCHAR"/>
+        <result property="monthlyTime" column="monthly_time" jdbcType="VARCHAR"/>
+        <result property="insertTime" column="insert_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="base_sql">
+        id, system_title_id, validate_type, validate_result, monthly_time, insert_time, is_delete
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenValidate">
+        insert into screen_validate(<include refid="base_sql"/>)
+        values (
+          #{id, jdbcType=VARCHAR},
+          #{systemTitleId, jdbcType=INTEGER},
+          #{validateType, jdbcType=VARCHAR},
+          #{validateResult, jdbcType=VARCHAR},
+          #{monthlyTime, jdbcType=VARCHAR},
+          now(),
+          #{isDelete, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="listAll" resultMap="resultMap">
+        select *
+        from screen_validate
+        order by insert_time desc
+        limit 0,5
+    </select>
+
+    <select id="countListData" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenValidateRequest" resultType="int">
+        select count(*) count
+        from ${tableName}
+        where is_delete='0' <include refid="where_sql"/>
+    </select>
+
+    <select id="validateDataIsComplete" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenValidateRequest" resultType="java.util.HashMap">
+        SELECT
+            t.department1,t.department2,t.biz_system bizSystem,t.resource_pool resourcePool,t.pod,
+            t1.cpuMax,
+            t2.storeMax,
+            t3.cpuAvg,
+            t4.storeAvg
+        FROM (
+            SELECT department1, department2, biz_system, resource_pool, pod
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/>
+            GROUP BY department1, department2, biz_system, resource_pool, pod
+        ) t
+        LEFT JOIN (
+            SELECT department1, department2, biz_system, resource_pool, pod,count(*) cpuMax
+            FROM screen_max_utilization
+            where is_delete = '0' <include refid="where_sql"/> and hardware_type = 'CPU'
+            GROUP BY department1, department2, biz_system, resource_pool, pod
+        ) t1 ON (t.department1 = t1.department1 and t.department2 = t1.department2 and t.biz_system = t1.biz_system
+                        and t.resource_pool = t1.resource_pool and t.pod = t1.pod)
+        LEFT JOIN (
+            SELECT department1, department2, biz_system, resource_pool, pod,count(*) storeMax
+            FROM screen_max_utilization
+            where is_delete = '0' <include refid="where_sql"/> and hardware_type = '内存'
+            GROUP BY department1, department2, biz_system, resource_pool, pod
+        ) t2 ON (t.department1 = t2.department1 and t.department2 = t2.department2 and t.biz_system = t2.biz_system
+                        and t.resource_pool = t2.resource_pool and t.pod = t2.pod)
+        LEFT JOIN (
+            SELECT department1, department2, biz_system, resource_pool, pod,count(*) cpuAvg
+            FROM screen_avg_utilization
+            where is_delete = '0' <include refid="where_sql"/> and hardware_type = 'CPU'
+            GROUP BY department1, department2, biz_system, resource_pool, pod
+        ) t3 ON (t.department1 = t3.department1 and t.department2 = t3.department2 and t.biz_system = t3.biz_system
+                        and t.resource_pool = t3.resource_pool and t.pod = t3.pod)
+        LEFT JOIN (
+            SELECT department1, department2, biz_system, resource_pool, pod,count(*) storeAvg
+            FROM screen_avg_utilization
+            where is_delete = '0' <include refid="where_sql"/> and hardware_type = '内存'
+            GROUP BY department1, department2, biz_system, resource_pool, pod
+        ) t4 ON (t.department1 = t4.department1 and t.department2 = t4.department2 and t.biz_system = t4.biz_system
+                        and t.resource_pool = t4.resource_pool and t.pod = t4.pod)
+        WHERE (t1.cpuMax is not null or t2.storeMax is not null or t3.cpuAvg is not null or t4.storeAvg is not null)
+        and (t1.cpuMax is null or t2.storeMax is null or t3.cpuAvg is null or t4.storeAvg is null)
+    </select>
+
+    <select id="validateDataIsCorrect" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenValidateRequest" resultType="java.util.HashMap">
+        SELECT
+            t1.department1,
+            t1.department2,
+            t1.biz_system bizSystem,
+            t1.resource_pool resourcePool,
+            t1.pod
+        FROM(
+            SELECT department1,department2,biz_system,resource_pool,pod,max_utilization,statist_date
+            FROM screen_max_utilization
+            where is_delete = '0' <include refid="where_sql"/>
+        ) t1
+        LEFT JOIN (
+            SELECT department1,department2,biz_system,resource_pool,pod,avg_utilization,statist_date
+            FROM screen_avg_utilization
+            where is_delete = '0' <include refid="where_sql"/>
+        ) t2 ON (t1.department1 = t2.department1 and t1.department2 = t2.department2 and t1.biz_system = t2.biz_system
+                 and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod and t1.statist_date = t2.statist_date)
+        where t1.max_utilization+0 <![CDATA[ < ]]> t2.avg_utilization+0
+        GROUP BY t1.department1,t1.department2,t1.biz_system,t1.resource_pool,t1.pod
+    </select>
+
+    <sql id="where_sql">
+        <if test="monthlyTime != null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="hardwareType != null and hardwareType != ''">
+            and hardware_type = #{hardwareType}
+        </if>
+    </sql>
+</mapper>

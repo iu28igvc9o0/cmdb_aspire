@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipCollect.mapper.CmdbVipCollectMapper">
+    <resultMap id="vipConllectMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVipCollectEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="vip" property="vip" jdbcType="VARCHAR"/>
+        <result column="usetype" property="usetype" jdbcType="VARCHAR"/>
+        <result column="bindip" property="bindip" jdbcType="VARCHAR"/>
+        <result column="resource" property="resource" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="TIMESTAMP"/>
+        <result column="iplist" property="iplist" jdbcType="VARCHAR"/>
+        <result column="event_id" property="eventId" jdbcType="VARCHAR"/>
+        <result column="src_creator" property="srcCreator" jdbcType="VARCHAR"/>
+        <result column="src_create_time" property="srcCreateTime" jdbcType="TIMESTAMP"/>
+        <result column="src_opt_time" property="srcOptTime" jdbcType="TIMESTAMP"/>
+        <result column="src_pre_opt_time" property="srcPreOptTime" jdbcType="TIMESTAMP"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="findColumn">
+        `id`,
+        `instance_id`,
+        `vip`,
+        `usetype`,
+        `bindip`,
+        `resource`,
+        `time`,
+        `iplist`
+    </sql>
+    <sql id="commonColumn">
+        `id`,
+        `instance_id`,
+        `vip`,
+        `usetype`,
+        `bindip`,
+        `resource`,
+        `time`,
+        `iplist`,
+        `event_id`,
+        `src_creator`,
+        `src_create_time`,
+        `src_opt_time`,
+        `src_pre_opt_time`,
+        `version`,
+        `create_time`
+    </sql>
+
+    <sql id="queryWhere">
+        <where>
+            cvip.del_flag = '0'
+            <if test="id != null and id != ''">
+                and cvip.id = #{id}
+            </if>
+            <if test="instanceId != null and instanceId != ''">
+                and cvip.instance_id = #{instanceId}
+            </if>
+            <if test="vipList != null and vipList.size() > 0">
+                <choose>
+                    <when test="vipList.size() == 1">
+                        <foreach collection="vipList" item="vip" index="index">
+                            and cvip.vip like concat ('',#{vip},'%')
+                        </foreach>
+                    </when>
+                    <otherwise>
+                        and cvip.vip in
+                        <foreach collection="vipList" item="vip" index="index" open="(" separator="," close=")">
+                            #{vip}
+                        </foreach>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="usetype != null and usetype != ''">
+                and cvip.usetype = #{usetype}
+            </if>
+            <if test="bindip != null and bindip != ''">
+                and cvip.bindip like concat ('%', #{bindip},'%')
+            </if>
+            <if test="resource != null and resource != ''">
+                and cvip.resource = #{resource}
+            </if>
+            <if test="iplist != null and iplist != ''">
+                and cvip.iplist like concat ('%',#{iplist},'%')
+            </if>
+            <if test="startTime != null">
+                and cvip.`time` &gt; #{startTime}
+            </if>
+            <if test="endTime != null">
+                and cvip.`time` &lt; #{endTime}
+            </if>
+        </where>
+    </sql>
+
+    <insert id="add" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVipCollectEntity">
+        INSERT INTO `cmdb_vip_address_pool`
+        (<include refid="commonColumn"></include>)
+        VALUES
+        (
+        #{id},
+        #{instanceId},
+        #{usetype},
+        #{bindip},
+        #{resource},
+        #{time},
+        #{iplist},
+        #{eventId},
+        #{srcCreator},
+        #{srcCreateTime},
+        #{srcOptTime},
+        #{srcPreOptTime},
+        #{version},
+        NOW()
+        );
+    </insert>
+
+    <insert id="batchAdd" parameterType="list">
+        INSERT INTO `cmdb_vip_address_pool`
+        (<include refid="commonColumn"></include>)
+        VALUES
+        <foreach collection="entityList" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},
+            #{item.instanceId,jdbcType=VARCHAR},
+            #{item.vip,jdbcType=VARCHAR},
+            #{item.usetype,jdbcType=VARCHAR},
+            #{item.bindip,jdbcType=VARCHAR},
+            #{item.resource,jdbcType=VARCHAR},
+            #{item.time,jdbcType=TIMESTAMP},
+            #{item.iplist,jdbcType=VARCHAR},
+            #{item.eventId,jdbcType=VARCHAR},
+            #{item.srcCreator,jdbcType=VARCHAR},
+            #{item.srcCreateTime,jdbcType=TIMESTAMP},
+            #{item.srcOptTime,jdbcType=TIMESTAMP},
+            #{item.srcPreOptTime,jdbcType=TIMESTAMP},
+            #{item.version,jdbcType=INTEGER},
+            NOW()
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVipCollectEntity">
+        UPDATE `cmdb_vip_address_pool`
+        <set>
+            <if test="vip != null and vip != ''">
+                `vip` = #{vip},
+            </if>
+            <if test="usetype != null and usetype != ''">
+                `usetype` = #{usetype},
+            </if>
+            <if test="bindip != null and bindip != ''">
+                `bindip` = #{bindip},
+            </if>
+            <if test="resource != null and resource != ''">
+                `resource` = #{resource},
+            </if>
+            <if test="time != null">
+                `time` = #{time},
+            </if>
+            <if test="iplist != null and iplist != ''">
+                `iplist` = #{iplist},
+            </if>
+            <if test="eventId != null and eventId != ''">
+                `event_id` = #{eventId},
+            </if>
+            <if test="srcCreator != null and srcCreator != ''">
+                `src_creator` = #{srcCreator},
+            </if>
+            <if test="srcCreateTime != null">
+                `src_create_time` = #{srcCreateTime},
+            </if>
+            <if test="srcOptTime != null">
+                `src_opt_time` = #{srcOptTime},
+            </if>
+            <if test="srcPreOptTime != null">
+                `src_pre_opt_time` = #{srcPreOptTime},
+            </if>
+            <if test="version != null and version != ''">
+                `version` = #{version},
+            </if>
+        </set>
+        WHERE
+        `instance_id` = #{instanceId}
+    </update>
+
+    <!--    逻辑删除-->
+    <update id="deleteByInstanceId" parameterType="string">
+        update cmdb_vip_address_pool set del_flag = '1' where `instance_id` = #{instanceId}
+    </update>
+
+    <!--    物理删除-->
+    <delete id="batchDeleteByInstanceId2" parameterType="list">
+        delete from cmdb_vip_address_pool where del_flag = '1' and `instance_id` in
+        <foreach collection="instanceIdList" item="instanceId" index="index" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+    </delete>
+
+    <!--    逻辑删除-->
+    <update id="batchDeleteByInstanceId" parameterType="list">
+        update cmdb_vip_address_pool set del_flag = '1' where `instance_id` in
+        <foreach collection="instanceIdList" item="instanceId" index="index" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+    </update>
+
+    <update id="updateByInstanceId" parameterType="map">
+        UPDATE `cmdb_vip_address_pool`
+        <set>
+            <if test="_parameter.containsKey('vip')">
+                `vip` = #{vip},
+            </if>
+            <if test="_parameter.containsKey('usetype')">
+                `usetype` = #{usetype},
+            </if>
+            <if test="_parameter.containsKey('bindip')">
+                `bindip` = #{bindip},
+            </if>
+            <if test="_parameter.containsKey('resource')">
+                `resource` = #{resource},
+            </if>
+            <if test="_parameter.containsKey('time')">
+                `time` = #{time},
+            </if>
+            <if test="_parameter.containsKey('iplist')">
+                `iplist` = #{iplist},
+            </if>
+            <if test="_parameter.containsKey('eventId')">
+                `event_id` = #{eventId},
+            </if>
+            <if test="_parameter.containsKey('srcCreator')">
+                `src_creator` = #{srcCreator},
+            </if>
+            <if test="_parameter.containsKey('srcCreateTime')">
+                `src_create_time` = #{srcCreateTime},
+            </if>
+            <if test="_parameter.containsKey('srcOptTime')">
+                `src_opt_time` = #{srcOptTime},
+            </if>
+            <if test="_parameter.containsKey('srcPreOptTime')">
+                `src_pre_opt_time` = #{srcPreOptTime},
+            </if>
+            <if test="_parameter.containsKey('version')">
+                `version` = #{version},
+            </if>
+        </set>
+        WHERE
+        `instance_id` = #{instanceId}
+    </update>
+
+    <select id="findResourceList" resultType="string">
+        select resource from cmdb_vip_address_pool group by resource
+    </select>
+
+    <select id="findUseTypeList" resultType="string">
+        select usetype from cmdb_vip_address_pool GROUP BY usetype
+    </select>
+
+    <select id="findPage" resultMap="vipConllectMap"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVipCollectRequest">
+        select
+        <include refid="findColumn"/>
+        from
+        cmdb_vip_address_pool cvip
+        <include refid="queryWhere"/>
+        order by cvip.`time` desc
+        <if test="pageNo >= 0 and pageSize > 0">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="findPageCount" resultType="java.lang.Integer"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVipCollectRequest">
+        select
+        count(cvip.id) as total
+        from
+        cmdb_vip_address_pool cvip
+        <include refid="queryWhere"/>
+    </select>
+
+    <!--   查询所有instanceId -->
+    <select id="getAllInstanceId" resultType="java.lang.String">
+        select instance_id from cmdb_vip_address_pool where del_flag = '0'
+    </select>
+
+    <!--   根据instanceId集合查询-->
+    <select id="findByInstanceIdList" parameterType="list" resultMap="vipConllectMap">
+        SELECT
+        <include refid="commonColumn"/>
+        FROM
+        cmdb_vip_address_pool
+        <where>
+            del_flag = '0'
+            and instance_id in
+            <foreach collection="list" separator="," item="instanceId" open="(" close=")">
+                #{instanceId,jdbcType=VARCHAR}
+            </foreach>
+        </where>
+    </select>
+
+    <!--    查询所有vip-->
+    <select id="findAllVip" resultType="java.lang.String">
+        select vip from cmdb_vip_address_pool where del_flag = '0' group by vip
+    </select>
+
+</mapper>

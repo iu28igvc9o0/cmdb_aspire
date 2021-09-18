@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.report.mapper.ReportMapper">
+
+    <resultMap id="report" type="com.aspire.ums.cmdb.report.playload.Report">
+        <result property="bizSystem" column="bizSystem" jdbcType="VARCHAR"/>
+        <result property="bizSystemConcat" column="bizSystemConcat" jdbcType="VARCHAR"/>
+        <result property="department1" column="department1" jdbcType="VARCHAR"/>
+        <result property="department2" column="department2" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idcType" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="totalNum" column="totalNum" jdbcType="VARCHAR"/>
+        <result property="serverNum" column="serverNum" jdbcType="VARCHAR"/>
+        <result property="vmNum" column="vmNum" jdbcType="VARCHAR"/>
+        <result property="storageNum" column="storageNum" jdbcType="VARCHAR"/>
+        <result property="networkNum" column="networkNum" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="listReportByBizSystem" resultMap="report">
+        SELECT cbs.bizSystem,
+        CONCAT_WS('_',cbs.`business_concat`,cbs.business_concat_phone) bizSystemConcat, org1.orgName
+        department1,org2.orgName department2,idc.idc_name idcType,pod.pod_name, totalNum, serverNum, vmNum, storageNum,
+        networkNum
+        FROM (
+        SELECT bizSystem,department1,department2,idcType,pod_name,
+        SUM(server_count + storage_count + net_count) totalNum, SUM(server_count) serverNum,
+        SUM(vm_count) vmNum, SUM(storage_count) storageNum, SUM(net_count) networkNum
+        FROM (
+        SELECT bizSystem,department1,department2,idcType,pod_name,
+        CASE dict.dict_note WHEN '服务器' THEN 1 ELSE 0 END server_count,
+        CASE dict2.dict_note WHEN '虚拟机' THEN 1 ELSE 0 END vm_count,
+        CASE dict.dict_note WHEN '存储设备' THEN 1 ELSE 0 END storage_count,
+        (CASE WHEN dict.dict_note = '网络设备' AND dict4.dict_note = '是' THEN 2
+        WHEN dict.dict_note = '网络设备' AND IFNULL(dict4.dict_note,'否') = '否' THEN 1
+        ELSE 0 END ) net_count
+        FROM cmdb_instance cin
+        LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+        WHERE cin.is_delete = '0'
+        ) ci WHERE 1=1
+        <if test="bizSystem != null and bizSystem != ''">
+            and ci.bizSystem = #{bizSystem}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            and ci.idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''">
+            and ci.department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            and ci.department2 = #{department2}
+        </if>
+        GROUP BY ci.bizSystem,ci.department1,ci.department2,ci.idcType,ci.pod_name
+        ORDER BY ci.bizSystem IS NULL OR ci.bizSystem = '', ci.bizSystem,
+        ci.department1 IS NULL OR ci.department1 = '', ci.department1,
+        ci.department2 IS NULL OR ci.department2 = '', ci.department2
+        ) tm
+        LEFT JOIN `cmdb_business_system` cbs ON tm.bizSystem = cbs.`id` AND cbs.`is_delete`='0'
+        LEFT JOIN `cmdb_org_system` org1 ON tm.department1 = org1.`id` AND org1.`is_delete`='0'
+        LEFT JOIN `cmdb_org_system` org2 ON tm.department2 = org2.`id` AND org2.`is_delete`='0'
+        LEFT JOIN `cmdb_pod_manager` pod ON tm.pod_name = pod.`id` AND pod.`is_delete`='0'
+        LEFT JOIN `cmdb_idc_manager` idc ON tm.idcType = idc.`id` AND idc.`is_delete`='0'
+    </select>
+
+    <select id="exportReportByBizSystem" resultType="java.util.Map">
+        SELECT cbs.bizSystem,
+        CONCAT_WS('_',cbs.`business_concat`,cbs.business_concat_phone) bizSystemConcat, org1.orgName
+        department1,org2.orgName department2,idc.idc_name idcType,pod.pod_name, totalNum, serverNum, vmNum, storageNum,
+        networkNum
+        FROM (
+        SELECT bizSystem,department1,department2,idcType,pod_name,
+        SUM(server_count + storage_count + net_count) totalNum, SUM(server_count) serverNum,
+        SUM(vm_count) vmNum, SUM(storage_count) storageNum, SUM(net_count) networkNum
+        FROM (
+        SELECT bizSystem,department1,department2,idcType,pod_name,
+        CASE dict.dict_note WHEN '服务器' THEN 1 ELSE 0 END server_count,
+        CASE dict2.dict_note WHEN '虚拟机' THEN 1 ELSE 0 END vm_count,
+        CASE dict.dict_note WHEN '存储设备' THEN 1 ELSE 0 END storage_count,
+        (CASE WHEN dict.dict_note = '网络设备' AND dict4.dict_note = '是' THEN 2
+        WHEN dict.dict_note = '网络设备' AND IFNULL(dict4.dict_note,'否') = '否' THEN 1
+        ELSE 0 END ) net_count
+        FROM cmdb_instance cin
+        LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+        WHERE cin.is_delete = '0'
+        ) ci WHERE 1=1
+        <if test="bizSystem != null and bizSystem != ''">
+            and ci.bizSystem = #{bizSystem}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            and ci.idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''">
+            and ci.department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            and ci.department2 = #{department2}
+        </if>
+        GROUP BY ci.bizSystem,ci.department1,ci.department2,ci.idcType,ci.pod_name
+        ORDER BY ci.bizSystem IS NULL OR ci.bizSystem = '', ci.bizSystem,
+        ci.department1 IS NULL OR ci.department1 = '', ci.department1,
+        ci.department2 IS NULL OR ci.department2 = '', ci.department2
+        ) tm
+        LEFT JOIN `cmdb_business_system` cbs ON tm.bizSystem = cbs.`id` AND cbs.`is_delete`='0'
+        LEFT JOIN `cmdb_org_system` org1 ON tm.department1 = org1.`id` AND org1.`is_delete`='0'
+        LEFT JOIN `cmdb_org_system` org2 ON tm.department2 = org2.`id` AND org2.`is_delete`='0'
+        LEFT JOIN `cmdb_pod_manager` pod ON tm.pod_name = pod.`id` AND pod.`is_delete`='0'
+        LEFT JOIN `cmdb_idc_manager` idc ON tm.idcType = idc.`id` AND idc.`is_delete`='0'
+    </select>
+
+    <select id="listReportByDepartment" resultMap="report">
+        SELECT department1,department2,idcType,pod_name, totalNum, serverNum, vmNum, storageNum, networkNum
+        FROM (
+        SELECT org1.`orgName` department1,org2.`orgName` department2,idc.`idc_name` idcType,pod.`pod_name` pod_name,
+        SUM(server_count + storage_count + net_count) totalNum, SUM(server_count) serverNum,
+        SUM(vm_count) vmNum, SUM(storage_count) storageNum, SUM(net_count) networkNum
+        FROM (
+        SELECT department1,department2,idcType,pod_name,
+        CASE dict.dict_note WHEN '服务器' THEN 1 ELSE 0 END server_count,
+        CASE dict2.dict_note WHEN '虚拟机' THEN 1 ELSE 0 END vm_count,
+        CASE dict.dict_note WHEN '存储设备' THEN 1 ELSE 0 END storage_count,
+        (CASE WHEN dict.dict_note = '网络设备' AND dict4.dict_note = '是' THEN 2
+        WHEN dict.dict_note = '网络设备' AND IFNULL(dict4.dict_note,'否') = '否' THEN 1
+        ELSE 0 END ) net_count
+        FROM cmdb_instance cin
+        LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+        WHERE cin.is_delete = '0'
+        ) ci
+
+        LEFT JOIN cmdb_idc_manager idc ON (ci.idcType = idc.id AND idc.is_delete = '0')
+        LEFT JOIN `cmdb_org_system` org1 ON ci.department1 = org1.`id` AND org1.`is_delete`='0'
+        LEFT JOIN `cmdb_org_system` org2 ON ci.department2 = org2.`id` AND org2.`is_delete`='0'
+        LEFT JOIN `cmdb_pod_manager` pod ON ci.pod_name = pod.`id` AND pod.`is_delete`='0'
+        WHERE 1=1
+        <if test="idcType != null and idcType != ''">
+            and ci.idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''">
+            and ci.department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            and ci.department2 = #{department2}
+        </if>
+        GROUP BY ci.department1,ci.department2,ci.idcType,idc.sort_index,ci.pod_name
+        ORDER BY ci.department1 IS NULL OR ci.department1 = '',ci. department1,
+        ci. department2 IS NULL OR ci.department2 = '', ci.department2,
+        ci.idcType IS NULL OR ci.idcType = '', idc.sort_index
+        )tm
+    </select>
+
+    <select id="exportReportByDepartment" resultType="java.util.Map">
+        SELECT department1,department2,idc.idc_name idcType,pod_name, totalNum, serverNum, vmNum, storageNum, networkNum
+        FROM (
+        SELECT org1.`orgName` department1,org2.`orgName` department2,idc.`idc_name` idcType,pod.`pod_name` pod_name,
+        SUM(server_count + storage_count + net_count) totalNum, SUM(server_count) serverNum,
+        SUM(vm_count) vmNum, SUM(storage_count) storageNum, SUM(net_count) networkNum
+        FROM (
+        SELECT department1,department2,idcType,pod_name,
+        CASE dict.dict_note WHEN '服务器' THEN 1 ELSE 0 END server_count,
+        CASE dict2.dict_note WHEN '虚拟机' THEN 1 ELSE 0 END vm_count,
+        CASE dict.dict_note WHEN '存储设备' THEN 1 ELSE 0 END storage_count,
+        (CASE WHEN dict.dict_note = '网络设备' AND dict4.dict_note = '是' THEN 2
+        WHEN dict.dict_note = '网络设备' AND IFNULL(dict4.dict_note,'否') = '否' THEN 1
+        ELSE 0 END ) net_count
+        FROM cmdb_instance cin
+        LEFT JOIN t_cfg_dict dict ON (cin.device_class = dict.id AND dict.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict2 ON (cin.device_type = dict2.id AND dict2.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict3 ON (cin.device_class_3 = dict3.id AND dict3.is_delete = '0' )
+        LEFT JOIN t_cfg_dict dict4 ON (cin.is_stack = dict4.id AND dict4.is_delete = '0' )
+        WHERE cin.is_delete = '0'
+        ) ci
+
+        LEFT JOIN cmdb_idc_manager idc ON (ci.idcType = idc.idc_name AND idc.is_delete = '0')
+        LEFT JOIN `cmdb_org_system` org1 ON ci.department1 = org1.`id` AND org1.`is_delete`='0'
+        LEFT JOIN `cmdb_org_system` org2 ON ci.department2 = org2.`id` AND org2.`is_delete`='0'
+        LEFT JOIN `cmdb_pod_manager` pod ON ci.pod_name = pod.`id` AND pod.`is_delete`='0'
+        WHERE 1=1
+        <if test="idcType != null and idcType != ''">
+            and ci.idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''">
+            and ci.department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            and ci.department2 = #{department2}
+        </if>
+        GROUP BY ci.department1,ci.department2,ci.idcType,idc.sort_index,ci.pod_name
+        ORDER BY ci.department1 IS NULL OR ci.department1 = '',ci. department1,
+        ci. department2 IS NULL OR ci.department2 = '', ci.department2,
+        ci.idcType IS NULL OR ci.idcType = '', idc.sort_index
+        )tm
+    </select>
+</mapper>

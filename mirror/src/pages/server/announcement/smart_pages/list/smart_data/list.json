@@ -1,0 +1,1254 @@
+{
+    "list": [
+      {
+        "type": "form",
+        "label": "表单容器",
+        "columnName": "form_fault",
+        "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+        "width": "100%",
+        "list": [
+          {
+            "type": "input",
+            "label": "故障上报人",
+            "columnName": "reporter",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请输入",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "clearableStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "person"
+          },
+          {
+            "type": "input",
+            "label": "报告提交人",
+            "columnName": "submitter",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请输入",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "clearableStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "input_1604629962887"
+          },
+          {
+            "label": "故障开始时间",
+            "type": "datePicker",
+            "columnName": "startTime",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "asideIcon": "iconfont iconriqi",
+            "customLabelWidth": false,
+            "required": false,
+            "rules": [],
+            "classify": "form",
+            "class": "",
+            "aspProps": {
+              "dateRange": 0
+            },
+            "props": {
+              "type": "datetime",
+              "placeholder": "请选择",
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "value-format": "yyyy-MM-dd HH:mm:ss",
+              "range-separator": "至",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": true,
+              "picker-options": {},
+              "clearableStatus": []
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "datePicker_1604630161737"
+          },
+          {
+            "label": "故障结束时间",
+            "type": "datePicker",
+            "columnName": "endTime",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "asideIcon": "iconfont iconriqi",
+            "customLabelWidth": false,
+            "required": false,
+            "rules": [],
+            "classify": "form",
+            "class": "",
+            "aspProps": {
+              "dateRange": 0
+            },
+            "props": {
+              "type": "datetime",
+              "placeholder": "请选择",
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "value-format": "yyyy-MM-dd HH:mm:ss",
+              "range-separator": "至",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": true,
+              "picker-options": {},
+              "clearableStatus": []
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "datePicker_1604630242032"
+          },
+          {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1604630310152",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+              {
+                "type": "button",
+                "label": "查询",
+                "columnName": "btn-form-search",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "eventName": "",
+                "dialogConfig": {
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "type": "primary",
+                  "icon": "el-icon-search"
+                },
+                "class": "mleft10",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "oldColumnName": "button_1604630314689",
+                "event": "submit"
+              },
+              {
+                "type": "button",
+                "label": "重置",
+                "columnName": "btn-form-reset",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "eventName": "",
+                "dialogConfig": {
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {},
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "oldColumnName": "button_1604630332235",
+                "event": "reset-submit"
+              }
+            ],
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          }
+        ],
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "button-group",
+        "label": "按钮容器",
+        "columnName": "button-group_form_fault",
+        "asideIcon": "iconfont iconanniuzu",
+        "width": "100%",
+        "list": [
+          {
+            "type": "button",
+            "label": "故障数据编辑",
+            "columnName": "btn-table-data-edit",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1604630454172"
+          },
+          {
+            "type": "button",
+            "label": "后续计划说明编辑",
+            "columnName": "btn-table-plan-edit",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1604630496655"
+          },
+          {
+            "type": "button",
+            "label": "数据导出",
+            "columnName": "btn-table-data-export",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "btn-table-export",
+            "event": "export"
+          },
+          {
+            "type": "button",
+            "label": "报告导出",
+            "columnName": "btn-table-report-export",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1604630509836",
+            "event": "export"
+          },
+          {
+            "type": "button",
+            "label": "数据导入",
+            "columnName": "btn-table-data-import",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1604630511332"
+          },
+          {
+            "label": "自定义组件",
+            "type": "customArea",
+            "columnName": "btn-table-column",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont iconquyu",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "slotName": "btn-table-column",
+            "props": {
+              "placeholder": ""
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "customArea_1604631225030"
+          }
+        ],
+        "classify": "layout",
+        "hidden": false,
+        "hasParentForm": true
+      },
+      {
+        "type": "table",
+        "label": "表格",
+        "columnName": "table_fault",
+        "asideIcon": "iconfont icondashujukeshihuaico-",
+        "width": "100%",
+        "classify": "layout",
+        "show-index": false,
+        "indexFixed": true,
+        "show-single-selection": false,
+        "singleSelectionFixed": true,
+        "show-multiple-selection": true,
+        "multipleSelectionFixed": true,
+        "cacheMultipleSelection": false,
+        "multipleSelectionColumnName": [],
+        "show-operation": false,
+        "operationFixed": true,
+        "show-pagination": true,
+        "defaultSelectAll": false,
+        "defaultSort": {
+          "prop": "",
+          "order": "",
+          "ascending": "asc",
+          "descending": "desc"
+        },
+        "props": {
+          "border": true,
+          "stripe": true,
+          "highlight-current-row": false,
+          "show-header": true,
+          "default-sort": ""
+        },
+        "btnGroupDynamic": [],
+        "list": [
+          {
+            "label": "内置可编辑参数",
+            "columnName": "$asp_isEdit",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": false,
+            "tooltip": true,
+            "$_isBuiltInParams": true
+          },
+          {
+            "label": "故障上报",
+            "columnName": "columnName_1604887826600",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "故障ID",
+                "columnName": "columnName_1604903211439",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人姓名",
+                "columnName": "columnName_1604903229145",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人电话",
+                "columnName": "columnName_1604903249760",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人邮箱",
+                "columnName": "columnName_1604903264472",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人业务组",
+                "columnName": "columnName_1604903272079",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报时间",
+                "columnName": "columnName_1604903306934",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障发生时间",
+                "columnName": "columnName_1604903313495",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报及时",
+                "columnName": "columnName_1604903318957",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "资源池",
+                "columnName": "columnName_1604903325475",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报工单ID",
+                "columnName": "columnName_1604903331589",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报内容简述",
+                "columnName": "columnName_1604903339534",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "接收报障时间",
+                "columnName": "columnName_1604903345496",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "故障报告",
+            "columnName": "columnName_1604903356511",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "故障报告名称",
+                "columnName": "columnName_1604903368340",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "报告编写人",
+                "columnName": "columnName_1604903384158",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "编写人电话",
+                "columnName": "columnName_1604903389979",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "编写人邮箱",
+                "columnName": "columnName_1604903419086",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "编写人业务组",
+                "columnName": "columnName_1604903439580",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "全网ID",
+                "columnName": "columnName_1604903445184",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "工单ID",
+                "columnName": "columnName_1604903448275",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "事件单下发时间",
+                "columnName": "columnName_1604903454140",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "事件单要求完成时间",
+                "columnName": "columnName_1604903459280",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "实际提交故障报告时间",
+                "columnName": "columnName_1604903465643",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障上报及时性",
+                "columnName": "columnName_1604903474520",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "平台恢复时间",
+                "columnName": "columnName_1604903486176",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "平台故障持续时长",
+                "columnName": "columnName_1604903494692",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "业务恢复时间",
+                "columnName": "columnName_1604903500665",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "影响业务系统数量",
+                "columnName": "columnName_1604903506292",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障影响描述",
+                "columnName": "columnName_1604903511677",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障分类",
+                "columnName": "columnName_1604903517251",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障原因描述",
+                "columnName": "columnName_1604903522800",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "厂家",
+                "columnName": "columnName_1604903530057",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "事件性质",
+                "columnName": "columnName_1604903540898",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "扣分",
+                "columnName": "columnName_1604903543499",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障报告附件",
+                "columnName": "columnName_1604903543659",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "后续计划",
+            "columnName": "columnName_1604903565131",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "后续计划",
+                "columnName": "columnName_1604903577562",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "后续计划完成说明",
+                "columnName": "columnName_1604903585919",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "其他",
+            "columnName": "columnName_1604903597686",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "其他附注信息",
+                "columnName": "columnName_1604903605610",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          }
+        ],
+        "operation": [],
+        "toolList": [],
+        "operation-width": "100",
+        "pagination": {
+          "layout": "total, sizes, prev, pager, next, jumpe",
+          "pageSizes": [
+            10,
+            20,
+            30
+          ],
+          "currentPage": 1,
+          "pageSize": 10,
+          "total": 0,
+          "hide-on-single-page": false
+        },
+        "http": {
+          "initHttp": true,
+          "type": "post",
+          "methods": "/api/form/lists"
+        },
+        "hidden": false,
+        "fixed-pagination": false
+      }
+    ],
+    "model": {
+      "reporter": "",
+      "submitter": "",
+      "startTime": "",
+      "endTime": "",
+      "btn-table-column": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+      "exportName": "",
+      "project": "webbas",
+      "labelWidth": 100,
+      "labelPosition": "left",
+      "size": "mini",
+      "class": "",
+      "layoutType": "flex",
+      "statusList": [],
+      "advancedQuery": false,
+      "lineNumber": 0
+    }
+  }
+        
+  
+      

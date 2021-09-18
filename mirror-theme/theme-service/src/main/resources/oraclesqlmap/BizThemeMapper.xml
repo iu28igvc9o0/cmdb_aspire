@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     BizThemeSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-10-22 16:28:59
+ -->
+<mapper namespace="com.aspire.mirror.theme.server.dao.BizThemeDao">
+
+	<resultMap id="baseResultMap" type="com.aspire.mirror.theme.server.dao.po.BizTheme">
+		<result property="themeId" column="theme_id" jdbcType="VARCHAR"/>
+		<result property="themeCode" column="theme_code" jdbcType="VARCHAR"/>
+		<result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+		<result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+		<result property="indexName" column="index_name" jdbcType="VARCHAR"/>
+		<result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+		<result property="upType" column="up_type" jdbcType="VARCHAR"/>
+		<result property="upStatus" column="up_status" jdbcType="VARCHAR"/>
+		<result property="lastUpValue" column="last_up_value" jdbcType="VARCHAR"/>
+		<result property="lastUpTime" column="last_up_time" jdbcType="TIMESTAMP"/>
+		<result property="upSwitch" column="up_switch" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+		<result property="lastFailTime" column="last_fail_time" jdbcType="TIMESTAMP"/>
+		<result property="interval" column="interval" jdbcType="INTEGER"/>
+		<result property="dimIds" column="dim_ids" jdbcType="VARCHAR"/>
+		<result property="themeName" column="theme_name" jdbcType="VARCHAR"/>
+		<result property="logReg" column="log_reg" jdbcType="VARCHAR"/>
+		<result property="logContent" column="log_content" jdbcType="VARCHAR"/>
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+		<result property="deleteFlag" column="delete_flag" jdbcType="VARCHAR"/>
+	</resultMap>
+
+
+	<sql id="baseColumnList">
+		monitor_biz_theme.theme_id,
+		monitor_biz_theme.theme_code,
+		monitor_biz_theme.object_type,
+		monitor_biz_theme.object_id,
+		monitor_biz_theme.index_name,
+		monitor_biz_theme.value_type,
+		monitor_biz_theme.up_type,
+		monitor_biz_theme.up_status,
+		monitor_biz_theme.last_up_value,
+		monitor_biz_theme.last_up_time,
+		monitor_biz_theme.up_switch,
+		monitor_biz_theme.status,
+		monitor_biz_theme.create_time,
+		monitor_biz_theme.last_fail_time,
+		monitor_biz_theme.interval,
+		monitor_biz_theme.dim_ids,
+		monitor_biz_theme.theme_name,
+		monitor_biz_theme.log_reg,
+		monitor_biz_theme.log_content,
+		monitor_biz_theme.update_time,
+		monitor_biz_theme.delete_flag
+	</sql>
+
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.aspire.mirror.theme.server.dao.po.BizTheme">
+		insert into
+			monitor_biz_theme (monitor_biz_theme.theme_id,monitor_biz_theme.theme_code,monitor_biz_theme.object_type,monitor_biz_theme.object_id,monitor_biz_theme.index_name,monitor_biz_theme.value_type,monitor_biz_theme.up_type,monitor_biz_theme.up_status,monitor_biz_theme.last_up_value,monitor_biz_theme.last_up_time,monitor_biz_theme.up_switch,monitor_biz_theme.status,monitor_biz_theme.create_time,monitor_biz_theme.last_fail_time,monitor_biz_theme.interval,monitor_biz_theme.dim_ids,monitor_biz_theme.theme_name,monitor_biz_theme.log_reg,monitor_biz_theme.log_content,monitor_biz_theme.update_time,monitor_biz_theme.delete_flag)
+		values(
+			#{themeId,jdbcType=VARCHAR} ,
+			#{themeCode,jdbcType=VARCHAR} ,
+			#{objectType,jdbcType=VARCHAR} ,
+			#{objectId,jdbcType=VARCHAR} ,
+			#{indexName,jdbcType=VARCHAR} ,
+			#{valueType,jdbcType=VARCHAR} ,
+			#{upType,jdbcType=VARCHAR} ,
+			#{upStatus,jdbcType=VARCHAR} ,
+			#{lastUpValue,jdbcType=VARCHAR} ,
+			#{lastUpTime,jdbcType=TIMESTAMP},
+			#{upSwitch,jdbcType=VARCHAR} ,
+			#{status,jdbcType=VARCHAR} ,
+			#{createTime,jdbcType=TIMESTAMP},
+			#{lastFailTime,jdbcType=TIMESTAMP},
+			#{interval,jdbcType=INTEGER} ,
+			#{dimIds,jdbcType=VARCHAR} ,
+			#{themeName,jdbcType=VARCHAR},
+			#{logReg,jdbcType=VARCHAR},
+			#{logContent,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP},
+			#{deleteFlag,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 列表 -->
+	<select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+		select * from
+		(select T.*, ROWNUM nm from
+		(select
+		<include refid="baseColumnList"/>
+		from monitor_biz_theme monitor_biz_theme
+		<include refid="Page_List_Params"/>
+		<choose>
+			<when test="sortName != null and sortName != ''">
+				order by ${sortName} ${order}, theme_id desc
+			</when>
+			<otherwise>
+				ORDER by create_time DESC , theme_id desc
+			</otherwise>
+		</choose>
+		) T
+		) AA
+        where AA.nm &gt; ${begin}
+		AND AA.nm <![CDATA[<=]]> ${begin}+${pageSize}
+	</select>
+
+
+
+	<sql id="Page_List_Params">
+		<where>
+			delete_flag = '0'
+			<if test="params['objectType'] != null and  params['objectType'] != ''">
+				and object_type = #{params.objectType}
+			</if>
+			<if test="params['status'] != null and  params['status'] != ''">
+				and status = #{params.status}
+			</if>
+			<if test="params['themeName'] != null and  params['themeName'] != ''">
+				and theme_name like CONCAT('%', #{params.themeName}, '%')
+			</if>
+			<if test="params['objectId'] != null and  params['objectId'] != ''">
+				and object_id = #{params.objectId}
+			</if>
+			<!--<choose>-->
+				<!--<when test="params['authDeviceIdList'] == null or params.authDeviceIdList.size == 0">-->
+					<!--<if test="authPrecinctList != null and authPrecinctList.size > 0">-->
+						<!--and room_id in (-->
+						<!--<foreach collection="authPrecinctList" item="item" index="index" separator=",">-->
+							<!--#{item, jdbcType=VARCHAR}-->
+						<!--</foreach>-->
+						<!--)-->
+					<!--</if>-->
+					<!--<if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">-->
+						<!--and device_type in (-->
+						<!--<foreach collection="authDeviceTypeList" item="item" index="index" separator=",">-->
+							<!--#{item, jdbcType=VARCHAR}-->
+						<!--</foreach>-->
+						<!--)-->
+					<!--</if>-->
+					<if test="params.authBizSystemIdList != null and params.authBizSystemIdList.size > 0">
+						and object_type = '2'
+						and object_id in (
+						<foreach collection="params.authBizSystemIdList"  item="item" index="index" separator=",">
+							#{item, jdbcType=VARCHAR}
+						</foreach>
+						)
+					</if>
+				<!--</when>-->
+				<!--<otherwise>-->
+					<!--and object_type = '1'-->
+					<!--and object_id in (-->
+					<!--<foreach collection="params.authDeviceIdList" item="item" index="index" separator=",">-->
+						<!--#{item, jdbcType=VARCHAR}-->
+					<!--</foreach>-->
+					<!--)-->
+				<!--</otherwise>-->
+			<!--</choose>-->
+
+		</where>
+	</sql>
+
+
+	<select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+		SELECT COUNT(*) FROM monitor_biz_theme monitor_biz_theme
+		<include refid="Page_List_Params"/>
+	</select>
+
+
+	<!-- 详情 -->
+	<select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList"/>
+		from monitor_biz_theme monitor_biz_theme where theme_id = #{themeId}
+		<!--<choose>-->
+		<!--<when test="params['authDeviceIdList'] == null or params.authDeviceIdList.size == 0">-->
+		<!--<if test="authPrecinctList != null and authPrecinctList.size > 0">-->
+		<!--and room_id in (-->
+		<!--<foreach collection="authPrecinctList" item="item" index="index" separator=",">-->
+		<!--#{item, jdbcType=VARCHAR}-->
+		<!--</foreach>-->
+		<!--)-->
+		<!--</if>-->
+		<!--<if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">-->
+		<!--and device_type in (-->
+		<!--<foreach collection="authDeviceTypeList" item="item" index="index" separator=",">-->
+		<!--#{item, jdbcType=VARCHAR}-->
+		<!--</foreach>-->
+		<!--)-->
+		<!--</if>-->
+		<if test="authParam.authBizSystemIdList != null and authParam.authBizSystemIdList.size > 0">
+			and object_type = '2'
+			and object_id in (
+			<foreach collection="authParam.authBizSystemIdList"  item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+		<!--</when>-->
+		<!--<otherwise>-->
+		<!--and object_type = '1'-->
+		<!--and object_id in (-->
+		<!--<foreach collection="params.authDeviceIdList" item="item" index="index" separator=",">-->
+		<!--#{item, jdbcType=VARCHAR}-->
+		<!--</foreach>-->
+		<!--)-->
+		<!--</otherwise>-->
+		<!--</choose>-->
+	</select>
+	<select id="selectByThemeCode" parameterType="String" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList"/>
+		from monitor_biz_theme monitor_biz_theme where theme_code = #{themeCode}
+	</select>
+	<!-- 修改 -->
+	<update id="updateByPrimaryKey" parameterType="com.aspire.mirror.theme.server.dao.po.BizTheme">
+		update monitor_biz_theme monitor_biz_theme set monitor_biz_theme.theme_id = #{themeId}
+		<if test="themeCode != null">
+			, monitor_biz_theme.theme_code = #{themeCode}
+		</if>
+		<if test="objectType != null">
+			, monitor_biz_theme.object_type = #{objectType}
+		</if>
+		<if test="objectId != null">
+			, monitor_biz_theme.object_id = #{objectId}
+		</if>
+		<if test="indexName != null">
+			, monitor_biz_theme.index_name = #{indexName}
+		</if>
+		<if test="valueType != null">
+			, monitor_biz_theme.value_type = #{valueType}
+		</if>
+		<if test="upType != null">
+			, monitor_biz_theme.up_type = #{upType}
+		</if>
+		<if test="upStatus != null">
+			, monitor_biz_theme.up_status = #{upStatus}
+		</if>
+		<if test="lastUpValue != null">
+			, monitor_biz_theme.last_up_value = #{lastUpValue}
+		</if>
+		<if test="lastUpTime != null">
+			, monitor_biz_theme.last_up_time = #{lastUpTime}
+		</if>
+		<if test="upSwitch != null">
+			, monitor_biz_theme.up_switch = #{upSwitch}
+		</if>
+		<if test="status != null">
+			, monitor_biz_theme.status = #{status}
+		</if>
+		<if test="createTime != null">
+			, monitor_biz_theme.create_time = #{createTime}
+		</if>
+		<if test="lastFailTime != null">
+			, monitor_biz_theme.last_fail_time = #{lastFailTime}
+		</if>
+		<if test="interval != null">
+			, monitor_biz_theme.interval = #{interval}
+		</if>
+		<if test="dimIds != null">
+			, monitor_biz_theme.dim_ids = #{dimIds}
+		</if>
+		<if test="themeName != null">
+			, monitor_biz_theme.theme_name = #{themeName}
+		</if>
+		<if test="logReg != null">
+			, monitor_biz_theme.log_reg = #{logReg}
+		</if>
+		<if test="logContent != null">
+			, monitor_biz_theme.log_content = #{logContent}
+		</if>
+		<if test="updateTime != null">
+			, monitor_biz_theme.update_time = #{updateTime}
+		</if>
+		<if test="deleteFlag != null">
+			, monitor_biz_theme.delete_flag = #{deleteFlag}
+		</if>
+		where theme_id = #{themeId}
+	</update>
+
+	<!-- 删除 -->
+	<update id="deleteByPrimaryKey" parameterType="string">
+		delete from monitor_biz_theme where theme_id = #{themeId}
+	</update>
+	<select id="select" resultMap="baseResultMap" parameterType="com.aspire.mirror.theme.server.dao.po.BizTheme">
+		SELECT
+		<include refid="baseColumnList"/>
+		FROM monitor_biz_theme monitor_biz_theme
+		<include refid="baseWhereClause"/>
+	</select>
+	<sql id="baseWhereClause">
+			<where>
+				delete_flag = '0'
+				<if test="themeId != null ">
+					and theme_id = #{themeId}
+				</if>
+				<if test="themeCode != null">
+					and theme_code = #{themeCode}
+				</if>
+				<if test="objectType != null">
+					and object_type = #{objectType}
+				</if>
+				<if test="objectId != null">
+					and object_id = #{objectId}
+				</if>
+				<if test="indexName != null">
+					and index_name = #{indexName}
+				</if>
+				<if test="valueType != null">
+					and value_type = #{valueType}
+				</if>
+				<if test="upType != null">
+					and up_type = #{upType}
+				</if>
+				<if test="upStatus != null">
+					and up_status = #{upStatus}
+				</if>
+				<if test="lastUpValue != null">
+					and last_up_value = #{lastUpValue}
+				</if>
+				<if test="lastUpTime != null">
+					and last_up_time = #{lastUpTime}
+				</if>
+				<if test="upSwitch != null">
+					and up_switch = #{upSwitch}
+				</if>
+				<if test="status != null">
+					and status = #{status}
+				</if>
+				<if test="createTime != null">
+					and create_time = #{createTime}
+				</if>
+				<if test="lastFailTime != null">
+					and last_fail_time = #{lastFailTime}
+				</if>
+				<if test="interval != null">
+					and monitor_biz_theme.interval = #{interval}
+				</if>
+				<if test="dimIds != null">
+					and dim_ids = #{dimIds}
+				</if>
+				<if test="themeName != null">
+					and theme_name = #{themeName}
+				</if>
+				<if test="logReg != null">
+					and log_reg = #{logReg}
+				</if>
+				<if test="logContent != null">
+					and log_content = #{logContent}
+				</if>
+				<if test="updateTime != null">
+					and update_time >= #{updateTime}
+				</if>
+				<if test="deleteFlag != null">
+					and delete_flag = #{deleteFlag}
+				</if>
+				<!--<choose>-->
+				<!--<when test="params['authDeviceIdList'] == null or params.authDeviceIdList.size == 0">-->
+				<!--<if test="authPrecinctList != null and authPrecinctList.size > 0">-->
+				<!--and room_id in (-->
+				<!--<foreach collection="authPrecinctList" item="item" index="index" separator=",">-->
+				<!--#{item, jdbcType=VARCHAR}-->
+				<!--</foreach>-->
+				<!--)-->
+				<!--</if>-->
+				<!--<if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">-->
+				<!--and device_type in (-->
+				<!--<foreach collection="authDeviceTypeList" item="item" index="index" separator=",">-->
+				<!--#{item, jdbcType=VARCHAR}-->
+				<!--</foreach>-->
+				<!--)-->
+				<!--</if>-->
+				<if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+					and object_type = '2'
+					and object_id in (
+					<foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+						#{item, jdbcType=VARCHAR}
+					</foreach>
+					)
+				</if>
+				<!--</when>-->
+				<!--<otherwise>-->
+				<!--and object_type = '1'-->
+				<!--and object_id in (-->
+				<!--<foreach collection="params.authDeviceIdList" item="item" index="index" separator=",">-->
+				<!--#{item, jdbcType=VARCHAR}-->
+				<!--</foreach>-->
+				<!--)-->
+				<!--</otherwise>-->
+				<!--</choose>-->
+
+			</where>
+	</sql>
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.v2.assessment.mapper.CmdbProduceAssessmentMapper">
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.assessment.payload.CmdbProduceAssessment">
+        <result  column="id" property="id" jdbcType="VARCHAR"/>
+        <result  column="device_count_id" property="deviceCountId" jdbcType="VARCHAR"/>
+        <result  column="metric_name" property="metricName" jdbcType="VARCHAR"/>
+        <result  column="score" property="score" jdbcType="INTEGER"/>
+        <result  column="score_description" property="scoreDescription" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="baseColumnList">
+        id,device_count_id,metric_name,score,score_description
+    </sql>
+
+    <select id="listByEntity" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbProduceAssessment" resultMap="resultMap">
+        select ass.id,ass.device_count_id,ass.metric_name,ass.score,ass.score_description
+        FROM cmdb_device_produce_assessment ass
+        LEFT JOIN `cmdb_device_assessment_metric` met ON (ass.metric_name = met.metric_name)
+        order by met.sort
+    </select>
+    <select id="listByCountIds" resultMap="resultMap">
+        select ass.id,ass.device_count_id,ass.metric_name,ass.score,ass.score_description
+        FROM cmdb_device_produce_assessment ass
+        LEFT JOIN `cmdb_device_assessment_metric` met ON (ass.metric_name = met.metric_name)
+        where ass.device_count_id in
+              <foreach collection="list" item="item" separator="," open="(" close=")">
+                  #{item}
+              </foreach>
+        order by met.sort
+    </select>
+
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbProduceAssessment">
+        insert into cmdb_device_produce_assessment
+        (<include refid="baseColumnList" />)
+        values
+        <foreach collection="list" item="item" index="index"  separator=","  >
+            (#{ item.id,jdbcType=VARCHAR},
+            #{ item.deviceCountId,jdbcType=VARCHAR},
+            #{ item.metricName,jdbcType=VARCHAR},
+            #{ item.score,jdbcType=INTEGER},
+            #{ item.scoreDescription,jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        score =  VALUES(score),
+        score_description =  VALUES(score_description)
+    </insert>
+
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM cmdb_device_produce_assessment
+        WHERE device_count_id in (
+          select id from cmdb_it_device_count where  produce = #{produce} AND QUARTER(create_time)=QUARTER(now())
+            )
+
+    </delete>
+
+    <!-- 删除记录 -->
+    <delete id="deleteByBatch" parameterType="java.lang.String">
+        DELETE FROM cmdb_device_produce_assessment
+        WHERE device_count_id in
+      <foreach collection="list" item="item" open="(" separator="," close=")" >
+          #{item}
+      </foreach>
+
+    </delete>
+</mapper>

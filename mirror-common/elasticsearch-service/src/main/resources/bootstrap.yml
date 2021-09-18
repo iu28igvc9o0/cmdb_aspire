@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: elasticsearch-service
+  cloud:
+    config:
+      enabled: true
+      name: ms-elasticsearch
+      profile: ${ENV_TYPE:dev}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}

@@ -1,0 +1,24 @@
+{
+	"from" : ${builder.from}, "size" : ${builder.size},
+	"query": {
+		"bool": {
+			"must": [
+			#foreach($param in ${builder.params.keySet()})  
+			   {
+					"match": {
+						"$param": "${builder.params.get($param)}"
+					}
+				},
+		    #end  
+				{
+					"range": {
+						"${builder.timeColsName}": {
+                       		 "lte": ${builder.endTime},
+                       		 "gte": ${builder.startTime}
+						}
+					}
+				}
+			]		
+		}
+	}
+}

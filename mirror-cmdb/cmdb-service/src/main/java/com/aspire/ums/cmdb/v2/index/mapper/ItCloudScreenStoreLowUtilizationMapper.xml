@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenStoreLowUtilizationMapper">
+
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.index.payload.ScreenStoreLowUtilization">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="system_title_id" jdbcType="INTEGER" property="systemTitleId"/>
+        <result column="department1" jdbcType="VARCHAR" property="department1"/>
+        <result column="department2" jdbcType="VARCHAR" property="department2"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="pod" jdbcType="VARCHAR" property="pod"/>
+        <result column="store_type" jdbcType="VARCHAR" property="storeType"/>
+        <result column="utilization" jdbcType="VARCHAR" property="utilization"/>
+        <result column="monthly_time" jdbcType="VARCHAR" property="monthlyTime"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="base_sql">
+        id, system_title_id, department1, department2, resource_pool, pod, biz_system, store_type, utilization, monthly_time, insert_time, is_delete
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenStoreLowUtilization">
+        insert into screen_store_low_utilization
+        values(
+            #{id, jdbcType=VARCHAR},
+            #{systemTitleId, jdbcType=INTEGER},
+            #{department1, jdbcType=VARCHAR},
+            #{department2, jdbcType=VARCHAR},
+            #{resourcePool, jdbcType=VARCHAR},
+            #{pod, jdbcType=VARCHAR},
+            #{bizSystem, jdbcType=VARCHAR},
+            #{storeType, jdbcType=VARCHAR},
+            #{utilization, jdbcType=VARCHAR},
+            #{monthlyTime, jdbcType=VARCHAR},
+            #{insertTime, jdbcType=TIMESTAMP},
+            #{isDelete, jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenStoreLowUltRequest">
+        delete from screen_store_low_utilization
+        where is_delete = '0' <include refid="where_sql"/>
+    </delete>
+
+    <select id="getLowStoreUltCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenStoreLowUltRequest" resultType="java.util.HashMap">
+        SELECT
+            t1.depType,
+            COUNT(DISTINCT t2.biz_system) bzCnt
+        FROM(
+            SELECT
+                (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                      ELSE '外部租户' END) depType,department1,department2,biz_system
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="where_sql"/>
+            GROUP BY department1,department2,biz_system
+        ) t1
+        LEFT JOIN (
+            SELECT department1,department2,biz_system
+            FROM screen_store_low_utilization
+            where is_delete = '0' and utilization <![CDATA[ < ]]> 30 <include refid="where_sql"/>
+            GROUP BY department1,department2,biz_system
+        ) t2 ON (t1.biz_system = t2.biz_system and t1.department1 = t2.department1 and t1.department2 = t2.department2)
+        GROUP BY t1.depType
+    </select>
+
+    <select id="getLowStoreUltListWithDept" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenStoreLowUltRequest" resultType="java.util.HashMap">
+        SELECT
+            parent.department,
+            parent.total,
+            IFNULL(child.part,0) part,
+            IFNULL(Round((child.part*100)/parent.total,2),0) percent
+        FROM(
+            SELECT
+                <include refid="select_department_sql"/>,COUNT(DISTINCT t.biz_system) total
+            FROM(
+                SELECT
+                    (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                          ELSE '外部租户' END) depType,department1,department2,biz_system
+                FROM screen_resource_allocation
+                where is_delete = '0' <include refid="where_sql"/>
+            ) t
+            where t.depType = #{depType}
+            <include refid="group_by_sql"/>
+        ) parent
+        LEFT JOIN (
+            SELECT <include refid="select_department_sql"/>,COUNT(DISTINCT t1.biz_system) part
+            FROM(
+                SELECT
+                    (CASE WHEN department1 = '信息技术中心' then '内部租户'
+                          ELSE '外部租户' END) depType,department1,department2,biz_system,resource_pool,pod
+                FROM screen_resource_allocation
+                WHERE is_delete = '0' <include refid="where_sql"/>
+                GROUP BY department1,department2,biz_system
+            ) t
+            LEFT JOIN (
+                SELECT department1,department2,biz_system
+                FROM screen_store_low_utilization
+                where is_delete = '0' and utilization <![CDATA[ < ]]> 30 <include refid="where_sql"/>
+                GROUP BY department1,department2,biz_system
+            ) t1 ON (t.biz_system = t1.biz_system and t.department1 = t1.department1 and t.department2 = t1.department2)
+            WHERE t.depType = #{depType}
+            <include refid="group_by_sql"/>
+        ) child ON parent.department = child.department
+        WHERE child.part <![CDATA[ > ]]> 0
+        order by part desc
+    </select>
+
+    <sql id="where_sql">
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="monthlyTime!=null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        <if test="storeType!=null and storeType != ''">
+            and store_type = #{storeType}
+        </if>
+        <if test="bizSystem!=null and bizSystem != ''">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="resourcePool!=null and resourcePool != ''">
+            and resource_pool = #{resourcePool}
+        </if>
+        <if test="pod!=null and pod != ''">
+            and pod = #{pod}
+        </if>
+    </sql>
+
+    <!-- 内部租户和外部租户统计的部门不同 -->
+    <sql id="group_by_sql">
+        <if test="depType != null and depType == '内部租户'">
+            group by t.department2
+        </if>
+        <if test="depType != null and depType == '外部租户'">
+            group by t.department1
+        </if>
+    </sql>
+    <!-- 内部租户按照二级部门统计、外部租户按照一级部门统计 -->
+    <sql id="select_department_sql">
+        <if test="depType != null and depType == '内部租户'">
+            t.department2 department
+        </if>
+        <if test="depType != null and depType == '外部租户'">
+            t.department1 department
+        </if>
+    </sql>
+</mapper>

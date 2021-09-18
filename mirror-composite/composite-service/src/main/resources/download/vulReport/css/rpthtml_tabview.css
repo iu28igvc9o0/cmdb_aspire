@@ -1,0 +1,52 @@
+@CHARSET "UTF-8";
+
+/*****************************************/
+/* tabmenu */
+/*****************************************/
+
+.VHeadDiv {
+	margin: 0;
+	padding: 0;
+	height: 40px;
+	padding-bottom: 10px;
+	background-color: transparent;
+	background-image: url(../images/banner.gif);
+	background-repeat: repeat-x;
+	overflow: hidden;
+	display: block;
+}
+
+.VTabmenu {
+	margin: 0;
+	padding-top: 4px;
+	height: auto!important;
+	min-height: 32px;
+	height: 100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+	background-color: #c0c0c0;
+}
+
+.VTabmenuItem {
+	float: left;
+	margin: 0 1px 0 1px;
+	width: auto!important;
+	width: 120px;
+	min-width: 120px;
+	height: 24px;	
+	font-size: 12px;
+	line-height: 24px;
+	text-align: center;
+	color: white;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.VTabmenuItem_normal {
+	background-color: #5af;
+}
+.VTabmenuItem_focus {
+	background-color: #f0f0f0;
+	color: red;
+	cursor: pointer;
+}

@@ -1,0 +1,43 @@
+#端口配置
+server.port: 2228
+#Eureka注册中心
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+#连接池配置
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/bills?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: Nmzw$yjd2@19
+  useSSL: false
+  filters: stat,log4j,wall
+  removeAbandoned: true
+  removeAbandonedTimeout: 1800 #连接池设置30分钟超时
+  logAbandoned: true # 连接超时释放时, 需要打印错误信息
+# Mybatis配置
+mybatis:
+  configLocation: classpath:mybatis-config.xml
+#Log4J配置
+logging:
+  level:
+    org.springframework: info
+    com.alibaba.druid: info
+cmdb:
+  schema:
+    name: cmdb_zy_online
+#CMDB服务特有配置
+  feign:
+    cmdb: http://10.12.70.39:2222
+    ldap: http://10.12.70.39:28102
+    rbac: http://10.12.70.39:28101
+    redis: http://10.12.70.39:26379
+    es: http://10.12.70.39:28103
+  query:
+    db: mysqle

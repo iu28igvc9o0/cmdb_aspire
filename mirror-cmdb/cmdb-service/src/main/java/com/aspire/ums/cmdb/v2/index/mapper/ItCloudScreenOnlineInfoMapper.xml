@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenOnlineInfoMapper">
+
+    <!-- 基础字段 -->
+    <sql id="base_sql">
+        id, system_title_id, department1, department2, biz_system, target_deploy_date, actual_deploy_date, target_inform_date, actual_inform_date, monthly_time, insert_time, is_delete
+    </sql>
+
+    <insert id="batchInsert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenOnlineInfo">
+        insert into screen_online_info(
+          <include refid="base_sql"/>
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.systemTitleId, jdbcType=INTEGER},
+            #{item.department1, jdbcType=VARCHAR},
+            #{item.department2, jdbcType=VARCHAR},
+            #{item.bizSystem, jdbcType=VARCHAR},
+            #{item.targetDeployDate, jdbcType=VARCHAR},
+            #{item.actualDeployDate, jdbcType=VARCHAR},
+            #{item.targetInformDate, jdbcType=VARCHAR},
+            #{item.actualInformDate, jdbcType=VARCHAR},
+            #{item.monthlyTime, jdbcType=VARCHAR},
+            #{item.insertTime, jdbcType=TIMESTAMP},
+            #{item.isDelete, jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenOnlineInfo">
+        insert into screen_online_info(
+        <include refid="base_sql"/>
+        )
+        values
+        (
+            #{id, jdbcType=VARCHAR},
+            #{systemTitleId, jdbcType=INTEGER},
+            #{department1, jdbcType=VARCHAR},
+            #{department2, jdbcType=VARCHAR},
+            #{bizSystem, jdbcType=VARCHAR},
+            #{targetDeployDate, jdbcType=VARCHAR},
+            #{actualDeployDate, jdbcType=VARCHAR},
+            #{targetInformDate, jdbcType=VARCHAR},
+            #{actualInformDate, jdbcType=VARCHAR},
+            #{monthlyTime, jdbcType=VARCHAR},
+            #{insertTime, jdbcType=TIMESTAMP},
+            #{isDelete, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest">
+        delete from screen_online_info
+        where is_delete = '0'
+        and department1 = #{department1}
+        and department2 = #{department2}
+        and biz_system = #{bizSystem}
+        and monthly_time = #{monthlyTime}
+    </delete>
+</mapper>

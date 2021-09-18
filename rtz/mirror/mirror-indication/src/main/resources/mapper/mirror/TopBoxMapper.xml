@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.TopBoxDAO">
+	<update id="updateIndicationData" parameterType="java.util.List">
+        <foreach collection="updateIndicationData" item="item" open="" close="" separator=";">
+            UPDATE mirror_indication_limit  SET max_value=#{item.maxValue}, min_value=#{item.minValue},change_value_max=#{item.changeValueMax},
+                    change_value_min=#{item.changeValueMin},change_rate_max=#{item.changeRateMax},change_rate_min=#{item.changeRateMin}
+            WHERE 1=1 and indication_limit_id=#{item.indicationLimitId}
+        </foreach>
+    </update>
+
+    <insert id="insertIndicationData" parameterType="java.util.List">
+        INSERT INTO mirror_indication_limit (max_value,min_value,change_value_max,change_value_min,change_rate_max,change_rate_min,indication_id) VALUES
+        <foreach collection="insertIndicationData" separator="," item="item" index="index">
+            (#{item.maxValue},#{item.minValue},#{item.changeValueMax},#{item.changeValueMin},#{item.changeRateMax},#{item.changeRateMin},#{item.indicationId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteIndicationData" parameterType="java.util.List">
+        DELETE FROM mirror_indication_limit WHERE indication_id IN
+        <foreach collection="deleteIndicationData" item="item" open="(" separator="," close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getIndicationNameById" parameterType="java.lang.String" resultType="map">
+        SELECT * FROM mirror_indication_new WHERE indication_id = #{indicationId}
+    </select>
+
+</mapper>

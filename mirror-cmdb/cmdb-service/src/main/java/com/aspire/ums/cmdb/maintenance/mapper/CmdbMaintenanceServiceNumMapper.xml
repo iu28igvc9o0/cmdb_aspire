@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceServiceNumMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceServiceNum" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"></result>
+		<result column="service_type" property="serviceType" jdbcType="VARCHAR"></result>
+        <result column="service_num" property="serviceNum" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="getServiceNumByProjectId" parameterType="string" resultType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceServiceNum">
+        select
+          id,
+          project_id projectId,
+          service_type serviceType,
+          service_num serviceNum
+        from cmdb_maintenance_service_num
+        where project_id = #{projectId}
+        order by service_type desc
+    </select>
+
+    <insert id="insertBatch">
+        insert into cmdb_maintenance_service_num(id,project_id,service_type,service_num)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+              #{item.id},
+              #{item.projectId},
+              #{item.serviceType},
+              #{item.serviceNum}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="string">
+        delete from  cmdb_maintenance_service_num
+        where project_id = #{projectId}
+    </delete>
+</mapper>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.MaintenSoftwareMapper">
+	    
+	<resultMap type="com.aspire.ums.cmdb.maintenance.entity.MaintenSoftware" id="maintenSoftwareMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="project" property="project" jdbcType="VARCHAR" />
+		<result column="classify" property="classify" jdbcType="VARCHAR" />
+		<result column="software_name" property="softwareName" jdbcType="VARCHAR"/>
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="number" property="number" jdbcType="VARCHAR" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="telephone" property="telephone" jdbcType="VARCHAR" />
+		<result column="mainten_begin_date" property="maintenBeginDate" jdbcType="TIMESTAMP" />
+		<result column="mainten_end_date" property="maintenEndDate" jdbcType="TIMESTAMP" />
+		<result column="admin" property="admin" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" /> 
+	 </resultMap>
+	
+	 
+	<sql id="baseSelectFrom">
+		SELECT
+			a.id,
+			a.project_id project_id,
+			b.project_name project,
+			a.classify classify,
+			a.software_name software_name,
+			a.unit unit,
+			a.number number,
+			b.mainten_produce company,
+			b.mainten_produce_name user_name,
+			b.mainten_produce_phone telephone,
+			b.service_start_time mainten_begin_date,
+			b.service_end_time mainten_end_date,
+			a.admin admin,
+			a.remark remark,
+			a.create_time create_time
+		FROM
+			cmdb_maintenance_software a
+		LEFT JOIN cmdb_maintenance_project b ON a.project_id = b.id
+	</sql>
+
+	<sql id="baseColumnList">
+		id,project_id,project, classify,software_name,unit,number,company,user_name,telephone,mainten_begin_date,
+		mainten_end_date,admin,remark
+	</sql>
+
+
+     <!-- 动态sql -->
+     <sql id="where_sql"> 
+    
+	    <if test="maintenEndDateBefore != null and  maintenEndDateAfter != null">
+			 and  mainten_end_date between '${maintenEndDateBefore}' and '${maintenEndDateAfter}'
+		</if>
+		<if test="project != null and  project != '' ">
+    		and project like  CONCAT('%',#{project},'%')
+    	</if>
+    	 
+    	<if test="softwareName != null and  softwareName != '' ">
+    		and software_name like  CONCAT('%',#{softwareName},'%')
+    	</if>
+    	<if test="company != null and  company != '' ">
+    		and company like  CONCAT('%',#{company},'%')
+    	</if>
+    	<if test="classify != null and  classify != '' ">
+    		and classify like  CONCAT('%',#{classify},'%')
+    	</if>
+
+    	<if test="userName != null and  userName != '' ">
+    		and user_name like  CONCAT('%',#{userName},'%')
+    	</if>
+    	<if test="telephone != null and  telephone != '' ">
+    		and telephone like  CONCAT('%',#{telephone},'%')
+    	</if>
+    	<if test="admin != null and  admin != '' ">
+    		and admin like  CONCAT('%',#{admin},'%')
+    	</if>
+
+
+    </sql>
+
+
+	 <insert id="insertMaintenSoftware"  parameterType="com.aspire.ums.cmdb.maintenance.entity.MaintenSoftware">
+	 
+	    insert into cmdb_maintenance_software(id,project_id,classify,software_name,unit,number,admin,remark )
+		values(
+	  #{ id,jdbcType=VARCHAR},
+	  #{ projectId,jdbcType=VARCHAR} ,
+		#{ classify,jdbcType=VARCHAR} ,
+		#{ softwareName,jdbcType=VARCHAR},
+		#{ unit,jdbcType=VARCHAR} ,
+		#{ number,jdbcType=VARCHAR} ,
+		#{ admin,jdbcType=VARCHAR} ,
+		#{ remark,jdbcType=VARCHAR}
+		)
+		ON DUPLICATE KEY UPDATE
+		classify = VALUES( classify ),
+		unit = VALUES( unit ),
+		number = VALUES( number ),
+		admin = VALUES( admin ),
+		remark = VALUES( remark ),
+	software_name = VALUES (software_name)
+	 </insert>
+	 
+
+    <insert id="insertMaintenSoftwareList" parameterType="java.util.List">
+			insert into  cmdb_maintenance_software (id,project_id,classify,software_name,unit,number,admin,remark )
+		VALUES
+		<foreach collection="list" item="item" index="index"  separator=","  >
+		  ( #{ item.id,jdbcType=VARCHAR}
+		   #{ item.projectId,jdbcType=VARCHAR} ,
+		    #{ item.classify,jdbcType=VARCHAR} ,
+		    #{ item.softwareName,jdbcType=VARCHAR},
+		    #{ item.unit,jdbcType=VARCHAR} ,
+		    #{ item.number,jdbcType=VARCHAR} ,
+		    #{ item.admin,jdbcType=VARCHAR} ,
+		    #{ item.remark,jdbcType=VARCHAR} )
+		</foreach>
+		 ON DUPLICATE KEY UPDATE
+		 classify = VALUES( classify ),
+		 unit = VALUES( unit ),
+		 number = VALUES( number ),
+		 admin = VALUES( admin ),
+		 remark = VALUES( remark ),
+		software_name = VALUES (software_name)
+	</insert>
+
+	 
+	 
+	  
+	
+	 <select id="selectMaintenSoftwareById" parameterType="String" resultMap="maintenSoftwareMap">
+		select  <include refid="baseColumnList" /> from
+		 (<include refid="baseSelectFrom" />) s
+		where  id = #{id}
+	 </select>
+	 
+	 
+	  <select id="selectMaintenSoftwareBySoftNmae" parameterType="map" resultMap="maintenSoftwareMap">
+		  select  <include refid="baseColumnList" /> from
+		  (<include refid="baseSelectFrom" />) s
+		  where project=#{project} and software_name=#{softwareName}
+	  </select>
+
+
+	 
+	 <!-- 删除多条数据 -->
+	 <delete id="deleteMaintenSoftwareIds" parameterType="java.util.List">
+	     delete from cmdb_maintenance_software where id in 
+	     <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+         </foreach>
+     </delete>
+	 
+	
+	 
+	 <!-- 分页数据个数 -->
+	 <select id="getMaintenSoftwareCount" resultType="Integer" parameterType="map">
+		 select  count(1) from
+		 (<include refid="baseSelectFrom" />) s where 1=1
+		 <if test="maintenEndDateBefore != null and maintenEndDateAfter != null">
+			 and mainten_end_date between  #{maintenEndDateBefore} and #{maintenEndDateAfter}
+		 </if>
+		 <if test="project != null and  project != '' ">
+			 and project like  CONCAT('%',#{project},'%')
+		 </if>
+		 <if test="projectId != null and  projectId != '' ">
+			 and project_id = #{projectId}
+		 </if>
+		 <if test="softwareName != null and  softwareName != '' ">
+			 and software_name like  CONCAT('%',#{softwareName},'%')
+		 </if>
+		 <if test="company != null and  company != '' ">
+			 and company like  CONCAT('%',#{company},'%')
+		 </if>
+	 </select>
+	
+
+	<!-- 分页数据 -->
+	<select id="getMaintenSoftwareByPage" parameterType="map" resultMap="maintenSoftwareMap" >
+		select  <include refid="baseColumnList" /> from
+		(<include refid="baseSelectFrom" />) s
+		where 1=1
+		<if test="maintenEndDateBefore != null and maintenEndDateAfter != null">
+			and mainten_end_date between #{maintenEndDateBefore} and #{maintenEndDateAfter}
+		</if>
+		<if test="project != null and  project != '' ">
+			and project like  CONCAT('%',#{project},'%')
+		</if>
+		<if test="projectId != null and  projectId != '' ">
+			and project_id = #{projectId}
+		</if>
+		<if test="softwareName != null and  softwareName != '' ">
+			and software_name like  CONCAT('%',#{softwareName},'%')
+		</if>
+		<if test="company != null and  company != '' ">
+			and company like  CONCAT('%',#{company},'%')
+		</if>
+		order by mainten_end_date <![CDATA[ <= ]]> NOW(), mainten_end_date, project
+	   	<if test="pageNo != null and pageSize != null ">
+	      limit ${(pageNo - 1)* pageSize},${pageSize}
+		</if>
+	</select>
+	
+	
+	<!-- 导出数据 -->
+	<!--<select id="getMaintenSoftwareList" parameterType="map" resultMap="maintenSoftwareMap" >-->
+		<!--select  <include refid="baseColumnList" /> from-->
+		<!--(<include refid="baseSelectFrom" />) s  where 1=1-->
+	    <!--<include refid="where_sql" />-->
+        <!--order by create_time desc-->
+	<!--</select>-->
+
+
+	 
+</mapper>

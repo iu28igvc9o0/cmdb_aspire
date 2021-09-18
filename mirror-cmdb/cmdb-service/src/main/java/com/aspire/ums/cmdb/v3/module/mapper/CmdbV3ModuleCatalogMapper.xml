@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCatalogMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCatalog" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="catalog_code" property="catalogCode" jdbcType="VARCHAR" />
+        <result column="catalog_name" property="catalogName" jdbcType="VARCHAR" />
+        <result column="parent_catalog_id" property="parentCatalogId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="selectAllFiled">
+        `id`,
+        `catalog_code`,
+        `catalog_name`,
+        `parent_catalog_id`,
+        `sort_index`,
+        `is_delete`
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="selectAllFiled"></include>
+        FROM cmdb_v3_module_catalog where `is_delete` = '0'
+    </select>
+    <!-- list查询 -->
+    <select id="getByModuleId" resultMap="resultMap">
+        SELECT
+        <include refid="selectAllFiled"></include>
+        FROM cmdb_v3_module_catalog where `is_delete` = '0' and id in
+        (select catalog_id from cmdb_module where  `is_delete` = '0' and id = #{moduleId})
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCatalog">
+        SELECT
+        <include refid="selectAllFiled"></include>
+        FROM cmdb_v3_module_catalog
+        WHERE 1=1 and `is_delete` = '0'
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="catalogCode != null and catalogCode != ''">
+        AND `catalog_code` = #{catalogCode}
+        </if>
+        <if test="catalogName != null and catalogName != ''">
+        AND `catalog_name` = #{catalogName}
+        </if>
+        <if test="parentCatalogId != null and parentCatalogId != ''">
+        AND `parent_catalog_id` = #{parentCatalogId}
+        </if>
+        order by sort_index
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCatalog" resultMap="resultMap">
+        SELECT
+          <include refid="selectAllFiled"></include>
+        FROM cmdb_v3_module_catalog
+        WHERE 1=1 and `is_delete` = '0'
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="catalogCode != null and catalogCode != ''">
+            AND `catalog_code` = #{catalogCode}
+        </if>
+        <if test="catalogName != null and catalogName != ''">
+            AND `catalog_name` = #{catalogName}
+        </if>
+        <if test="parentCatalogId != null and parentCatalogId != ''">
+            AND `parent_catalog_id` = #{parentCatalogId}
+        </if>
+    </select>
+
+    <select id="getById" resultMap="resultMap">
+        SELECT
+        <include refid="selectAllFiled"></include>
+        FROM cmdb_v3_module_catalog
+        WHERE 1=1
+        AND `id` = #{id} and `is_delete` = '0'
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCatalog">
+        INSERT INTO cmdb_v3_module_catalog
+        (
+            `id`,
+            `catalog_code`,
+            `catalog_name`,
+            `parent_catalog_id`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{catalogCode, jdbcType=VARCHAR},
+            #{catalogName, jdbcType=VARCHAR},
+            #{parentCatalogId, jdbcType=VARCHAR},
+            (select max(IFNULL(c.sort_index,0)) + 1 from cmdb_v3_module_catalog c where c.parent_catalog_id = #{parentCatalogId}),
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCatalog">
+        UPDATE cmdb_v3_module_catalog SET
+        `catalog_name` = #{catalogName}
+        <if test="sortIndex != null">
+            , `sort_index` = #{sortIndex}
+        </if>
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCatalog">
+        UPDATE cmdb_v3_module_catalog SET
+        `is_delete` = 1
+        WHERE
+        `id` = #{id}
+    </delete>
+    <select id="selectMaxIndex" resultType="java.lang.Integer">
+        select max(sort_index) from cmdb_v3_module_catalog where is_delete = 0
+    </select>
+    <select id="getSortUpEntity" resultMap="resultMap">
+        select * from (
+            select * from cmdb_v3_module_catalog f
+            where
+                exists (
+                    select * from cmdb_v3_module_catalog s
+                        where f.parent_catalog_id = s.parent_catalog_id
+                        and f.sort_index <![CDATA[ <= ]]> s.sort_index
+                        and s.id = #{catalogId}
+                        and s.is_delete='0'
+                )
+                and f.id != #{catalogId}
+                and f.is_delete='0'
+            order by f.sort_index desc
+        ) n limit 0,1
+    </select>
+
+    <select id="getSortDownEntity" resultMap="resultMap">
+        select * from (
+            select * from cmdb_v3_module_catalog f
+            where
+                exists (
+                    select * from cmdb_v3_module_catalog s
+                        where f.parent_catalog_id = s.parent_catalog_id
+                        and f.sort_index <![CDATA[ >= ]]> s.sort_index
+                        and s.id = #{catalogId}
+                        and s.is_delete='0'
+                )
+                and f.id != #{catalogId}
+                and f.is_delete='0'
+            order by f.sort_index asc
+        ) n limit 0,1
+    </select>
+</mapper>

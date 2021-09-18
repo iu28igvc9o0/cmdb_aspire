@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.openstack.mapper.CmdbOpenstackImageMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="image_id" property="imageId" jdbcType="VARCHAR" />
+        <result column="event_id" property="eventId" jdbcType="VARCHAR" />
+        <result column="hname" property="hname" jdbcType="VARCHAR" />
+        <result column="minDisk" property="minDisk" jdbcType="VARCHAR" />
+        <result column="minRam" property="minRam" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="org" property="org" jdbcType="VARCHAR" />
+        <result column="size" property="size" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="sname" property="sname" jdbcType="VARCHAR" />
+        <result column="src_create_time" property="srcCreateTime" jdbcType="DATE" />
+        <result column="src_creator" property="srcCreator" jdbcType="VARCHAR" />
+        <result column="src_modify_time" property="srcModifyTime" jdbcType="DATE" />
+        <result column="src_modifier" property="srcModifier" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `image_id`,
+        `event_id`,
+        `hname`,
+        `minDisk`,
+        `minRam`,
+        `name`,
+        `org`,
+        `size`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_image
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage">
+        SELECT
+        `id`,
+        `instance_id`,
+        `image_id`,
+        `event_id`,
+        `hname`,
+        `minDisk`,
+        `minRam`,
+        `name`,
+        `org`,
+        `size`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_image
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="imageId != null and imageId != ''">
+        AND `image_id` = #{imageId}
+        </if>
+        <if test="eventId != null and eventId != ''">
+        AND `event_id` = #{eventId}
+        </if>
+        <if test="hname != null and hname != ''">
+        AND `hname` = #{hname}
+        </if>
+        <if test="minDisk != null and minDisk != ''">
+        AND `minDisk` = #{minDisk}
+        </if>
+        <if test="minRam != null and minRam != ''">
+        AND `minRam` = #{minRam}
+        </if>
+        <if test="name != null and name != ''">
+        AND `name` = #{name}
+        </if>
+        <if test="org != null and org != ''">
+        AND `org` = #{org}
+        </if>
+        <if test="size != null and size != ''">
+        AND `size` = #{size}
+        </if>
+        <if test="status != null and status != ''">
+        AND `status` = #{status}
+        </if>
+        <if test="sname != null and sname != ''">
+        AND `sname` = #{sname}
+        </if>
+        <if test="srcCreateTime != null and srcCreateTime != ''">
+        AND `src_create_time` = #{srcCreateTime}
+        </if>
+        <if test="srcCreator != null and srcCreator != ''">
+        AND `src_creator` = #{srcCreator}
+        </if>
+        <if test="srcModifyTime != null and srcModifyTime != ''">
+        AND `src_modify_time` = #{srcModifyTime}
+        </if>
+        <if test="srcModifier != null and srcModifier != ''">
+        AND `src_modifier` = #{srcModifier}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+        <if test="version != null and version != ''">
+        AND `version` = #{version}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `image_id`,
+        `event_id`,
+        `hname`,
+        `minDisk`,
+        `minRam`,
+        `name`,
+        `org`,
+        `size`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_image
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="getByInstanceId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `image_id`,
+        `event_id`,
+        `hname`,
+        `minDisk`,
+        `minRam`,
+        `name`,
+        `org`,
+        `size`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_image
+        WHERE 1=1
+        AND `instance_id` = #{instanceId}
+    </select>
+
+    <select id="findByInstanceId" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `image_id`,
+        `event_id`,
+        `hname`,
+        `minDisk`,
+        `minRam`,
+        `name`,
+        `org`,
+        `size`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_image
+        WHERE 1=1
+        AND `instance_id` = #{instanceId}
+    </select>
+
+    <select id="findByInstanceIdList" parameterType="java.util.List" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `image_id`,
+        `event_id`,
+        `hname`,
+        `minDisk`,
+        `minRam`,
+        `name`,
+        `org`,
+        `size`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_image
+        <where>
+            instance_id in
+            <foreach collection="list" separator="," item="instanceId" open="(" close=")">
+                #{instanceId,jdbcType=VARCHAR}
+            </foreach>
+        </where>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage">
+        INSERT INTO cmdb_openstack_image
+        (
+            `id`,
+            `instance_id`,
+            `image_id`,
+            `event_id`,
+            `hname`,
+            `minDisk`,
+            `minRam`,
+            `name`,
+            `org`,
+            `size`,
+            `status`,
+            `sname`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{imageId, jdbcType=VARCHAR},
+            #{eventId, jdbcType=VARCHAR},
+            #{hname, jdbcType=VARCHAR},
+            #{minDisk, jdbcType=VARCHAR},
+            #{minRam, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{org, jdbcType=VARCHAR},
+            #{size, jdbcType=VARCHAR},
+            #{status, jdbcType=VARCHAR},
+            #{sname, jdbcType=VARCHAR},
+            #{srcCreateTime, jdbcType=DATE},
+            #{srcCreator, jdbcType=VARCHAR},
+            #{srcModifyTime, jdbcType=DATE},
+            #{srcModifier, jdbcType=VARCHAR},
+            #{version, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_openstack_image
+        (
+            `id`,
+            `instance_id`,
+            `image_id`,
+            `event_id`,
+            `hname`,
+            `minDisk`,
+            `minRam`,
+            `name`,
+            `org`,
+            `size`,
+            `status`,
+            `sname`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        )  VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.instanceId, jdbcType=VARCHAR},
+            #{item.imageId, jdbcType=VARCHAR},
+            #{item.eventId, jdbcType=VARCHAR},
+            #{item.hname, jdbcType=VARCHAR},
+            #{item.minDisk, jdbcType=VARCHAR},
+            #{item.minRam, jdbcType=VARCHAR},
+            #{item.name, jdbcType=VARCHAR},
+            #{item.org, jdbcType=VARCHAR},
+            #{item.size, jdbcType=VARCHAR},
+            #{item.status, jdbcType=VARCHAR},
+            #{item.sname, jdbcType=VARCHAR},
+            #{item.srcCreateTime, jdbcType=DATE},
+            #{item.srcCreator, jdbcType=VARCHAR},
+            #{item.srcModifyTime, jdbcType=DATE},
+            #{item.srcModifier, jdbcType=VARCHAR},
+            #{item.version, jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage">
+        UPDATE cmdb_openstack_image SET
+        `instance_id` = #{instanceId},
+        `image_id` = #{imageId},
+        `event_id` = #{eventId},
+        `hname` = #{hname},
+        `minDisk` = #{minDisk},
+        `minRam` = #{minRam},
+        `name` = #{name},
+        `org` = #{org},
+        `size` = #{size},
+        `status` = #{status},
+        `sname` = #{sname},
+        `src_create_time` = #{srcCreateTime},
+        `src_creator` = #{srcCreator},
+        `src_modify_time` = #{srcModifyTime},
+        `src_modifier` = #{srcModifier},
+        `version` = #{version}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateByInstanceId" parameterType="java.util.HashMap">
+        UPDATE cmdb_openstack_image
+        <set>
+            <if test="_parameter.containsKey('minDisk') ">
+                minDisk =  #{minDisk},
+            </if>
+            <if test="_parameter.containsKey('minRam') ">
+                minRam =  #{minRam},
+            </if>
+            <if test="_parameter.containsKey('name') ">
+                name =  #{name},
+            </if>
+            <if test="_parameter.containsKey('hname') ">
+                hname =  #{hname},
+            </if>
+            <if test="_parameter.containsKey('id') ">
+                image_id =  #{id},
+            </if>
+            <if test="_parameter.containsKey('sname') ">
+                sname =  #{sname},
+            </if>
+            <if test="_parameter.containsKey('size') ">
+                size =  #{size},
+            </if>
+            <if test="_parameter.containsKey('status') ">
+                status =  #{status},
+            </if>
+            <if test="_parameter.containsKey('version') ">
+                version =  #{version},
+            </if>
+        </set>
+        WHERE instance_id=#{instanceId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackImage">
+        DELETE FROM cmdb_openstack_image
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <delete id="deleteByInstanceId" parameterType="java.lang.String">
+        DELETE FROM cmdb_openstack_image
+        WHERE
+         `instance_id` = #{instanceId}
+    </delete>
+
+    <delete id="deleteByInstanceIdList" parameterType="list">
+        DELETE FROM cmdb_openstack_image WHERE instance_id IN
+        <foreach collection="list" item="instanceId" index="index" open="(" close=")" separator=",">
+            #{instanceId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+    <select id="getAllInstanceId" resultType="java.lang.String">
+        SELECT distinct instance_id FROM cmdb_openstack_image
+    </select>
+</mapper>

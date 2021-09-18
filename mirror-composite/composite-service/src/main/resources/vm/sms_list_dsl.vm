@@ -1,0 +1,27 @@
+{
+    "from" : ${builder.from}, "size" : ${builder.size},
+    "query": {
+        "bool": {
+            "must": [
+                #foreach($paramMultiple in ${builder.paramsMultiple.keySet()})
+                {
+                    "terms": {
+                        "$paramMultiple":[ #foreach($paramMultipleItem in ${builder.paramsMultiple.get($paramMultiple)})
+                            #if($velocityCount!=1),#end"$paramMultipleItem"
+                        #end
+                        ]
+                    }
+                },
+                #end
+                {
+                    "range": {
+                        "${builder.timeColsName}": {
+                            "lte": ${builder.endTime},
+                            "gte": ${builder.startTime}
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

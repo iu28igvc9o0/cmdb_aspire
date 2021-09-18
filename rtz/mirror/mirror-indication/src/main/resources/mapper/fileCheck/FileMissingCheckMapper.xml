@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.fileCheck.dao.IFileMissingCheckDAO">
+
+	<select id="getFileMissingCheckData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT mp.province_name '省份',fips.upload_date '日期',md.dict_value '时间段',
+		GROUP_CONCAT(CONCAT_WS(' ', fips.minute_period, md1.dict_value)) '完整度'
+		FROM file_indication_period_config fipc
+		INNER JOIN file_indication fi on (fi.file_indication_type = #{type} AND  fipc.indication_id = fi.file_indication_id)
+		INNER JOIN mirror_dict md ON (md.dict_id = fipc.dict_period
+		<if test="period != null and period != ''">
+			AND md.dict_value = #{period}
+		</if>)
+		INNER JOIN file_indication_period_state fips ON ( fips.period_config_id = fipc.config_id
+		<if test="date != null and date != ''">
+			AND fips.upload_date = #{date}
+		</if>
+		<if test="missing != null">
+			AND fips.upload_status = #{missing}
+		</if>)
+		INNER JOIN mirror_province mp ON (mp.province_code = fipc.province_code)
+		INNER JOIN mirror_dict md1 ON (md1.dict_name='FILE_STATE_STATUS' AND md1.dict_id = fips.upload_status)
+		WHERE  1 = 1 AND fipc.indication_id = #{fileIndicationId}
+		<if test="province != null and province != ''">
+			AND fipc.province_code = #{province}
+		</if>
+		group by mp.province_name,fips.upload_date,md.dict_value
+		order BY mp.province_code ASC, fips.upload_date DESC,md.dict_value, fips.minute_period ASC
+		limit #{startIndex}, #{pageSize}
+	</select>
+
+	<select id="getFileCheckResultForMail" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT mp.province_code, fi.file_indication_name, fi.file_indication_code, fips.upload_date, fips.minute_period period_name, fips.upload_status, fips.update_integrity, fips.file_size_status
+		FROM file_indication_period_config fipc
+		INNER JOIN file_indication fi on (fi.file_indication_type = #{type} AND  fipc.indication_id = fi.file_indication_id)
+		INNER JOIN mirror_dict md ON (md.dict_id = fipc.dict_period)
+		INNER JOIN file_indication_period_state fips ON ( fips.period_config_id = fipc.config_id
+			<if test="date != null and date != ''">
+				AND fips.upload_date = #{date}
+			</if>
+		)
+		INNER JOIN mirror_province mp ON (mp.province_code = fipc.province_code)
+		WHERE (fips.upload_status = 30 or fips.file_size_status = 30)
+		order BY mp.province_code ASC, fi.file_indication_id, fips.upload_date DESC, md.dict_value, fips.minute_period ASC
+	</select>
+
+	<select id="getFileMissingCheckDataCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1) totalCount FROM (
+			SELECT mp.province_name '省份',fips.upload_date '日期',md.dict_value '时间段' FROM file_indication_period_config fipc
+			INNER JOIN file_indication fi on (fi.file_indication_type = #{type} AND  fipc.indication_id = fi.file_indication_id)
+			INNER JOIN mirror_dict md ON (md.dict_id = fipc.dict_period
+			<if test="period != null and period != ''">
+				AND md.dict_value = #{period}
+			</if>)
+			INNER JOIN file_indication_period_state fips ON ( fips.period_config_id = fipc.config_id
+			<if test="date != null and date != ''">
+				AND fips.upload_date = #{date}
+			</if>
+			<if test="missing != null">
+				AND fips.upload_status = #{missing}
+			</if>)
+			INNER JOIN mirror_province mp ON (mp.province_code = fipc.province_code)
+			INNER JOIN mirror_dict md1 ON (md1.dict_name='FILE_STATE_STATUS' AND md1.dict_id = fips.upload_status)
+			WHERE 1 = 1 AND fipc.indication_id = #{fileIndicationId}
+			<if test="province != null and province != ''">
+				AND fipc.province_code = #{province}
+			</if>
+			group by mp.province_name,fips.upload_date,md.dict_value
+		) t
+	</select>
+
+	<select id="getMissingList" resultType="java.util.LinkedHashMap">
+		select fps.upload_date, fpc.indication_id, fi.file_indication_code, fi.file_indication_name, fpc.dict_period, md.dict_value period_name, fpc.province_code, mp.province_name,fps.upload_status, fps.update_integrity from file_indication_period_state fps
+		inner join file_indication_period_config fpc on fps.period_config_id = fpc.config_id
+		inner join mirror_dict md on md.dict_id = fpc.dict_period
+		inner join file_indication fi on fi.file_indication_id = fpc.indication_id
+		inner join mirror_province mp on mp.province_code = fpc.province_code
+		where 1=1
+		<if test="uploadDate != null and uploadDate != ''">
+			and fps.upload_date=#{uploadDate}
+		</if>
+		<if test="type != null and type != ''">
+			and fi.file_indication_type = #{type}
+		</if>
+		order by fpc.indication_id, fpc.province_code, md.dict_value
+	</select>
+
+</mapper>

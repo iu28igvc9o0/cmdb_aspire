@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.systemManager.mapper.BizSystemMapper" >
+
+    <resultMap id="bizSystem" type="com.aspire.ums.cmdb.systemManager.payload.BizSystem">
+        <id property="id" column="id" />
+        <result property="bizName" column="bizName" />
+        <result property="orgId" column="orgId" />
+        <result property="orgName" column="orgName" />
+        <result property="pid" column="parent_id" />
+        <result property="isdisable" column="isdisable" />
+        <result property="remark" column="remark" />
+        <result property="isdel" column="isdel" />
+        <!--<collection  property="concatList" column="bizId" select="getConcatById" />-->
+        <association property="orgManager" column="id" select="getOrgById" />
+    </resultMap>
+
+    <!--下线-->
+    <update id="delete">
+         update cmdb_biz_system set isdel = 1
+        <where>
+            id = #{id} or parent_id=#{id}
+        </where>
+    </update>
+
+    <select id="getBizSystemDataCount"
+            parameterType="com.aspire.ums.cmdb.systemManager.payload.BizSystemReq"
+            resultType="java.lang.Integer">
+        select count(1) from cmdb_biz_system biz
+        <where>
+            isdel != 1
+            <if test="bizName != null and bizName != ''">
+                and bizName like CONCAT('%',#{bizName},'%')
+            </if>
+            <if test="isdisable != null and isdisable != ''">
+                and isdisable = #{isdisable}
+            </if>
+            <if test="departmentId != null and departmentId != ''" >
+                and EXISTS (select 1 from cmdb_org_system org where biz.orgId = org.id
+                and (org.parent_id=#{departmentId} or org.id=#{departmentId}) )
+            </if>
+            <choose>
+                <when test="pid != null and pid != ''">
+                    and parent_id = #{pid}
+                </when>
+                <otherwise>
+                    and parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <select id="getBizSystemData"
+            parameterType="com.aspire.ums.cmdb.systemManager.payload.BizSystemReq"
+            resultMap="bizSystem">
+        select * from cmdb_biz_system biz
+        <where>
+            isdel != 1
+            <if test="bizName != null and bizName != ''">
+                and bizName like CONCAT('%',#{bizName},'%')
+            </if>
+            <if test="isdisable != null and isdisable != ''">
+                and isdisable = #{isdisable}
+            </if>
+            <if test="departmentId != null and departmentId != ''" >
+                and EXISTS (select 1 from cmdb_org_system org where biz.orgId = org.id
+                and (org.parent_id=#{departmentId} or org.id=#{departmentId}) )
+            </if>
+            <choose>
+                <when test="pid != null and pid != ''">
+                    and parent_id = #{pid}
+                </when>
+                <otherwise>
+                    and parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+        LIMIT #{startPageNum},#{pageSize}
+    </select>
+
+    <!--新增-->
+    <insert id="insert">
+        insert into cmdb_biz_system (id,bizName,orgId,parent_id,isdisable,remark,isdel)
+        values (#{id},#{bizName},#{orgId},#{pid},#{isdisable},#{remark},0)
+    </insert>
+
+    <!--编辑-->
+    <update id="updateByPrimaryKey">
+        update cmdb_biz_system
+        <set>
+            bizName = #{bizName},
+            orgId = #{orgId},
+            isdisable = #{isdisable},
+            remark = #{remark}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+    <update id="updateSubBizOrgId">
+        update cmdb_biz_system
+        set orgId = #{orgId}
+        where parent_id = #{pid}
+    </update>
+
+    <!--新增联系人-->
+    <insert id="insertConcat">
+        insert into cmdb_biz_system_concat (bizId,name,phone,email)
+        values (#{bizId},#{name},#{phone},#{email})
+    </insert>
+
+    <!--根据ID查询-->
+    <select id="getBizSystemById" parameterType="java.lang.String"
+            resultMap="bizSystem">
+        select
+        id,
+        bizName,
+        orgId,
+        parent_id,
+        isdisable,
+        remark,
+        isdel
+        from cmdb_biz_system where id=#{id}
+    </select>
+
+    <!--查询联系人-->
+    <select id="getConcatById" parameterType="java.lang.String"
+            resultType="com.aspire.ums.cmdb.systemManager.payload.Concat">
+        select
+        bizId,
+        name,
+        phone,
+        email
+        from cmdb_biz_system_concat where bizId=#{id}
+    </select>
+
+    <!--根据父ID查询-->
+    <select id="getBizSystemByPid"
+            parameterType="java.lang.String"
+            resultMap="bizSystem">
+        select
+            bs.id,
+            bs.bizName,
+            bs.orgId,
+            os.orgName,
+            bs.parent_id,
+            bs.isdisable,
+            bs.remark
+        from cmdb_biz_system bs left join cmdb_org_system os on bs.orgId=os.id where bs.parent_id=#{pid} and bs.isdel != 1
+    </select>
+
+    <!--删除联系人-->
+    <delete id="delConcatById" parameterType="java.lang.String">
+        delete from cmdb_biz_system_concat where bizId=#{bizId}
+    </delete>
+
+    <select id="getOrgById" resultType="com.aspire.ums.cmdb.systemManager.payload.OrgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark
+        from cmdb_org_system where id=#{orgId}
+    </select>
+
+    <select id="getDepartmentInfoByBizSystem" resultType="java.util.HashMap">
+        select id, department1, department2 from cmdb_business_system
+        where bizSystem=#{bizSystem} and is_delete='0'
+    </select>
+</mapper>

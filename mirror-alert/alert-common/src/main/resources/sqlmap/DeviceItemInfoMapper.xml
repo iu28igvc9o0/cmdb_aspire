@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.dashboard.DeviceItemInfoDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.dashboard.po.DeviceItemInfo" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="device_class" column="device_class" jdbcType="VARCHAR"/>
+        <result property="device_type" column="device_type" jdbcType="VARCHAR"/>
+        <result property="subclass" column="subclass" jdbcType="VARCHAR"/>
+        <result property="moniter_item_name" column="moniter_item_name" jdbcType="VARCHAR"/>
+        <result property="moniter_item_key" column="moniter_item_key" jdbcType="VARCHAR"/>
+        <result property="comment" column="comment" jdbcType="VARCHAR"/>
+        <result property="alert_level" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="is_create_alert" column="is_create_alert" jdbcType="VARCHAR"/>
+        <result property="default_value" column="default_value" jdbcType="VARCHAR"/>
+        <result property="monitor_rate" column="monitor_rate" jdbcType="VARCHAR"/>
+        <result property="protocol" column="protocol" jdbcType="VARCHAR"/>
+        <result property="is_show_idcType" column="is_show_idcType" jdbcType="VARCHAR"/>
+        <result property="is_show_room" column="is_show_room" jdbcType="VARCHAR"/>
+        <result property="is_show_frame" column="is_show_frame" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
+        <result property="alert_tips" column="alert_tips" jdbcType="VARCHAR"/>
+        <result property="monitor_rate" column="object_type" jdbcType="VARCHAR"/>
+         <result property="is_create_order" column="is_create_order" jdbcType="VARCHAR"/>
+    </resultMap>
+
+ 	<sql id="baseColumnList">
+    	id,device_class,device_type,subclass,moniter_item_name,moniter_item_key,comment,
+    	alert_level,is_create_alert,default_value,monitor_rate,protocol,is_show_idcType,
+    	is_show_room,is_show_frame,note,alert_tips,monitor_rate,is_create_order
+	</sql>
+	<select id="getDeviceClass"  resultType="java.lang.String">
+        select distinct(d.device_class) from device_item_info d
+    </select>
+    
+    <select id="getDeviceType"  resultType="java.lang.String">
+        select distinct(d.device_type) from device_item_info d where d.device_class = #{deviceClass}
+    </select>
+    
+    <select id="getSubclass"  resultType="java.lang.String">
+        select distinct(d.subclass) from device_item_info d 
+        where d.device_class = #{deviceClass} and d.device_type = #{deviceType}
+    </select>
+    
+    <select id="getMonitor"  resultMap="baseResultMap">
+        select  <include refid="baseColumnList" /> 
+         from device_item_info d
+          where d.device_class = #{deviceClass}  and 
+d.device_type=#{deviceType} and  d.subclass = #{subclass}
+    </select>
+    
+    <select id="getMonitorAll"  resultMap="baseResultMap">
+		SELECT <include refid="baseColumnList" />  from device_item_info d group by d.moniter_item_name
+    </select>
+    
+    <select id="getAll"  resultMap="baseResultMap">
+		select  <include refid="baseColumnList" />  from device_item_info
+    </select>
+    
+     <select id="getSunMonitors"  resultMap="baseResultMap">
+		select d.subclass,d.moniter_item_name,d.moniter_item_key
+		from device_item_info d 
+		where d.device_class = #{deviceClass} and d.device_type = #{deviceType}
+		group by d.subclass,d.moniter_item_name,d.moniter_item_key
+    </select>
+    
+    <resultMap type="map" id="baseResultMap1">
+        <result property="device_class" column="device_class" jdbcType="VARCHAR"/>
+        <result property="device_type" column="device_type" jdbcType="VARCHAR"/>
+        <result property="subclass" column="subclass" jdbcType="VARCHAR"/>
+        <result property="moniter_item_name" column="moniter_item_name" jdbcType="VARCHAR"/>
+        <result property="moniter_item_key" column="key" jdbcType="VARCHAR"/>
+        <result property="comment" column="comment" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    
+    <select id="getMonitorList"  resultMap="baseResultMap1">
+		select subclass,moniter_item_name,moniter_item_key ,comment,device_class,device_type
+		from device_item_info 
+		where  1=1
+		<if test="deviceClass != null and deviceClass != ''">
+        and device_class = #{deviceClass}
+        </if>
+        	<if test="deviceType != null and deviceType != ''">
+       			 and device_Type = #{deviceType}
+        </if>
+		order by device_class,device_type,subclass
+    </select>
+	
+    <!-- 新增 
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.filter.po.AlertFilterScene">
+		insert into
+			alert_filter_scene(name,creater,editer,note,created_at,option_condition,filter_id,operate_user)
+		values(
+			#{name,jdbcType=VARCHAR} ,
+			#{creater,jdbcType=VARCHAR} ,
+			#{editer,jdbcType=VARCHAR} ,
+			#{note,jdbcType=VARCHAR} ,
+			#{created_at,jdbcType=TIMESTAMP},
+			#{optionCondition,jdbcType=VARCHAR},
+			#{filterId,jdbcType=VARCHAR},
+			#{operateUser,jdbcType=VARCHAR}
+		)
+	</insert>-->
+	
+	 <insert id="batchInsert" parameterType="com.aspire.mirror.alert.server.dao.dashboard.po.DeviceItemInfo">
+		insert into
+			device_item_info(device_class,device_type,subclass,moniter_item_name,moniter_item_key,comment,
+			alert_level,is_create_alert,default_value,monitor_rate,protocol,is_show_idcType,is_show_room,
+			is_show_frame,note,alert_tips,object_type,is_create_order)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+          ( #{item.device_class,jdbcType=VARCHAR} ,
+			#{item.device_type,jdbcType=VARCHAR} ,
+			#{item.subclass,jdbcType=VARCHAR} ,
+			#{item.moniter_item_name,jdbcType=VARCHAR} ,
+			#{item.moniter_item_key,jdbcType=VARCHAR},
+			#{item.comment,jdbcType=VARCHAR},
+			#{item.alert_level,jdbcType=VARCHAR},
+			#{item.is_create_alert,jdbcType=VARCHAR},
+			#{item.default_value,jdbcType=VARCHAR},
+			#{item.monitor_rate,jdbcType=VARCHAR} ,
+			#{item.protocol,jdbcType=VARCHAR} ,
+			#{item.is_show_idcType,jdbcType=VARCHAR} ,
+			#{item.is_show_room,jdbcType=VARCHAR} ,
+			#{item.is_show_frame,jdbcType=VARCHAR},
+			#{item.note,jdbcType=VARCHAR},
+			#{item.alert_tips,jdbcType=VARCHAR},
+			#{item.object_type,jdbcType=VARCHAR},
+			#{item.is_create_order,jdbcType=VARCHAR}
+			)  
+      </foreach> 
+		
+	</insert>
+
+    <select id="getMonitorByKey"  resultMap="baseResultMap">
+        select  <include refid="baseColumnList" />
+        from device_item_info d
+        where d.moniter_item_key = #{key}
+    </select>
+  
+</mapper>

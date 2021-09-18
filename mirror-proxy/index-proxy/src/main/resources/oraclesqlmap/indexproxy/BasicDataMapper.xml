@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.indexproxy.dao.BasicDataDao">
+
+    <resultMap type="com.aspire.mirror.indexproxy.domain.MonitorTemplateRecord" id="monitorTemplateMap">
+    	<result property="template_id" column="templateId" jdbcType="VARCHAR"/>
+    	<result property="name" column="name" jdbcType="VARCHAR"/>
+    	<result property="description" column="description" jdbcType="VARCHAR"/>
+    	<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    	<result property="type" column="type" jdbcType="VARCHAR"/>
+    	<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    	<result property="funType" column="fun_type" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.indexproxy.domain.MonitorItemRecord" id="monitorItemMap">
+    	<result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+    	<result property="name" column="name" jdbcType="VARCHAR"/>
+    	<result property="type" column="type" jdbcType="VARCHAR"/>
+    	<result property="templateId" column="template_id" jdbcType="INTEGER"/>
+    	<result property="key" column="key" jdbcType="VARCHAR"/>
+    	<result property="delay" column="delay" jdbcType="INTEGER"/>
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+    	<result property="units" column="units" jdbcType="VARCHAR"/>
+    	<result property="error" column="error" jdbcType="VARCHAR"/>
+    	<result property="dataType" column="data_type" jdbcType="VARCHAR"/>
+    	<result property="sysType" column="sys_type" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.indexproxy.domain.MonitorTriggerRecord" id="monitorTriggerMap">
+    	<result property="triggerId" column="trigger_id" jdbcType="VARCHAR"/>
+    	<result property="name" column="name" jdbcType="VARCHAR"/>
+    	<result property="expression" column="expression" jdbcType="VARCHAR"/>
+    	<result property="url" column="url" jdbcType="VARCHAR"/>
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="value" column="value" jdbcType="VARCHAR"/>
+    	<result property="priority" column="priority" jdbcType="VARCHAR"/>
+    	<result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+    	<result property="param" column="param" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.indexproxy.domain.MonitorActionRecord" id="monitorActionMap">
+    	<result property="actionId" column="action_id" jdbcType="VARCHAR"/>
+    	<result property="name" column="name" jdbcType="VARCHAR"/>
+    	<result property="eventSource" column="event_source" jdbcType="VARCHAR"/>
+    	<result property="evalType" column="eval_type" jdbcType="VARCHAR"/>
+    	<result property="status" column="status" jdbcType="VARCHAR"/>
+    	<result property="type" column="type" jdbcType="VARCHAR"/>
+    	<result property="dealer" column="dealer" jdbcType="VARCHAR"/>
+    	<result property="triggerId" column="trigger_id" jdbcType="VARCHAR"/>
+    	<result property="eventType" column="event_type" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.indexproxy.domain.MonitorEventRecord" id="monitorEventMap">
+    	<result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+    	<result property="sourceType" column="source_type" jdbcType="VARCHAR"/>
+    	<result property="sourceId" column="source_id" jdbcType="VARCHAR"/>
+    	<result property="source" column="source" jdbcType="VARCHAR"/>
+    	<result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+    	<result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+    	<result property="object" column="object" jdbcType="VARCHAR"/>
+    	<result property="value" column="value" jdbcType="VARCHAR"/>
+    	<result property="acknowledged" column="acknowledged" jdbcType="VARCHAR"/>
+    	<result property="clock" column="clock" jdbcType="INTEGER"/>
+    	<result property="ns" column="ns" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <select id="getDataItemSyncSeq" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select sync_seq from data_sync_mark where item_identity = #{itemIdentity}
+    </select>
+	
+	<insert id="insertDataItemSyncMark" parameterType="java.util.Map">
+		insert into data_sync_mark(id,item_identity, last_sync_time)
+		 values
+		 (
+		 SEQ_DATA_SYNC_MARK.nextval,
+		 #{itemIdentity, jdbcType=VARCHAR},
+		 #{syncTime, jdbcType=TIMESTAMP})
+		 )
+	</insert>
+	
+	<update id="updateDataItemSyncMark" parameterType="java.util.Map">
+		update data_sync_mark set sync_seq = #{syncSeq}, last_sync_time = #{syncTime} 
+		 where item_identity = #{itemIdentity}
+	</update>
+	
+	<delete id="removeMonitorTemplateById" parameterType="java.lang.String">
+		delete from sync_monitor_template where template_id = #{templateId}	
+	</delete>
+
+	<insert id="insertMonitorTemplate" parameterType="com.aspire.mirror.indexproxy.domain.MonitorTemplateRecord">
+		insert into sync_monitor_template(template_id, name, description, create_time, type, update_time, fun_type)
+		values
+		(#{templateId,jdbcType=VARCHAR},
+		 #{name,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+ 		#{createTime,jdbcType=TIMESTAMP},
+		#{type,jdbcType=VARCHAR},
+ 		#{updateTime,jdbcType=TIMESTAMP},
+		#{funType,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getMonitorTemplateById" resultMap="monitorTemplateMap" parameterType="java.lang.String">
+		select template_id, name, description, create_time, type, update_time, fun_type
+		  from sync_monitor_template 
+		 where template_id = #{templateId}
+	</select>
+	
+	<delete id="removeMonitorItemById" parameterType="java.lang.String">
+		delete from sync_monitor_items where item_id = #{itemId}	
+	</delete>
+	
+	<insert id="insertMonitorItem" parameterType="com.aspire.mirror.indexproxy.domain.MonitorItemRecord">
+		insert into sync_monitor_items(item_id, name, type, template_id, sync_monitor_items.key, 
+									   delay, status, value_type, units, error, data_type, sys_type) 
+		values(
+		#{itemId,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{templateId,jdbcType=VARCHAR},
+		#{key,jdbcType=VARCHAR},
+		#{delay,jdbcType=INTEGER},
+		#{status,jdbcType=VARCHAR},
+		#{valueType,jdbcType=VARCHAR},
+		#{units,jdbcType=VARCHAR},
+		#{error,jdbcType=VARCHAR},
+		#{dataType,jdbcType=VARCHAR},
+		#{sysType,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getMonitorItemById" resultMap="monitorItemMap" parameterType="java.lang.String">
+		select item_id, name, type, template_id, sync_monitor_items.key , delay, status,
+		       value_type, units, error, data_type from sync_monitor_items
+		 where item_id = #{itemId}
+	</select>
+	
+	<delete id="removeMonitorTriggerById" parameterType="java.lang.String">
+		delete from sync_monitor_triggers where trigger_id = #{triggerId}	
+	</delete>
+	
+    <insert id="insertMonitorTrigger" parameterType="com.aspire.mirror.indexproxy.domain.MonitorTriggerRecord">
+		insert into sync_monitor_triggers(trigger_id, name, expression, url, status, value, priority, item_id, param) 
+		values(
+		#{triggerId,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{expression,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{value,jdbcType=VARCHAR},
+		#{priority,jdbcType=VARCHAR},
+		#{itemId,jdbcType=VARCHAR},
+		#{param,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getTriggerListByItemId" resultMap="monitorTriggerMap" parameterType="java.lang.String">
+		select trigger_id, name, expression, url, status, value, priority, item_id, param 
+		  from sync_monitor_triggers 
+		 where status = 'ON' 
+		   and item_id = #{itemId}
+	</select>
+	
+	<delete id="removeMonitorActionById" parameterType="java.lang.String">
+		delete from sync_monitor_actions where action_id = #{actionId}	
+	</delete>
+	
+    <insert id="insertMonitorAction" parameterType="com.aspire.mirror.indexproxy.domain.MonitorActionRecord">
+		insert into sync_monitor_actions(action_id, name, event_source, eval_type, status, type, dealer, trigger_id, event_type) 
+		values(
+		#{actionId,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{eventSource,jdbcType=VARCHAR},
+		#{evalType,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{dealer,jdbcType=VARCHAR},
+		#{triggerId,jdbcType=VARCHAR},
+		#{eventType,jdbcType=INTEGER})
+	</insert>
+	  
+    <select id="getMonitorActionListByTriggerId" resultMap="monitorActionMap" parameterType="java.lang.String">
+		select action_id, name, event_source, eval_type, status, type, dealer, trigger_id, event_type 
+		  from sync_monitor_actions 
+		 where trigger_id = #{triggerId}
+		   and status = 'ON'
+	</select>
+	
+    <insert id="insertMonitorEvent" parameterType="com.aspire.mirror.indexproxy.domain.MonitorEventRecord">
+		insert into monitor_events (event_id, source_type, source_id, source, object_type, 
+		                            object_id, object, value, acknowledged, clock, ns)
+		values (
+		#{eventId,jdbcType=VARCHAR},
+		#{sourceType,jdbcType=VARCHAR},
+		#{sourceId,jdbcType=VARCHAR},
+		#{source,jdbcType=VARCHAR},
+		#{objectType,jdbcType=VARCHAR},
+		#{objectId,jdbcType=VARCHAR},
+		#{object,jdbcType=VARCHAR},
+		#{value,jdbcType=VARCHAR},
+		#{acknowledged,jdbcType=VARCHAR},
+		#{clock,jdbcType=INTEGER},
+		#{ns,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="getCacheValByKey" parameterType="java.lang.String" resultType="java.lang.String">
+		select cache_value from cache_map where cache_key = #{cacheKey}
+	</select>
+	
+	<delete id="removeCacheKey" parameterType="java.lang.String">
+		delete from cache_map where cache_key = #{cacheKey}
+	</delete>
+	
+	<insert id="putCacheEntry" parameterType="java.util.Map">
+		insert into cache_map(cache_key, cache_value) values (
+		#{cacheKey,},
+		#{cacheValue})
+	</insert>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     ModuleInfoMapper
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2019-10-17 14:04:59
+ -->
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.ModuleInfoDao">
+    <resultMap type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleInfo" id="baseResultMap">
+        <result property="moduleCode" column="module_code" jdbcType="VARCHAR"/>
+        <result property="data" column="data" jdbcType="VARCHAR"/>
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+        <result property="lastUpdateUser" column="last_update_user" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleInfo">
+        insert into t_cfg_module_info
+        (module_code, data, id, create_user, last_update_user, create_time, update_time)values(
+        #{moduleCode,jdbcType=VARCHAR} ,
+        #{data,jdbcType=VARCHAR},
+        #{id,jdbcType=VARCHAR},
+         #{createUser,jdbcType=VARCHAR},
+          #{lastUpdateUser,jdbcType=VARCHAR},
+           #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <select id="findByCode" parameterType="String" resultMap="baseResultMap">
+        select
+        module_code, data, id, create_user, last_update_user, create_time, update_time
+        from t_cfg_module_info where module_code = #{moduleCode}
+    </select>
+    <update id="updateByCode" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleInfo">
+        update t_cfg_module_info
+        set  id = #{id}
+        <if test="moduleCode != null and moduleCode != ''">
+            , module_code = #{moduleCode}
+        </if>
+        <if test="data != null and data != ''">
+            , data = #{data}
+        </if>
+        <if test="lastUpdateUser != null and lastUpdateUser != ''">
+            , last_update_user = #{lastUpdateUser}
+        </if>
+        <if test="updateTime != null">
+            ,update_time = #{updateTime}
+        </if>
+        where id = #{id}
+    </update>
+</mapper>

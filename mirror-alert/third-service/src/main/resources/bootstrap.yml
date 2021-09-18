@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: third-service
+  cloud:
+    config:
+      enabled: true
+      name: ms-third
+      profile: ${ENV_TYPE:dev}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}

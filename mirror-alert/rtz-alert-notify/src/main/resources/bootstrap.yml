@@ -1,0 +1,6 @@
+spring: 
+  application:
+    name: rtz-alert-notify
+  cloud:
+    config:
+      enabled: false

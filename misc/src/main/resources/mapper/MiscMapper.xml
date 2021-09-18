@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.aspire.mirror.misc.dao.MiscDao">
+
+	<resultMap id="snmpEvent_result" type="com.aspire.mirror.misc.model.SnmpEvent">
+		<result property="alertId" column="alert_id"/>
+		<result property="bussinessSystem" column="biz_sys"/>
+		<result property="moniObject" column="moni_index"/>
+		<result property="moniIndex" column="moni_index"/>
+		<result property="alertLevel" column="alert_level"/>
+		<result property="moniType" column="object_type"/>
+		<result property="alertStartTime" column="alert_start_time"/>
+		<result property="removeDate" column="alert_end_time"/>
+		<result property="eventStatus" column="order_status"/>
+		<result property="alertDesc" column="remark"/>
+		<result property="device" column="device_ip"/>
+		<result property="curMoniValue" column="cur_moni_value"/>
+		<result property="neCode" column="ne_code"/>
+		<result property="createTime" column="create_time"/>
+		<result property="alertStatus" column="alert_status"/>
+	</resultMap>
+	
+	<resultMap id="snmpEventNode_result" type="com.aspire.mirror.misc.model.SnmpEventNode">
+		<result property="nodeMiscId" column="node_misc_id"/>
+		<result property="nodeMiscName" column="node_misc_name"/>
+		<result property="snmpStatus" column="snmp_status"/>
+	</resultMap>
+	
+	<resultMap id="snmpEventInfo_result" type="com.aspire.mirror.misc.model.SnmpEventHis">
+		<result property="alertId" column="alert_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="alertStatus" column="alert_status"/>
+	</resultMap>
+
+
+	<select id="ListAllSnmpEvent" resultMap="snmpEvent_result">
+		<![CDATA[
+		 select * from
+			(select 
+				a.alert_id,
+				a.biz_sys,
+				a.device_ip,
+				a.moni_index,
+				a.alert_level,
+				a.object_type,
+				a.alert_start_time,
+				null as alert_end_time,
+				'1' as order_status,
+				a.remark,
+				a.device_id,
+				a.cur_moni_value,
+				'' as ne_code,
+				a.alert_start_time as create_time,
+				'1' as alert_status 
+			from alert_alerts as a left join alert_snmp_event_his as b 
+			on a.alert_id=b.alert_id  and b.alert_status='1' 
+			where (b.create_time is null or (b.create_time is not null and a.alert_start_time > b.create_time))
+			
+			union all
+			
+			select 
+				c.alert_id,
+				c.biz_sys,
+				c.device_ip,
+				c.moni_index,
+				c.alert_level,
+				c.object_type,
+				c.alert_start_time,
+				c.alert_end_time,
+				'2' as order_status,
+				c.remark,
+				c.device_id,
+				c.cur_moni_value,
+				'' as ne_code,
+				c.alert_end_time as create_time,
+				'2' as alert_status
+			from alert_alerts_his as c left join alert_snmp_event_his as d 
+			on c.alert_id=d.alert_id  and d.alert_status='2' 
+			where (d.create_time is null or (d.create_time is not null and c.alert_end_time > d.create_time))
+			) as e
+			]]>
+	</select>
+	
+	
+	<select id="listSnmpEventNode" resultMap="snmpEventNode_result">
+		select 
+			node_misc_id,
+			node_misc_name,
+			snmp_status 
+		from alert_snmp_node 
+		where snmp_status = 'Y'
+	</select>
+
+
+	<select id="findSnmpEventSucInfo" parameterType="com.aspire.mirror.misc.model.SnmpEvent" resultMap="snmpEventInfo_result">
+		<![CDATA[
+		select 
+			alert_id,
+			create_time,
+			alert_status 
+		from alert_snmp_event_his 
+		where alert_id = #{alertId} and alert_status = #{alertStatus}
+		]]>
+	</select>
+	
+	
+	<select id="findSnmpEventAlert" parameterType="com.aspire.mirror.misc.model.SnmpEvent" resultType="java.lang.String">
+		select if(
+			(
+				select if(
+					(SELECT create_time FROM alert_snmp_event_his WHERE alert_id = #{alertId} AND alert_status = '1') is not null,
+					(SELECT create_time FROM alert_snmp_event_his WHERE alert_id = #{alertId} AND alert_status = '1'),
+					'1'
+				)
+			)
+			>
+			(
+				select if(
+					(SELECT create_time FROM alert_snmp_event_his WHERE alert_id = #{alertId} AND alert_status = '2') is not null,
+					(SELECT create_time FROM alert_snmp_event_his WHERE alert_id = #{alertId} AND alert_status = '2'),
+					'1'
+				)
+			),
+			'1',
+			null
+		)
+	</select>
+
+
+	<insert id="insertSnmpEventSusInfo" parameterType="com.aspire.mirror.misc.model.SnmpEventHis">
+		insert into alert_snmp_event_his 
+			(
+				alert_id,
+				create_time,
+				alert_status
+			) values 
+			(
+				#{alertId},
+				#{createTime},
+				#{alertStatus}
+			)	
+	</insert>
+
+	
+	<update id="updateSnmpEventInfo" parameterType="com.aspire.mirror.misc.model.SnmpEventHis">
+		update alert_snmp_event_his
+		set create_time = #{createTime} 
+		where alert_id = #{alertId} and alert_status = #{alertStatus}
+	</update>
+
+
+</mapper>

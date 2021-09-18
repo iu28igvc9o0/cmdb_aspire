@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="display" property="display" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `module_id`,
+        `code_id`,
+        `display`
+        FROM cmdb_v3_module_relation
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRelation">
+        SELECT
+        `id`,
+        `module_id`,
+        `code_id`,
+        `display`
+        FROM cmdb_v3_module_relation
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+        AND `module_id` = #{moduleId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="display != null and display != ''">
+        AND `display` = #{display}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRelation" resultMap="resultMap">
+        SELECT
+        `id`,
+        `module_id`,
+        `code_id`,
+        `display`
+        FROM cmdb_v3_module_relation
+        WHERE 1=1
+        AND `id` = #{id}
+        AND `module_id` = #{moduleId}
+        AND `code_id` = #{codeId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRelation">
+        INSERT INTO cmdb_v3_module_relation
+        (
+            `id`,
+            `module_id`,
+            `code_id`,
+            `display`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{display, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRelation">
+        UPDATE cmdb_v3_module_relation SET
+        `display` = #{display}
+        WHERE
+        `id` = #{id}
+         and `module_id` = #{moduleId},
+         and `code_id` = #{codeId},
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleRelation">
+        DELETE FROM cmdb_v3_module_relation
+        WHERE
+         `id` = #{id}
+         and  `module_id` = #{moduleId},
+         and  `code_id` = #{codeId},
+    </delete>
+</mapper>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.aspire.mirror</groupId>
+	<artifactId>mirror-rbac</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<springfox-version>2.6.1</springfox-version>
+		<lombok.version>1.16.14</lombok.version>
+		<docker.tags.version>latest</docker.tags.version>
+		<docker.image.name>172.30.150.86:5000/test01/${project.artifactId}</docker.image.name>
+		<docker.base.image.name>172.30.150.64:5000/oraclejre8:latest </docker.base.image.name>
+	</properties>
+
+	<modules>
+		<module>rbac-api</module>
+		<module>rbac-service</module>
+	</modules>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>${snapshotRepository.id}</id>
+			<name>${snapshotRepository.name}</name>
+			<url>${snapshotRepository.url}</url>
+		</snapshotRepository>
+		<repository>
+			<id>${repository.id}</id>
+			<name>${repository.name}</name>
+			<url>${repository.url}</url>
+		</repository>
+	</distributionManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<!--执行器 mvn assembly:assembly -->
+					<execution>
+						<id>release</id>
+						<!--名字任意 -->
+						<phase>package</phase>
+						<!-- 绑定到package生命周期阶段上 -->
+						<goals>
+							<goal>single</goal>
+							<!-- 只运行一次 -->
+						</goals>
+						<configuration>
+							<descriptors>
+								<!--描述文件路径 -->
+								<descriptor>release.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			<!--checkstyle插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<consoleOutput>true</consoleOutput>
+					<outputFileFormat>xml</outputFileFormat>
+					<outputFile>${project.build.directory}/codecheck/checkstyle.xml</outputFile>
+					<configLocation>../check/EclipseCheckStyle.xml</configLocation>
+					<linkXRef>false</linkXRef>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>8.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.8</version>
+				<configuration>
+					<rulesets>
+						<ruleset>../check/pmd_rules.xml</ruleset>
+					</rulesets>
+					<format>xml</format>
+					<targetDirectory>${project.build.directory}/codecheck</targetDirectory>
+					<printFailingErrors>true</printFailingErrors>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.4</version>
+				<configuration>
+					<xmlOutput>true</xmlOutput>
+					<xmlOutputDirectory>${project.build.directory}/codecheck</xmlOutputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.22.1</version>
+				<configuration>
+					<images>
+						<image>
+							<name>${docker.image.name}:${docker.tags.version}</name>
+							<build>
+								<from>${docker.base.image.name}</from>
+								<tags>
+									<tag>${docker.tags.self.version}</tag>
+								</tags>
+								<ports>
+									<port>8080</port>
+								</ports>
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<cmd>java ${JAVA_OPTIONS} -jar /maven/${project.build.finalName}.jar</cmd>
+							</build>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<!--pmd报告结果 -->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.8</version>
+				<configuration>
+					<reportSets>
+						<reportSet>
+							<reports>
+								<report>pmd</report>
+							</reports>
+						</reportSet>
+					</reportSets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+<parent>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-parent</artifactId>
+	<version>1.5.7.RELEASE</version>
+</parent>
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-dependencies</artifactId>
+			<version>Dalston.SR3</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+<dependencies>
+	<!-- swagger ui 相关jar -->
+	<dependency>
+		<groupId>io.springfox</groupId>
+		<artifactId>springfox-swagger2</artifactId>
+		<version>${springfox-version}</version>
+	</dependency>
+	<dependency>
+		<groupId>io.springfox</groupId>
+		<artifactId>springfox-swagger-ui</artifactId>
+		<version>${springfox-version}</version>
+	</dependency>
+	<dependency>
+		<groupId>com.fasterxml.jackson.datatype</groupId>
+		<artifactId>jackson-datatype-joda</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>joda-time</groupId>
+		<artifactId>joda-time</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<scope>compile</scope>
+		<optional>true</optional>
+	</dependency>
+</dependencies>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<snapshotRepository.id>snapshots</snapshotRepository.id>
+				<snapshotRepository.name>Nexus Snapshot Repository</snapshotRepository.name>
+				<snapshotRepository.url>http://10.181.12.13:8081/nexus/content/repositories/snapshots/</snapshotRepository.url>
+
+				<snapshotRepository.id>releases</snapshotRepository.id>
+				<snapshotRepository.name>Nexus Release Repository</snapshotRepository.name>
+				<repository.url>http://10.181.12.13:8081/nexus/content/repositories/releases/</repository.url>
+
+				<docker.tags.version>latest</docker.tags.version>
+				<docker.image.name>172.30.150.86:5000/test01/${project.artifactId}</docker.image.name>
+				<docker.base.image.name>172.30.150.64:5000/oraclejre8:latest </docker.base.image.name>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<snapshotRepository.id>snapshots</snapshotRepository.id>
+				<snapshotRepository.name>Nexus Snapshot Repository</snapshotRepository.name>
+				<snapshotRepository.url>http://10.181.12.13:8081/nexus/content/repositories/snapshots/</snapshotRepository.url>
+
+				<snapshotRepository.id>releases</snapshotRepository.id>
+				<snapshotRepository.name>Nexus Release Repository</snapshotRepository.name>
+				<repository.url>http://10.181.12.13:8081/nexus/content/repositories/releases/</repository.url>
+
+				<docker.tags.version>latest</docker.tags.version>
+				<docker.image.name>172.30.150.86:5000/test01/${project.artifactId}</docker.image.name>
+				<docker.base.image.name>172.30.150.64:5000/oraclejre8:latest </docker.base.image.name>
+			</properties>
+		</profile>
+	</profiles>
+</project>

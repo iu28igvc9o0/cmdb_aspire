@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.ProduceInfoMapper">
+
+	<resultMap id="produceInfo" type="com.aspire.ums.cmdb.maintenance.payload.ProduceInfoResq">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="produce" column="produce" jdbcType="VARCHAR" />
+		<result property="logoUrl" column="logo_url" jdbcType="VARCHAR" />
+		<result property="type" column="produce_type" jdbcType="VARCHAR" />
+		<result property="isdel" column="isdel" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<!--<collection property="concats" ofType="com.aspire.ums.cmdb.maintenance.payload.Concat" select="com.aspire.ums.cmdb.maintenance.mapper.ProduceInfoConcatMapper.queryServiceByProduceId" column="id">-->
+		<!--</collection>-->
+	</resultMap>
+
+	<!-- 仅供服务供应商依据produceId查询级联所用 -->
+	<resultMap id="serviceProduceInfo" type="com.aspire.ums.cmdb.maintenance.payload.ProduceInfoResq">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="produce" column="produce" jdbcType="VARCHAR" />
+		<result property="logoUrl" column="logo_url" jdbcType="VARCHAR" />
+		<result property="type" column="produce_type" jdbcType="VARCHAR" />
+		<result property="isdel" column="isdel" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<collection property="concats" ofType="com.aspire.ums.cmdb.maintenance.payload.Concat" select="com.aspire.ums.cmdb.maintenance.mapper.ProduceInfoConcatMapper.queryServiceByProduceId" column="id">
+		</collection>
+	</resultMap>
+
+	<!-- 仅供合同供应商依据produceId查询级联所用 -->
+	<resultMap id="contractProduceInfo" type="com.aspire.ums.cmdb.maintenance.payload.ProduceInfoResq">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="produce" column="produce" jdbcType="VARCHAR" />
+		<result property="logoUrl" column="logo_url" jdbcType="VARCHAR" />
+		<result property="type" column="produce_type" jdbcType="VARCHAR" />
+		<result property="isdel" column="isdel" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<collection property="concats" ofType="com.aspire.ums.cmdb.maintenance.payload.Concat" select="com.aspire.ums.cmdb.maintenance.mapper.ProduceInfoConcatMapper.queryContractByProduceId" column="id">
+		</collection>
+	</resultMap>
+
+	<sql id="where_sql2">
+		<if test="produce != null and produce != ''">
+			AND mp.produce LIKE concat('%', #{produce}, '%')
+		</if>
+		<if test="type != null and type != ''">
+			AND mp.produce_type = #{type}
+		</if>
+	</sql>
+
+	<update id="delete">
+      update cmdb_mainten_produce set isdel = 1, update_time = now()
+      where id in
+		<foreach collection="list" item="id" open="(" separator="," close=")" >
+			#{id}
+		</foreach>
+    </update>
+
+	<select id="getProduceInfoCount" resultType="Integer" >
+		select count(1) FROM  cmdb_mainten_produce mp
+		where isdel = 0
+		<include refid="where_sql2" />
+	</select>
+
+	<select id="getProduceInfoByPage" resultMap="produceInfo" >
+		select mp.id,mp.produce,mp.logo_url,mp.produce_type,mp.remark,mp.isdel FROM  cmdb_mainten_produce mp
+		where isdel = 0
+		<include refid="where_sql2" />
+
+		<if test="orderBy != null and orderBy != ''">
+			order by mp.${orderBy}
+		</if>
+		<if test="orderBy == null or orderBy == ''">
+			order by mp.create_time desc
+		</if>
+		<if test="pageSize != 0">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+		</if>
+
+	</select>
+
+	<select id="getProduceInfoById" resultMap="produceInfo" >
+		select mp.id,mp.produce,mp.logo_url,mp.produce_type,mp.remark,mp.isdel FROM  cmdb_mainten_produce mp
+		where isdel = 0 and mp.id = #{id}
+	</select>
+
+	<select id="getServiceProduceInfoById" resultMap="serviceProduceInfo" >
+		select mp.id,mp.produce,mp.logo_url,mp.produce_type,mp.remark,mp.isdel FROM  cmdb_mainten_produce mp
+		where isdel = 0 and mp.id = #{id}
+	</select>
+
+	<select id="getContractProduceInfoById" resultMap="contractProduceInfo" >
+		select mp.id,mp.produce,mp.logo_url,mp.produce_type,mp.remark,mp.isdel FROM  cmdb_mainten_produce mp
+		where isdel = 0 and mp.id = #{id}
+	</select>
+
+	<select id="selectProduce" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from cmdb_mainten_produce
+        where isdel = 0 and produce = #{produce} and produce_type = #{type}
+        <if test="id != null and id != ''">
+			and id != #{id}
+		</if>
+    </select>
+
+	<select id="selectId" resultType="java.lang.String">
+		select Max(id) id from cmdb_mainten_produce
+		where isdel = 0 and produce = #{produce} and produce_type = #{type}
+	</select>
+
+	<sql id="where_sql">
+		<if test="name != null and name != ''">
+			AND mpc.name LIKE concat('%', #{name}, '%')
+		</if>
+		<if test="phone != null and phone != ''">
+			AND mpc.phone LIKE concat('%', #{phone}, '%')
+		</if>
+		<if test="email != null and email != ''">
+			AND mpc.email LIKE concat('%', #{email}, '%')
+		</if>
+		<if test="produce != null and produce != ''">
+			AND mp.produce LIKE concat('%', #{produce}, '%')
+		</if>
+		<if test="type != null and type != ''">
+			AND mp.produce_type = #{type}
+		</if>
+	</sql>
+
+	<select id="queryExportData" resultType="java.util.LinkedHashMap">
+		select mp.id,mp.produce,mp.logo_url,mp.produce_type,mp.remark,mpc.name,mpc.phone,mpc.email,mpc.remark remark2
+		FROM  cmdb_mainten_produce mp
+		LEFT JOIN cmdb_mainten_produce_concat mpc on mpc.produceId = mp.id
+		where mp.isdel=0
+		<include refid="where_sql" />
+		order by mp.create_time desc
+	</select>
+
+    <insert id="add" parameterType="com.aspire.ums.cmdb.maintenance.payload.ProduceInfoResq" >
+        insert into cmdb_mainten_produce (id,produce,logo_url,produce_type,remark,isdel,create_time,update_time)
+        values (#{id},#{produce},#{logoUrl},#{type},#{remark},0,now(),now())
+	   ON DUPLICATE KEY UPDATE
+		produce = VALUES(produce),
+		 logo_url = VALUES(logo_url),
+	   produce_type=values(produce_type),
+	   remark=values(remark),
+ 		update_time = now()
+    </insert>
+
+	<update id="update" parameterType="com.aspire.ums.cmdb.maintenance.payload.ProduceInfoResq">
+		update cmdb_mainten_produce
+		<set>
+			produce = #{produce},
+			logo_url = #{logoUrl},
+			produce_type = #{type},
+			remark = #{remark},
+			update_time = now()
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="queryProduceInfoList" resultMap="produceInfo">
+		select id,produce from cmdb_mainten_produce where isdel = 0
+		order by create_time desc
+	</select>
+	 
+</mapper>

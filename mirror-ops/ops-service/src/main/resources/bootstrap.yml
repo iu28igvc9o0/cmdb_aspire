@@ -1,0 +1,15 @@
+
+spring:
+  jmx:
+    default-domain: ops
+  application:
+    name: ops-service
+  cloud:
+    config:
+      enabled: true
+      name: ms-ops-service
+      label: ${GIT_BRANCH:master}
+      profile: ${ENV_TYPE:prod}
+      uri:  http://${ENV_CONFIG_IP:10.12.70.39}:${ENV_CONFIG_PORT:18888}
+      failFast: true
+##

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IIndicationDimDAO">
+	
+	<resultMap type="com.aspire.mirror.entity.IndicationDimEntity" id="indicationDimEntity">
+		<result property="themeId" column="theme_id" jdbcType="VARCHAR"/>
+		<result property="themeCode" column="theme_code" jdbcType="VARCHAR"/>
+		<result property="themeName" column="theme_name" jdbcType="VARCHAR"/>
+		<result property="dimId" column="dim_id" jdbcType="VARCHAR"/>
+		<result property="dimCode" column="dim_code" jdbcType="VARCHAR"/>
+		<result property="dimName" column="dim_name" jdbcType="VARCHAR"/>
+		<result property="dimOrder" column="dim_order" jdbcType="VARCHAR"/>
+		<result property="dimType" column="dim_type" jdbcType="VARCHAR"/>
+		<result property="dimReg" column="dim_reg" jdbcType="VARCHAR"/>
+		<result property="matchFlag" column="match_flag" jdbcType="VARCHAR"/>
+		<result property="handlerClass" column="handler_class" jdbcType="VARCHAR"/>
+		<result property="handlerWsdl" column="handler_wsdl" jdbcType="VARCHAR"/>
+		<result property="handlerMethod" column="handler_method" jdbcType="VARCHAR"/>
+		<association property="indicationList" column="theme_code"
+					 select="com.aspire.mirror.dao.IIndicationDAO.getIndicationByThemeCode">
+		</association>
+	</resultMap>
+	
+	<select id="getAllDim" resultMap="indicationDimEntity" >
+		SELECT * FROM rtz_indication_dim
+	</select>
+
+	<select id="getDimListByThemeCode" resultMap="indicationDimEntity" >
+		SELECT * FROM rtz_indication_dim where theme_code=#{themeCode}
+	</select>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO rtz_indication_dim (theme_id, theme_code, theme_name, dim_id, dim_code,
+		dim_name, dim_order, dim_type, dim_reg, match_flag, handler_class, handler_wsdl, handler_method)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.themeId,jdbcType=VARCHAR},
+			#{item.themeCode,jdbcType=VARCHAR},
+			#{item.themeName,jdbcType=VARCHAR},
+			#{item.dimId,jdbcType=VARCHAR},
+			#{item.dimCode,jdbcType=VARCHAR},
+			#{item.dimName,jdbcType=VARCHAR},
+			#{item.dimOrder,jdbcType=VARCHAR},
+			#{item.dimType,jdbcType=VARCHAR},
+			#{item.dimReg,jdbcType=VARCHAR},
+			#{item.matchFlag,jdbcType=VARCHAR},
+			#{item.handlerClass,jdbcType=VARCHAR},
+			#{item.handlerWsdl,jdbcType=VARCHAR},
+			#{item.handlerMethod,jdbcType=VARCHAR})
+		</foreach>
+		 ON DUPLICATE KEY UPDATE
+		theme_name = values (theme_name),
+		dim_code = values (dim_code),
+		dim_name = values (dim_name),
+		dim_order = values (dim_order),
+		dim_type = values (dim_type),
+		dim_reg = values (dim_reg),
+		match_flag = values (match_flag),
+		handler_class = values (handler_class),
+		handler_wsdl = values (handler_wsdl),
+		handler_method = values (handler_method)
+	</insert>
+
+	<delete id="deleteDim" parameterType="com.aspire.mirror.entity.IndicationDimEntity">
+		delete from rtz_indication_dim where theme_id=#{themeId} and dim_id=#{dimId}
+	</delete>
+</mapper>

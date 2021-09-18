@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.KGResourceIndexMapper">
+
+    <sql id="baseDict">
+        select t.* from t_cfg_dict t
+                            inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+    </sql>
+    <select id="deviceCountByProduceAll" parameterType="map" resultType="java.util.LinkedHashMap">
+        SELECT
+        x.device_mfrs,
+        x.total_count total,
+        SUM(x.m_count) device_count
+        FROM (
+            SELECT
+            CASE WHEN rank_no <![CDATA[ <= ]]> 10 THEN device_mfrs ELSE '其他' END device_mfrs,
+            t.m_count,tc.total_count
+            FROM (SELECT @rank :=@rank + 1 AS rank_no,	c.device_mfrs,m_count
+                    FROM
+                    (
+                        SELECT
+                        (CASE WHEN IFNULL(device_mfrs, '')='' THEN '' ELSE device_mfrs END) device_mfrs,
+                        COUNT(1) m_count
+                        FROM
+                        cmdb_instance
+                        where is_delete = '0'
+                        <choose>
+                            <when test="paramType == 'all'">
+                                AND (device_type = #{deviceType} OR FIND_IN_SET(device_class,#{deviceClass}))
+                            </when>
+                            <otherwise>
+                                <if test="deviceType != null and deviceType != ''" >
+                                    AND device_type = #{deviceType}
+                                </if>
+                                <if test="deviceClass != null and deviceClass != ''" >
+                                    AND FIND_IN_SET(device_class,#{deviceClass})
+                                </if>
+                            </otherwise>
+                        </choose>
+                        GROUP BY
+                        device_mfrs
+                        ORDER BY
+                        COUNT(1) DESC
+                    ) c,
+                    (SELECT @rank := 0) b
+            ) t, (SELECT COUNT(1) total_count FROM cmdb_instance where is_delete = '0') tc
+        ) X GROUP BY device_mfrs
+        ORDER BY device_count DESC
+    </select>
+
+    <select id="modelCountByProduce" parameterType="map" resultType="java.util.LinkedHashMap">
+        SELECT
+        IF(c.device_model = '' or IFNULL(c.device_model,'') = '','未知',c.device_model) device_model,
+        SUM(m_count) m_count
+        FROM (
+            SELECT
+            CASE WHEN rank_no <![CDATA[ <= ]]> 10 THEN device_model ELSE '其他' END device_model,b.m_count
+            FROM (
+                SELECT @rank := @rank + 1 rank_no,ci.device_model, ci.m_count
+                FROM (
+                    SELECT
+                    (CASE WHEN IFNULL(device_model, '')='' THEN '' ELSE device_model END) device_model,
+                    COUNT(1) m_count
+                    FROM cmdb_instance
+                    where is_delete = '0'
+                    <choose>
+                        <when test="paramType == 'all'">
+                            AND (device_type = #{deviceType} OR FIND_IN_SET(device_class,#{deviceClass}))
+                        </when>
+                        <otherwise>
+                            <if test="deviceType != null and deviceType != ''" >
+                                AND device_type = #{deviceType}
+                            </if>
+                            <if test="deviceClass != null and deviceClass != ''" >
+                                AND FIND_IN_SET(device_class,#{deviceClass})
+                            </if>
+                        </otherwise>
+                    </choose>
+                    <if test="produce != '' and produce != null and produce != '未知'">
+                        AND device_mfrs = #{produce}
+                    </if>
+                    <if test="produce == '未知'">
+                        AND (device_mfrs = '' or device_mfrs is null)
+                    </if>
+                    <if test="produce == '其他'">
+                        AND device_mfrs IN
+                        (
+                            SELECT device_mfrs
+                            FROM (
+                                SELECT device_mfrs, COUNT,@rank :=@rank + 1 AS rank_no
+                                FROM (
+                                    SELECT device_mfrs,COUNT(1) COUNT
+                                    FROM (
+                                    SELECT (CASE WHEN IFNULL(device_mfrs, '')='' THEN '' ELSE device_mfrs END) device_mfrs
+                                    FROM cmdb_instance where is_delete='0'
+                                    ) a
+                                    GROUP BY device_mfrs
+                                    ORDER BY COUNT DESC
+                                ) c,(SELECT @rank := 0) b
+                            ) d WHERE  rank_no > 10
+                        )
+                    </if>
+                    GROUP BY device_model
+                    ORDER BY m_count DESC
+                ) ci, (SELECT @rank := 0) a
+            ) b
+        ) c
+        GROUP BY device_model
+        ORDER BY m_count DESC
+    </select>
+
+    <select id="getAllSegmentAddress" resultType="map">
+        SELECT segment_addr field_name,segment_addr field_value
+        FROM cmdb_instance
+        WHERE is_delete='0' AND (segment_addr != '' OR segment_addr IS NOT NULL)
+        GROUP BY segment_addr
+    </select>
+
+    <select id="getDeviceStatusCount" parameterType="java.lang.String" resultType="map">
+        SELECT tc.total_count,COUNT(1) d_count
+        FROM cmdb_instance,(SELECT COUNT(1) total_count FROM cmdb_instance where is_delete = '0' AND FIND_IN_SET(device_type,#{deviceType})) tc
+        WHERE is_delete='0' AND FIND_IN_SET(device_type,#{deviceType})
+        <if test="segmentAddr != null and segmentAddr != ''">
+            AND FIND_IN_SET(segment_addr,#{segmentAddr})
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            AND FIND_IN_SET(bizSystem,#{bizSystem})
+        </if>
+        <if test="deviceStatus != null and deviceStatus != ''">
+            AND FIND_IN_SET(device_status,#{deviceStatus})
+        </if>
+    </select>
+
+    <select id="getDeviceUseCountByType" parameterType="java.lang.String" resultType="map">
+        SELECT device_type,SUM(d_count) d_count
+        FROM (
+            SELECT device_type,device_status,COUNT(1) d_count
+            FROM cmdb_instance
+            WHERE is_delete='0' AND FIND_IN_SET(device_type,#{deviceType})
+            <if test="segmentAddr != null and segmentAddr != ''">
+                AND FIND_IN_SET(segment_addr,#{segmentAddr})
+            </if>
+            <if test="bizSystem != null and bizSystem != ''">
+                AND FIND_IN_SET(bizSystem,#{bizSystem})
+            </if>
+            <if test="deviceStatus != null and deviceStatus != ''">
+                AND FIND_IN_SET(device_status,#{deviceStatus})
+            </if>
+            GROUP BY device_type,device_status
+        )ci
+        GROUP BY device_type
+    </select>
+
+    <select id="deviceCountBySegmentUse" parameterType="java.lang.String" resultType="map">
+        SELECT temp.segment_use,COUNT(1) segment_use_count,
+        (SELECT COUNT(1)
+            FROM cmdb_instance ci
+            INNER JOIN (SELECT dict_code segment_addr,dict_note segment_use FROM	(<include refid="baseDict"/>) dict
+                                    WHERE delete_flag = 0 and col_name = 'segment_use') t on t.segment_addr = ci.segment_addr
+            WHERE is_delete='0'
+            <if test="deviceType != null and deviceType != ''" >
+                AND FIND_IN_SET(device_type,#{deviceType})
+            </if>
+        ) tatol
+        FROM (
+            SELECT ci.ip,ci.segment_addr,t.segment_use
+            FROM cmdb_instance ci
+            INNER JOIN (SELECT dict_code segment_addr,dict_note segment_use FROM (<include refid="baseDict"/>) dict
+                                    WHERE delete_flag = 0 and col_name = 'segment_use') t on t.segment_addr = ci.segment_addr
+            WHERE is_delete='0'
+            <if test="deviceType != null and deviceType != ''" >
+                AND FIND_IN_SET(device_type,#{deviceType})
+            </if>
+        ) temp
+        GROUP BY temp.segment_use
+        ORDER BY segment_use_count DESC
+    </select>
+
+    <select id="deviceCountBySystem" parameterType="java.lang.String" resultType="map">
+        SELECT temp.bizSystem,temp.d_count,i.tatol,round((temp.d_count*1./i.tatol)*100,0) rate
+        FROM (
+            SELECT bizSystem,SUM(d_count) d_count
+            FROM (
+                SELECT
+                CASE WHEN rank_no <![CDATA[ <= ]]> 20 THEN bizSystem ELSE '其他' END bizSystem,d_count
+                FROM (
+                    SELECT @rank := @rank+1 rank_no,a.bizSystem,a.d_count
+                    FROM (
+                        SELECT ci.bizSystem,COUNT(1) d_count
+                        FROM cmdb_instance ci
+                        WHERE is_delete='0' AND bizSystem IS NOT NULL
+                        <if test="deviceType != null and deviceType != ''" >
+                            AND FIND_IN_SET(device_type,#{deviceType})
+                        </if>
+                        <if test="deviceStatus != null and deviceStatus != ''" >
+                            AND FIND_IN_SET(device_status,#{deviceStatus})
+                        </if>
+                        <choose>
+                            <when test="systemType != '' and systemType != null">
+                                AND bizSystem NOT IN
+                            </when>
+                            <otherwise>AND bizSystem IN</otherwise>
+                        </choose>
+                        (
+                        SELECT dict_code biz_system FROM 	(<include refid="baseDict"/>) dict WHERE col_name = 'lead_system'
+                        )
+                        GROUP BY ci.bizSystem
+                        ORDER BY d_count DESC
+                    ) a,(SELECT @rank := 0) b
+                ) c
+            ) d
+            GROUP BY bizSystem
+            ORDER BY d_count DESC
+        ) temp
+        JOIN (
+            SELECT COUNT(1) tatol
+            FROM cmdb_instance ci
+            WHERE is_delete='0' AND bizSystem IS NOT NULL
+            <if test="deviceType != null and deviceType != ''" >
+                AND FIND_IN_SET(device_type,#{deviceType})
+            </if>
+            <if test="deviceStatus != null and deviceStatus != ''" >
+                AND FIND_IN_SET(device_status,#{deviceStatus})
+            </if>
+            <choose>
+                <when test="systemType != '' and systemType != null">
+                    AND bizSystem NOT IN
+                </when>
+                <otherwise>AND bizSystem IN</otherwise>
+            </choose>
+            (
+            SELECT dict_code biz_system FROM 	(<include refid="baseDict"/>) dict WHERE col_name = 'lead_system'
+            )
+        ) i
+    </select>
+
+    <select id="deviceUseByClassAndType" parameterType="java.lang.String" resultType="map">
+        SELECT aci.device_type,(aci.device_count-aci.alert_count) device_count,aci.close_count,aci.alert_count
+        FROM (
+            SELECT
+            ci1.device_type,
+            COUNT(ci1.device_type) device_count,
+            (SELECT COUNT(1) device_count
+                FROM cmdb_instance ci2
+                WHERE is_delete = '0' AND NOT (device_class ='服务器' AND  device_type ='X86服务器' AND NOT device_class_3='X86服务器')
+                AND device_status = '已关闭电源' AND ci2.device_type = #{deviceType}) close_count,
+            (SELECT COUNT(1) a_count FROM
+                (SELECT device_ip,COUNT(1) d_count
+                FROM mirror.alert_alerts aa
+                WHERE device_ip IS NOT NULL AND aa.device_type = #{deviceType}
+                GROUP BY device_ip) temp) alert_count
+            FROM cmdb_instance ci1
+            WHERE is_delete = '0' AND NOT (device_class ='服务器' AND  device_type ='X86服务器' AND NOT device_class_3='X86服务器')
+            AND (device_class = #{deviceClass} AND device_type = #{deviceType})
+        ) aci
+    </select>
+
+</mapper>

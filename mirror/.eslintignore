@@ -1,0 +1,13 @@
+build/*.js
+config/*.js
+static/js/*.js
+src/assets/js/common/keycloak.js
+src/assets/iconfont/iconfont.js
+src/assets/js/utility/echarts.min.js
+src/router/index.bak.js
+src/router/index.old.js
+src/assets/js/menu/default-nav-config copy.js
+src/router/index.js
+eslint-report.html
+vscode-settings.md
+

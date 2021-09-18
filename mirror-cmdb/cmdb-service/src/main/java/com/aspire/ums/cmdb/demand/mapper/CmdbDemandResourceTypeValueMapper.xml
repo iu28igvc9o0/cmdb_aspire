@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.demand.mapper.CmdbDemandResourceTypeValueMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceTypeValue" >
+        <result column="demand_id" property="demandId" jdbcType="VARCHAR" />
+        <result column="resource_type_id" property="resourceTypeId" jdbcType="VARCHAR" />
+        <result column="resource_count" property="resourceCount" jdbcType="VARCHAR" />
+        <result column="resource_scene" property="resourceScene" jdbcType="VARCHAR" />
+        <result column="resource_use" property="resourceUse" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `demand_id`,
+        `resource_type_id`,
+        `resource_count`,
+        `resource_scene`,
+        `resource_use`
+        FROM cmdb_demand_resource_type_value
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByDemandId" resultMap="resultMap">
+        SELECT
+        `demand_id`,
+        `resource_type_id`,
+        `resource_count`,
+        `resource_scene`,
+        `resource_use`
+        FROM cmdb_demand_resource_type_value
+        where `demand_id` = #{demandId}
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceTypeValue" resultMap="resultMap">
+        SELECT
+        `demand_id`,
+        `resource_type_id`,
+        `resource_count`,
+        `resource_scene`,
+        `resource_use`
+        FROM cmdb_demand_resource_type_value
+        WHERE 1=1
+        AND `resource_type_id` = #{resourceTypeId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceTypeValue">
+        INSERT INTO cmdb_demand_resource_type_value
+        (
+            `demand_id`,
+            `resource_type_id`,
+            `resource_count`,
+            `resource_scene`,
+            `resource_use`
+        ) VALUES (
+            #{demandId, jdbcType=VARCHAR},
+            #{resourceTypeId, jdbcType=VARCHAR},
+            #{resourceCount, jdbcType=VARCHAR},
+            #{resourceScene, jdbcType=VARCHAR},
+            #{resourceUse, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceTypeValue">
+        UPDATE cmdb_demand_resource_type_value SET
+        `resource_count` = #{resourceCount},
+        `resource_scene` = #{resourceScene},
+        `resource_use` = #{resourceUse}
+        WHERE
+        `resource_type_id` = #{resourceTypeId} and `demand_id` = #{demandId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceTypeValue">
+        DELETE FROM cmdb_demand_resource_type_value
+        WHERE
+         `resource_type_id` = #{resourceTypeId} and `demand_id` = #{demandId}
+    </delete>
+</mapper>

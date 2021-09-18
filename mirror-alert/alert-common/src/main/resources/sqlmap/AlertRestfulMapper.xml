@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertRestfulDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertStandardization" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="conditions" column="conditions" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="displayCols" column="displayCols" jdbcType="VARCHAR"/>
+        <result property="updated_at" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="topic" column="topic" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="extraCols" column="extraCols" jdbcType="VARCHAR"/>
+        <result property="countType" column="countType" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertStandardizationLog" id="baseResultLogMap">
+        <result property="fromTime" column="from_time" jdbcType="TIMESTAMP"/>
+        <result property="toTime" column="to_time" jdbcType="TIMESTAMP"/>
+        <result property="execTime" column="exec_time" jdbcType="TIMESTAMP"/>
+        <result property="execDuration" column="exec_duration" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="configId" column="config_id" jdbcType="INTEGER"/>
+    </resultMap>
+   
+
+    <!-- 新增 -->
+    <insert id="insertBookAlerts" parameterType="com.aspire.mirror.alert.server.dao.alert.po.AlertStandardization" useGeneratedKeys="true" keyProperty="id" >
+		insert into
+			alert_standardization(conditions,source,displayCols,topic,status,extraCols,countType)
+		values(
+			#{conditions,jdbcType=VARCHAR} ,
+			#{source,jdbcType=VARCHAR} ,
+			#{displayCols,jdbcType=VARCHAR} ,
+			#{topic,jdbcType=VARCHAR} ,
+			#{status,jdbcType=INTEGER} ,
+			#{extraCols,jdbcType=VARCHAR} ,
+			#{countType,jdbcType=INTEGER} 
+		)
+	</insert>
+   
+ 
+	
+	 <select id="getBookAlerts"  resultMap="baseResultMap">
+        select
+      id,conditions,source,displayCols,updated_at,topic ,extraCols,countType
+        from alert_standardization where status=1
+        <if test="source != null and source != ''">
+        and source = #{source}
+        </if>
+    </select>
+    
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.KpiBook" id="baseResultMap1">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="interval" column="interval" jdbcType="INTEGER"/>
+        <result property="idc_type" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="pod" column="pod" jdbcType="VARCHAR"/>
+        <result property="roomId" column="roomId" jdbcType="VARCHAR"/>
+        <result property="keys" column="keys" jdbcType="VARCHAR"/>
+        <result property="updated_at" column="updated_at" jdbcType="TIMESTAMP"/>
+         <result property="status" column="status" jdbcType="INTEGER"/>
+         <result property="source" column="source" jdbcType="VARCHAR"/>
+          <collection property="kpiList"
+                      select="com.aspire.mirror.alert.server.dao.alert.AlertRestfulDao.getKpiList" column="{kpiId=id}" />
+    </resultMap>
+    
+     <select id="getKpiList"   resultType="com.aspire.mirror.alert.server.dao.alert.po.KpiListData">
+        select id,idc_type,pod,roomId,keys_value,kpi_id,deviceClass,deviceType
+        from kpi_book_item 
+        where  kpi_id = #{kpiId} and status=1
+    </select>
+    
+    
+       <!-- 新增 -->
+    <insert id="insertKpiBook" parameterType="com.aspire.mirror.alert.server.dao.alert.po.KpiBook" useGeneratedKeys="true" keyProperty="id" >
+		insert into
+			kpi_book_info(interval_value,status,source,subTopic)
+        values(
+			#{interval,jdbcType=INTEGER} ,
+			#{status,jdbcType=INTEGER} ,
+			#{source,jdbcType=VARCHAR} ,
+			#{subTopic,jdbcType=VARCHAR}
+		)
+     
+		
+	</insert>
+	
+	 <insert id="insertKpiList" parameterType="com.aspire.mirror.alert.server.dao.alert.po.KpiListData" useGeneratedKeys="true" keyProperty="id" >
+		insert into
+			kpi_book_item(kpi_id,idc_type,pod,roomId,keys_value,deviceClass)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+         (
+			#{item.kpi_id,jdbcType=INTEGER} ,
+			#{item.idc_type,jdbcType=VARCHAR} ,
+			#{item.pod,jdbcType=VARCHAR} ,
+			#{item.roomId,jdbcType=VARCHAR} ,
+			#{item.keys_value,jdbcType=VARCHAR} ,
+			#{item.deviceClass,jdbcType=VARCHAR} 
+		)
+      </foreach> 
+		
+	</insert>
+   
+ 
+	
+	 <select id="getKpiBook"  resultMap="baseResultMap1">
+        select
+      id,interval_value,updated_at,status,source,subTopic
+        from kpi_book_info where status=1
+         <if test="source != null and source != ''">
+        and source = #{source}
+        </if>
+    </select>
+    
+    <select id="getLastStandardizationLog"  resultMap="baseResultLogMap">
+        select
+      from_time,to_time,exec_time,exec_duration,status,content
+        from kpi_standardization_log where status='success'
+         and type = #{type} and config_id =  #{configId} 
+         order by from_time desc
+         limit 1
+    </select>
+     <insert id="insertStandardizationLog" parameterType="com.aspire.mirror.alert.server.dao.alert.po.AlertStandardizationLog">
+		insert into
+			kpi_standardization_log(from_time,to_time,exec_time,exec_duration,status,content,type,create_time,config_id)
+        values(
+			#{fromTime,jdbcType=TIMESTAMP} ,
+			#{toTime,jdbcType=TIMESTAMP} ,
+			#{execTime,jdbcType=TIMESTAMP} ,
+			#{execDuration,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{content,jdbcType=VARCHAR},
+			#{type,jdbcType=INTEGER},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{configId,jdbcType=VARCHAR}
+		)
+     
+		
+	</insert>
+	
+	<select id="selectAuthField"  resultType="com.aspire.mirror.alert.server.dao.alert.po.AuthFieldConfig" >
+        select
+		name,value from auth_field_config
+			where 1=1
+		  <if test="type != null ">
+        and  type=#{type}
+        </if>
+	
+    </select>
+    <select id="getIdcTypePerformanceData"  resultType="map" >
+        select
+		idcType,item,deviceType,fifteen_ratio,thirty_ratio
+			,sixty_ratio,eighty_five_ratio,hundred_ratio,day
+			from alert_idcType_performance_sync
+			where day>=#{startTime}  and   day<![CDATA[<=]]>#{endTime} 
+		  <if test="item != null and  item!=''">
+        and  item=#{item}
+        </if>
+	<if test="deviceType != null and  deviceType!=''">
+        and  deviceType=#{deviceType}
+        </if>
+        <if test="idcType != null and  idcType!=''">
+        and  idcType=#{idcType}
+        </if>
+        order by day asc
+    </select>
+    <select id="getAllIdcTypePerformanceData"  resultType="map" >
+        SELECT sum(s.fifteen_count)fifteen_count,sum(s.eighty_five_count)eighty_five_count
+		,SUM(s.thirty_count)thirty_count,SUM(s.sixty_count)sixty_count,SUM(s.hundred_count)hundred_count 
+		,s.deviceType,s.item from alert_idctype_performance_sync s 
+		where s.day=#{day}
+		GROUP BY s.deviceType,s.item
+    </select>
+      
+    <insert id="batchInsertIdcTypePerformance" parameterType="list">
+		insert into
+			alert_idcType_performance_sync(idcType,item,deviceType,fifteen_ratio,thirty_ratio
+			,sixty_ratio,eighty_five_ratio,hundred_ratio,day
+			,fifteen_count,thirty_count,sixty_count,eighty_five_count,hundred_count)
+        values
+      <foreach collection="list" item="item" index="index" separator=",">  
+         (
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.item,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.fifteen_ratio,jdbcType=DECIMAL} ,
+			#{item.thirty_ratio,jdbcType=DECIMAL} ,
+			#{item.sixty_ratio,jdbcType=DECIMAL} ,
+			#{item.eighty_five_ratio,jdbcType=DECIMAL} ,
+			#{item.hundred_ratio,jdbcType=DECIMAL} ,
+			#{item.day,jdbcType=VARCHAR} ,
+			#{item.fifteen_count,jdbcType=INTEGER} ,
+			#{item.thirty_count,jdbcType=INTEGER} ,
+			#{item.sixty_count,jdbcType=INTEGER} ,
+			#{item.eighty_five_count,jdbcType=INTEGER} ,
+			#{item.hundred_count,jdbcType=INTEGER} 
+		)
+      </foreach> 
+     
+		
+	</insert>
+	
+	 <insert id="insertDeviceAlerts" parameterType="list">
+		insert into
+			device_alert_sync(resourceId,idcType,ip,pod_name,roomId
+			,bizSystem,create_time,date,suyanUuid,device_type)
+        values
+      <foreach collection="list" item="item" index="index" separator=",">  
+         (
+			#{item.resourceId,jdbcType=VARCHAR} ,
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.ip,jdbcType=VARCHAR} ,
+			#{item.pod_name,jdbcType=VARCHAR} ,
+			#{item.roomId,jdbcType=VARCHAR} ,
+			#{item.bizSystem,jdbcType=VARCHAR} ,
+			#{item.create_time,jdbcType=VARCHAR} ,
+			#{item.date,jdbcType=VARCHAR} ,
+			#{item.suyanUuid,jdbcType=VARCHAR} ,
+			#{item.device_type,jdbcType=VARCHAR} 
+			
+		)
+      </foreach> 
+     
+		
+	</insert>
+	
+</mapper>

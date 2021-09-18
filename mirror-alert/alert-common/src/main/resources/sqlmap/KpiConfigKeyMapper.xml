@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.kpi.KpiConfigKeyMapper">
+
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.kpi.po.KpiConfigKey">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="config_id" property="configId" jdbcType="VARCHAR"/>
+        <result column="key_name" property="keyName" jdbcType="VARCHAR"/>
+        <result column="kpi_key" property="kpiKey" jdbcType="VARCHAR"/>
+        <result column="kpi_key_model" property="kpiKeyModel" jdbcType="VARCHAR"/>
+        <result column="kpi_key_field" property="kpiKeyField" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="baseColumnList">
+        id,config_id,key_name,kpi_key,kpi_key_model,kpi_key_field,description
+    </sql>
+    <select id="selectByConfigId" parameterType="java.lang.String" resultMap="resultMap">
+        select <include refid="baseColumnList"/>
+        from kpi_config_key where config_id=#{configId}
+    </select>
+</mapper>

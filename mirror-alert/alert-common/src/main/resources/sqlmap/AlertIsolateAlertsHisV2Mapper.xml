@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.isolate.AlertIsolateAlertsHisV2Mapper">
+    <!-- 定义返回结果结果集 -->
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="page_limit" >
+        limit #{begin}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </sql>
+    <!-- list查询 -->
+    <select id="listByEntity" resultType="java.util.Map"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria">
+        SELECT
+        CASE t.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else t.alert_level end alert_level,
+        <choose>
+            <when test="exportField != null and exportField != ''">
+              ${exportField}
+            </when>
+            <otherwise>
+                t.*
+            </otherwise>
+        </choose>
+        ,
+        b.name isolate_name
+        FROM alert_isolate_alerts_his t INNER JOIN alert_isolate b on t.isolate_id=b.id
+        <include refid="Example_Where_Clause"/> order by t.cur_moni_time desc
+        limit 100000
+    </select>
+    <!-- 分页查询 -->
+    <select id="findPageWithResult"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria" resultType="java.util.Map">
+        select
+        a.*, b.name isolate_name
+        from alert_isolate_alerts_his a INNER JOIN alert_isolate b on a.isolate_id=b.id
+        <include refid="Example_Where_Clause"/> order by a.cur_moni_time desc
+        <if test="begin != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+            resultType="Integer">
+        select count(1)
+        from alert_isolate_alerts_his a INNER JOIN alert_isolate b on a.isolate_id=b.id
+        <include refid="Example_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="java.util.Map">
+        insert into alert_isolate_alerts_his
+        <foreach collection="map.keys" item="key" open="(" close=")" separator="," >
+            ${key}
+        </foreach>
+        values
+        <foreach collection="map.keys"  item="key" open="(" close=")" separator=",">
+            #{map[${key}]}
+        </foreach>
+    </insert>
+</mapper>

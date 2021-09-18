@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.MaintainViewMapper" >
+    <resultMap id="MaintainViewResultMap" type="com.aspire.ums.cmdb.maintain.entity.MaintainView" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="`name`" property="name" jdbcType="VARCHAR" />
+        <result column="circleId" property="circleId" jdbcType="VARCHAR" />
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+        <result column="defaultView" property="defaultView" jdbcType="VARCHAR" />
+    </resultMap>
+    
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.Module" >
+    <id column="id1" property="id" jdbcType="VARCHAR" />
+    <result column="name1" property="name" jdbcType="VARCHAR" />
+    <result column="code1" property="code" jdbcType="VARCHAR" />
+    <result column="iconUrl1" property="iconurl" jdbcType="VARCHAR" />
+    <result column="sortIndex1" property="sortindex" jdbcType="INTEGER" />
+    <result column="disabled1" property="disabled" jdbcType="VARCHAR" />
+    <result column="builtin1" property="builtin" jdbcType="VARCHAR" />
+    <result column="insertTime1" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="updateTime1" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="isDelete1" property="isdelete" jdbcType="INTEGER" />
+    <result column="parentId1" property="parentid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ModuleMap" type="com.aspire.ums.cmdb.module.entity.Module" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="iconUrl" property="iconurl" jdbcType="VARCHAR" />
+    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="disabled" property="disabled" jdbcType="VARCHAR" />
+    <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />
+    <collection column="parentId" property="childModules" resultMap="BaseResultMap"/>
+  </resultMap>
+    
+    <sql id="MaintainView_Column_List" >
+        id, `name`, circleId, sort, defaultView 
+    </sql>
+
+    <select id="getAll" parameterType="com.aspire.ums.cmdb.maintain.entity.MaintainView"   resultType="java.util.HashMap"  >
+
+    </select>
+
+    <select id="getOne" parameterType="java.lang.String" resultMap="MaintainViewResultMap" >
+        SELECT 
+       <include refid="MaintainView_Column_List" />
+	   FROM cmdb_maintain_view
+	   WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.MaintainView" >
+       INSERT INTO 
+       		cmdb_maintain_view
+       		(id, `name`, circleId, sort, defaultView) 
+       	VALUES
+       		(#{id}, #{name}, #{circleId}, (select case when max(aa.sort) is null then 1 else max(aa.sort)+1 end from cmdb_maintain_view aa), #{defaultView})
+    </insert>
+    
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.MaintainView" >
+                UPDATE 
+       		cmdb_maintain_view 
+       SET 
+		    `name`  =  #{name}
+       WHERE 
+       		id = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_maintain_view 
+       WHERE 
+       		 id =#{id}
+    </delete>
+    
+     <select id="getByCondition" parameterType="com.aspire.ums.cmdb.maintain.entity.MaintainView"   resultMap="MaintainViewResultMap"  >
+       SELECT 
+     <include refid="MaintainView_Column_List" />
+	   FROM cmdb_maintain_view cmv
+	   WHERE 1=1  
+		<if test="name!=null and name!=''">  
+		    AND cmv.name  =  #{name}
+		</if>  
+		<if test="circleId!=null and circleId!=''">  
+		    AND cmv.circleId  =  #{circleId}
+		</if>  
+		ORDER BY cmv.sort
+    </select>
+    
+     <select id="getModule" parameterType="java.util.HashMap"   resultType="java.util.HashMap"  >
+             select * from cmdb_module cm where isDelete = 0  
+       		<if test="parentId!=null and parentId!=''">  
+             and cm.parentId = #{parentId} 
+             and cm.disabled = 'false'
+             </if>  
+       		<if test="parentId==null or parentId==''">  
+             and cm.parentId IS NULL
+             </if>   
+             order by sortIndex
+    </select>
+    
+    <insert id="addViewCondition" parameterType="java.util.HashMap" >
+       INSERT INTO 
+       		cmdb_maintain_view_condition
+       		(moduleId, viewId) 
+       	VALUES
+       		(#{moduleId}, #{viewId})
+    </insert>
+    
+    
+  <delete id="deleteViewCondition" parameterType="java.lang.String" >
+      delete from 
+       		cmdb_maintain_view_condition
+   where viewId = #{viewId}
+    </delete>
+    
+    <select id="getModuleIds" parameterType="java.util.HashMap"   resultType="java.util.HashMap"  >
+             select cmv.id viewId, cmv.name viewName, cm.id, cm.name from cmdb_maintain_view cmv left join  cmdb_maintain_view_condition cmvc on  cmvc.viewId = cmv.id   
+              LEFT JOIN  cmdb_module cm  on cmvc.moduleId = cm.id and cm.isDelete = 0 and cm.disabled='false'
+             where 1 =1  
+             and cmv.id = #{viewId} 
+             order by cm.id
+    </select>
+    
+    <select id="selectInstanceTag" parameterType="java.lang.String"   resultType="java.util.HashMap"  >
+           SELECT GROUP_CONCAT(NAME) `name`, instanceId FROM cmdb_instance_tag  GROUP BY instanceId HAVING instanceId =#{id}
+    </select>
+    
+    <delete id="deleteInstanceTag" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_instance_tag 
+       WHERE 
+       		 instanceId =#{id}
+    </delete>
+    
+    <insert id="addInstanceTag" parameterType="java.util.HashMap" >
+       INSERT INTO 
+       		cmdb_instance_tag
+       		(id, name, instanceId) 
+       	VALUES
+       		(#{id}, #{name}, #{instanceId})
+    </insert>
+    
+  <select id="selectModule" resultMap="ModuleMap">
+	select * from (select * from cmdb_module where parentId is null and isDelete=0 order by sortIndex asc) as a
+ 	LEFT JOIN
+	(select id as id1, name as name1, code as code1, parentId as parentId1, iconUrl as iconUrl1, sortIndex as  sortIndex1, disabled as disabled1, builtin as builtin1, insertTime as insertTime1, updateTime as updateTime1, 
+    isDelete as isDelete1 from cmdb_module where parentId is not null and isDelete=0 and  disabled='false') as b ON b.parentId1 = a.id	
+  </select>
+
+</mapper>

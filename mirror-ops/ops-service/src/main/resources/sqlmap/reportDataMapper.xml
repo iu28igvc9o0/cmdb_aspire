@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsReportDao">
+
+	<select id="queryAgentHostCount" resultType="java.lang.Integer">
+		select count(agent_ip) from ops_spectre_host
+	</select>
+	
+	<select id="queryPipelineCount" resultType="java.lang.Integer">
+		select count(pipeline_id) from ops_pipeline
+	</select>
+	
+	<select id="queryPipelineInstanceStatusCount" parameterType="java.util.Map" 
+				resultType="com.aspire.mirror.ops.api.domain.StatusGroupCountItem">
+		select status, count(status) statusCount from ops_pipeline_instance
+		  where 1 = 1
+		  <if test="bizClassify != null">
+		  	and biz_classify = #{bizClassify}
+		  </if>
+		  <if test="fromDay != null">
+		  	and create_time >= #{fromDay}
+		  </if>
+		  group by status
+	</select>
+	<select id="queryPipelineInstanceTriggerWayCount" parameterType="java.util.Map" resultType="com.aspire.mirror.ops.api.domain.StatisticRespModel">
+		select trigger_way type, count(trigger_way) count from ops_pipeline_instance
+		 where 1 = 1
+		<if test="fromDay != null">
+			and create_time >= #{fromDay}
+		</if>
+		group by trigger_way
+	</select>
+
+	<select id="queryPipelineJobStatusCount" resultType="com.aspire.mirror.ops.api.domain.StatusGroupCountItem">
+		select status, count(status) statusCount from ops_pipeline_run_job group by status
+	</select>
+	
+	<select id="queryStatusCountByDay" parameterType="java.util.Map" 
+				resultType="com.aspire.mirror.ops.api.domain.IndexPageDayRunTrendItem$DayStausCountItem">
+		select theDay, status, count(status) statusCount
+		  from (select DATE_FORMAT(create_time, '%Y-%m-%d') theDay, status
+				  from ops_pipeline_instance
+			     where 1 = 1
+			    <if test="bizClassify != null">
+			  		and biz_classify = #{bizClassify}
+			    </if> 
+				<if test="fromDay != null">
+			  		and create_time >= #{fromDay}
+			  	</if>
+			  	) a group by theDay, status 	
+ 	  	order by theDay
+	</select>
+	
+	<select id="queryRunTimeSpanList" resultType="java.lang.Float" parameterType="java.util.Map">
+		select total_time from ops_pipeline_instance
+		 where total_time is not null
+		  <if test="bizClassify != null">
+		  	and biz_classify = #{bizClassify}
+		  </if>
+		  <if test="fromDay != null">
+		  	and create_time >= #{fromDay}
+		  </if>
+	</select>
+	<select id="queryNormalScenes" parameterType="java.lang.Integer" resultType="com.aspire.mirror.ops.api.domain.OpsPipelineScenes">
+		select ps.pipeline_scenes_id pipelineScenesId,
+        ps.pipeline_id pipelineId,
+        ps.scenes_name scenesName,
+        ps.scenes_desc scenesDesc,
+        ps.scenes_picture scenesPicture,
+        ps.creater creater,
+        ps.create_time createTime,
+        ps.updater updater,
+        ps.update_time updateTime
+        from ops_pipeline_scenes ps
+        left join ops_pipeline_instance pi on ps.pipeline_id = pi.pipeline_id
+        group by ps.pipeline_scenes_id
+        order by count(pi.pipeline_instance_id) desc
+        limit 0, #{index}
+	</select>
+	<!-- for new index page -->
+	<resultMap type="com.aspire.mirror.ops.domain.OpsReportGroupData" id="groupData">
+		<result column="group_code" property="groupCode" />
+		<result column="group_count" property="groupCount" />
+	</resultMap>
+	
+	<select id="getAgentHostGroupCountByStatus" resultMap="groupData">
+		select status group_code, count(status) group_count from ops_spectre_host group by status
+	</select>
+	
+	<select id="getPipeInstGroupCountByStatus" resultMap="groupData" parameterType="java.util.Map">
+		select status group_code, count(status) group_count 
+		  from ops_pipeline_instance 
+		 where 1 = 1
+		<if test="fromDay != null">
+		  	and create_time >= #{fromDay}
+		</if>
+		group by status
+	</select>
+	
+	<select id="getPipeInstExceptionResultCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(p.pipeline_instance_id) from ops_pipeline_instance p
+		 where p.status = 9 
+			  	<if test="fromDay != null">
+				  	and p.create_time >= #{fromDay}
+				</if>
+		   and exists (
+		          select 1 from ops_step_instance s, ops_host_step_operate_log g
+				   where p.pipeline_instance_id = s.pipeline_instance_id
+				     and s.step_instance_id = g.step_instance_id
+				     and g.aspnode_result = 1
+				)
+	</select>
+	
+	<select id="getPipeInstGroupCountByTriggerWay" resultMap="groupData" parameterType="java.util.Map">
+		select trigger_way group_code, count(trigger_way) group_count 
+		  from ops_pipeline_instance 
+		 where 1 = 1
+		<if test="fromDay != null">
+		  	and create_time >= #{fromDay}
+		</if>
+		group by trigger_way
+	</select>
+	
+	<select id="getApInstanceGroupCountByStatus" resultMap="groupData" parameterType="java.util.Map">
+		select status group_code, count(status) group_count 
+		  from ops_auto_repair_execute_log 
+		 where 1 = 1
+		<if test="fromDay != null">
+		  	and trigger_time >= #{fromDay}
+		</if>
+		group by status
+	</select>
+	
+	<select id="getApInstanceExceptionResultCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(id) from ops_auto_repair_execute_log
+		 where status = 9 and aspnode_result = 1
+			   	<if test="fromDay != null">
+			  		and trigger_time >= #{fromDay}
+				</if>
+	</select>
+	
+	<select id="getApInstanceTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(id)
+		  from ops_auto_repair_execute_log 
+		 where 1 = 1 
+		<if test="fromDay != null">
+		  	and trigger_time >= #{fromDay}
+		</if>
+	</select>
+	
+	<select id="queryExceptionPipeInstList" parameterType="com.aspire.mirror.ops.api.domain.IndexReportExceptionPipeInstQueryModel"
+				resultType="com.aspire.mirror.ops.api.domain.OpsPipelineInstanceDTO">
+		select i.pipeline_instance_id pipelineInstanceId, i.name pipelineInstanceName, i.create_time createTime, i.name, 
+			   i.operator, i.status, i.total_time totalTime
+	      from ops_pipeline_instance i
+		where i.status in (101, 102, 7, 10)
+			  or (status = 9 and exists (
+				   select 1 from ops_step_instance s, ops_host_step_operate_log g
+			       where i.pipeline_instance_id = s.pipeline_instance_id
+			         and s.step_instance_id = g.step_instance_id
+			         and g.aspnode_result = 1)
+			      )
+			order by i.pipeline_instance_id desc
+		<if test="pageSize != null and pageSize > 0 ">
+            limit #{startIdx}, #{pageSize}
+        </if>
+	</select>
+	
+	<select id="queryExceptionPipeInstListTotalSize"  resultType="java.lang.Integer" 
+			 			parameterType="com.aspire.mirror.ops.api.domain.IndexReportExceptionPipeInstQueryModel">
+		select count(pipeline_instance_id)
+	      from ops_pipeline_instance i
+		where i.status in (101, 102, 7, 10)
+			  or (status = 9 and exists (
+				   select 1 from ops_step_instance s, ops_host_step_operate_log g
+			       where i.pipeline_instance_id = s.pipeline_instance_id
+			         and s.step_instance_id = g.step_instance_id
+			         and g.aspnode_result = 1)
+			      )  
+	</select>
+	<select id="getOpsHistoryNumStatistic" resultType="com.aspire.mirror.ops.domain.OpsStatisticNumBase" parameterType="java.util.Map">
+		 select count(status) totalNum,
+        sum(case when status = '9' then 1 else 0 end) successNum,
+		sum(case when status in(101, 102, 7, 10) then 1 else 0 end) failNum,
+		sum(case when status = '8' then 1 else 0 end) auditNum
+        from ops_pipeline_instance where 1=1
+        <if test="fromDay != null">
+			and create_time >= #{fromDay}
+		</if>
+		<if test="endDay != null">
+			and create_time &lt;= #{endDay}
+		</if>
+		<if test="types != null">
+			and trigger_way in (
+			<foreach collection="types.split(',')" item="item"  index="index" separator=",">
+				#{item}
+			</foreach>
+			)
+		</if>
+	</select>
+	<select id="getApInstanceGroupCountStatistic" resultType="com.aspire.mirror.ops.domain.OpsStatisticNumBase" parameterType="java.util.Map">
+		select
+		count(status) totalNum,
+		sum(case when status = '9' then 1 else 0 end) successNum,
+		sum(case when status in(101, 102) then 1 else 0 end) failNum
+		from ops_auto_repair_execute_log
+		where 1 = 1
+		<if test="fromDay != null">
+			and trigger_time >= #{fromDay}
+		</if>
+		<if test="endDay != null">
+			and trigger_time &lt;= #{endDay}
+		</if>
+	</select>
+	<select id="getOpsHistoryDeviceNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(a.tag) from (
+		SELECT
+		substring_index( substring_index( substring(osi.target_hosts,2, length(osi.target_hosts)-2), ',', topic.help_topic_id + 1 ), ',',- 1 ) AS tag
+		FROM
+		(
+		select distinct target_hosts from ops_step_instance
+		where 1=1
+		and target_hosts != '[]'
+		<if test="fromDay != null">
+			and create_time >= #{fromDay}
+		</if>
+		) osi
+		JOIN mysql.help_topic topic ON topic.help_topic_id &lt; ( length( substring(osi.target_hosts,2, length(osi.target_hosts)-2) ) - length( REPLACE ( substring(osi.target_hosts,2, length(osi.target_hosts)-2), ',', '' ) ) + 1 )
+		group by tag
+		) a
+	</select>
+	<select id="getOpsHistoryTimeStatistic" resultType="com.aspire.mirror.ops.domain.OpsTimeConsumeStatisticBase" parameterType="java.util.Map">
+		select avg(total_time) averageTime, max(total_time) maxTime from ops_pipeline_instance where 1=1
+		<if test="fromDay != null">
+			and create_time >= #{fromDay}
+		</if>
+	</select>
+	<select id="getApInstanceTimeStatistic" resultType="com.aspire.mirror.ops.domain.OpsTimeConsumeStatisticBase" parameterType="java.util.Map">
+		select avg(total_time) averageTime, max(total_time) maxTime from ops_auto_repair_execute_log where 1=1
+		<if test="fromDay != null">
+			and trigger_time >= #{fromDay}
+		</if>
+	</select>
+	<select id="queryToBeProcessedTaskListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.ops.api.domain.OpsToBeProcessedTaskQueryModel">
+		select count(*) from
+		(
+		select pipeline_instance_id taskId, name taskName, 'sensitive' taskType, create_time createTime from ops_pipeline_instance where status = '8' and review_applicant is not null
+		union
+		select id taskId, scheme_name taskName, 'selfRepair' taskType, trigger_time createTime  from  ops_auto_repair_execute_log where status = '6'
+		) t
+	</select>
+	<select id="queryToBeProcessedTaskList" resultType="com.aspire.mirror.ops.api.domain.OpsToBeProcessedTaskStatistic" parameterType="com.aspire.mirror.ops.api.domain.OpsToBeProcessedTaskQueryModel">
+		select t.taskId, t.taskName, t.taskType, t.createTime from
+		(
+		select pipeline_instance_id taskId, name taskName, 'sensitive' taskType, create_time createTime from ops_pipeline_instance where status = '8' and review_applicant is not null
+		union
+		select id taskId, scheme_name taskName, 'selfRepair' taskType, trigger_time createTime  from  ops_auto_repair_execute_log where status = '6'
+		) t
+		where 1=1
+		order by t.createTime desc
+		limit #{startIdx}, #{pageSize}
+	</select>
+</mapper>

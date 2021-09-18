@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsDao">
+
+	<resultMap type="com.aspire.mirror.alert.server.dao.alert.po.Alerts"
+		id="baseResultMap">
+		<result property="alertId" column="alert_id" jdbcType="VARCHAR" />
+		<result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR" />
+		<result property="eventId" column="event_id" jdbcType="VARCHAR" />
+		<result property="actionId" column="action_id" jdbcType="VARCHAR" />
+		<result property="deviceId" column="device_id" jdbcType="VARCHAR" />
+		<result property="bizSys" column="biz_sys" jdbcType="VARCHAR" />
+		<result property="moniIndex" column="moni_index" jdbcType="VARCHAR" />
+		<result property="moniObject" column="moni_object" jdbcType="VARCHAR" />
+		<result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR" />
+		<result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP" />
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+		<result property="itemId" column="item_id" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<result property="orderStatus" column="order_status" jdbcType="VARCHAR" />
+		<result property="operateStatus" column="operate_status" jdbcType="INTEGER" />
+		<result property="source" column="source" jdbcType="VARCHAR" />
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+		<result property="sourceRoom" column="source_room" jdbcType="VARCHAR" />
+		<result property="objectId" column="object_id" jdbcType="VARCHAR" />
+		<result property="objectType" column="object_type" jdbcType="VARCHAR" />
+		<result property="region" column="region" jdbcType="VARCHAR" />
+		<result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+		<result property="deviceType" column="device_class" jdbcType="VARCHAR" />
+		<result property="orderId" column="order_id" jdbcType="VARCHAR" />
+		<result property="orderType" column="order_type" jdbcType="VARCHAR" />
+		<result property="alertStartTime" column="alert_start_time"
+			jdbcType="TIMESTAMP" />
+		<result property="alertCount" column="alert_count" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="baseWhereClause">
+		<where>
+			1=1
+			<if test="params['ip'] != null and  params['ip'] != ''">
+				 and device_ip like "%"#{params.ip}"%"
+			</if>
+			<if test="params['alertStartTime'] != null and  params['alertStartTime'] != ''">
+				alert_start_time  &gt;= to_date(#{params.alertStartTime},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params['alertLevel'] != null and  params['alertLevel'] != ''">
+				and alert_level = #{params.alertLevel}
+			</if>
+			<if test="params['moniObject'] != null and  params['moniObject'] != ''">
+				 and moni_object like "%"#{params.moniObject}"%"
+			</if>
+			<if test="params['orderStatus'] != null and  params['orderStatus'] != ''">
+				and order_status = #{params.orderStatus}
+			</if>
+			<if test="params['bizSys'] != null and  params['bizSys'] != ''">
+				and biz_sys = #{params.bizSys}
+			</if>
+			<if test="params['objectType'] != null and  params['objectType'] != ''">
+				and object_type = #{params.objectType}
+			</if>
+		</where>
+	</sql>
+
+
+	<sql id="baseColumnList">
+		alert_id,r_alert_id,event_id,action_id,device_id,biz_sys,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id,remark,order_status,operate_status,source,idc_type,source_room,object_id,object_type,region,device_ip,device_class,order_id,order_type,alert_start_time,alert_count
+	</sql>
+
+
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.alert.po.Alerts">
+		insert into
+		alert_alerts(
+		alert_id,
+		r_alert_id,
+		event_id,
+		action_id,
+		device_id,
+		biz_sys,
+		moni_index,
+		moni_object,
+		cur_moni_value,
+		cur_moni_time,
+		alert_level,
+		item_id,
+		remark,
+		order_status,
+		source,
+		source_room,
+		object_id,
+		object_type,
+		region,
+		device_ip,
+		order_id,
+		order_type,
+		alert_start_time,
+		idc_type,
+		device_class,
+		alert_count,
+		operate_status)
+		values(
+		#{alertId,jdbcType=VARCHAR} ,
+		#{rAlertId,jdbcType=VARCHAR} ,
+		#{eventId,jdbcType=VARCHAR} ,
+		#{actionId,jdbcType=VARCHAR} ,
+		#{deviceId,jdbcType=VARCHAR} ,
+		#{bizSys,jdbcType=VARCHAR} ,
+		#{moniIndex,jdbcType=VARCHAR} ,
+		#{moniObject,jdbcType=VARCHAR} ,
+		#{curMoniValue,jdbcType=VARCHAR} ,
+		#{curMoniTime,jdbcType=TIMESTAMP} ,
+		#{alertLevel,jdbcType=VARCHAR} ,
+		#{itemId,jdbcType=VARCHAR} ,
+		#{remark,jdbcType=VARCHAR} ,
+		#{orderStatus,jdbcType=VARCHAR} ,
+		#{source,jdbcType=VARCHAR} ,
+		#{sourceRoom,jdbcType=VARCHAR},
+		#{objectId,jdbcType=VARCHAR},
+		#{objectType,jdbcType=VARCHAR},
+		#{region,jdbcType=VARCHAR},
+		#{deviceIp,jdbcType=VARCHAR},
+		#{orderId,jdbcType=VARCHAR},
+		#{orderType,jdbcType=VARCHAR},
+		#{alertStartTime,jdbcType=TIMESTAMP},
+		#{idcType,jdbcType=VARCHAR},
+		#{deviceClass,jdbcType=VARCHAR},
+		#{alertCount,jdbcType=INTEGER},
+		#{operateStatus,jdbcType=INTEGER}
+		)
+	</insert>
+
+
+	<insert id="insertByBatch" parameterType="com.aspire.mirror.alert.server.dao.alert.po.Alerts">
+		INSERT INTO
+		alert_alerts(alert_id,r_alert_id,event_id,action_id,device_id,biz_sys,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id,remark,order_status,source,source_room,object_id,object_type,region,device_ip,order_id,order_type,alert_start_time,idc_type,alert_count)
+		(
+		<foreach  collection="list" item="item" index="index" separator="union all" >
+			select
+			#{item.alertId,jdbcType=VARCHAR} ,
+			#{item.rAlertId,jdbcType=VARCHAR} ,
+			#{item.eventId,jdbcType=VARCHAR} ,
+			#{item.actionId,jdbcType=VARCHAR} ,
+			#{item.deviceId,jdbcType=VARCHAR} ,
+			#{item.bizSys,jdbcType=VARCHAR} ,
+			#{item.moniIndex,jdbcType=VARCHAR} ,
+			#{item.moniObject,jdbcType=VARCHAR} ,
+			#{item.curMoniValue,jdbcType=VARCHAR} ,
+			#{item.curMoniTime,jdbcType=TIMESTAMP} ,
+			#{item.alertLevel,jdbcType=VARCHAR} ,
+			#{item.itemId,jdbcType=VARCHAR},
+			#{item.remark,jdbcType=VARCHAR} ,
+			#{item.orderStatus,jdbcType=VARCHAR} ,
+			#{item.source,jdbcType=VARCHAR} ,
+			#{item.sourceRoom,jdbcType=VARCHAR},
+			#{item.objectId,jdbcType=VARCHAR},
+			#{item.objectType,jdbcType=VARCHAR},
+			#{item.region,jdbcType=VARCHAR},
+			#{item.deviceIp,jdbcType=VARCHAR},
+			#{item.orderId,jdbcType=VARCHAR},
+			#{item.orderType,jdbcType=VARCHAR},
+			#{item.alertStartTime,jdbcType=TIMESTAMP},
+			#{item.idcType,jdbcType=VARCHAR},
+			#{item.alertCount,jdbcType=INTEGER}
+			from dual
+		</foreach>
+		)
+	</insert>
+
+
+	<!-- 列表 -->
+	<select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+	    select TT.* from (
+		select aa.*, ROWNUM nm from
+		(
+		select
+		<include refid="baseColumnList"/>
+		from
+		alert_alerts
+		where
+		<include refid="baseWhereClause"/>
+		order by #{sortName} #{order}
+		) aa
+		) TT
+		where TT.nm &gt; #{begin}
+		AND TT.nm <![CDATA[<=]]> #{begin}+#{pageSize}
+	</select>
+
+
+	<select id="pageListCount" parameterType="com.aspire.mirror.common.entity.Page"
+		resultType="java.lang.Integer">
+		select count(*) from alert_alerts
+		<if test="params != null">
+			<include refid="baseWhereClause" />
+		</if>
+	</select>
+
+
+	<select id="select" parameterType="com.aspire.mirror.alert.server.dao.alert.po.Alerts"
+		resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		from alert_alerts
+		<where>
+			<if test="source != null and  source != ''">
+				source = #{source}
+			</if>
+			<if test="deviceIp != null and  deviceIp != ''">
+				 and device_ip like "%"#{deviceIp}"%"
+			</if>
+			<if test="itemId != null and  itemId != ''">
+				and item_id = #{itemId}
+			</if>
+			<if test="alertLevel != null and alertLevel != ''">
+				and alert_level = #{alertLevel}
+			</if>
+			<if test="moniObject != null and  moniObject != ''">
+				 and moni_object like "%"#{moniObject}"%"
+			</if>
+			<if test="moniIndex != null and  moniIndex != ''">
+				and moni_index = #{moniIndex}
+			</if>
+			<if test="eventId != null and  eventId != ''">
+				and event_id = #{eventId}
+			</if>
+			<if test="actionId != null and  actionId != ''">
+				and action_id = #{actionId}
+			</if>
+			<if test="orderStatus != null and  orderStatus != ''">
+				and order_status = #{orderStatus}
+			</if>
+			<if test="bizSys != null and  bizSys != ''">
+				and biz_sys = #{bizSys}
+			</if>
+			<if test="objectType != null and  objectType != ''">
+				and object_type = #{objectType}
+			</if>
+			<if test="rAlertId != null and  rAlertId != ''">
+				and r_alert_id = #{rAlertId}
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 详情 -->
+	<select id="selectByPrimaryKey" parameterType="String"
+		resultMap="baseResultMap">
+		select
+		alert_id,r_alert_id,event_id,action_id,device_id,biz_sys,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id,remark,
+		(
+			select B.order_status from
+(
+select A.order_status,ROWNUM nm from
+(select i.order_status from alert_alerts i , alert_alerts aa where  i.ITEM_ID=aa.ITEM_ID and i.ALERT_LEVEL = aa.ALERT_LEVEL
+and aa.alert_id = #{alertId} ORDER BY order_status) A
+) B
+where B.nm = 1
+		) order_status,
+		operate_status,source,idc_type,source_room,object_id,object_type,region,device_ip,device_class,
+		(
+       select B.order_id from
+(
+select A.order_id,ROWNUM nm from
+(select i.order_id from alert_alerts i , alert_alerts aa where  i.ITEM_ID=aa.ITEM_ID and i.ALERT_LEVEL = aa.ALERT_LEVEL
+and aa.alert_id = #{alertId} ORDER BY order_id) A
+) B
+where B.nm = 1
+		  ) order_id,
+		order_type,alert_start_time
+		from alert_alerts t where alert_id = #{alertId}
+	</select>
+
+
+	<!-- 根据ip查alerts  相关alert -->
+	<select id="selectAllAlertGenerateList" parameterType="String"
+		resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		from alert_alerts t where device_ip = #{deviceIp} and  moni_object = #{moniObject} and alert_level = #{alertLevel} 
+		ORDER BY alert_start_time DESC
+	</select>
+	
+	
+	<select id="selectByPrimaryKeyArrays" parameterType="java.util.List"
+		resultMap="baseResultMap">
+		SELECT
+		<include refid="baseColumnList" />
+		FROM alert_alerts
+	    WHERE alert_id in
+		<include refid="Foreach_PrimaryKeyArrays_Sql" />
+	</select>
+
+
+	<select id="selectOrderParam" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+		'0' isfault,
+		date_format((t1.cur_moni_time),'%Y-%m-%d %H:%i:%s')
+		as starttime,
+		date_format((t1.cur_moni_time + 3),'%Y-%m-%d %H:%i:%s')
+		as limittime,
+		concat((case when t1.biz_sys is null then '未知业务系统'
+		else t1.biz_sys end),
+		':', (case when t1.device_ip is null then
+		'未知主机IP' else t1.device_ip
+		end), '发生', t1.moni_index, '异常') title,
+		concat('检测到:', (case when t1.biz_sys is null then '未知业务系统' else
+		t1.biz_sys
+		end),(case when t1.device_ip is null then '未知主机IP' else
+		t1.device_ip
+		end), t1.moni_object, ':', t1.moni_index, '达到',
+		t1.cur_moni_value,
+		',告警级别', t1.alert_level, ',告警事件ID为', t1.alert_id)
+		detail,
+		t1.alert_level lev,
+		'' as alertsource,
+		t1.biz_sys as
+		sysname,
+		t1.biz_sys as bizsystem,
+		'1' as reasontype,
+		'' as orderid,
+		t1.device_ip as device,
+		t1.alert_id as alertid
+		from alert_alerts t1
+		where 1=1
+		<if test="alertLevel != null and alertLevel != ''">
+			and t1.alert_level = #{alertLevel}
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			and t1.order_status = #{orderStatus}
+		</if>
+		<if test="alertIdArrays != null">
+			and t1.alert_id in
+			<foreach collection="alertIdArrays" index="index" item="alertId"
+				open="(" separator="," close=")">
+				#{alertId}
+			</foreach>
+		</if>
+	</select>
+
+
+	<select id="selectOrderParam1" parameterType="java.util.HashMap"
+			resultType="java.util.HashMap">
+		select *
+		from alert_alerts t1
+		where 1=1
+		<if test="alertLevel != null and alertLevel != ''">
+			and t1.alert_level = #{alertLevel}
+		</if>
+		<if test="orderStatus != null and orderStatus != ''">
+			and t1.order_status = #{orderStatus}
+		</if>
+		<if test="alertIdArrays != null">
+			and t1.alert_id in
+			<foreach collection="alertIdArrays" index="index" item="alertId"
+					 open="(" separator="," close=")">
+				#{alertId}
+			</foreach>
+		</if>
+	</select>
+
+
+	<update id="modOrderStatusByOrderId" parameterType="java.lang.String">
+		update
+		alert_alerts set order_status = #{orderStatus,jdbcType=VARCHAR} where order_id =
+		#{orderId}
+	</update>
+
+
+	<!-- 修改 -->
+	<update id="updateByPrimaryKey" parameterType="com.aspire.mirror.alert.server.dao.alert.po.Alerts">
+		update alert_alerts set alert_id = #{alertId,jdbcType=VARCHAR}
+		<if test="rAlertId != null">
+			, r_alert_id = #{rAlertId,jdbcType=VARCHAR}
+		</if>
+		<if test="eventId != null">
+			, event_id = #{eventId,jdbcType=VARCHAR}
+		</if>
+		<if test="deviceId != null">
+			, device_id = #{deviceId,jdbcType=VARCHAR}
+		</if>
+		<if test="bizSys != null">
+			, biz_sys = #{bizSys,jdbcType=VARCHAR}
+		</if>
+		<if test="moniIndex != null">
+			, moni_index = #{moniIndex,jdbcType=VARCHAR}
+		</if>
+		<if test="moniObject != null">
+			, moni_object = #{moniObject,jdbcType=VARCHAR}
+		</if>
+		<if test="curMoniValue != null">
+			, cur_moni_value = #{curMoniValue,jdbcType=VARCHAR}
+		</if>
+		<if test="curMoniTime != null">
+			, cur_moni_time = #{curMoniTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="alertLevel != null">
+			, alert_level = #{alertLevel,jdbcType=VARCHAR}
+		</if>
+		<if test="operateStatus != null">
+			, operate_status = #{operateStatus,jdbcType=INTEGER}
+		</if>
+		<if test="itemId != null">
+			, item_id = #{itemId,jdbcType=VARCHAR}
+		</if>
+		<if test="remark != null">
+			, remark = #{remark,jdbcType=VARCHAR}
+		</if>
+		<if test="orderStatus != null">
+			, order_status = #{orderStatus,jdbcType=VARCHAR}
+		</if>
+		<if test="source != null">
+			, source = #{source,jdbcType=VARCHAR}
+		</if>
+		<if test="sourceRoom != null">
+			, source_room = #{sourceRoom,jdbcType=VARCHAR}
+		</if>
+		<if test="orderId != null">
+			, order_id = #{orderId,jdbcType=VARCHAR}
+		</if>
+		<if test="orderType != null">
+			, order_type = #{orderType,jdbcType=VARCHAR}
+		</if>
+		<if test="alertStartTime != null">
+			, alert_start_time = #{alertStartTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="updateCount">
+			, alert_count = alert_count + 1
+		</if>
+		<if test="messageSend != null">
+			, message_send = #{messageSend,jdbcType=VARCHAR}
+		</if>
+		<if test="messageOpen != null">
+			, message_open = #{messageOpen,jdbcType=VARCHAR}
+		</if>
+		<if test="mailSend != null">
+			, mail_send = #{mailSend,jdbcType=VARCHAR}
+		</if>
+		<if test="mailOpen != null">
+			, mail_open = #{mailOpen,jdbcType=VARCHAR}
+		</if>
+		where alert_id = #{alertId}
+	</update>
+
+
+	<!-- 删除 -->
+	<update id="deleteByPrimaryKeyArrays" parameterType="java.util.List">
+		delete from alert_alerts where alert_id in
+		<include refid="Foreach_PrimaryKeyArrays_Sql" />
+	</update>
+
+
+	<!-- 删除 -->
+	<delete id="deleteByParams" parameterType="map">
+		delete from alert_alerts where
+			event_id = #{snmpTrapOID}
+			and device_ip = #{sourceIP}
+			and moni_index = #{alarmContent}
+	</delete>
+	<sql id="Foreach_PrimaryKeyArrays_Sql">
+		<foreach collection="array" index="index" item="alertId" open="("
+			separator="," close=")">
+			#{alertId}
+		</foreach>
+	</sql>
+
+
+	<select id="getAlertConfig" resultType="java.util.HashMap">
+		SELECT ac.ID as id,
+		acd.CONFIG_TYPE as configType, acd.TARGET_ID as
+		businessCode,
+		acd.MONIT_TYPE as moniType, acd.ALERT_LEVEL as
+		alertLevel
+		from
+		alert_config ac JOIN alert_config_detail acd ON ac.ID =
+		acd.ALERT_CONFIG_ID
+	</select>
+
+
+	<select id="getFirstBusiness" resultType="java.util.HashMap"
+		parameterType="map">
+		select cba.ID AS id, cba.BUSINESS_NAME AS name from
+		cmdb_business_attach cba
+		where del_flag = '0' and disabled = '0' and parent_id is NULL and
+		BUSINESS_CODE in
+		<foreach collection="businessCodes" index="index" item="businessCode"
+			open="(" separator="," close=")">
+			#{businessCode}
+		</foreach>
+	</select>
+
+
+	<!-- 获取警报概览数据 -->
+	<select id="selectSummeryByOperateCode" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticOverview">
+		SELECT t.alert_level AS alertLevel,t.operate_status AS operateStatus, COUNT(*) AS count
+		from alert_alerts t
+		INNER JOIN (
+		SELECT i.device_ip,i.item_id,i.alert_level,MAX(alert_id) alert_id, COUNT(1) alert_count FROM alert_alerts i GROUP BY
+		i.device_ip,
+		i.item_id,
+		i.alert_level) n ON t.alert_id=n.alert_id
+		WHERE 1=1
+		<if test="code !=null">
+			AND t.operate_status = #{code}
+		</if>
+		GROUP BY t.alert_level, t.operate_status
+	</select>
+
+
+	<select id="selectOverview" resultMap="baseResultMap">
+
+	</select>
+
+
+	<select id="selectLatest" parameterType="Integer" resultMap="baseResultMap">
+		/*select *
+		from alert_alerts
+		order by alert_start_time desc
+		limit #{limit}*/
+		select T.* from
+		(
+		select A.*,  ROWNUM nm from
+		(select * from alert_alerts order by alert_start_time desc) A
+		) T
+		where T.nm <![CDATA[<=]]> #{limit}
+	</select>
+
+
+	<select id="selectByDateRange" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticOverview">
+		select t.alert_level AS alertLevel,t.operate_status AS operateStatus, COUNT(*) AS count
+		from alert_alerts t
+		INNER JOIN (
+		SELECT i.device_ip,i.item_id,i.alert_level,MAX(alert_id) alert_id, COUNT(1) alert_count FROM alert_alerts i GROUP BY
+		i.device_ip,
+		i.item_id,
+		i.alert_level) n ON t.alert_id=n.alert_id
+		where 1=1
+		<if test="beginDate != null  and endDate != null">
+			 and t.alert_start_time >= #{beginDate} and t.alert_start_time <![CDATA[<]]> #{endDate} + 1
+		</if>
+		group by t.alert_level, t.operate_status
+	</select>
+
+
+	<select id="selectAuotAlertData" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		select
+		<include refid="baseColumnList" /> ,ROWNUM nm
+		from alert_alerts alert where alert.order_status = '1'
+		and alert.ALERT_LEVEL IN
+		<foreach collection="alertLevelArr" item="item" index="index"
+				 open="(" separator="," close=")">
+		#{item}
+		</foreach>
+		<if test="targetIdArr != null  and targetIdArr != null">
+			and alert.biz_sys in
+			<foreach collection="targetIdArr" item="item" index="index"
+					 open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		AND nm <![CDATA[<=]]> 200
+	</select>
+
+
+	<select id="selectMoniObj" resultType="String">
+		SELECT DISTINCT moni_object FROM alert_alerts
+	</select>
+
+
+	<select id="selectHisMoniObj" resultType="String">
+		SELECT DISTINCT moni_object FROM alert_alerts_his
+	</select>
+
+
+
+	<update id="updateAlertClearCount"
+			parameterType="com.aspire.mirror.alert.server.domain.AlertClearCountModel">
+		update ALERT_MANUAL_STATISTIC
+		set source_alert_id = #{sourceAlertId}
+		<if test="autoCount != null">
+			, auto_count = #{autoCount}
+		</if>
+		<if test="manualCount != null">
+			, manual_count = #{manualCount}
+		</if>
+		where room_id = #{roomId}
+		and source_alert_id = #{sourceAlertId}
+	</update>
+</mapper>

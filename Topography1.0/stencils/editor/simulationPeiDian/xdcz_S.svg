@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="16.9332mm" height="12.6998mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1693 1270"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil2 {fill:#348DD1}
+    .fil0 {fill:#ADD3F0}
+    .fil3 {fill:#F18D1E}
+    .fil1 {fill:#348DD1;fill-rule:nonzero}
+   ]]>
+  </style>
+ </defs>
+ <g id="图层_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2595542730448">
+   <g>
+    <g id="_2595483960672">
+     <path class="fil0" d="M942 113l678 0 0 441c0,28 -24,50 -52,50l-575 0c-28,0 -51,-22 -51,-50l0 -441z"/>
+     <polygon class="fil1" points="866,43 951,43 951,0 1027,0 1027,43 1535,43 1535,0 1611,0 1611,43 1695,43 1695,118 866,118 "/>
+     <polygon class="fil2" points="1116,211 1116,226 1071,226 1071,271 1055,271 1055,226 1010,226 1010,211 1055,211 1055,166 1071,166 1071,211 "/>
+     <polygon class="fil2" points="1561,226 1456,226 1456,211 1561,211 "/>
+     <polygon class="fil3" points="1331,195 1174,381 1283,381 1253,522 1398,338 1286,338 "/>
+    </g>
+    <g id="_2595483960672_0">
+     <path class="fil0" d="M73 113l678 0 0 441c0,28 -23,50 -51,50l-576 0c-28,0 -51,-22 -51,-50l0 -441z"/>
+     <polygon class="fil1" points="-2,43 82,43 82,0 158,0 158,43 666,43 666,0 742,0 742,43 827,43 827,118 -2,118 "/>
+     <polygon class="fil2" points="248,211 248,226 203,226 203,271 187,271 187,226 142,226 142,211 187,211 187,166 203,166 203,211 "/>
+     <polygon class="fil2" points="693,226 587,226 587,211 693,211 "/>
+     <polygon class="fil3" points="463,195 305,381 415,381 384,522 529,338 417,338 "/>
+    </g>
+   </g>
+   <g id="_2595483960672_1">
+    <path class="fil0" d="M508 779l677 0 0 440c0,28 -23,51 -51,51l-576 0c-28,0 -50,-23 -50,-51l0 -440z"/>
+    <polygon class="fil1" points="432,709 516,709 516,665 592,665 592,709 1100,709 1100,665 1176,665 1176,709 1261,709 1261,785 432,785 "/>
+    <polygon class="fil2" points="682,877 682,891 637,891 637,936 621,936 621,891 576,891 576,877 621,877 621,832 637,832 637,877 "/>
+    <polygon class="fil2" points="1127,892 1021,892 1021,877 1127,877 "/>
+    <polygon class="fil3" points="897,860 740,1047 849,1047 819,1188 964,1003 852,1003 "/>
+   </g>
+  </g>
+ </g>
+</svg>

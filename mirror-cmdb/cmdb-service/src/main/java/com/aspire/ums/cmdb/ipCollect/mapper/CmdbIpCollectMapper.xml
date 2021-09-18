@@ -1,0 +1,1232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipCollect.mapper.CmdbIpCollectMapper">
+    <resultMap id="ipCollectMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpCollectResponse">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="iptype" property="iptype" jdbcType="VARCHAR"/>
+        <result column="mac" property="mac" jdbcType="VARCHAR"/>
+        <result column="resource" property="resource" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="TIMESTAMP"/>
+        <result column="gateway" property="gateway" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="VARCHAR"/>
+        <result column="ip2Idc" property="ip2Idc" jdbcType="VARCHAR"/>
+        <result column="ip2Idc" property="ip2Idc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="topTotalMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpCollectTopTotalResponse">
+        <result column="ip_total" property="ipTotal" jdbcType="INTEGER"/>
+        <result column="ipv4_total" property="ipv4Total" jdbcType="INTEGER"/>
+        <result column="ipv6_total" property="ipv6Total" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="cmdbIpInfoMap" type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpInfo">
+        <result property="ip" column="ip" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="INTEGER"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="ipType" column="ip_type" jdbcType="VARCHAR"/>
+        <result property="firstSurvivalTime" column="insert_time" jdbcType="VARCHAR"/>
+        <result property="latestSurvivalTime" column="update_time" jdbcType="VARCHAR" />
+        <result property="businessName1" column="businessName1" jdbcType="VARCHAR"/>
+        <result property="businessName2" column="businessName2" jdbcType="VARCHAR"/>
+        <result property="ip4IdcType" column="ip4IdcType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--存活IP基类-->
+    <resultMap id="baseIpCollectEntity" type="com.aspire.ums.cmdb.ipCollect.payload.entity.BaseIpCollectEntity">
+        <result property="ip" column="ip" jdbcType="VARCHAR"/>
+        <result property="iptype" column="iptype" jdbcType="VARCHAR"/>
+        <result property="resource" column="resource" jdbcType="VARCHAR"/>
+        <result property="time" column="time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `instance_id`,
+        `ip`,
+        `iptype`,
+        `mac`,
+        `resource`,
+        `time`
+    </sql>
+
+    <sql id="queryWhere">
+        del_flag = '0'
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+            and instance_id = #{instanceId}
+        </if>
+        <if test="ipList != null and ipList.size() > 0">
+            <choose>
+                <when test="ipList.size() == 1">
+                    <foreach collection="ipList" item="ip" index="index">
+                        and ip like concat ('',#{ip},'%')
+                    </foreach>
+                </when>
+                <otherwise>
+                    and ip in
+                    <foreach collection="ipList" item="ip" index="index" open="(" separator="," close=")">
+                        #{ip}
+                    </foreach>
+                </otherwise>
+            </choose>
+        </if>
+        <if test="iptype != null and iptype != ''">
+            and iptype = #{iptype}
+        </if>
+        <if test="macList != null and macList.size() > 0">
+            <choose>
+                <when test="macList.size() == 1">
+                    <foreach collection="macList" item="mac" index="index">
+                        and mac like concat ('',#{mac},'%')
+                    </foreach>
+                </when>
+                <otherwise>
+                    and mac in
+                    <foreach collection="macList" item="mac" index="index" open="(" separator="," close=")">
+                        #{mac}
+                    </foreach>
+                </otherwise>
+            </choose>
+        </if>
+        <if test="resource != null and resource != ''">
+            and resource = #{resource}
+        </if>
+        <if test="startTime != null">
+            and `time` &gt; #{startTime}
+        </if>
+        <if test="endTime != null">
+            and `time` &lt; #{endTime}
+        </if>
+    </sql>
+
+    <sql id="addressWhere">
+        <include refid="queryWhere"/>
+        <if test="gateway != null and gateway != ''">
+            and gateway = #{gateway}
+        </if>
+    </sql>
+    <sql id="confAndArpWhere">
+        <include refid="queryWhere"/>
+        <if test="gateway != null and gateway != ''">
+            and `srcip` = #{gateway}
+        </if>
+    </sql>
+
+    <!--根据modelId获取准确内网IP的sql 新增 fanwenhui 20200709-->
+    <sql id="innerTableSql">
+        cmdb_ip_repository_inner_ip cip
+        INNER JOIN cmdb_ip_repository_inner_segment s ON cip.id = s.id
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        AND rs.is_delete = 0 AND rs.id = s.id
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_inner_ip')
+        AND ri.is_delete = 0 AND ri.id = cip.id
+    </sql>
+
+    <!--根据modelId获取准确的IPV6的sql 新增 fanwenhui 20200716-->
+    <sql id="ipv6TableSql">
+        cmdb_ip_repository_ipv6_ip cip
+        INNER JOIN cmdb_ip_repository_ipv6_segment s ON cip.ipv6_segment_owner = s.ipv6_segment_address
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_ipv6_segment')
+        AND rs.is_delete = 0 AND rs.id = s.id
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_ipv6_ip')
+        AND ri.is_delete = 0 AND ri.id = cip.id
+    </sql>
+
+    <!--根据modelId获取准确的公网的sql 新增 fanwenhui 20200716-->
+    <sql id="publicTableSql">
+        cmdb_ip_repository_public_ip cip
+        INNER JOIN cmdb_ip_repository_public_segment s ON cip.public_segment_owner = s.public_segment_address
+        INNER JOIN cmdb_ip_repository rs ON rs.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_public_segment')
+        AND rs.is_delete = 0 AND rs.id = s.id
+        INNER JOIN cmdb_ip_repository ri ON ri.module_id = (SELECT id FROM cmdb_module WHERE `code` = 'ip_repository_public_ip')
+        AND ri.is_delete = 0 AND ri.id = cip.id
+    </sql>
+
+    <!--实时存活IP记录详情查询 新增 fanwenhui 20201109-->
+    <sql id="cmdbIpNowSql">
+        select
+        <include refid="baseColumn"/>,gateway,'ip_address_pool' as source
+        from cmdb_ip_address_pool
+        where
+        <include refid="addressWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,srcip as gateway,'ip_conf_pool' as source
+        from cmdb_ip_conf_pool
+        where
+        <include refid="confAndArpWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,srcip as gateway,'ip_arp_pool' as source
+        from cmdb_ip_arp_pool
+    </sql>
+
+    <!--实时存活IP数量查询 新增 fanwenhui 20201109-->
+    <sql id="cmdbIpCountNowSql">
+        select
+        <include refid="baseColumn"/>,'ip_address_pool' as source
+        from cmdb_ip_address_pool
+        where
+        <include refid="addressWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,'ip_conf_pool' as source
+        from cmdb_ip_conf_pool
+        where
+        <include refid="confAndArpWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,'ip_arp_pool' as source
+        from cmdb_ip_arp_pool
+    </sql>
+
+    <!-- 实时存活IP顶部数据汇总查询 新增 fanwenhui 20201109-->
+    <sql id="cmdbIpTopNowSql">
+        select
+        ip,mac,iptype,'ip_address_pool' as source
+        from cmdb_ip_address_pool
+        where
+        <include refid="addressWhere"/>
+        union all
+        select
+        ip,mac,iptype,'ip_conf_pool' as source
+        from cmdb_ip_conf_pool
+        where
+        <include refid="confAndArpWhere"/>
+        union all
+        select
+        ip,mac,iptype,'ip_arp_pool' as source
+        from cmdb_ip_arp_pool
+    </sql>
+
+    <!--存活IP历史记录详情查询 新增 fanwenhui 20201109-->
+    <sql id="cmdbIpHisSql">
+        select
+        <include refid="baseColumn"/>,gateway,'ip_address_pool' as source
+        from cmdb_ip_address_pool_his
+        where
+        <include refid="addressWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,srcip as gateway,'ip_conf_pool' as source
+        from cmdb_ip_conf_pool_his
+        where
+        <include refid="confAndArpWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,srcip as gateway,'ip_arp_pool' as source
+        from cmdb_ip_arp_pool_his
+    </sql>
+
+    <!--存活IP历史数量查询 新增 fanwenhui 20201109-->
+    <sql id="cmdbIpCountHisSql">
+        select
+        <include refid="baseColumn"/>,'ip_address_pool' as source
+        from cmdb_ip_address_pool_his
+        where
+        <include refid="addressWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,'ip_conf_pool' as source
+        from cmdb_ip_conf_pool_his
+        where
+        <include refid="confAndArpWhere"/>
+        union all
+        select
+        <include refid="baseColumn"/>,'ip_arp_pool' as source
+        from cmdb_ip_arp_pool_his
+    </sql>
+
+    <!--存活IP顶部数据历史记录汇总查询 新增 fanwenhui 20201109-->
+    <sql id="cmdbIpTopHisSql">
+        select
+        ip,mac,iptype,'ip_address_pool' as source
+        from cmdb_ip_address_pool_his
+        where
+        <include refid="addressWhere"/>
+        union all
+        select
+        ip,mac,iptype,'ip_conf_pool' as source
+        from cmdb_ip_conf_pool_his
+        where
+        <include refid="confAndArpWhere"/>
+        union all
+        select
+        ip,mac,iptype,'ip_arp_pool' as source
+        from cmdb_ip_arp_pool_his
+    </sql>
+
+    <select id="findPage" resultMap="ipCollectMap"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpCollectRequest">
+        select<include refid="baseColumn"/>,gateway,
+        GROUP_CONCAT(source) AS source
+        from
+        (
+        <choose>
+            <when test="hisFlag != null and hisFlag != ''">
+                <include refid="cmdbIpHisSql" />
+            </when>
+            <otherwise>
+                <include refid="cmdbIpNowSql" />
+            </otherwise>
+        </choose>
+        where
+        <include refid="confAndArpWhere"/>
+        )a
+        <where>
+            <if test="source != null and source != ''">
+                and a.source = #{source}
+            </if>
+        </where>
+        <choose>
+            <when test='"是" == oneIpFlag'>
+                group by a.ip
+            </when>
+            <otherwise>
+                group by a.ip,a.mac
+            </otherwise>
+        </choose>
+        <choose>
+            <when test='"desc" == ipSort'>
+                ORDER BY inet_aton(a.ip) DESC
+            </when>
+            <otherwise>
+                ORDER BY inet_aton(a.ip) ASC
+            </otherwise>
+        </choose>
+        <if test="pageNo >= 0 and pageSize > 0">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="findPageCount" resultType="integer"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpCollectRequest">
+        select count(id) as tatol from (
+        select id from (
+        <choose>
+            <when test="hisFlag != null and hisFlag != ''">
+                <include refid="cmdbIpCountHisSql" />
+            </when>
+            <otherwise>
+                <include refid="cmdbIpCountNowSql" />
+            </otherwise>
+        </choose>
+        where
+        <include refid="confAndArpWhere"/>
+        )a
+        <where>
+            <if test="source != null and source != ''">
+                and a.source = #{source}
+            </if>
+        </where>
+        <choose>
+            <when test='"是" == oneIpFlag'>
+                group by a.ip
+            </when>
+            <otherwise>
+                group by a.ip,a.mac
+            </otherwise>
+        </choose>
+        ) b
+    </select>
+
+    <select id="findTopTotal" resultMap="topTotalMap"
+            parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbIpCollectRequest">
+        select
+        count(ip) as ip_total,
+        count(case when iptype = 'ipv4' then 1 end) as ipv4_total,
+        count(case when iptype = 'ipv6' then 1 end) as ipv6_total
+        from (
+        select * from (
+        <choose>
+            <when test="hisFlag != null and hisFlag != ''">
+                <include refid="cmdbIpTopHisSql" />
+            </when>
+            <otherwise>
+                <include refid="cmdbIpTopNowSql" />
+            </otherwise>
+        </choose>
+        where
+        <include refid="confAndArpWhere"/>
+        )a
+        <where>
+            <if test="source != null and source != ''">
+                and a.source = #{source}
+            </if>
+        </where>
+        group by a.ip
+        ) b
+    </select>
+
+
+    <select id="getResource" resultType="java.lang.String">
+        select resource from v_ip_collect group by resource
+    </select>
+
+    <!--根据IP所属的资源池和IP地址批量更新IP信息 新增 fanwenhui 20200709-->
+    <update id="updateInnerIpInfo" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE
+            <include refid="innerTableSql"/>
+            <set>
+                <if test="item.survival_status != null and item.survival_status != ''">
+                    survival_status = #{item.survival_status},
+                </if>
+                <if test="item.first_survival_time != null and item.first_survival_time != ''">
+                    first_survival_time = #{item.first_survival_time},
+                </if>
+                <if test="item.latest_survival_time != null and item.latest_survival_time != ''">
+                    latest_survival_time = #{item.latest_survival_time},
+                </if>
+                <if test="item.assign_status != null and item.assign_status != ''">
+                    assign_status = #{item.assign_status},
+                </if>
+                <if test="item.businessName1 != null and item.businessName1 != ''">
+                    online_business = #{item.businessName1},
+                    is_cmdb_manager = '11462',
+                    s.is_pool = '11462',
+                </if>
+                <if test="item.businessName2 != null and item.businessName2 != ''">
+                    sub_business_module = #{item.businessName2},
+                </if>
+            </set>
+            WHERE s.idcType = #{item.idcType} AND cip.ip = #{item.ip}
+        </foreach>
+    </update>
+
+    <!--根据IP所属的资源池和IP地址批量更新IP信息 新增 fanwenhui 20200709-->
+    <update id="updateIpv6Info" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE
+            cmdb_ip_repository_ipv6_ip cip
+            <set>
+                <if test="item.survival_status != null and item.survival_status != ''">
+                    survival_status = #{item.survival_status},
+                </if>
+                <if test="item.first_survival_time != null and item.first_survival_time != ''">
+                    first_survival_time = #{item.first_survival_time},
+                </if>
+                <if test="item.latest_survival_time != null and item.latest_survival_time != ''">
+                    latest_survival_time = #{item.latest_survival_time},
+                </if>
+                <if test="item.assign_status != null and item.assign_status != ''">
+                    assign_status = #{item.assign_status},
+                </if>
+            </set>
+            WHERE cip.ipv6 = #{item.ip}
+        </foreach>
+    </update>
+
+    <!--根据IP所属的资源池和IP地址批量更新IP信息 新增 fanwenhui 20200709-->
+    <update id="updatePublicIpInfo" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE
+            cmdb_ip_repository_public_ip cip
+            <set>
+                <if test="item.survival_status != null and item.survival_status != ''">
+                    survival_status = #{item.survival_status},
+                </if>
+                <if test="item.first_survival_time != null and item.first_survival_time != ''">
+                    first_survival_time = #{item.first_survival_time},
+                </if>
+                <if test="item.latest_survival_time != null and item.latest_survival_time != ''">
+                    latest_survival_time = #{item.latest_survival_time},
+                </if>
+                <if test="item.assign_status != null and item.assign_status != ''">
+                    assign_status = #{item.assign_status},
+                </if>
+            </set>
+            WHERE cip.ip = #{item.ip}
+        </foreach>
+    </update>
+
+    <update id="updatePublicIpInfo4Del" parameterType="java.util.List">
+        UPDATE
+        cmdb_ip_repository_public_ip cip
+        <set>
+            survival_status = '656b7303f69b4b118053a7ff6a7e1f48',
+            assign_status = 'a76db9e59e48490aa48d6e3fb01dfa70',
+            first_survival_time = null,
+            latest_survival_time = null
+        </set>
+        WHERE cip.ip NOT IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+             #{item}
+        </foreach>
+    </update>
+
+    <update id="updateIpv6Info4Del" parameterType="java.util.List">
+        UPDATE
+        cmdb_ip_repository_ipv6_ip cip
+        <set>
+            survival_status = '656b7303f69b4b118053a7ff6a7e1f48',
+            assign_status = 'a76db9e59e48490aa48d6e3fb01dfa70',
+            first_survival_time = null,
+            latest_survival_time = null
+        </set>
+        WHERE cip.ipv6 NOT IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--获取CMDB资产上的非IPv6的所有IP-->
+    <select id="getCmdbAllIpInfo1" resultMap="cmdbIpInfoMap" parameterType="java.lang.String">
+        -- 设备ip
+        SELECT ip,idcType,ip AS device_ip,'管理IP' AS ip_type,insert_time,update_time,CONCAT(ip,'-', idcType) AS ip4IdcType,
+        bizSystem AS businessName1,business_level2 AS businessName2
+        FROM cmdb_instance WHERE 1=1
+        <choose>
+            <when test="delFlag != null and delFlag != ''">
+                AND is_delete = 1
+            </when>
+            <otherwise>
+                AND is_delete = 0
+            </otherwise>
+        </choose>
+        AND ip != '' AND ip IS NOT NULL AND idcType != '' AND idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpInfo2" resultMap="cmdbIpInfoMap" parameterType="java.lang.String">
+        -- other ip
+        SELECT DISTINCT o.ip_address AS ip,a.idcType,a.ip AS device_ip,'其他IP' AS ip_type,
+        a.insert_time,a.update_time,CONCAT(o.ip_address,'-', a.idcType) AS ip4IdcType,
+        a.bizSystem AS businessName1,a.business_level2 AS businessName2
+        FROM cmdb_instance_server_ip o
+        JOIN cmdb_instance a ON o.device_id = a.id
+        WHERE 1=1
+        <choose>
+            <when test="delFlag != null and delFlag != ''">
+                AND o.is_delete = 1 AND a.is_delete = 1
+            </when>
+            <otherwise>
+                AND o.is_delete = 0 AND a.is_delete = 0
+            </otherwise>
+        </choose>
+        AND ip_address != '' AND ip_address IS NOT NULL AND idcType != '' AND idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpInfo3" resultMap="cmdbIpInfoMap" parameterType="java.lang.String">
+        -- 业务IP1
+        SELECT DISTINCT business_ip1 AS ip,idcType,ip AS device_ip,'业务IP1' AS ip_type,
+        insert_time,update_time,CONCAT(business_ip1,'-', idcType) AS ip4IdcType,
+        bizSystem AS businessName1,business_level2 AS businessName2
+        FROM cmdb_instance WHERE 1=1
+        <choose>
+            <when test="delFlag != null and delFlag != ''">
+                AND is_delete = 1
+            </when>
+            <otherwise>
+                AND is_delete = 0
+            </otherwise>
+        </choose>
+        AND business_ip1 != '' AND business_ip1 IS NOT NULL AND idcType != '' AND idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpInfo4" resultMap="cmdbIpInfoMap" parameterType="java.lang.String">
+        -- 业务IP2
+        SELECT DISTINCT business_ip2 AS ip,idcType,ip AS device_ip,'业务IP2' AS ip_type,
+        insert_time,update_time,CONCAT(business_ip2,'-', idcType) AS ip4IdcType,
+        bizSystem AS businessName1,business_level2 AS businessName2
+        FROM cmdb_instance WHERE 1=1
+        <choose>
+            <when test="delFlag != null and delFlag != ''">
+                AND is_delete = 1
+            </when>
+            <otherwise>
+                AND is_delete = 0
+            </otherwise>
+        </choose>
+        AND business_ip2 != '' AND business_ip2 IS NOT NULL AND idcType != '' AND idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpInfo5" resultMap="cmdbIpInfoMap" parameterType="java.lang.String">
+        -- console IP
+        SELECT DISTINCT c.console_ip AS ip, i.idcType, i.ip AS device_ip, 'consoleIP' AS ip_type,
+        i.insert_time,i.update_time,CONCAT(c.console_ip,'-', i.idcType) AS ip4IdcType,
+        i.bizSystem AS businessName1,i.business_level2 AS businessName2
+        FROM cmdb_instance_console c
+        JOIN cmdb_instance i ON i.id = c.id
+        WHERE 1=1
+        <choose>
+            <when test="delFlag != null and delFlag != ''">
+                AND i.is_delete = 1 AND c.is_delete = 1
+            </when>
+            <otherwise>
+                AND i.is_delete = 0 AND c.is_delete = 0
+            </otherwise>
+        </choose>
+        AND console_ip != '' AND console_ip IS NOT NULL AND idcType != '' AND idcType IS NOT NULL
+    </select>
+
+    <!--查询网管的公网映射表获取存活的公网IP并更新到公网地址库上 新增 fanwenhui 20200716-->
+    <select id="getPublicIpIpInfo" resultMap="cmdbIpInfoMap">
+        SELECT DISTINCT t.OUTER_IP AS ip, '' AS idcType, t.FW_IP AS device_ip, 'publicIp' AS ip_type,
+                t.CREATE_TIME AS insert_time,t.CREATE_TIME AS update_time
+        FROM cmdb_pubnet_mapped_ipinfo t
+    </select>
+
+    <!--查询自动化平台同步过来的Ipv6数据 新增 fanwenhui 20200717-->
+    <select id="getAllAutoIpv6" resultMap="cmdbIpInfoMap">
+        SELECT ip, resource AS idcType, gateway AS deviceIp, '存活IP' AS ipType,
+        src_create_time AS insert_time,`time` AS update_time
+        FROM cmdb_ip_address_pool
+        WHERE ip != '' and ip IS NOT NULL AND del_flag = 0 AND iptype = 'ipv6'
+        AND time > date(NOW()) AND del_flag = '0'
+        UNION
+        SELECT ip, resource AS idcType, srcip AS deviceIp, '存活IP' AS ipType,
+        src_create_time AS insert_time,`time` AS update_time
+        FROM cmdb_ip_arp_pool
+        WHERE ip != '' and ip IS NOT NULL AND del_flag = 0 AND iptype = 'ipv6'
+        AND time > date(NOW()) AND del_flag = '0'
+        UNION
+        SELECT ip, resource AS idcType, srcip AS deviceIp, '存活IP' AS ipType,
+        src_create_time AS insert_time,`time` AS update_time
+        FROM cmdb_ip_conf_pool
+        WHERE ip != '' and ip IS NOT NULL AND del_flag = 0 AND iptype = 'ipv6'
+        AND time > date(NOW()) AND del_flag = '0'
+    </select>
+
+    <!-- 查询其他IP表关联主机资产表，获取资产管理的IPv6 新增 fanwenhui 20200527 -->
+    <select id="getCmdbAllIp4Ipv6" resultMap="cmdbIpInfoMap">
+        SELECT DISTINCT a.ip_address AS ip, b.idcType, b.ip AS deviceIp,'CMDB' AS ipType,
+        b.insert_time,b.update_time
+        FROM cmdb_instance_server_ip a
+        JOIN cmdb_instance b ON b.id = a.device_id WHERE a.is_delete = 0
+    </select>
+
+    <select id="getAutoInnerIpInfo" resultMap="cmdbIpInfoMap">
+        SELECT ip, resource AS idcType, gateway AS deviceIp, '存活IP扫描' AS ipType,
+        src_create_time AS insert_time,`time` AS update_time,CONCAT(ip,'-', resource) AS ip4IdcType
+        FROM cmdb_ip_address_pool
+        where ip != '' and ip IS NOT NULL and resource!= '' and resource is not null and del_flag = 0 and LOWER(iptype) = 'ipv4'
+        AND time > date(NOW()) AND del_flag = '0'
+        union
+        SELECT ip, resource AS idcType, srcip AS deviceIp, '存活IP扫描' AS ipType,
+        src_create_time AS insert_time,`time` AS update_time,CONCAT(ip,'-', resource) AS ip4IdcType
+        FROM cmdb_ip_arp_pool
+        where ip != '' and ip IS NOT NULL and resource!= '' and resource is not null and del_flag = 0 and LOWER(iptype) = 'ipv4'
+        AND time > date(NOW()) AND del_flag = '0'
+        union
+        SELECT ip, resource AS idcType, srcip AS deviceIp, '存活IP扫描' AS ipType,
+        src_create_time AS insert_time,`time` AS update_time,CONCAT(ip,'-', resource) AS ip4IdcType
+        FROM cmdb_ip_conf_pool
+        where ip != '' and ip IS NOT NULL and resource!= '' and resource is not null and del_flag = 0 and LOWER(iptype) = 'ipv4'
+        AND time > date(NOW()) AND del_flag = '0'
+    </select>
+
+    <!-- 获取存活IP最低版本的检测时间作为首次存活时间更新到地址库 新增 fanwenhui 20200807 -->
+    <select id="getAutoIpInfo4FirstSurvivalTime" resultMap="cmdbIpInfoMap">
+        SELECT * FROM
+        (
+            SELECT ip,resource AS idcType,`time` AS insert_time,iptype AS ip_type FROM cmdb_ip_address_pool_his a
+            INNER JOIN
+            ( SELECT ip AS ip2,MIN(`version`) AS minVersion FROM cmdb_ip_address_pool_his
+                WHERE `del_flag` = '0' AND IFNULL(resource,'') != '' and LOWER(iptype) = 'ipv4' GROUP BY ip ) b
+            ON a.ip = b.ip2 AND a.version = b.minVersion WHERE del_flag = '0' AND IFNULL(resource,'') != ''
+
+            UNION
+
+            SELECT ip,resource AS idcType,`time` AS insert_time,iptype AS ip_type FROM cmdb_ip_conf_pool_his a
+            INNER JOIN
+            ( SELECT ip AS ip2,MIN(`version`) AS minVersion FROM cmdb_ip_conf_pool_his
+                WHERE `del_flag` = '0' AND IFNULL(resource,'') != '' and LOWER(iptype) = 'ipv4' GROUP BY ip ) b
+            ON a.ip = b.ip2 AND a.version = b.minVersion WHERE del_flag = '0' AND IFNULL(resource,'') != ''
+
+            UNION
+
+            SELECT ip,resource AS idcType,`time` AS insert_time,iptype AS ip_type FROM cmdb_ip_arp_pool_his a
+            INNER JOIN
+            ( SELECT ip AS ip2,MIN(`version`) AS minVersion FROM cmdb_ip_arp_pool_his
+                WHERE `del_flag` = '0' AND IFNULL(resource,'') != '' and LOWER(iptype) = 'ipv4' GROUP BY ip ) b
+            ON a.ip = b.ip2 AND a.version = b.minVersion WHERE del_flag = '0' AND IFNULL(resource,'') != ''
+            ORDER BY insert_time ASC
+        ) t GROUP BY ip
+    </select>
+
+    <!-- 获取当天的冲突IP集合 新增 fanwenhui 20200810 -->
+    <select id="getIpClashList4Now" resultMap="ipCollectMap">
+        SELECT * FROM
+        (
+            SELECT <include refid="baseColumn"/>,gateway,'ip_address_pool' as source,
+            DATE_FORMAT(`time`, '%Y-%m-%d %H') AS timeKey,CONCAT(ip,'-', resource) AS ip2Idc
+            FROM cmdb_ip_address_pool
+            WHERE time > DATE(NOW()) AND IFNULL(mac,'') != '' AND del_flag = '0' AND IFNULL(resource,'') != ''
+            UNION ALL
+            SELECT <include refid="baseColumn"/>,srcip as gateway,'ip_conf_pool' as source,
+            DATE_FORMAT(`time`, '%Y-%m-%d %H') AS timeKey,CONCAT(ip,'-', resource) AS ip2Idc
+            FROM cmdb_ip_conf_pool
+            WHERE time > DATE(NOW()) AND IFNULL(mac,'') != '' AND del_flag = '0' AND IFNULL(resource,'') != ''
+            UNION ALL
+            SELECT <include refid="baseColumn"/>,srcip as gateway,'ip_arp_pool' as source,
+            DATE_FORMAT(`time`, '%Y-%m-%d %H') AS timeKey,CONCAT(ip,'-', resource) AS ip2Idc
+            FROM cmdb_ip_arp_pool
+            WHERE time > DATE(NOW()) AND IFNULL(mac,'') != '' AND del_flag = '0' AND IFNULL(resource,'') != ''
+        ) t ORDER BY t.time
+    </select>
+
+    <!-- 查询存活IP历史表的分区是否存在 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpHisPartName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT partition_name
+        FROM information_schema.PARTITIONS
+        WHERE `table_name` = #{tableName} AND partition_name = #{partName}
+    </select>
+
+    <!-- 删除某个分区表的数据 新增 fanwenhui 20201110 -->
+    <update id="deletePartDataByPartName" parameterType="java.lang.String">
+        ALTER TABLE ${tableName} TRUNCATE partition ${partName}
+    </update>
+
+    <!-- 新增网关采集历史表分区 新增 fanwenhui 20201110 -->
+    <update id="alterCmdbIpAddressHisPart" parameterType="java.util.Map">
+        ALTER TABLE cmdb_ip_address_pool_his  ADD partition (partition ${next_time_par} values less than (#{next_time}))
+    </update>
+
+    <!-- 新增网络配置文件解析历史表分区 新增 fanwenhui 20201110 -->
+    <update id="alterCmdbIpConfHisPart" parameterType="java.util.Map">
+        ALTER TABLE cmdb_ip_conf_pool_his  add partition (partition ${next_time_par} values less than (#{next_time}))
+    </update>
+
+    <!-- 新增主机探测历史表分区 新增 fanwenhui 20201110 -->
+    <update id="alterCmdbIpArpHisPart" parameterType="java.util.Map">
+        ALTER TABLE cmdb_ip_arp_pool_his  add partition (partition ${next_time_par} values less than (#{next_time}))
+    </update>
+
+    <!-- 获取网关采集历史表分区当天的存活IP数量 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpAddressHisCount4NowDate" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_address_pool_his WHERE `time` > DATE(NOW())
+    </select>
+
+    <!-- 获取网络配置文件解析历史表分区的存活IP数量 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpConfHisCount4NowDate" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_conf_pool_his WHERE `time` > DATE(NOW())
+    </select>
+
+    <!-- 获取主机探测历史表分区当天的存活IP数量 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpArpHisCount4NowDate" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_arp_pool_his WHERE `time` > DATE(NOW())
+    </select>
+
+    <!-- 获取网关采集当天的存活IP数量 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpAddressCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_address_pool WHERE `time` > DATE(NOW())
+    </select>
+
+    <!-- 获取网络配置文件解析的存活IP数量 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpConfCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_conf_pool WHERE `time` > DATE(NOW())
+    </select>
+
+    <!-- 获取主机探测当天的存活IP数量 新增 fanwenhui 20201110 -->
+    <select id="getCmdbIpArpCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM cmdb_ip_arp_pool WHERE `time` > DATE(NOW())
+    </select>
+
+    <!-- 录入当天的存活IP到网关采集历史表 新增 fanwenhui 20201110 -->
+    <insert id="saveCmdbIpAddressHis">
+        INSERT into cmdb_ip_address_pool_his SELECT * from cmdb_ip_address_pool WHERE `time` > DATE(NOW())
+    </insert>
+
+    <!-- 录入当天的存活IP到网络配置文件解析历史表 新增 fanwenhui 20201110 -->
+    <insert id="saveCmdbIpConfHis">
+        INSERT into cmdb_ip_conf_pool_his SELECT * from cmdb_ip_conf_pool WHERE `time` > DATE(NOW())
+    </insert>
+
+    <!-- 录入当天的存活IP到主机探测历史表 新增 fanwenhui 20201110 -->
+    <insert id="saveCmdbIpArpHis">
+        INSERT into cmdb_ip_arp_pool_his SELECT * from cmdb_ip_arp_pool WHERE `time` > DATE(NOW())
+    </insert>
+
+    <!-- 删除网关采集上一天的存活IP数据 新增 fanwenhui 20201110 -->
+    <delete id="deleteCmdbIpAddressPreDay">
+        DELETE FROM cmdb_ip_address_pool WHERE <![CDATA[ `time` < DATE(NOW()) ]]>
+    </delete>
+
+    <!-- 删除网关采集上一天的存活IP数据 新增 fanwenhui 20201110 -->
+    <delete id="deleteCmdbIpConfPreDay">
+        DELETE FROM cmdb_ip_conf_pool WHERE <![CDATA[ `time` < DATE(NOW()) ]]>
+    </delete>
+
+    <!-- 删除网关采集上一天的存活IP数据 新增 fanwenhui 20201110 -->
+    <delete id="deleteCmdbIpArpPreDay">
+        DELETE FROM cmdb_ip_arp_pool WHERE <![CDATA[ `time` < DATE(NOW()) ]]>
+    </delete>
+
+    <!-- 根据IP和资源池名称查询资产信息 create by fanwenhui 20200818 -->
+    <select id="getCmdbInfoListByIpAndIdc" resultType="java.util.Map" parameterType="java.util.List">
+        SELECT * FROM
+        (
+        <foreach collection="list" index="index" item="item" open="(" separator="union all" close=")">
+            SELECT a.id AS instanceId,a.ip,idc.dict_note AS idcType,#{item.survival_status} AS survival_status,
+            #{item.latest_survival_time} AS latest_survival_time
+            FROM cmdb_instance a
+            LEFT JOIN t_cfg_dict idc ON (idc.id = a.idcType AND idc.is_delete = '0' AND idc.col_name = 'idcType2')
+            WHERE a.ip = #{item.ip} AND idc.dict_note = #{item.idcType}
+        </foreach>
+        ) t
+    </select>
+
+    <!--更新CMDB资产的存活信息 create by fanwenhui 20200819 -->
+    <update id="updateCmdbListInfo" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE cmdb_instance
+            <set>
+                <if test="null !=item.survival_status and ''!=item.survival_status">
+                    survival_status=#{item.survival_status},
+                </if>
+                <if test="null !=item.latest_survival_time and ''!=item.latest_survival_time">
+                    latest_survival_time=#{item.latest_survival_time},
+                </if>
+                <if test="null !=item.otherIp and ''!=item.otherIp">
+                    other_ip = #{item.otherIp},
+                </if>
+            </set>
+            WHERE id = #{item.instanceId}
+        </foreach>
+    </update>
+
+    <!--更新IP地址库中不是cmdb管理的使用业务和独立业务为null create by fanwenhui 20200903 -->
+    <update id="updateInnerIpInfoNotInCmdb">
+        UPDATE cmdb_ip_repository_inner_ip cip
+        SET cip.online_business=NULL,cip.sub_business_module=NULL
+        WHERE cip.is_cmdb_manager != '11462'
+    </update>
+
+    <!--更新内网IP的可用IP数量 create by fanwenhui 20200903 -->
+    <update id="updateInnerIpFreeCount">
+        UPDATE `cmdb_ip_repository_inner_segment` a LEFT JOIN (
+            SELECT network_segment_address ,idcType, SUM(free_ip_count) `free_ip_count`, SUM(assign_ip_count) `assign_ip_count`, SUM(active_ip_count) `active_ip_count`
+            FROM (
+                SELECT a.`network_segment_address`,a.idcType,
+                CASE WHEN  b.`assign_status`!=(select id from t_cfg_dict where col_name='ipAllocationStatusType' and dict_note='已分配' and is_delete='0' limit 1) OR IFNULL(b.`assign_status`, '') = '' THEN 1 ELSE 0 END  free_ip_count,
+                CASE WHEN  b.`assign_status`=(select id from t_cfg_dict where col_name='ipAllocationStatusType' and dict_note='已分配' and is_delete='0' limit 1) THEN 1 ELSE 0 END  assign_ip_count,
+                CASE WHEN  b.`survival_status`=(select id from t_cfg_dict where col_name='survival_status' and dict_note='已存活' and is_delete='0' limit 1) THEN 1 ELSE 0 END  active_ip_count
+                FROM `cmdb_ip_repository_inner_segment` a
+                LEFT JOIN `cmdb_ip_repository_inner_ip` b ON a.`id` = b.`id`
+                WHERE b.is_delete='0' GROUP BY a.`network_segment_address`, b.id
+            ) res1
+            GROUP BY `network_segment_address`,idcType) res
+        ON a.`network_segment_address` = res.`network_segment_address` AND a.`idcType` = res.idcType
+        SET a.`free_ip_count` = res.`free_ip_count`, a.`active_ip_count`=res.`active_ip_count`,a.`assign_ip_count`=res.`assign_ip_count`
+    </update>
+
+    <!--查询资产的存活信息不为空的资产并推送到kafka上，同步更新旧网管 create by fanwenhui 20201211 -->
+    <select id="findCmdbAssetSurvial2Kafka" resultType="java.lang.String">
+        SELECT id FROM cmdb_instance WHERE (IFNULL(survival_status,'') != '' OR IFNULL(other_ip,'') != '')
+    </select>
+
+    <!--查询所有需要监控的报表 create by fanwenhui 20201221 -->
+    <select id="findCmdbReportSql" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT report_name AS reportName,report_sql AS reportSql,
+        report_param AS reportParam,mail_receive AS reportEmail,
+        mail_subject AS subject,type_name AS typeName
+        FROM cmdb_report_alarm_config WHERE is_delete = '0' AND `type` = #{type}
+    </select>
+
+    <select id="findDeviceAssetSurvivalList" resultType="java.util.HashMap">
+        SELECT
+          a.id,
+          a.idcType,
+          idc.dict_note idcTypeName,
+          date_format(max(auto.update_time),'%Y-%m-%d %T') latestSurvivalTime
+        FROM
+        (
+        select id,ip,idcType from cmdb_instance a where is_delete='0'
+            union
+        select id,business_ip1 ip,idcType from cmdb_instance  where is_delete='0'
+            union
+        select id,business_ip2 ip,idcType from cmdb_instance  where is_delete='0'
+            union
+        select ci.id,console.console_ip ip,ci.idcType
+          from cmdb_instance ci join cmdb_instance_console console on ci.id=console.id
+        where ci.is_delete='0'
+        ) a
+        LEFT JOIN t_cfg_dict idc ON idc.id = a.idcType AND idc.is_delete = '0' join (
+        SELECT ip, resource AS idcType, gateway AS deviceIp, '存活IP扫描' AS ipType,
+                src_create_time AS insert_time,`time` AS update_time,CONCAT(ip,'-', resource) AS ip4IdcType
+                FROM cmdb_ip_address_pool
+                WHERE ip != '' AND ip IS NOT NULL AND resource!= '' AND resource IS NOT NULL AND del_flag = 0 AND LOWER(iptype) = 'ipv4'
+                AND TIME > DATE(NOW()) AND del_flag = '0'
+                UNION
+                SELECT ip, resource AS idcType, srcip AS deviceIp, '存活IP扫描' AS ipType,
+                src_create_time AS insert_time,`time` AS update_time,CONCAT(ip,'-', resource) AS ip4IdcType
+                FROM cmdb_ip_arp_pool
+                WHERE ip != '' AND ip IS NOT NULL AND resource!= '' AND resource IS NOT NULL AND del_flag = 0 AND LOWER(iptype) = 'ipv4'
+                AND TIME > DATE(NOW()) AND del_flag = '0'
+                UNION
+                SELECT ip, resource AS idcType, srcip AS deviceIp, '存活IP扫描' AS ipType,
+                src_create_time AS insert_time,`time` AS update_time,CONCAT(ip,'-', resource) AS ip4IdcType
+                FROM cmdb_ip_conf_pool
+                WHERE ip != '' AND ip IS NOT NULL AND resource!= '' AND resource IS NOT NULL AND del_flag = 0 AND LOWER(iptype) = 'ipv4'
+                AND TIME > DATE(NOW()) AND del_flag = '0'
+        ) auto on a.ip=auto.ip and idc.dict_note=auto.idcType
+        where IFNULL(a.ip,'')!=''
+		group by
+		a.id,
+        a.idcType,
+        idc.dict_note
+    </select>
+
+    <update id="updateDeviceAsset2Survival" parameterType="java.util.HashMap">
+        update cmdb_instance
+        <set>
+            survival_status=#{survivalStatus,jdbcType=VARCHAR},
+            latest_survival_time=#{latestSurvivalTime}
+        </set>
+        <where>
+            <if test="instanceIdList!=null and instanceIdList.size()>0">
+                id in
+                <foreach collection="instanceIdList" item="instanceId" separator="," open="(" close=")">
+                    #{instanceId,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <select id="findDeviceAssetUnSurvivalList" resultType="java.lang.String">
+        select distinct id from (
+        SELECT
+        id,
+        ip,
+        idcType,
+        latest_survival_time,
+        '0' ipType
+        FROM
+        cmdb_instance a
+        WHERE
+        is_delete = '0'
+        AND ( <![CDATA[ latest_survival_time IS NULL OR latest_survival_time < DATE( NOW( ) ) ]]> )
+        UNION
+        SELECT
+        id,
+        business_ip1 ip,
+        idcType,
+        latest_survival_time,
+        '1' ipType
+        FROM
+        cmdb_instance
+        WHERE
+        is_delete = '0'
+        AND ( <![CDATA[ latest_survival_time IS NULL OR latest_survival_time < DATE( NOW( ) ) ]]> )
+        UNION
+        SELECT
+        id,
+        business_ip2 ip,
+        idcType,
+        latest_survival_time,
+        '2' ipType
+        FROM
+        cmdb_instance
+        WHERE
+        is_delete = '0'
+        AND ( <![CDATA[ latest_survival_time IS NULL OR latest_survival_time < DATE( NOW( ) ) ]]> )
+        UNION
+        SELECT
+        ci.id,
+        console.console_ip ip,
+        ci.idcType,
+        latest_survival_time,
+        '3' ipType
+        FROM
+        cmdb_instance ci
+        JOIN cmdb_instance_console console ON ci.id = console.id
+        WHERE
+        ci.is_delete = '0'
+        AND ( <![CDATA[ latest_survival_time IS NULL OR latest_survival_time < DATE( NOW( ) ) ]]> )
+        ) a
+        where IFNULL(a.ip,'')!=''
+    </select>
+
+    <update id="updateSurvivalStatus" parameterType="java.util.HashMap">
+        update cmdb_instance
+        <set>
+            survival_status=#{survivalStatus,jdbcType=VARCHAR},
+        </set>
+        <where>
+            <if test="instanceIdList!=null and instanceIdList.size()>0">
+                id in
+                <foreach collection="instanceIdList" item="instanceId" separator="," open="(" close=")">
+                    #{instanceId,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <insert id="saveSurvivalMonitor" parameterType="java.util.List">
+        insert into cmdb_instance_survival_monitor(
+        `id`,
+        `instance_id`,
+        `survival_status`,
+        `latest_survival_time`
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.instanceId},
+            #{item.survivalStatus},
+            #{item.latestSurvivalTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--存活IP同步到IP地址库前全量更新地址存活状态=未存活的ID create by fanwenhui 20201229-->
+    <update id="updateAllInnerIpSurvival" parameterType="java.lang.String">
+        UPDATE cmdb_ip_repository_inner_ip SET survival_status = #{statusId} WHERE is_delete = '0'
+    </update>
+
+    <!-- 同步之前删除网关采集当天的存活IP数据 新增 fanwenhui 20201229 -->
+    <delete id="deleteCmdbIpAddressNowDay" parameterType="java.lang.String">
+        DELETE FROM cmdb_ip_address_pool WHERE <![CDATA[ DATE_FORMAT(`time`,'%Y-%m-%d') = #{nowDay} ]]>
+    </delete>
+
+    <!-- 同步之前删除网关采集当天的存活IP数据 新增 fanwenhui 20201229 -->
+    <delete id="deleteCmdbIpConfNowDay" parameterType="java.lang.String">
+        DELETE FROM cmdb_ip_conf_pool WHERE <![CDATA[ DATE_FORMAT(`time`,'%Y-%m-%d') = #{nowDay} ]]>
+    </delete>
+
+    <!-- 同步之前删除网关采集当天的存活IP数据 新增 fanwenhui 20201229 -->
+    <delete id="deleteCmdbIpArpNowDay" parameterType="java.lang.String">
+        DELETE FROM cmdb_ip_arp_pool WHERE <![CDATA[ DATE_FORMAT(`time`,'%Y-%m-%d') = #{nowDay} ]]>
+    </delete>
+
+    <insert id="saveHostServerAutoStatusReport">
+        insert into cmdb_auto_status_monitor
+        (`id`,
+        `instance_id`,
+        `device_ip`,
+        `auto_status`,
+        `create_date`
+        )
+        select
+            md5(uuid()) id,
+            ci.id instance_id,
+            ip device_ip,
+            '待检测' auto_status,
+            CURDATE()
+        from (
+        select
+            ci.id,
+            ci.module_id,
+            ci.ip,-- 管理IP
+            ci.host_backup,-- 主备id
+            cd5.dict_note hostBackupName,-- 主备中文名
+            ci.idcType,
+            cd4.dict_note idcTypeName,-- 所属资源池中文
+            ci.mgr_by_pool,
+            cd6.dict_note mgrByPoolName,-- 是否资源池管理 中文
+            ci.bizSystem,
+            cbl.business_name businessLevel1Name,-- 独立业务中文名
+            ci.business_level2,
+            cbl2.business_name businessLevel2Name,-- 独立业务子模块中文
+            ci.device_class,
+            cd1.dict_note deviceClassName,-- 设备分类中文
+            ci.device_type,
+            cd2.dict_note deviceTypeName,-- 设备类型 中文
+            ci.device_status,
+            cd7.dict_note deviceStatusName,-- 设备状态中文
+            ci.survival_status,-- 存活状态
+            ci.latest_survival_time -- 最近存活时间
+        from cmdb_instance ci
+        left join t_cfg_dict cd1 on ci.device_class=cd1.id and cd1.is_delete='0' -- 设备分类
+        left join t_cfg_dict cd2 on ci.device_type=cd2.id and cd2.is_delete='0' -- 设备类型
+        left join t_cfg_dict cd4 on ci.idcType=cd4.id and cd4.is_delete='0' -- 所属资源池
+        left join cmdb_business_line cbl on ci.bizSystem=cbl.id and cbl.is_delete='0' -- 独立业务
+        left join cmdb_business_line cbl2 on ci.business_level2=cbl2.id and cbl2.is_delete='0' and cbl2.parentBusiness=cbl.id -- 独立业务子模块
+        left join t_cfg_dict cd5 on ci.host_backup=cd5.id and cd5.is_delete='0' -- 主备
+        left join t_cfg_dict cd6 on ci.mgr_by_pool=cd6.id and cd6.is_delete='0' -- 是否资源池管理
+        left join t_cfg_dict cd7 on ci.device_status=cd7.id and cd7.is_delete='0' -- 设备状态（上电、下电）
+        where ci.`module_id`='ffc74c0a9e314f8e9b669ad09d6f09c2' and ci.is_delete='0'
+        ) ci
+        where 1=1
+        and ci.deviceClassName='服务器'
+        and ci.deviceTypeName in ('虚拟机','物理机','虚拟机-KVM','虚拟机-Vmware')
+        and ci.deviceStatusName='上电'
+    </insert>
+
+    <update id="updateHostServerAutoStatusReport">
+        update cmdb_auto_status_monitor mon
+        join cmdb_instance_automate auto on mon.device_ip=auto.auto2_ip
+        set mon.auto_status=auto.auto2_agentStatus
+        where mon.create_date=CURDATE()
+    </update>
+
+    <select id="queryHostServerSendOrderList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select
+          monitor.id id,
+          monitor.instance_id device_id,
+          monitor.auto_status auto_status,
+          date_format(monitor.update_time,'%Y-%m-%d %T') monitor_time,
+          ci.ip device_ip,
+          ci.device_class,
+          ci.host_backup,-- 主备id
+          cd5.dict_note hostBackupName,-- 主备中文名
+          ci.idcType,
+          cd4.dict_note idcTypeName,-- 所属资源池中文
+          ci.mgr_by_pool,
+          cd6.dict_note mgrByPoolName,-- 是否资源池管理 中文
+          ci.bizSystem,
+          cbl.business_name businessLevel1Name,-- 独立业务中文名
+          ci.business_level2,
+          cbl2.business_name businessLevel2Name,-- 独立业务子模块中文
+          ci.device_class,
+          cd1.dict_note deviceClassName,-- 设备分类中文
+          ci.device_type,
+          cd2.dict_note deviceTypeName,-- 设备类型 中文
+          ci.device_status,
+          cd7.dict_note deviceStatusName -- 设备状态中文
+        from
+        cmdb_auto_status_monitor monitor
+        left join cmdb_instance ci on monitor.instance_id=ci.id and ci.is_delete='0'
+        left join t_cfg_dict cd1 on ci.device_class=cd1.id and cd1.is_delete='0' -- 设备分类
+        left join t_cfg_dict cd2 on ci.device_type=cd2.id and cd2.is_delete='0' -- 设备类型
+        left join t_cfg_dict cd4 on ci.idcType=cd4.id and cd4.is_delete='0' -- 所属资源池
+        left join cmdb_business_line cbl on ci.bizSystem=cbl.id and cbl.is_delete='0' -- 独立业务
+        left join cmdb_business_line cbl2 on ci.business_level2=cbl2.id and cbl2.is_delete='0' and cbl2.parentBusiness=cbl.id -- 独立业务子模块
+        left join t_cfg_dict cd5 on ci.host_backup=cd5.id and cd5.is_delete='0' -- 主备
+        left join t_cfg_dict cd6 on ci.mgr_by_pool=cd6.id and cd6.is_delete='0' -- 是否资源池管理
+        left join t_cfg_dict cd7 on ci.device_status=cd7.id and cd7.is_delete='0' -- 设备状态（上电、下电）
+        where ci.`module_id`='ffc74c0a9e314f8e9b669ad09d6f09c2' and ci.is_delete='0'
+        and monitor.create_date=CURDATE() and monitor.send_order_time is null and monitor.auto_status!='正常'
+    </select>
+
+    <update id="updateHostServerOrderStatus" parameterType="java.util.HashMap">
+        update cmdb_auto_status_monitor
+        <set>
+            send_order_time=now(),
+            order_status='1',
+            order_no=#{orderNo}
+        </set>
+        <where>
+            id in
+            <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </update>
+
+    <select id="findAssetOtherIp" resultType="java.util.Map">
+        SELECT a.id AS assetId,a.ip AS manageIp,IFNULL(a.business_ip1,'') AS ywIp1,IFNULL(a.business_ip2,'') AS ywIp2,
+        IFNULL(cic.console_ip,'') AS consoleIp,GROUP_CONCAT(c.auto2_eth_ip) AS otherIp
+        FROM cmdb_instance a
+        JOIN cmdb_instance_automate b ON a.ip = b.auto2_ip
+        JOIN cmdb_instance_automate_eth c ON b.id = c.auto2_instanceid
+        JOIN cmdb_instance_console cic ON a.id = cic.id
+        GROUP BY a.ip
+    </select>
+
+    <!-- 获取需要更新的资产数据 新增 fanwenhui 20210205 -->
+    <select id="findDeviceUpdateInfo" resultType="java.util.Map">
+        SELECT id AS deviceId,IFNULL(other_ip,'') AS otherIp,
+        survival_status AS surviveStatus,DATE_FORMAT(latest_survival_time,'%Y-%m-%d') recentSurvivetime
+        FROM cmdb_instance WHERE is_delete = '0'
+    </select>
+
+    <select id="findBaseIpCollectBaseEntity" resultMap="baseIpCollectEntity">
+        SELECT ip,iptype,resource,`time` FROM cmdb_ip_address_pool
+        WHERE time > DATE(NOW()) AND del_flag = '0' AND IFNULL(resource,'') != ''
+        UNION ALL
+        SELECT ip,iptype,resource,`time` FROM cmdb_ip_conf_pool
+        WHERE time > DATE(NOW()) AND del_flag = '0' AND IFNULL(resource,'') != ''
+        UNION ALL
+        SELECT ip,iptype,resource,`time` FROM cmdb_ip_arp_pool
+        WHERE time > DATE(NOW()) AND del_flag = '0' AND IFNULL(resource,'') != ''
+    </select>
+
+    <select id="findCarrierNetworkWithInnerNeworkIpLibrary" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+            c.id device_id,
+            ifnull(b.ip, '') inner_ip,
+            ifnull(c.carrier_network, '') carrier_network
+        from
+            cmdb_ip_repository_inner_segment a
+        inner join cmdb_ip_repository_inner_ip b on b.id = a.id
+        <choose>
+            <when test="flag != null and flag == 'ip'">
+                inner join cmdb_instance c on c.ip = b.ip
+            </when>
+            <when test="flag != null and flag == 'business_ip1'">
+                inner join cmdb_instance c on c.business_ip1 = b.ip
+            </when>
+            <when test="flag != null and flag == 'business_ip2'">
+                inner join cmdb_instance c on c.business_ip2 = b.ip
+            </when>
+        </choose>
+        left join t_cfg_dict d1 on (d1.id = b.is_cmdb_manager and d1.col_name = 'whether' and d1.delete_flag = '0' and d1.is_delete = '0')
+        left join t_cfg_dict d2 on (d2.id = b.assign_status and d2.col_name = 'ipAllocationStatusType' and d2.delete_flag = '0' and d2.is_delete = '0')
+        left join t_cfg_dict d3 on (d3.id = a.inner_segment_type and d3.col_name = 'inner_segment_type' and d3.delete_flag = '0' and d3.is_delete = '0')
+        where
+            d1.dict_note = '是'
+        and d2.dict_note = '已分配'
+        and d3.dict_note = '承载网段'
+    </select>
+
+    <select id="findCarrierNetworkByInnerNeworkIpLibrary" resultType="java.lang.String">
+        select
+            b.ip inner_ip
+        from
+            cmdb_ip_repository_inner_segment a
+        inner join cmdb_ip_repository_inner_ip b on b.id = a.id
+        left join t_cfg_dict d1 on (d1.id = b.is_cmdb_manager and d1.col_name = 'whether' and d1.delete_flag = '0' and d1.is_delete = '0')
+        left join t_cfg_dict d2 on (d2.id = b.assign_status and d2.col_name = 'ipAllocationStatusType' and d2.delete_flag = '0' and d2.is_delete = '0')
+        left join t_cfg_dict d3 on (d3.id = a.inner_segment_type and d3.col_name = 'inner_segment_type' and d3.delete_flag = '0' and d3.is_delete = '0')
+        where
+            d1.dict_note = '是'
+        and d2.dict_note = '已分配'
+        and d3.dict_note = '承载网段'
+    </select>
+
+    <select id="findCarrierNetworkWithOtherIP" parameterType="java.util.List" resultType="java.util.Map">
+        <foreach collection="list" item="item" index="index" separator=" union all ">
+            select
+                a.id device_id,
+                '${item}' inner_ip,
+                ifnull(a.carrier_network, '') carrier_network
+            from
+                cmdb_instance a
+            where
+                concat(';', a.other_ip, ';') like concat('%;', '${item}', ';%')
+        </foreach>
+    </select>
+
+    <select id="findCarrierNetworkWithInnerNeworkIpLibraryRelated" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+            d.id device_id,
+            ifnull(b.ip, '') inner_ip,
+            ifnull(d.carrier_network, '') carrier_network
+        from
+            cmdb_ip_repository_inner_segment a
+        inner join cmdb_ip_repository_inner_ip b on b.id = a.id
+        <choose>
+            <when test="flag != null and flag == 'related_server_ip'">
+                inner join cmdb_instance_server_ip c on c.ip_address=b.ip
+                inner join cmdb_instance d on d.id = c.device_id
+            </when>
+            <when test="flag != null and flag == 'related_console'">
+                inner join cmdb_instance_console c on c.console_ip=b.ip
+                inner join cmdb_instance d on d.id = c.id
+            </when>
+        </choose>
+        left join t_cfg_dict d1 on (d1.id = b.is_cmdb_manager and d1.col_name = 'whether' and d1.delete_flag = '0' and d1.is_delete = '0')
+        left join t_cfg_dict d2 on (d2.id = b.assign_status and d2.col_name = 'ipAllocationStatusType' and d2.delete_flag = '0' and d2.is_delete = '0')
+        left join t_cfg_dict d3 on (d3.id = a.inner_segment_type and d3.col_name = 'inner_segment_type' and d3.delete_flag = '0' and d3.is_delete = '0')
+        where
+            d1.dict_note = '是'
+        and d2.dict_note = '已分配'
+        and d3.dict_note = '承载网段'
+    </select>
+
+    <update id="updateCarrierNetworkForAsset" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update
+                cmdb_instance
+            <set>
+                <if test="item.carrierNetwork != null and item.carrierNetwork != ''">
+                    carrier_network = '${item.carrierNetwork}',
+                </if>
+            </set>
+            where id = '${item.id}'
+        </foreach>
+    </update>
+
+</mapper>

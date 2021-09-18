@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>release</id>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <!--<format>dir</format>-->
+        <format>zip</format>
+    </formats>
+
+    <!---->
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/release</directory>
+            <outputDirectory>bdc/release</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-public/config-server/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <outputDirectory>bdc/config-server</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-public/eureka-server-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-common/common-service-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-template/template-service-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-alert/alert-service-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-theme/theme-service-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-proxy/index-adapt-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-proxy/index-proxy-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-composite/composite-service-war/target</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>*.war</include>
+            </includes>
+            <outputDirectory>bdc/war</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../db-script/oracle</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <outputDirectory>bdc/release/dbscript</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/../mirror-public/config-server/src/main/resources/config</directory>
+            <!-- 过滤 -->
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <excludes>
+                <exclude>**/cmdb-dev.yml</exclude>
+                <exclude>**/ms-cmdb-dev.yml</exclude>
+                <exclude>**/ms-inspection-dev.yml</exclude>
+                <exclude>**/ms-jobtracker-dev.yml</exclude>
+                <exclude>**/ms-log-dev.yml</exclude>
+                <exclude>**/ms-misc-dev.yml</exclude>
+                <exclude>**/ms-rbac-dev.yml</exclude>
+                <exclude>**/ms-tasktracker-dev.yml</exclude>
+            </excludes>
+            <outputDirectory>bdc/release/config</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

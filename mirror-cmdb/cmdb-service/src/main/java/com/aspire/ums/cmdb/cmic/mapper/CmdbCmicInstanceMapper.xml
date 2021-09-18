@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.cmic.mapper.CmdbCmicInstanceMapper">
+
+    <!--批量插入数据-->
+    <insert id="batchInsertIpRepository" parameterType="list">
+        INSERT INTO cmdb_ip_repository (id, module_id, insert_person, insert_time, update_person,update_time, is_delete)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.module_id}, #{item.insert_person}, #{item.insert_time},#{item.update_person}, #{item.update_time},
+            '0')
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertInnerRepository" parameterType="list">
+        INSERT INTO cmdb_ip_repository_inner (id, is_delete)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0')
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertInnerSegment" parameterType="list">
+        INSERT INTO cmdb_ip_repository_inner_segment
+        (
+        id,
+        is_delete,
+        network_gataway,
+        network_segment_address,
+        vlan_number, safe_region,
+        first_business_system,
+        idcType,
+        alone_business_system,
+        inner_segment_type,
+        inner_segment_sub_type,
+        inner_segment_ip_type,
+        is_pool
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            '0',
+            #{item.network_gataway},
+            #{item.network_segment_address},
+            #{item.vlan_number},
+            #{item.safe_region},
+            #{item.first_business_system},
+            #{item.idcType},
+            #{item.alone_business_system},
+            #{item.inner_segment_type},
+            #{item.inner_segment_sub_type},
+            #{item.inner_segment_ip_type},
+            #{item.is_pool}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertInnerIp" parameterType="list">
+        INSERT INTO cmdb_ip_repository_inner_ip (id, is_delete, survival_status, assign_status, is_cmdb_manager, ip, network_segment_owner)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.survival_status}, #{item.assign_status}, #{item.is_cmdb_manager}, #{item.ip}, #{item.public_segment_owner})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertOperateLog" parameterType="list">
+        INSERT INTO cmdb_ip_repository_log (id, is_delete, operate_content, network_segment_type, operate_type, operate_result,
+        operate_obj, operate_from, operate_obj_type, idcType, operate_time, network_segment_sub_type, operate_account)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.operate_content}, #{item.network_segment_type}, #{item.operate_type}, #{item.operate_result},
+            #{item.operate_obj}, #{item.operate_from}, #{item.operate_obj_type}, #{item.idcType}, #{item.operate_time}, #{item.network_segment_sub_type}
+            , #{item.operate_account})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertPublicRepository" parameterType="list">
+        INSERT INTO cmdb_ip_repository_public (id, is_delete)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0')
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertPublicSegment" parameterType="list">
+        INSERT INTO cmdb_ip_repository_public_segment (id, is_delete, network_gataway, network_segment_name, idcType, is_pool,
+        public_segment_address, public_ip_type, public_segment_type, first_business_system, alone_business_system)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.network_gataway}, #{item.network_segment_name}, #{item.idcType}, #{item.is_pool},
+            #{item.public_segment_address}, #{item.public_ip_type}, #{item.public_segment_type},
+            #{item.first_business_system}, #{item.alone_business_system})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertPublicIp" parameterType="list">
+        INSERT INTO cmdb_ip_repository_public_ip (id, is_delete, survival_status, assign_status, ip, public_segment_owner)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.survival_status}, #{item.assign_status}, #{item.ip}, #{item.public_segment_owner})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertIPV6Repository" parameterType="list">
+        INSERT INTO cmdb_ip_repository_ipv6 (id, is_delete)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0')
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertIPV6Segment" parameterType="list">
+        INSERT INTO cmdb_ip_repository_ipv6_segment (id, is_delete, first_business_system, network_segment_name, idcType, alone_business_system,
+        ipv6_segment_type, ipv6_segment_sub_type, ipv6_region, ipv6_ip_type, ipv6_segment_address, ipv6_network_gataway)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.first_business_system}, #{item.network_segment_name}, #{item.idcType}, #{item.alone_business_system},
+            #{item.ipv6_segment_type}, #{item.ipv6_segment_sub_type}, #{item.ipv6_region}, #{item.ipv6_ip_type},
+            #{item.ipv6_segment_address}, #{item.ipv6_network_gataway})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertIPV6Ip" parameterType="list">
+        INSERT INTO cmdb_ip_repository_ipv6_ip (id, is_delete, survival_status, assign_status, ipv6, ipv6_segment_owner)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.survival_status}, #{item.assign_status}, #{item.ipv6}, #{item.ipv6_segment_owner})
+        </foreach>
+    </insert>
+
+    <update id="updateAssignStatus4InnerIp" parameterType="java.util.HashMap">
+        UPDATE cmdb_ip_repository_inner_ip
+        <set>
+            assign_status=(SELECT id FROM t_cfg_dict WHERE col_name = 'ipAllocationStatusType' AND dict_note = '已分配' AND is_delete =
+            '0' limit 1),
+            assign_time=NOW(),
+            assign_user='alauda'
+        </set>
+        <where>
+            network_segment_owner=#{networkSegmentAddress}
+            and INET_ATON(ip) > INET_ATON(
+            CONCAT(
+            SUBSTRING_INDEX(ip, '.', 3),
+            '.200'
+            )
+            )
+            AND ip LIKE CONCAT(
+            SUBSTRING_INDEX(ip, '.', 3),
+            '.%'
+            )
+            AND assign_status!=(SELECT id FROM t_cfg_dict WHERE col_name = 'ipAllocationStatusType' AND dict_note = '已分配' AND
+            is_delete =
+            '0' limit 1)
+        </where>
+    </update>
+
+    <update id="updateAssignStatus" parameterType="java.util.HashMap">
+        UPDATE `${tableName}`
+        <set>
+        <foreach collection="instanceData.entrySet()" index="key" item="value" separator=",">
+            ${key} = #{value}
+        </foreach>
+        </set>
+        <where>
+            <if test="instanceIdList != null and instanceIdList.size() > 0">
+                `id` IN
+                <foreach collection="instanceIdList" index="index" item="instanceId" open="(" close=")" separator=",">
+                    #{instanceId}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <insert id="batchInsertServerProject" parameterType="list">
+        INSERT INTO cmdb_server_project (id, module_id, insert_person, insert_time, update_person,update_time, is_delete)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.module_id}, #{item.insert_person}, #{item.insert_time},#{item.update_person}, #{item.update_time},
+            '0')
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertServerCabinet" parameterType="list">
+        INSERT INTO cmdb_server_cabinet (id, idcType, server_room_location, server_cabinet_code,
+        server_cabinet_standard,project_belong_to,business_belong_to,
+        is_delete)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.idcType}, #{item.server_room_location}, #{item.server_cabinet_code},#{item.server_cabinet_standard},
+            #{item.project_belong_to},#{item.business_belong_to},
+            '0')
+        </foreach>
+    </insert>
+
+    <!--插入申请记录.-->
+    <insert id="batchInsertServerCabinetRecord" parameterType="list">
+        INSERT INTO cmdb_cabinet_record (id, is_delete, opt_type, idcType, server_room_location,
+        server_cabinet_code,server_cabinet_standard,
+        server_device_count,first_online_date,bill_start_date,offline_date,project_belong_to,business_belong_to,owner_person,order_no)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.opt_type}, #{item.idcType}, #{item.server_room_location}, #{item.server_cabinet_code},
+            #{item.server_cabinet_standard},#{item.server_device_count},#{item.first_online_date},#{item.bill_start_date},
+            #{item.offline_date},#{item.project_belong_to},#{item.business_belong_to},#{item.owner_person},
+            #{item.order_no})
+        </foreach>
+    </insert>
+
+    <insert id="batchInsertNetworkLineMgr" parameterType="list">
+        INSERT INTO `cmdb_network_line_mgr`
+        (`id`, `is_delete`, `server_line`, `idcType`, `server_network_type`, `server_bill_type`,
+        `server_bill_unit`, `server_line_standard`, `server_line_a`, `server_line_b`, `server_line_create_date`,
+        `server_line_update_date`, `server_line_cancal_date`, `project_belong_to`, `business_belong_to`, `server_line_count`)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},'0', #{item.server_line}, #{item.idcType}, #{item.server_network_type},
+            #{item.server_bill_type},#{item.server_bill_unit},
+            #{item.server_line_standard},#{item.server_line_a},#{item.server_line_b},#{item.server_line_create_date},
+            #{item.server_line_update_date},#{item.server_line_cancal_date},#{item.project_belong_to},#{item.business_belong_to},
+            #{item.server_line_count}
+            )
+        </foreach>
+    </insert>
+
+    <!--插入申请记录.-->
+    <insert id="batchInsertNetworkLineRecord" parameterType="list">
+        INSERT INTO cmdb_network_line_record (id, is_delete, opt_type, owner_person,order_no)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, '0', #{item.opt_type},#{item.owner_person},#{item.order_no})
+        </foreach>
+    </insert>
+
+    <update id="incrServerCabinet" parameterType="java.util.HashMap">
+        update cmdb_cabinet
+        <set>
+            `online_count`=`online_count` + #{deviceCount}
+        </set>
+        <where>
+            idcType=#{idcType}
+            and server_room_location=#{server_room_location}
+            and server_cabinet_code=#{server_cabinet_code}
+        </where>
+    </update>
+
+    <update id="decrServerCabinet" parameterType="java.util.HashMap">
+        update cmdb_cabinet
+        <set>
+            `online_count`=`online_count` - #{deviceCount}
+        </set>
+        <where>
+            idcType=#{idcType}
+            and server_room_location=#{server_room_location}
+            and server_cabinet_code=#{server_cabinet_code}
+            and `online_count` - #{deviceCount} <![CDATA[ >= ]]>  0
+        </where>
+    </update>
+
+    <insert id="batchInsertServerCabinetBillReport" parameterType="java.util.List">
+        insert into cmdb_cabinet_bill_report(
+        `id`,
+        `is_delete`,
+        `contract_no`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_standard`,
+        `server_cabinet_code`,
+        `server_bill_year`,
+        `server_cabinet_bill_month`,
+        `server_cabinet_bill_days`,
+        `contractor_price`,
+        `server_cabinet_bill_total`,
+        `billing_start_date`,
+        `bill_end_time`,
+        `create_time`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            '0',
+            #{item.contract_no},
+            #{item.idcType},
+            #{item.server_room_location},
+            #{item.server_cabinet_standard},
+            #{item.server_cabinet_code},
+            #{item.server_bill_year},
+            #{item.server_cabinet_bill_month},
+            #{item.server_cabinet_bill_days},
+            #{item.contractor_price},
+            #{item.server_cabinet_bill_total},
+            #{item.billing_start_date},
+            #{item.bill_end_time},
+            now()
+            )
+        </foreach>
+    </insert>
+
+    <!-- 更新当月计费 -->
+    <update id="updateServerCabinetBillTotal" parameterType="java.util.HashMap">
+        update cmdb_cabinet a join cmdb_cabinet_bill b
+        on a.id =b.id
+        <set>
+            b.bill_month_total${server_bill_month}=#{server_cabinet_bill_total},
+            b.bill_month_unit${server_bill_month}=#{server_bill_price}
+        </set>
+        <where>
+            a.id=#{id}
+        </where>
+    </update>
+
+    <select id="selectServerCabinet4Bill" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select
+        a.id,
+        a.idcType,
+        a.server_room_location,
+        a.server_cabinet_code,
+        a.online_count,
+        a.server_cabinet_standard,
+        a.first_online_date,
+        a.bill_start_date,
+        a.offline_date,
+        a.business_belong_to,
+        a.project_belong_to,
+        a.server_online_status,
+        b.contract_no,
+        b.contractor_price,
+        b.billing_start_date,
+        b.bill_end_time
+        from cmdb_cabinet a left join cmdb_cabinet_bill_conf b
+        on a.idcType=b.idcType
+        and a.server_room_location=b.server_room_location
+        and a.server_cabinet_standard=b.server_cabinet_standard
+        and b.is_delete='0'
+        where a.is_delete='0'
+    </select>
+
+    <!-- 保存网络线路汇总历史记录 -->
+    <insert id="batchInsertNetworkLineHis" parameterType="java.util.List">
+        insert into cmdb_network_line_history(
+        `id`,
+        `network_line_id`,
+        `is_delete`,
+        `server_line`,
+        `idcType`,
+        `server_network_type`,
+        `server_bill_type`,
+        `server_bill_unit`,
+        `server_line_count`,
+        `server_line_standard`,
+        `server_line_a`,
+        `server_line_b`,
+        `server_line_create_date`,
+        `server_line_update_date`,
+        `server_line_cancal_date`,
+        `business_belong_to`,
+        `project_belong_to`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.network_line_id},
+            '0',
+            #{item.server_line},
+            #{item.idcType},
+            #{item.server_network_type},
+            #{item.server_bill_type},
+            #{item.server_bill_unit},
+            #{item.server_line_count},
+            #{item.server_line_standard},
+            #{item.server_line_a},
+            #{item.server_line_a},
+            #{item.server_line_create_date},
+            #{item.server_line_update_date},
+            #{item.server_line_cancal_date},
+            #{item.business_belong_to},
+            #{item.project_belong_to}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 保存网络线路汇总结算 -->
+    <insert id="batchInsertNetworkLineBill" parameterType="java.util.List">
+        INSERT INTO `cmdb_network_line_bill`(
+        `id`,
+        `is_delete`,
+        `bill_year`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            '0',
+            #{item.bill_year}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

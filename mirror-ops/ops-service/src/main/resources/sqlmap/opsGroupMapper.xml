@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsGroupDao">
+    <resultMap id="groupRelationDetailMap" type="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+        <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+        <result property="objectName" column="object_name" jdbcType="VARCHAR"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="groupMap" type="com.aspire.mirror.ops.api.domain.OpsGroup">
+        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+        <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        <result property="groupDesc" column="group_desc" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="groupAllColumns">
+        group_id, parent_id, group_name, group_desc, creater, create_time, updater, update_time
+    </sql>
+    <select id="queryGroupByGroupId" parameterType="java.lang.Long" resultMap="groupMap">
+        select
+        <include refid="groupAllColumns"/>
+        from ops_group g where g.group_id = #{groupId}
+    </select>
+    <select id="queryGroupByParentId" parameterType="java.lang.Long" resultMap="groupMap">
+        select
+        <include refid="groupAllColumns"/>
+        from ops_group g where g.parent_id = #{parentId}
+    </select>
+
+    <select id="queryGroupList" parameterType="com.aspire.mirror.ops.api.domain.OpsGroup" resultMap="groupMap">
+        select
+        <include refid="groupAllColumns"/>
+        from ops_group g where 1=1
+        <if test="top">
+            and g.parent_id = 0
+        </if>
+        <if test="groupId != null">
+            and g.group_id = #{groupId}
+        </if>
+        <if test="parentId != null">
+            and  g.parent_id = #{parentId}
+        </if>
+        <if test="groupName != null and groupName != ''">
+            and g.group_name = #{groupName}
+        </if>
+        <if test="groupDesc != null and groupDesc != ''">
+            and g.group_desc = #{groupDesc}
+        </if>
+        <if test="creater != null and creater != ''">
+            and g.creater = #{creater}
+        </if>
+        <if test="createTime != null and createTime != ''">
+            and g.create_time = #{createTime}
+        </if>
+        <if test="updater != null and updater != ''">
+            and g.updater = #{updater}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+            and g.update_time = #{updateTime}
+        </if>
+        <if test="authGroupIdList != null and authGroupIdList.size > 0">
+            and g.group_id in (
+            <foreach collection="authGroupIdList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+    <select id="queryGroupCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) from ops_group where group_name = #{groupName}
+    </select>
+    <insert id="saveGroup" parameterType="com.aspire.mirror.ops.api.domain.OpsGroup" useGeneratedKeys="true" keyColumn="group_id" keyProperty="groupId">
+        insert into ops_group (parent_id, group_name, group_desc, creater, create_time, updater, update_time)
+        values (
+          #{parentId},
+          #{groupName},
+          #{groupDesc},
+          #{creater},
+          #{createTime},
+          #{updater},
+          #{updateTime}
+        )
+    </insert>
+    <update id="updateGroup" parameterType="com.aspire.mirror.ops.api.domain.OpsGroup">
+        update ops_group set group_id = #{groupId}
+        <if test="parentId != null">
+            , parent_id = #{parentId}
+        </if>
+        <if test="groupName != null">
+            , group_name = #{groupName}
+        </if>
+        <if test="groupDesc != null">
+            , group_desc = #{groupDesc}
+        </if>
+        <if test="updater != null">
+            , updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            , update_time = #{updateTime}
+        </if>
+        where group_id = #{groupId}
+    </update>
+    <delete id="deleteGroup" parameterType="java.lang.Long">
+      delete from  ops_group where group_id = #{groupId}
+    </delete>
+    <insert id="saveBatchGroupRelation" parameterType="com.aspire.mirror.ops.api.domain.OpsGroupRelation">
+        insert into ops_group_relation (group_id, object_type, object_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.groupId,jdbcType=BIGINT},
+            #{item.objectType,jdbcType=VARCHAR},
+            #{item.objectId,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+    <select id="querGroupObjectListTotalSize"  parameterType="com.aspire.mirror.ops.api.domain.GroupRelationQueryModel" resultType="java.lang.Integer">
+      select count(*) from v_base_info bi
+      where 1=1
+        <if test="objectNameLike != null and objectNameLike != ''">
+            and bi.object_name like CONCAT('%', #{objectNameLike}, '%')
+        </if>
+        <if test="objectName != null and objectName != ''">
+            and bi.object_name like CONCAT('%', #{objectName}, '%')
+        </if>
+        <if test="objectId != null">
+            and bi.object_id = #{objectId}
+        </if>
+        <if test="objectType != null and objectType != ''">
+            and bi.object_type = #{objectType}
+        </if>
+    </select>
+    <select id="querGroupObjectList"  parameterType="com.aspire.mirror.ops.api.domain.GroupRelationQueryModel" resultType="com.aspire.mirror.ops.api.domain.GroupObjectDetail">
+        select bi.object_type objectType, bi.object_id objectId, bi.object_name objectName, bi.creater,
+        bi.create_time createTime, bi.updater, bi.update_time updateTime
+        from v_base_info bi
+        where 1=1
+        <if test="objectNameLike != null and objectNameLike != ''">
+            and bi.object_name like CONCAT('%', #{objectNameLike}, '%')
+        </if>
+        <if test="objectName != null and objectName != ''">
+            and bi.object_name like CONCAT('%', #{objectName}, '%')
+        </if>
+        <if test="objectId != null">
+            and bi.object_id = #{objectId}
+        </if>
+        <if test="objectType != null and objectType != ''">
+            and bi.object_type = #{objectType}
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by bi.create_time desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+    <select id="querGroupRelationListTotalSize" parameterType="com.aspire.mirror.ops.api.domain.GroupRelationQueryModel" resultType="java.lang.Integer">
+        select count(gr.group_relation_id)
+        from ops_group_relation gr
+        left join v_base_info bi on gr.object_id = bi.object_id and gr.object_type = bi.object_type
+        where 1=1
+        <if test="objectType != null and objectType != ''">
+           and gr.object_type = #{objectType}
+        </if>
+        <if test="groupId != null">
+            and gr.group_id = #{groupId}
+        </if>
+        <if test="objectId != null">
+            and gr.object_id = #{objectId}
+        </if>
+        <if test="groupIdList != null and groupIdList.size !=0">
+            and gr.group_id in (
+            <foreach collection="groupIdList" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="objectNameLike != null and objectNameLike != ''">
+            and bi.object_name like CONCAT('%', #{objectNameLike}, '%')
+        </if>
+    </select>
+    <select id="querGroupRelationListByGroupId" resultMap="groupRelationDetailMap">
+        select gr.group_relation_id, gr.group_id, gr.object_type, gr.object_id, bi.object_name, bi.creater,
+        bi.create_time, bi.updater, bi.update_time
+        from ops_group_relation gr
+        left join v_base_info bi on gr.object_id = bi.object_id and gr.object_type = bi.object_type
+        where gr.group_id = #{groupId}
+        <if test="objectType != null and objectType != ''">
+            and gr.object_type = #{objectType}
+        </if>
+    </select>
+    <select id="queryGroupRelationBase" parameterType="com.aspire.mirror.ops.api.domain.OpsGroupRelation" resultType="com.aspire.mirror.ops.api.domain.OpsGroupRelation">
+        select gr.group_relation_id groupRelationId, gr.group_id groupId, gr.object_type objectType, gr.object_id objectId
+        from ops_group_relation gr
+        where 1=1
+        <if test="objectType != null and objectType != ''">
+            and gr.object_type = #{objectType}
+        </if>
+        <if test="objectId != null and objectId != ''">
+            and gr.object_id = #{objectId}
+        </if>
+        <if test="groupId != null">
+            and gr.group_id = #{groupId}
+        </if>
+    </select>
+    <select id="querGroupRelationList" parameterType="com.aspire.mirror.ops.api.domain.GroupRelationQueryModel"
+            resultMap="groupRelationDetailMap">
+        select gr.group_relation_id, gr.group_id, gr.object_type, gr.object_id, bi.object_name, bi.creater,
+        bi.create_time, bi.updater, bi.update_time, g.group_name
+        from ops_group_relation gr
+        left join v_base_info bi on gr.object_id = bi.object_id and gr.object_type = bi.object_type
+        left join ops_group g on gr.group_id = g.group_id
+        where 1=1
+        <if test="objectType != null and objectType != ''">
+            and gr.object_type = #{objectType}
+        </if>
+        <if test="objectId != null and objectId != ''">
+            and gr.object_id = #{objectId}
+        </if>
+        <if test="groupId != null">
+            and gr.group_id = #{groupId}
+        </if>
+        <if test="groupIdList != null and groupIdList.size !=0">
+            and gr.group_id in (
+            <foreach collection="groupIdList" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="objectNameLike != null and objectNameLike != ''">
+            and bi.object_name like CONCAT('%', #{objectNameLike}, '%')
+        </if>
+        <if test="groupNameLike != null and groupNameLike != ''">
+            and g.group_name like CONCAT('%', #{groupNameLike}, '%')
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by gr.group_relation_id desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+    <delete id="deleteGroupRelationList" parameterType="java.lang.String">
+        delete from ops_group_relation where group_relation_id in (
+        <foreach collection="group_relation_ids.split(',')" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+    <delete id="deleteGroupRelationByGroupIdListAndObjectId">
+        delete from ops_group_relation where group_id in (
+        <foreach collection="groupIdList" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+        ) and object_id = #{objectId} and object_type = #{objectType}
+    </delete>
+    <delete id="deleteGroupRelationByObjectIdAndType">
+        delete from ops_group_relation where object_id = #{objectId} and object_type = #{objectType}
+    </delete>
+</mapper>

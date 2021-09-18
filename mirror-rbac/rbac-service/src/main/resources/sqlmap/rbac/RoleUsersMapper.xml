@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.RoleUsersDao">
+
+	<resultMap id="RoleUsersResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.RoleUsers">
+		<result column="role_uuid" property="roleUuid" />
+		<result column="role_name" property="roleName" />
+		<result column="namespace" property="namespace" />
+		<result column="username" property="username" />
+		<result column="assigned_at" property="assignedAt" />
+	</resultMap>
+
+	<select id="fetchRoleUsersList" resultMap="RoleUsersResultMap">
+		SELECT
+		role_uuid, namespace, username, assigned_at
+		FROM
+		roles_user
+		WHERE role_uuid = #{roleUuid}
+	</select>
+
+	<select id="listOfRoleUsers" resultMap="RoleUsersResultMap">
+		SELECT
+		ru.role_uuid, ru.namespace, ru.username
+		FROM role r,roles_user ru
+		WHERE r.uuid =
+		ru.role_uuid AND ru.username = #{username} AND
+		ru.namespace = #{namespace}
+	</select>
+	<select id="getOperRoleIdByUserName" resultType="string">
+		select role_uuid FROM roles_user ru left join role r on ru.role_uuid=r.uuid where r.role_type=0 and ru.username = #{username} AND
+		ru.namespace = #{namespace}
+	</select>
+	<select id="fetchRolesAssignedList" resultMap="RoleUsersResultMap">
+		SELECT
+		role_uuid, namespace, username, assigned_at
+		,(select name from
+		role where uuid =
+		roles_user.role_uuid) role_name
+		FROM roles_user
+		WHERE
+		namespace = #{namespace}
+		<if test="user != null and user != ''">
+			AND username = #{user}
+		</if>
+		<if test="roleUuid != null and roleUuid.length > 0">
+			AND role_uuid IN
+			<foreach collection="roleUuid" index="index" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="hasAdminRole" resultType="int">
+		SELECT count(ru.role_uuid)
+		FROM roles_user ru
+		join role r on ru.role_uuid=r.uuid and r.admin_role=1
+		WHERE ru.username = #{username}
+		AND ru.namespace = #{namespace}
+	</select>
+
+	<select id="hasFetchRoleUsersList" resultType="int">
+		SELECT count(*)
+		FROM roles_user
+		WHERE username = #{username}
+		AND namespace = #{namespace}
+		AND role_uuid = #{roleUuid}
+	</select>
+
+	<insert id="createRoleUsers">
+		INSERT INTO
+		roles_user(role_uuid, namespace, username, assigned_at)
+		VALUES(#{roleUuid},#{namespace},#{username},now())
+	</insert>
+
+	<insert id="createRoleUsersBatch">
+		INSERT INTO roles_user(role_uuid, namespace, username, assigned_at)
+		VALUES
+		<foreach collection="roleUsersList" index="index" item="item"
+			separator=",">
+			(#{item.roleUuid},#{item.namespace},#{item.username},now())
+		</foreach>
+	</insert>
+
+	<delete id="deleteRoleUsers">
+		DELETE FROM roles_user
+		WHERE namespace = #{namespace}
+		<if test="roleUuid != null and roleUuid !=''">
+			AND role_uuid = #{roleUuid}
+		</if>
+		<if test="username != null and username !=''">
+			AND username = #{username}
+		</if>
+	</delete>
+
+	<delete id="deleteRoleUsersByRoleUuid">
+		DELETE FROM
+		roles_user
+		WHERE role_uuid = #{roleUuid}
+	</delete>
+
+	<delete id="deleteRoleUsersBatch">
+		DELETE FROM roles_user
+		WHERE namespace = #{namespace}
+		AND username IN
+		<foreach collection="usernameList" index="index" item="username"
+			open="(" separator="," close=")">
+			#{username}
+		</foreach>
+	</delete>
+
+</mapper>

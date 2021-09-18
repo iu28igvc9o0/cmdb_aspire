@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.ModuleRelationMapper" >
+    <resultMap id="ModuleRelationResultMap" type="com.aspire.ums.cmdb.maintain.entity.ModuleRelation" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="sourceModuleId" property="sourceModuleId" jdbcType="VARCHAR" />
+        <result column="targetModuleId" property="targetModuleId" jdbcType="VARCHAR" />
+        <result column="relationId" property="relationId" jdbcType="VARCHAR" />
+        <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+        <result column="restriction" property="restriction" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="ModuleRelation_Column_List" >
+        id, sourceModuleId, targetModuleId, relationId, builtin,  restriction
+    </sql>
+
+    <select id="getAll" parameterType="com.aspire.ums.cmdb.maintain.entity.ModuleRelation"   resultType="java.util.HashMap"  >
+
+    </select>
+
+    <select id="getOne" parameterType="java.lang.String" resultMap="ModuleRelationResultMap" >
+        SELECT 
+       <include refid="ModuleRelation_Column_List" />
+	   FROM cmdb_module_relation
+	   WHERE id = #{id}
+    </select>
+    
+     <select id="getModuleRelation" parameterType="com.aspire.ums.cmdb.maintain.entity.ModuleRelation" resultMap="ModuleRelationResultMap" >
+        SELECT 
+       <include refid="ModuleRelation_Column_List" />
+	   FROM cmdb_module_relation
+	   WHERE 1 =1 
+	     <if test="id!=null and id!=''"> 
+              and id  =  #{id}
+         </if>
+         <if test="sourceModuleId!=null and sourceModuleId!=''"> 
+              and sourceModuleId  =  #{sourceModuleId}
+         </if>
+         <if test="targetModuleId!=null and targetModuleId!=''"> 
+              and targetModuleId  =  #{targetModuleId}
+         </if>
+	   limit 0,1
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.ModuleRelation" >
+       INSERT INTO 
+       		cmdb_module_relation
+       		(id, sourceModuleId, targetModuleId, relationId, builtin,  restriction, insertTime, updateTime) 
+       	VALUES
+       		(#{id}, #{sourceModuleId}, #{targetModuleId}, #{relationId}, #{builtin}, #{restriction}, NOW(), NOW())
+    </insert>
+    
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.ModuleRelation" >
+
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_module_relation 
+       WHERE 
+       		 id =#{id}
+    </delete>
+    
+     <select id="getRetionByCondition" parameterType="com.aspire.ums.cmdb.maintain.entity.ModuleRelation"    resultType="java.util.HashMap"  >
+              SELECT aa.*, cr.name as relationName, cm1.name as sourceModuleName, cm1.IconUrl as sourceIconUrl,cm1.builtin as sourceBuiltin, cm2.name as targetModuleName, cm2.IconUrl as targetIconUrl,cm2.builtin as targetBuiltin,
+              (case when aa.restriction = 'OneToOne' then '一对一'
+		      when aa.restriction = 'OneToMany' then '一对多'
+		      when aa.restriction = 'ManyToOne' then '多对一'
+		      when aa.restriction = 'ManyToMany' then '多对多'
+		      else '其他' end ) restrictionDec,
+		      (select count(1) from cmdb_instance_relation_detail where moduleRelationId = aa.id) as insRelationCount
+              FROM 
+              (
+              SELECT cmr.* FROM cmdb_module_relation cmr  WHERE 1=1 
+              <if test="sourceModuleId!=null and sourceModuleId!=''"> 
+              and  cmr.targetModuleId = #{sourceModuleId} 
+              </if>  
+  
+               ) aa, cmdb_relation cr, cmdb_module cm1, cmdb_module cm2   where aa.relationId =  cr.id and aa.sourceModuleId = cm1.id and aa.targetModuleId = cm2.id and cm1.isDelete = 0 and cm2.isDelete = 0 
+
+               UNION ALL
+              SELECT aa.*, cr.name as relationName, cm1.name as sourceModuleName, cm1.IconUrl as sourceIconUrl,cm1.builtin as sourceBuiltin, cm2.name as targetModuleName, cm2.IconUrl as targetIconUrl,cm2.builtin as targetBuiltin,
+              (case when aa.restriction = 'OneToOne' then '一对一'
+		      when aa.restriction = 'OneToMany' then '一对多'
+		      when aa.restriction = 'ManyToOne' then '多对一'
+		      when aa.restriction = 'ManyToMany' then '多对多'
+		      else '其他' end ) restrictionDec,
+		      (select count(1) from cmdb_instance_relation_detail where moduleRelationId = aa.id) as insRelationCount
+              FROM 
+              (
+              SELECT cmr.* FROM cmdb_module_relation cmr   WHERE 1=1 
+              <if test="sourceModuleId!=null and sourceModuleId!=''"> 
+              and  cmr.sourceModuleId = #{sourceModuleId} 
+              </if>
+  
+               ) aa, cmdb_relation cr, cmdb_module cm1, cmdb_module cm2   where aa.relationId =  cr.id and aa.sourceModuleId = cm1.id and aa.targetModuleId = cm2.id and cm1.isDelete = 0 and cm2.isDelete = 0 
+         
+    </select>
+    
+     <select id="getModuleByCondition" parameterType="com.aspire.ums.cmdb.maintain.entity.ModuleRelation"    resultType="java.util.HashMap"  >
+               
+             SELECT cm.* FROM cmdb_module cm  where not exists(
+               SELECT 1 FROM cmdb_module_relation WHERE 1 = 1  
+              <if test="sourceModuleId!=null and sourceModuleId!=''"> 
+              and ( sourceModuleId = #{sourceModuleId} and targetModuleId = cm.id ) or  ( targetModuleId = #{sourceModuleId} and sourceModuleId = cm.id )  
+              ) AND  cm.id != #{sourceModuleId} AND cm.`parentId` IS NOT NULL AND cm.isDelete = 0
+              </if>
+              <if test="targetModuleId!=null and targetModuleId!=''"> 
+              and ( targetModuleId = #{targetModuleId} and sourceModuleId = cm.id ) or ( sourceModuleId = #{targetModuleId} and targetModuleId = cm.id ) 
+              ) AND  cm.id != #{targetModuleId} AND cm.`parentId` IS NOT NULL AND cm.isDelete = 0
+              </if>
+
+              order by cm.code
+               
+              
+    </select>
+
+
+    <insert id="addRelation" parameterType="com.aspire.ums.cmdb.maintain.entity.Relation" >
+       INSERT INTO 
+       		cmdb_relation
+       		(id, name, builtin) 
+       	VALUES
+       		(#{id}, #{name}, #{builtin})
+    </insert>
+    
+    <delete id="delRelation" parameterType="com.aspire.ums.cmdb.maintain.entity.Relation" >
+       DELETE FROM
+       		cmdb_relation
+       WHERE 
+       		 name =#{name}
+
+    </delete>
+    
+   <select id="getAllRelation" resultType="com.aspire.ums.cmdb.maintain.entity.Relation" >
+       SELECT * FROM cmdb_relation  ORDER BY builtin DESC
+    </select>
+    
+      <select id="checkRelationName" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       SELECT *
+	   FROM cmdb_relation 
+	   WHERE  name  =  #{name}
+	     <if test="builtin!=null and builtin!=''"> 
+              and builtin  =  #{builtin}
+         </if>
+
+    </select>
+    
+   <select id="checkRelationInstanceList" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       SELECT *
+	   FROM cmdb_instance_relation_detail 
+	   WHERE  moduleRelationId  =  #{moduleRelationId} 
+         
+    </select>
+</mapper>

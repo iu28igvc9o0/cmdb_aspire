@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IIndicationItemDAO">
+	
+	<resultMap type="com.aspire.mirror.entity.IndicationItemEntity" id="indicationItemMap">
+		<result property="indicationItemId" column="indication_item_id" jdbcType="TINYINT"/>
+		<result property="indicationItemCode" column="indication_item_code" jdbcType="VARCHAR"/>
+		<result property="indicationItemName" column="indication_item_name" jdbcType="VARCHAR"/>
+		<result property="indicationItemUnit" column="indication_item_unit" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap type="com.aspire.mirror.entity.IndicationAllItemEntity" id="indicationAllItemMap">
+		<result property="configId" column="config_id" jdbcType="TINYINT"/>
+		<result property="indicationId" column="indication_id" jdbcType="TINYINT"/>
+		<result property="indicationItemId" column="indication_item_id" jdbcType="TINYINT"/>
+		<result property="indicationName" column="indication_name" jdbcType="VARCHAR"/>
+		<result property="indicationItemCode" column="indication_item_code" jdbcType="VARCHAR"/>
+		<result property="indicationItemName" column="indication_item_name" jdbcType="VARCHAR"/>
+		<result property="primaryItem" column="primary_item" jdbcType="TINYINT"/>
+		<result property="indicationItemUnit" column="indication_item_unit" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="getIndicationItemByItemId" resultMap="indicationItemMap" >
+		select * from mirror_indication_item where indication_item_id=#{indicationItemId}
+	</select>
+
+	<select id="getIndicationAllItemsByIndicationId" resultMap="indicationAllItemMap" >
+		select mic.config_id, mic.indication_id, mic.indication_item_id, mi.indication_name, mii.indication_item_code, mii.indication_item_name, mic.primary_item,mii.indication_item_unit from mirror_indication_item_config mic
+		inner join mirror_indication_new mi on mic.indication_id = mi.indication_id
+		inner join mirror_indication_item mii on mii.indication_item_id = mic.indication_item_id
+		where mic.indication_id=#{indicationId}
+		order by indication_item_order
+	</select>
+
+</mapper>

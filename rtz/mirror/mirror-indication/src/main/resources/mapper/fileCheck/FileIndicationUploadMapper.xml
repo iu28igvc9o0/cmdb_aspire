@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.fileCheck.dao.IFileIndicationUploadDAO">
+
+	<resultMap type="com.aspire.fileCheck.entity.FileIndicationUploadEntity" id="indicationUploadEntity">
+		<result property="uploadDate" column="upload_date" jdbcType="VARCHAR"/>
+		<result property="periodConfigId" column="period_config_id" jdbcType="TINYINT"/>
+		<result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+		<result property="fileUploadTime" column="file_upload_time" jdbcType="VARCHAR"/>
+		<result property="fileCreateTime" column="file_create_time" jdbcType="VARCHAR"/>
+		<result property="dictLazyStatus" column="dict_lazy_status" jdbcType="TINYINT"/>
+	</resultMap>
+
+	<select id="getFileUploadDelayDetectionData" resultType="map">
+		SELECT mp.province_name provinceName,mp.province_ftp_dir provinceFtpDir,mc.dict_value dictValue,fipc.fix_file_count fixFileCount,
+		fipc.config_id configId,fipc.indication_id indicationId,fipc.dict_period dictPeriodId,fipc.province_code provinceCode
+		FROM file_indication_period_config fipc
+		LEFT JOIN mirror_province mp ON fipc.province_code = mp.province_code
+		LEFT JOIN mirror_dict mc on fipc.dict_period = mc.dict_id
+	</select>
+
+	<select id="checkFileExist" parameterType="map" resultType="map">
+		SELECT * FROM file_indication_upload
+		where upload_date=#{checkFileExistData.uploadDate} and period_config_id=#{checkFileExistData.periodConfigId} and  file_name=#{checkFileExistData.fileName}
+	</select>
+
+	<insert id="insetFileIndicationUpload" parameterType="map">
+		INSERT INTO file_indication_upload (upload_date,period_config_id,file_name,file_upload_time,file_create_time,dict_lazy_status)
+		VALUES (#{insertData.uploadDate},#{insertData.periodConfigId},#{insertData.fileName},#{insertData.fileUploadTime},#{insertData.fileCreateTime},#{insertData.dictLazyStatus})
+	</insert>
+
+	<select id="checkFileIndicationPeriodState" parameterType="map" resultType="map">
+		SELECT * FROM file_indication_period_state
+		WHERE upload_date = #{insertData.uploadDate} AND period_config_id = #{insertData.periodConfigId} AND file_indication_id = #{insertData.fileIndicationId}
+	</select>
+
+	<insert id="insertFileIndicationPeriodState" parameterType="map">
+		INSERT INTO file_indication_period_state (upload_date,period_config_id,file_indication_id,upload_status,update_integrity)
+		VALUES (#{insertData.uploadDate},#{insertData.periodConfigId},#{insertData.fileIndicationId},#{insertData.uploadStatus},#{insertData.updateIntegrity})
+	</insert>
+
+	<update id="updateFileIndicationPeriodState" parameterType="map">
+		UPDATE  file_indication_period_state SET upload_status = #{updateData.uploadStatus},update_integrity = #{updateData.updateIntegrity}
+		WHERE upload_date = #{updateData.uploadDate} AND period_config_id = #{updateData.periodConfigId} AND file_indication_id = #{updateData.fileIndicationId}
+	</update>
+
+	<select id="getFileUploadDelayDetectionData1" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		mp.province_name '省份',
+		fi.file_indication_code '指标',
+		fiu.upload_date '日期',
+		md.dict_value '时间段',
+		fiu.file_name '延迟文件名称',
+		md1.dict_value AS '延迟时长'
+		FROM
+		file_indication_period_config fipc
+		INNER JOIN file_indication fi ON ( fi.file_indication_id = fipc.indication_id )
+		INNER JOIN mirror_dict md ON ( md.dict_id = fipc.dict_period )
+		INNER JOIN file_indication_upload fiu ON ( fiu.period_config_id = fipc.config_id )
+		INNER JOIN mirror_province mp ON ( mp.province_code = fipc.province_code )
+		INNER JOIN mirror_dict md1 ON ( md1.dict_id = fiu.dict_lazy_status )
+		WHERE
+		1 = 1
+		<if test="period != null and period != ''">
+			AND md.dict_value = #{period}
+		</if>
+		<if test="date != null and date != ''">
+			AND fiu.upload_date = #{date}
+		</if>
+		<if test="type != null and type != ''">
+			AND fi.file_indication_type = #{type}
+		</if>
+		<if test="fileIndicationId != null and fileIndicationId != ''">
+			AND fi.file_indication_id = #{fileIndicationId}
+		</if>
+		<if test="detection != null ">
+			AND md1.dict_id = #{detection}
+		</if>
+		<if test="province != null and province != ''">
+			AND mp.province_code = #{province}
+		</if>
+		ORDER BY
+		mp.province_code ASC,
+		fiu.upload_date DESC,
+		md.dict_value ASC
+	</select>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO file_indication_upload (upload_date,period_config_id,file_name,file_upload_time,file_create_time,dict_lazy_status) values
+		<foreach collection="entityList" item="item" index="index" separator=",">
+			(#{item.uploadDate,jdbcType=VARCHAR},
+			#{item.periodConfigId,jdbcType=TINYINT},
+			#{item.fileName,jdbcType=VARCHAR},
+			#{item.fileUploadTime,jdbcType=VARCHAR},
+			#{item.fileCreateTime,jdbcType=VARCHAR},
+			#{item.dictLazyStatus,jdbcType=TINYINT})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		upload_date = values (upload_date),
+		period_config_id = values (period_config_id),
+		file_name = values (file_name)
+	</insert>
+
+	<select id="getUploadFilesByPeriodConfigId" resultMap="indicationUploadEntity">
+		select * from file_indication_upload where period_config_id=#{configId}
+	</select>
+
+	<delete id="deleteEntity" parameterType="com.aspire.fileCheck.entity.FileIndicationUploadEntity">
+		delete from file_indication_upload where period_config_id=#{entity.periodConfigId} and file_name=#{entity.fileName}
+	</delete>
+</mapper>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceSoftwareRecordMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceSoftwareRecord" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project" property="project" jdbcType="VARCHAR" />
+        <result column="classify" property="classify" jdbcType="VARCHAR" />
+        <result column="software_id" property="softwareId" jdbcType="VARCHAR" />
+        <result column="software_name" property="softwareName" jdbcType="VARCHAR" />
+        <result column="company" property="company" jdbcType="VARCHAR" />
+        <result column="server_start_time" property="serverStartTime" jdbcType="TIMESTAMP" />
+        <result column="server_end_time" property="serverEndTime" jdbcType="TIMESTAMP" />
+        <result column="server_person" property="serverPerson" jdbcType="VARCHAR" />
+        <result column="server_level" property="serverLevel" jdbcType="VARCHAR" />
+        <result column="handle_long" property="handleLong" jdbcType="VARCHAR" />
+        <result column="real_days" property="realDays" jdbcType="VARCHAR" />
+        <result column="yidong_approver" property="yidongApprover" jdbcType="VARCHAR" />
+        <result column="devops_approver" property="devopsApprover" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <sql id="baseColumnList">
+        id,project,classify,software_id,software_name,company,server_start_time,
+        server_end_time,server_person,server_level,handle_long,real_days,yidong_approver,
+        devops_approver,create_user,create_time
+    </sql>
+    <sql id="baseSelectFrom">
+        SELECT
+            a.id id,
+            c.project_name project,
+            b.classify classify,
+            a.software_id software_id,
+            b.software_name software_name,
+            c.mainten_produce company,
+            a.server_person server_person,
+            a.server_level server_level,
+            a.server_start_time server_start_time,
+            a.server_end_time server_end_time,
+            a.handle_long handle_long,
+            a.real_days real_days,
+            a.yidong_approver yidong_approver,
+            a.devops_approver devops_approver,
+            a.create_user create_user,
+            a.create_time create_time
+        FROM `cmdb_maintenance_software_record` a
+        LEFT JOIN `cmdb_maintenance_software` b ON b.id = a.software_id
+        LEFT JOIN `cmdb_maintenance_project` c ON c.id = b.project_id
+        WHERE c.is_delete = 0
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        select <include refid="baseColumnList" /> from
+        (<include refid="baseSelectFrom"/>) r
+        where 1=1
+        <if test="project != null and  project != '' ">
+            and project like  CONCAT('%',#{project},'%')
+        </if>
+        <if test="softwareName != null and  softwareName != '' ">
+            and software_name like  CONCAT('%',#{softwareName},'%')
+        </if>
+        <if test="company != null and  company != '' ">
+            and company like  CONCAT('%',#{company},'%')
+        </if>
+        <if test="serverStartTimeBegin != null and serverStartTimeEnd != null">
+            AND `server_start_time` between #{serverStartTimeEnd} and #{serverStartTimeEnd}
+        </if>
+        order by create_time desc
+<!--        <if test="pageNo != null and pageSize != null">-->
+<!--            limit ${(pageNo - 1) * pageSize },${pageSize}-->
+<!--        </if>-->
+    </select>
+
+    <!-- list查询 -->
+    <select id="listCount" resultType="java.lang.Integer">
+        select count(1) from
+        (<include refid="baseSelectFrom"/>) r
+        WHERE 1=1
+        <if test="softwareName != null and softwareName != ''">
+            AND `software_name` like  CONCAT('%',#{softwareName},'%')
+        </if>
+        <if test="softwareId != null and  softwareId != '' ">
+            and software_id = #{softwareId}
+        </if>
+        <if test="serverStartTimeBegin != null and serverStartTimeEnd != null">
+            AND `server_start_time` between #{serverStartTimeEnd} and #{serverStartTimeEnd}
+        </if>
+        <if test="project != null and  project != '' ">
+            and project like  CONCAT('%',#{project},'%')
+        </if>
+        <if test="company != null and  company != '' ">
+            and company like  CONCAT('%',#{company},'%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceSoftwareRecordQuery">
+        select <include refid="baseColumnList" /> from
+        (<include refid="baseSelectFrom"/>) r
+        WHERE 1=1
+        <if test="company != null and  company != '' ">
+            and company like  CONCAT('%',#{company},'%')
+        </if>
+        <if test="softwareId != null and  softwareId != '' ">
+            and software_id = #{softwareId}
+        </if>
+        <if test="project != null and  project != '' ">
+            and project like  CONCAT('%',#{project},'%')
+        </if>
+        <if test="softwareName != null and softwareName != ''">
+        AND `software_name` like  CONCAT('%',#{softwareName},'%')
+        </if>
+        <if test="serverStartTimeBegin != null and serverStartTimeEnd != null">
+        AND `server_start_time` between #{serverStartTimeBegin} and #{serverStartTimeEnd}
+        </if>
+        order by create_time desc
+        <if test="pageNo != null and pageSize != null">
+            limit ${(pageNo - 1) * pageSize },${pageSize}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceSoftwareRecord" resultMap="resultMap">
+        SELECT
+        `id`,
+        `software_id`,
+        `server_start_time`,
+        `server_end_time`,
+        `server_person`,
+        `handle_long`,
+        `real_days`,
+        `yidong_approver`,
+        `devops_approver`,
+       `create_user`,
+        `create_time`
+        FROM cmdb_maintenance_software_record
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceSoftwareRecord">
+        INSERT INTO cmdb_maintenance_software_record
+        (
+            `id`,
+            `software_id`,
+            `server_start_time`,
+            `server_end_time`,
+            `server_person`,
+        `server_level`,
+            `handle_long`,
+            `real_days`,
+            `yidong_approver`,
+            `devops_approver`,
+            `create_time`,
+        `create_user`
+        ) VALUES
+                 <foreach collection="list" item="item" separator="," >
+                     (
+                     #{item.id, jdbcType=VARCHAR},
+                     #{item.softwareId, jdbcType=VARCHAR},
+                     #{item.serverStartTime, jdbcType=TIMESTAMP},
+                     #{item.serverEndTime, jdbcType=TIMESTAMP},
+                     #{item.serverPerson, jdbcType=VARCHAR},
+                     #{item.serverLevel, jdbcType=VARCHAR},
+                     #{item.handleLong, jdbcType=VARCHAR},
+                     #{item.realDays, jdbcType=VARCHAR},
+                     #{item.yidongApprover, jdbcType=VARCHAR},
+                     #{item.devopsApprover, jdbcType=VARCHAR},
+                     #{item.createTime, jdbcType=TIMESTAMP},
+                     #{item.createUser, jdbcType=VARCHAR}
+                     )
+                 </foreach>
+
+        ON DUPLICATE KEY UPDATE
+        server_start_time = VALUES( server_start_time ),
+        server_end_time = VALUES( server_end_time ),
+        server_person = VALUES( server_person ),
+        server_level = VALUES( server_level ),
+        handle_long = VALUES( handle_long ),
+        real_days = VALUES( real_days ),
+        yidong_approver = VALUES (yidong_approver),
+        devops_approver = VALUES (devops_approver),
+        create_user = VALUES (create_user)
+    </insert>
+
+    <!--&lt;!&ndash; 修改记录 &ndash;&gt;-->
+    <!--<update id="update" parameterType="com.aspire.mirror.entity.CmdbMaintenanceSoftwareRecord">-->
+        <!--UPDATE cmdb_maintenance_software_record SET-->
+        <!--`software_id` = #{softwareId},-->
+        <!--`server_start_time` = #{serverStartTime},-->
+        <!--`server_end_time` = #{serverEndTime},-->
+        <!--`server_person` = #{serverPerson},-->
+        <!--`handle_long` = #{handleLong},-->
+        <!--`real_days` = #{realDays},-->
+        <!--`yidong_approver` = #{yidongApprover},-->
+        <!--`devops_approver` = #{devopsApprover},-->
+        <!--`create_time` = #{createTime}-->
+        <!--WHERE-->
+        <!--`id` = #{id}-->
+    <!--</update>-->
+
+    <!-- 删除记录 -->
+    <delete id="deleteByBatch" parameterType="java.lang.String">
+        DELETE FROM cmdb_maintenance_software_record
+        WHERE
+         `id` in
+      <foreach collection="list" item="item" open="(" close=")" separator=",">
+          #{item}
+      </foreach>
+    </delete>
+</mapper>

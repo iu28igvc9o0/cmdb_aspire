@@ -1,0 +1,230 @@
+server:
+  port: 28131
+version: /v1
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://10.12.70.39:8761/eureka/
+
+kafka.topic.topic_system_alerts: TOPIC_SYSTEM_ALERTS
+
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useSSL: false
+
+kafka:
+  topic:
+    topic_system_alerts: TOPIC_SYSTEM_ALERTS      # 系统告警kafka主题
+    topic_zabbix_delete: TOPIC_ZABBIX_DELETE
+    topic_zabbix_item: TOPIC_ZABBIX_ITEM
+    topic_zabbix_trigger: TOPIC_ZABBIX_TRIGGER
+    topic_zabbix_trends: TOPIC_ZABBIX_TRENDS
+
+mybatis:
+  mapperLocations:
+  - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+    org.springboot.sample.entity
+
+# 告警事件监听
+alert.event.listener:
+  AlertEventNotifier:   # 监听实现名
+    switch: true        # 监听开关
+    awareLevel: 4       # 告警级别:  1-提示 2-低 3-中 4-高 5-严重
+    kafkaServers: vmhadoop12:9092,vmhadoop13:9092,vmhadoop14:9092
+    kafkaTopic: ZW-Monitor
+
+spring:
+  zipkin:
+    enabled: false
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+
+  kafka: # kafka 配置
+    bootstrap-servers: 10.12.70.40:9092
+    producer:
+      retries: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: consumer_alert_service
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 2000
+      session.timeout.ms: 20000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 9    # 配置partions分区数, 保证每个分区至少1个消费线程
+    properties:
+      session.timeout.ms: 60000
+  jackson:
+    time-zone: GMT+8
+
+  mail: # JavaMailSender 邮件发送的配置
+    switch: true # 是否发送邮件,默认值为fasle
+    host: szmail.aspire-tech.com
+    port: 25
+    username: pengguihua@aspirecn.com
+    password: 'peng!234'
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: false
+          starttls: # TLS协议
+            enable: false
+            required: false
+  #          port: 465
+  #          socketFactory: # SSL协议
+  #            class: javax.net.ssl.SSLSocketFactory
+
+sample:
+  zipkin:
+    enabled: true
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: info
+    com.aspire.mirror.alert: info
+    org.springframework.data: debug
+  file: /opt/data/logs/alert-service.log
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000
+
+#FLOW_KEY: gzsjclgd0523
+#FULLNAME: admin
+#ORDER_AUTOGEN_LEVEL: 4,5
+#
+#WSDL_URL: http://10.1.4.245:58080/bpmx/service/ProcessService?wsdl
+
+orderAutoGen.cron: 0 0/5 *  * * ?
+bpm:
+  closing:
+    cron: 0 0 1 * * ?
+    isOpen: false
+    url: http://10.1.203.87:8086/runtime/sysThirdPartyInterfaces/v1/alertOrderIsEnd
+  runtime:
+    url: http://10.12.8.194:8086
+  token: Basic YWRtaW46NEFmeTJzNENiKzhCN2RFWFpIc08vdz09
+  alert:
+    Url: http://10.12.8.194:8086/bpmx/service/ProcessService?wsdl
+    tuningFlowkey: gjdygd
+    gjFlowkey: gjcllc
+    gzFlowkey: gzcllc
+    wbFlowkey: wbgllc
+    acount: admin
+    method: start
+    namepace: http://impl.webservice.platform.hotent.com/
+    gjModel: <data>{"gjyw":{"title":"@{device_ip}@{device_type}产生告警","objectType":"@{device_type}","sourceIP":"@{device_ip}","zyc":"@{idc_type}","alarmId":"@{alert_id}","objectName":"@{moni_object}","detail":"@{@{moni_index}","starttime":"@{alert_start_time}","alert_level":"@{alert_level}","objectId":"@{event_id}","POD":"@{pod_name}","ywxt":"@{biz_sys}"}}</data>
+    gzModel: <data>{"gzywdxV4":{"gzbt":"@{device_ip}@{device_type}发生故障","zyc":"@{idc_type}","gzfssj":"@{alert_start_time}","ywxt":"@{biz_sys}","gzdygjgd":"@{order_id}","xdrzdgzclr":"@{user_name}","clrID":"@{user}","device_id":"@{device_id}","object_type":"@{object_type}"}}</data>
+    wbModel: <data>{"wbglb":{"sqbt":"@{device_ip}@{device_type}维保申请","zyc":"@{idc_type}","gdly":"umspaidan","errororder":"@{order_id}"}}</data>
+
+sls:
+  cron: 0 */1 * * * ?
+  ftp:
+    download:
+      host: 10.12.70.40
+      port: 21
+      user: ftpadmin
+      password: 11qq!!QQ
+      mode: pasv
+      path: /scan_report/pkg_app_report
+    upload:
+      host: 10.12.70.40
+      port: 21
+      user: ftpadmin
+      password: 11qq!!QQ
+      path: /scan_report_upload/pkg_app_report
+    clear:
+      days: -1
+  local:
+    store: /opt/temp/scan_report
+    download: /scan_report_upload/pkg_app_report
+  bpm:
+    token:
+      url: http://10.12.8.194:8088/auth/getToken
+      username: QjguF75dA4hchFVKf7k5cg== #admin
+      password: yy/Vh60lXQJSOcm+CikQow== #Asp+8888
+    upload:
+      url: http://10.12.8.194:8084/system/file/v1/upload
+    webservice:
+      url: http://10.12.8.194:8086/bpmx/service/ProcessService?wsdl
+      flowkey: ldsmgd
+      account: admin
+      namespace: http://impl.webservice.platform.hotent.com/
+      method: start
+    rest:
+      url: http://10.12.8.194:8086/runtime/bpmProcess/v1/loadBpmProcess
+
+recipient:
+  client:
+    url: http://127.0.0.1:8088/v1/alerts/recipient/task
+
+bdc_notify_url: http://10.1.121.65:8888/bmserver/api/alert/v1.0/notify.ajax
+
+MoniterServerRatioExportTask.flag: fnormal
+MoniterServerRatioExportTask.cron: 0 10 * * * ?
+MoniterServerRatioExportTask.ftpPath: /ratio_report/
+
+CloudSysSyncTask:
+  PHY_URL: http://IP:port/RESTForQW/getCRPerfmFWQ
+  VM_URL: http://IP:port/RESTForQW/getCRPerfmXNJ
+  phyTopic: TOPIC_CLOUD_PHY
+  vmTopic: TOPIC_CLOUD_VM
+  num: 100
+  flag: fnormal
+  vmCron: 0 */10 * * * ?
+  phyCrom: 0 */10 * * * ?
+  token: 5245ed1b-6345-11e
+
+sms:
+  url: http://127.0.0.1:2000/test
+  target: test
+  password: pasw
+
+systemType: normal
+
+ftp:
+  host: 10.12.70.40
+  port: 21
+  username: ftpadmin
+  password: 11qq!!QQ
+  path: /file_download/
+  bufferSize: 8096
+
+cmdb:
+  token: 5245ed1b-6345-11e   #cmdb查询接口token
+  size: 500000
+
+AlertSynchronizeCMDBInstance.flag: normal
+AlertSynchronizeCMDBInstance.cron: 0 0 0 * * ?
+
+snmp4j.listenAddress: 0.0.0.0/8362   #苏研snmp告警接入配置
+threadPool.size: 10   #snmp线程池数量
+
+monitor:
+  kpi:
+    topic: TOPIC_MONITOR_KPI    #监控数据治理的topic
+    batchCount: 2000            #单批次数量
+    open: true
+    doingHour: 2                #执行超时时间，默认2小时
+
+alert:
+  check:
+    level: 2,3,4,5   #告警级别只能是数据，以逗号分隔

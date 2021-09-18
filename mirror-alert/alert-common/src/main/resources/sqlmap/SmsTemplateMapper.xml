@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.SmsTemplateDao" >
+  <resultMap id="BaseResultMap" type="com.aspire.mirror.alert.server.dao.notify.po.SmsTemplate" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sms_template
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.notify.po.SmsTemplate" >
+    insert into sms_template (id, name, create_time)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.alert.server.dao.notify.po.SmsTemplate" >
+    update sms_template
+    set name = #{name,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, name, create_time, update_time
+    from sms_template
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, create_time, update_time
+    from sms_template
+  </select>
+  <select id="findSmsTemplateList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id, name, create_time, update_time
+    from sms_template
+    where 1 = 1
+    order by update_time desc
+    limit #{startNo},#{pageSize}
+  </select>
+</mapper>

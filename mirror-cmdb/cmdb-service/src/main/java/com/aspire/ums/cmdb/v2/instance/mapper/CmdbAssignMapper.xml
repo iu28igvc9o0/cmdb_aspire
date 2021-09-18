@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.instance.mapper.CmdbAssignMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.instance.payload.CmdbAssign" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="resource_pool" property="resourcePool" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="department1" property="department1" jdbcType="VARCHAR" />
+        <result column="department2" property="department2" jdbcType="VARCHAR" />
+        <result column="biz_system" property="bizSystem" jdbcType="VARCHAR" />
+        <result column="depart_need_count" property="departNeedCount" jdbcType="INTEGER" />
+        <result column="built_count" property="builtCount" jdbcType="INTEGER" />
+        <result column="assigned_count" property="assignedCount" jdbcType="INTEGER" />
+        <result column="pre_assign_count" property="preAssignCount" jdbcType="INTEGER" />
+        <result column="unbuilt_count" property="unBuiltCount" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        `id`,
+        `resource_pool`,
+        `type`,
+        `department1`,
+        `department2`,
+        `biz_system`,
+        `depart_need_count`,
+        `built_count`,
+        `assigned_count`,
+        `pre_assign_count`,
+        `assigned_count`,
+        `unbuilt_count`,
+        `create_time`
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbAssignQuery">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_assign_report
+        WHERE 1=1
+        <if test="resourcePool != null and resourcePool != ''">
+            AND `resource_pool`  like  CONCAT('%',#{resourcePool},'%')
+        </if>
+        <if test="department1 != null and department1 != ''">
+            AND `department1` = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            AND `department2` = #{department2}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            AND `biz_system` = #{bizSystem}
+        </if>
+        order by create_time desc
+    </select>
+
+    <!-- list查询 -->
+    <select id="listCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbAssignQuery">
+        SELECT
+       count(1)
+        FROM cmdb_assign_report
+        WHERE 1=1
+        <if test="resourcePool != null and resourcePool != ''">
+            AND `resource_pool`  like  CONCAT('%',#{resourcePool},'%')
+        </if>
+        <if test="department1 != null and department1 != ''">
+            AND `department1` = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            AND `department2` = #{department2}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            AND `biz_system` = #{bizSystem}
+        </if>
+        order by create_time desc
+    </select>
+
+
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbAssign">
+        INSERT INTO cmdb_assign_report
+        (
+            `id`,
+            `resource_pool`,
+            `type`,
+            `department1`,
+            `department2`,
+            `biz_system`,
+            `depart_need_count`,
+            `built_count`,
+            `assigned_count`,
+            `pre_assign_count`,
+            `unbuilt_count`,
+            `create_time`
+        ) VALUES (
+                     #{id, jdbcType=VARCHAR},
+                     #{resourcePool, jdbcType=VARCHAR},
+                     #{type, jdbcType=VARCHAR},
+                     #{department1, jdbcType=VARCHAR},
+                     #{department2, jdbcType=VARCHAR},
+                     #{bizSystem, jdbcType=VARCHAR},
+                     #{departNeedCount, jdbcType=INTEGER},
+                     #{builtCount, jdbcType=INTEGER},
+                     #{assignedCount, jdbcType=INTEGER},
+                     #{preAssignCount, jdbcType=INTEGER},
+                     #{unBuiltCount, jdbcType=INTEGER},
+                     #{createTime, jdbcType=TIMESTAMP}
+                 )
+            ON DUPLICATE KEY UPDATE
+depart_need_count =  VALUES(depart_need_count),
+built_count =  VALUES(built_count),
+assigned_count = VALUES(assigned_count),
+pre_assign_count = VALUES(pre_assign_count),
+assigned_count = VALUES(assigned_count),
+    unbuilt_count = VALUES(unbuilt_count)
+
+
+    </insert>
+
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM cmdb_assign_report
+        WHERE
+        `id` = #{id}
+    </delete>
+</mapper>

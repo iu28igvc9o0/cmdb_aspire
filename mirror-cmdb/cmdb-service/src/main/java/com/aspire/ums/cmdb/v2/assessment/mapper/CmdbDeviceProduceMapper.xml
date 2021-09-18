@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.assessment.mapper.CmdbDeviceProduceMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `name`
+        FROM cmdb_device_produce
+        order by create_time desc
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce">
+        SELECT
+        `id`,
+        `name`
+        FROM cmdb_device_produce
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="name != null and name != ''">
+        AND `name` = #{name}
+        </if>
+        order by create_time desc
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce" resultMap="resultMap">
+        SELECT
+        `id`,
+        `name`
+        FROM cmdb_device_produce
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce">
+        INSERT INTO cmdb_device_produce
+        (
+            `id`,
+            `name`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR}
+        )
+    </insert>
+
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce">
+        INSERT INTO cmdb_device_produce
+        (
+            `id`,
+            `name`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index"  separator=","  >
+         (
+                 #{item.id, jdbcType=VARCHAR},
+                 #{item.name, jdbcType=VARCHAR}
+                 )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce">
+        UPDATE cmdb_device_produce SET
+        `name` = #{name}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbDeviceProduce">
+        DELETE FROM cmdb_device_produce
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

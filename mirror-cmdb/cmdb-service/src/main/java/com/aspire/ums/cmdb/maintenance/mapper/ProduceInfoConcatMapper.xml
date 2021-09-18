@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.ProduceInfoConcatMapper">
+
+	<resultMap id="concat" type="com.aspire.ums.cmdb.maintenance.payload.Concat">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="produceId" column="produceId" jdbcType="VARCHAR" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		<result property="phone" column="phone" jdbcType="VARCHAR" />
+		<result property="email" column="email" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+		<collection property="personTypes" ofType="com.aspire.ums.cmdb.maintenance.payload.ConfigDict">
+			<result column="id" property="id"/>
+			<result column="dict_code" property="name"/>
+			<result column="dict_note" property="value"/>
+			<result column="col_name" property="type"/>
+			<result column="up_dict" property="pid"/>
+			<result column="pname" property="pname"/>
+			<result column="description" property="description"/>
+		</collection>
+	</resultMap>
+	<sql id="baseDict">
+		select t.* from t_cfg_dict t
+							inner join cmdb_dict d on t.id = d.id
+		where d.is_delete = '0' and t.is_delete='0'
+	</sql>
+
+
+	<sql id="where_sql">
+		<if test="name != null and name != ''">
+			and name LIKE concat('%', #{name}, '%')
+		</if>
+		<if test="phone != null and phone != ''">
+			and phone LIKE concat('%', #{phone}, '%')
+		</if>
+		<if test="email != null and email != ''">
+			and email LIKE concat('%', #{email}, '%')
+		</if>
+	</sql>
+
+	<select id="queryConcat"  resultMap="concat">
+		SELECT d.concat_id id, d.produceId,d.name, d.phone,d.email,d.remark,d.id dict_id,d.dict_code,d.col_name,d.dict_note FROM (
+		SELECT a.concat_id, b.produceId,b.name, b.phone,b.email,b.remark,c.id,c.dict_code,c.col_name,c.dict_note,b.create_time,c.create_date
+		FROM `cmdb_mainten_relation` a
+		LEFT JOIN
+		`cmdb_mainten_produce_concat` b
+		ON a.concat_id=b.id
+		LEFT JOIN
+		(SELECT id,dict_code,col_name,dict_note,create_date FROM (<include refid="baseDict"/>) t WHERE col_name='mainten_person_type') c
+		ON a.type_id=c.id
+		) d where d.produceId=#{produceId}
+		<if test="personType != null and personType != ''">
+			and d.dict_code=#{personType}
+		</if>
+		<if test="name != null and name != ''">
+			and	d.name=#{name}
+		</if>
+		<if test="phone != null and phone != ''">
+			and	d.phone=#{phone}
+		</if>
+		<if test="typeId != null and typeId != ''">
+			and d.id=#{typeId}
+		</if>
+		GROUP BY d.produceId,d.name,d.phone,d.id
+		order by d.create_time desc, d.id
+	</select>
+
+	<select id="selectConcat" resultType="java.lang.Integer">
+		SELECT count(1) FROM (
+		SELECT a.concat_id, b.produceId,b.name, b.phone,b.email,b.remark,c.id dict_id,c.dict_code,c.col_name,c.dict_note FROM `cmdb_mainten_relation` a
+		LEFT JOIN
+		`cmdb_mainten_produce_concat` b
+		ON a.concat_id=b.id
+		LEFT JOIN
+		(SELECT id,dict_code,col_name,dict_note FROM  (<include refid="baseDict"/>) t WHERE col_name='mainten_person_type') c
+		ON a.type_id=c.id
+		) d where d.produceId=#{produceId}
+		          and d.name=#{name}
+		          and d.phone=#{phone}
+			and d.id=#{typeId}
+		GROUP BY d.produceId,d.name,d.phone,d.id
+	</select>
+
+    <!-- 新增联系人 -->
+	<insert id="addBatch">
+		insert into cmdb_mainten_produce_concat (id,produceId,name,type,phone,email,remark,create_time)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.id},
+			 #{produceId},
+			#{item.name},
+			#{item.phone},
+			#{item.email},
+			#{item.remark},
+			#{item.createTime})
+		</foreach>
+	</insert>
+
+	<insert id="add">
+		insert into cmdb_mainten_produce_concat (id,produceId,name,phone,email,remark,create_time)
+		values
+			(#{id},
+			 #{produceId},
+			#{name},
+			#{phone},
+			#{email},
+			#{remark},
+			 #{createTime})
+	</insert>
+
+	<update id="update">
+		update cmdb_mainten_produce_concat
+		<set>
+		  	name = #{name},
+			phone = #{phone},
+			email = #{email},
+			remark = #{remark}
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delByProduceId">
+        delete from cmdb_mainten_produce_concat
+        where produceId = #{produceId}
+    </delete>
+
+
+	<delete id="batchDelByProduceId">
+		delete from cmdb_mainten_produce_concat
+		where produceId in
+		      <foreach collection="list" item="item" open="(" separator="," close=")">
+				  #{item}
+			  </foreach>
+
+	</delete>
+	<delete id="delConcatById">
+		delete from cmdb_mainten_produce_concat
+		where id = #{id}
+	</delete>
+
+	<insert id="insertRelationByBatch" parameterType="com.aspire.ums.cmdb.maintenance.payload.MaintenProConcatRelation">
+		insert into cmdb_mainten_relation (id,concat_id,type_id)
+		values
+		       <foreach collection="list" item="item" separator=",">
+				   ( #{item.id},
+				   #{item.concatId},
+				   #{item.typeId})
+			   </foreach>
+
+	</insert>
+
+
+	<delete id="delRelByConcatId">
+		delete from cmdb_mainten_relation
+		where concat_id = #{concatId}
+	</delete>
+
+	<delete id="batchDelRelByProduceId">
+		delete from cmdb_mainten_relation
+		where concat_id in
+			  (select id from cmdb_mainten_produce_concat
+			    where produceId in
+			          <foreach collection="list" item="item" separator="," open="(" close=")">
+						  #{item}
+					  </foreach>
+			          )
+	</delete>
+
+    <select id="queryServiceByProduceId" parameterType="java.lang.String" resultMap="concat">
+        SELECT d.concat_id id, d.produceId,d.name, d.phone,d.email,d.remark,d.id dict_id,d.dict_code,d.col_name,d.dict_note FROM (
+		SELECT a.concat_id, b.produceId,b.name, b.phone,b.email,b.remark,c.id,c.dict_code,c.col_name,c.dict_note FROM `cmdb_mainten_relation` a
+		LEFT JOIN
+		`cmdb_mainten_produce_concat` b
+		ON a.concat_id=b.id
+		LEFT JOIN
+		(SELECT id,dict_code,col_name,dict_note FROM  (<include refid="baseDict"/>) t WHERE col_name='mainten_person_type') c
+		ON a.type_id=c.id
+		) d where d.produceId=#{produceId}
+		and d.dict_code= '服务联系人'
+    </select>
+
+	<select id="queryContractByProduceId" parameterType="java.lang.String" resultMap="concat">
+        SELECT d.concat_id id, d.produceId,d.name, d.phone,d.email,d.remark,d.id dict_id,d.dict_code,d.col_name,d.dict_note FROM (
+		SELECT a.concat_id, b.produceId,b.name, b.phone,b.email,b.remark,c.id,c.dict_code,c.col_name,c.dict_note FROM `cmdb_mainten_relation` a
+		LEFT JOIN
+		`cmdb_mainten_produce_concat` b
+		ON a.concat_id=b.id
+		LEFT JOIN
+		(SELECT id,dict_code,col_name,dict_note FROM  (<include refid="baseDict"/>) t WHERE col_name='mainten_person_type') c
+		ON a.type_id=c.id
+		) d where d.produceId=#{produceId}
+		and d.dict_code= '合同联系人'
+    </select>
+</mapper>

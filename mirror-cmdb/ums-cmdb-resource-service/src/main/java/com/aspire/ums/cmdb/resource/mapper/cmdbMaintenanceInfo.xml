@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.CmdbMaintenanceInfoMapper">
+ 
+ <resultMap type="com.aspire.ums.cmdb.resource.entity.CmdbMaintenanceInfo" id="MaintenanceInfoMap">
+        <id property="id" column="ID" />
+         <result property="mode" column="MAINTENANCE_MODEL" />
+         <result property="vender" column="MAINTENANCE_VENDER" />
+         <result property="contact" column="MAINTENANCE_CONTACT" />
+         <result property="tel" column="MAINTENANCE_TEL" />
+         <result property="mail" column="MAINTENANCE_MAIL" />
+ </resultMap>
+  
+ 
+ <select id="getMaintenanceInfo" resultType="com.aspire.ums.cmdb.resource.entity.CmdbMaintenanceInfo" resultMap="MaintenanceInfoMap"  parameterType="java.lang.String">
+      select * from cmdb_device_maintenance
+     <!--  <where>
+      	    <if test="null != pId and '' != pId">
+	               id=#{pId}
+	        </if>
+	        
+ 	        <if test="null == pId or '' == pId">
+	               id is null
+	        </if>
+       </where> -->
+ </select>
+ 
+</mapper>

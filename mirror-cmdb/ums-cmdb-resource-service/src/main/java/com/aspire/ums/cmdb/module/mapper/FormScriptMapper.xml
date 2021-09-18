@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.FormScriptMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.FormScript" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="formId" property="formid" jdbcType="VARCHAR" />
+    <result column="tag" property="tag" jdbcType="VARCHAR" />
+    <result column="language" property="language" jdbcType="VARCHAR" />
+    <result column="script" property="script" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.aspire.ums.cmdb.module.entity.FormScript" extends="BaseResultMap" >
+    <result column="script" property="script" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, formId, tag, language,script
+  </sql>
+  <sql id="Blob_Column_List" >
+    script
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cmdb_form_script
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  	<select id="selectScriptByTag" resultMap="BaseResultMap" parameterType="java.lang.String">
+  		select <include refid="Base_Column_List" /> from 
+  		cmdb_form_script where tag = #{tag,jdbcType=VARCHAR}
+  	</select>
+  <select id="selectScriptByformId" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select <include refid="Base_Column_List" /> from 
+  		cmdb_form_script where formId = #{fromId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_form_script
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByFormId" parameterType="java.lang.String" >
+    delete from cmdb_form_script
+    where formId = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByTagId" parameterType="java.lang.String" >
+    delete from cmdb_form_script
+    where tag = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.FormScript" >
+    insert into cmdb_form_script (id, formId, tag, 
+      language, script)
+    values (#{id,jdbcType=VARCHAR}, #{formid,jdbcType=VARCHAR}, #{tag,jdbcType=VARCHAR}, 
+      #{language,jdbcType=VARCHAR}, #{script,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.FormScript" >
+    insert into cmdb_form_script
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''">
+        id,
+      </if>
+      <if test="formid != null and formid !=''" >
+        formId,
+      </if>
+      <if test="tag != null and tag !=''" >
+        tag,
+      </if>
+      <if test="language != null" >
+        language,
+      </if>
+      <if test="script != null" >
+        script,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null  and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="formid != null  and formid !=''" >
+        #{formid,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null and tag !=''" >
+        #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="language != null" >
+        #{language,jdbcType=VARCHAR},
+      </if>
+      <if test="script != null" >
+        #{script,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.FormScript" >
+    update cmdb_form_script
+    <set >
+      <if test="formid != null" >
+        formId = #{formid,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null" >
+        tag = #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="language != null" >
+        language = #{language,jdbcType=VARCHAR},
+      </if>
+      <if test="script != null" >
+        script = #{script,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.aspire.ums.cmdb.module.entity.FormScript" >
+    update cmdb_form_script
+    set formId = #{formid,jdbcType=VARCHAR},
+      tag = #{tag,jdbcType=VARCHAR},
+      language = #{language,jdbcType=VARCHAR},
+      script = #{script,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.FormScript" >
+    update cmdb_form_script
+    set formId = #{formid,jdbcType=VARCHAR},
+      tag = #{tag,jdbcType=VARCHAR},
+      language = #{language,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

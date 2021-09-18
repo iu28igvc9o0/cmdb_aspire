@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.openstack.mapper.CmdbOpenstackAllocationPoolMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="subnet_id" property="subnetId" jdbcType="VARCHAR" />
+        <result column="start" property="start" jdbcType="VARCHAR" />
+        <result column="end" property="end" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `subnet_id`,
+        `start`,
+        `end`,
+        `create_time`,
+        `update_time`
+        FROM cmdb_openstack_allocation_pool
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool">
+        SELECT
+        `id`,
+        `subnet_id`,
+        `start`,
+        `end`,
+        `create_time`,
+        `update_time`
+        FROM cmdb_openstack_allocation_pool
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="subnetId != null and subnetId != ''">
+        AND `subnet_id` = #{subnetId}
+        </if>
+        <if test="start != null and start != ''">
+        AND `start` = #{start}
+        </if>
+        <if test="end != null and end != ''">
+        AND `end` = #{end}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool" resultMap="resultMap">
+        SELECT
+        `id`,
+        `subnet_id`,
+        `start`,
+        `end`,
+        `create_time`,
+        `update_time`
+        FROM cmdb_openstack_allocation_pool
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool">
+        INSERT INTO cmdb_openstack_allocation_pool
+        (
+            `id`,
+            `subnet_id`,
+            `start`,
+            `end`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{subnetId, jdbcType=VARCHAR},
+            #{start, jdbcType=VARCHAR},
+            #{end, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_openstack_allocation_pool
+        (
+            `id`,
+            `subnet_id`,
+            `start`,
+            `end`
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.subnetId, jdbcType=VARCHAR},
+            #{item.start, jdbcType=VARCHAR},
+            #{item.end, jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool">
+        UPDATE cmdb_openstack_allocation_pool SET
+        `subnet_id` = #{subnetId},
+        `start` = #{start},
+        `end` = #{end}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool">
+        DELETE FROM cmdb_openstack_allocation_pool
+        WHERE
+         `id` = #{id}
+    </delete>
+    
+    <!-- 删除记录 -->
+    <delete id="deleteBySubnetId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAllocationPool">
+        DELETE FROM cmdb_openstack_allocation_pool
+        WHERE
+         `subnet_id` = #{subnetId}
+    </delete>
+    
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.inspectionDaily.AlertInspectionDao">
+
+    <select id="getAlertDataByDeviceType" parameterType="java.lang.String" resultType="map">
+        SELECT device_type,COUNT(1) sCount
+        FROM (
+            SELECT device_type,device_ip
+            FROM (
+                SELECT device_type,device_ip FROM alert_alerts
+                WHERE device_ip IS NOT NULL
+                AND device_type IN ('虚拟机','X86服务器','宿主机')
+                <if test="dateTime != null and dateTime != ''" >
+                    AND DATE_FORMAT(cur_moni_time,'%Y-%m-%d') = #{dateTime}
+                </if>
+                GROUP BY device_type,device_ip
+            ) aah
+            GROUP BY device_type,device_ip
+        )temp
+        GROUP BY device_type
+    </select>
+
+    <select id="getAlertDataByDeviceClass" parameterType="java.lang.String" resultType="map">
+        SELECT device_class,COUNT(1) sCount
+        FROM (
+            SELECT device_class,device_ip
+            FROM (
+                SELECT device_class,device_ip FROM alert_alerts
+                WHERE device_ip IS NOT NULL
+                <if test="deviceClass != null and deviceClass != ''" >
+                    AND device_class = #{deviceClass}
+                </if>
+                <if test="dateTime != null and dateTime != ''" >
+                    AND DATE_FORMAT(cur_moni_time,'%Y-%m-%d') = #{dateTime}
+                </if>
+                GROUP BY device_class,device_ip
+            ) aah
+            GROUP BY device_class,device_ip
+        )temp
+        GROUP BY device_class
+    </select>
+
+    <insert id="insertDeviceInspection" parameterType="map">
+        INSERT INTO inspection_day_device
+        (`device_sum`, `normal_sum`, `normal_rate`, `vm_sum`, `vm_rate`, `phy_sum`, `phy_rate`, `host_sum`, `host_rate`, `exception_rate`, `mon`,`net_sum`, `net_rate`)
+        VALUES
+        (#{deviceSum},#{normalSum},#{normalRate},#{vmSum},#{vmRate},#{phySum},#{phyRate},#{hostSum},#{hostRate},#{exceptionRate},#{mon},#{netSum},#{netRate})
+    </insert>
+
+    <delete id="deleteDeviceInspection" parameterType="java.lang.String">
+        DELETE FROM inspection_day_device WHERE mon = #{dateTime}
+    </delete>
+
+    <select id="getBizSystemData" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT index_name bizSystem FROM `alert_schedule_index`
+        WHERE index_type = 'bizsystem' AND index_value = #{indexType}
+    </select>
+
+    <insert id="insertBizSystemInspection" parameterType="map">
+        INSERT INTO inspection_day_bizsystem
+        (`bizsystem_count`, `normal_count`, `normal_login_count`, `normal_visit_count`, `normal_rate`, `exception_count`, `exception_login_count`, `exception_visit_count`, `exception_rate`,`mon`)
+        VALUES
+        (#{bizsystemCount},#{normalCount},#{normalLoginCount},#{normalVisitCount},#{normalRate},#{exceptionCount},#{exceptionLoginCount},#{exceptionVisitCount},#{exceptionRate},#{mon})
+    </insert>
+
+    <select id="getAlertDataByBizSystem" resultType="java.lang.Integer">
+        SELECT COUNT(1) bizSystemCount
+            FROM (
+                SELECT biz_sys
+                FROM (
+                    SELECT biz_sys,COUNT(1) bizSystemCount FROM alert_alerts
+                    WHERE DATE_FORMAT(cur_moni_time,'%Y-%m-%d') = #{dateTime}
+                        AND FIND_IN_SET(biz_sys,#{bizSystemList})
+                        AND  moni_index LIKE CONCAT(CONCAT('%',#{indexType}),'%')
+                    GROUP BY biz_sys
+                ) aah
+                GROUP BY biz_sys
+            )temp
+    </select>
+    <delete id="deleteBizSystemInspection" parameterType="java.lang.String">
+        DELETE FROM inspection_day_bizsystem WHERE mon = #{dateTime}
+    </delete>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.ConfigLogMapper" >
+   
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.ConfigLog" >
+       INSERT INTO 
+       		cmdb_config_log
+       		(id, `name`, circleName, circleId, `action`, `owner`, ownerName, `desc`, moduleName, instanceId,  insertTime ) 
+       	VALUES
+       		(#{id}, #{name}, #{circleName}, #{circleId}, #{action}, #{owner},  #{ownerName},  #{desc}, #{moduleName}, #{instanceId},  NOW())
+    </insert>
+    
+    	  
+      
+    <select id="getRelationInfoList" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+          SELECT aa.*, cr.name AS relationName, cm1.name AS sourceModuleName, cm1.IconUrl AS sourceIconUrl, cm2.name AS targetModuleName, cm2.IconUrl AS targetIconUrl
+
+              FROM 
+              (
+              SELECT cmr.*,  ci2.moduleId  sourceModuleId, ci2.name  sourceInstanceName , ci1.moduleId targetModuleId, ci1.name targetInstanceName FROM cmdb_instance_relation_detail  cmr, cmdb_instance ci1, cmdb_instance ci2  WHERE 1=1 and ci1.isDelete = 0 and ci2.isDelete = 0  
+<if test="sourceInstanceId!=null and sourceInstanceId!=''"> 
+              AND  cmr.targerInstanceId = #{sourceInstanceId}  AND ci1.id =  cmr.targerInstanceId 
+              AND  ci2.id =  cmr.sourceInstanceId 
+</if>  
+  
+               ) aa, cmdb_relation cr, cmdb_module cm1, cmdb_module cm2 ,cmdb_module_relation cmr  WHERE aa.moduleRelationId = cmr.id AND  cmr.relationId = cr.id AND aa.sourceModuleId = cm1.id AND aa.targetModuleId = cm2.id  and cm1.isDelete = 0 and cm2.isDelete = 0  and cm1.disabled='false' and cm2.disabled='false'
+<if test="moduleRelationId!=null and moduleRelationId!=''"> 
+              AND  aa.id  =  #{moduleRelationId}
+</if>                 
+
+               UNION ALL
+              SELECT aa.*, cr.name AS relationName, cm1.name AS sourceModuleName, cm1.IconUrl AS sourceIconUrl, cm2.name AS targetModuleName, cm2.IconUrl AS targetIconUrl
+
+              FROM 
+              (
+              SELECT cmr.* , ci1.moduleId sourceModuleId, ci1.name sourceInstanceName, ci2.moduleId   targetModuleId, ci2.name  targetInstanceName FROM cmdb_instance_relation_detail cmr , cmdb_instance ci1, cmdb_instance ci2  WHERE 1=1 and ci1.isDelete = 0 and ci2.isDelete = 0   
+<if test="sourceInstanceId!=null and sourceInstanceId!=''">           
+              AND  cmr.sourceInstanceId = #{sourceInstanceId}  AND ci1.id =  cmr.sourceInstanceId
+              AND  ci2.id =  cmr.targerInstanceId 
+</if>           
+  
+               ) aa, cmdb_relation cr, cmdb_module cm1, cmdb_module cm2 ,cmdb_module_relation cmr  WHERE aa.moduleRelationId = cmr.id AND  cmr.relationId = cr.id AND aa.sourceModuleId = cm1.id AND aa.targetModuleId = cm2.id  and cm1.isDelete = 0 and cm2.isDelete = 0  and cm1.disabled='false' and cm2.disabled='false'
+<if test="moduleRelationId!=null and moduleRelationId!=''"> 
+              AND  aa.id  =  #{moduleRelationId}
+</if>   
+           
+    </select>
+  
+</mapper>

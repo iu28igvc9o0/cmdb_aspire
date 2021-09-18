@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.migu.tsg</groupId>
+        <artifactId>msp-composite</artifactId>
+        <version>2.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>composite-service</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <start-class>com.migu.tsg.microservice.atomicservice.composite.CompositeServiceApplication</start-class>
+        <docker.registry.name>192.168.25.129:6000/</docker.registry.name>
+        <docker.repository.name>${docker.registry.name}tsg/springcloudservice/${project.artifactId}
+        </docker.repository.name>
+        <docker.port>28701</docker.port>
+        <kafka.clients.version>0.11.0.0</kafka.clients.version>
+        <kafka.version>0.8.2.0</kafka.version>
+        <jest.version>5.3.2</jest.version>
+        <velocity.version>1.7</velocity.version>
+        <zookeeper.version>3.3.0</zookeeper.version>
+        <javax.mail.version>1.4.7</javax.mail.version>
+        <httpcore.version>4.4.5</httpcore.version>
+        <commons.io.version>2.5</commons.io.version>
+        <axis.version>1.4</axis.version>
+    </properties>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <imageName>${project.artifactId}</imageName>
+                    <baseImage>java:8-jre</baseImage>
+                    <entryPoint>["java", "-jar","/opt/${project.build.finalName}.jar"]</entryPoint>
+                    <resources>
+                        <resource>
+                            <targetPath>/opt</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>*.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mxgraph</groupId>
+            <artifactId>jgraphx</artifactId>
+            <version>3.7.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+        </dependency>
+
+        <!--logback日志-->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>5.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>1.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <!-- websocket -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!--mapper -->
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-spring-boot-starter</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-client</artifactId>
+        </dependency>
+        <!-- spring thymeleaf模板 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <!-- 单元测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-common</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.sshd</groupId>
+			<artifactId>sshd-core</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-scp -->
+		<dependency>
+		    <groupId>org.apache.sshd</groupId>
+		    <artifactId>sshd-scp</artifactId>
+		    <version>2.2.0</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-scp -->
+		<dependency>
+		    <groupId>org.apache.sshd</groupId>
+		    <artifactId>sshd-sftp</artifactId>
+		    <version>2.2.0</version>
+		</dependency>	
+        <!-- 添加依赖yaml -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>composite-basic</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>composite-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>composite-alert-service</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>composite-alert-app</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+        </dependency>
+        <!-- created by zry used in storage
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>network-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>appstore-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>config-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>res-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>log-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>monitor-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>alarm-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>notice-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>rbac-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>region-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>ci-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>task-api</artifactId>
+        </dependency> -->
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>theme-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>template-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>inspection-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>rbac-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>elasticsearch-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- x
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>cd-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>image-api</artifactId>
+        </dependency>
+
+
+
+
+        <dependency>
+            <groupId>com.migu.tsg</groupId>
+            <artifactId>zuul-config-api</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.0.25</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>oracle-ojdbc</artifactId>
+            <version>7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <!-- google json插件 -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <!-- 分页插件 -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>4.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.70</version>
+        </dependency>
+        <!-- kafka -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.clients.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.9.2</artifactId>
+            <version>${kafka.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.zookeeper</groupId>
+                    <artifactId>zookeeper</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- searchbox -->
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest</artifactId>
+            <version>${jest.version}</version>
+        </dependency>
+        <!-- velocity -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${velocity.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>${zookeeper.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>scada-api</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.aspire.mirror</groupId>-->
+            <!--<artifactId>common-api</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>${axis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>${axis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>log-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.aspire.mirror</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.3</version>
+        </dependency>
+
+        <!-- fusionauth-jwt -->
+        <dependency>
+            <groupId>io.fusionauth</groupId>
+            <artifactId>fusionauth-jwt</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.13.1</version>
+        </dependency>
+    </dependencies>
+</project>

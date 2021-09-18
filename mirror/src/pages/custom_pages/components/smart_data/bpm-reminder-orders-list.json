@@ -1,0 +1,289 @@
+{
+    "list": [
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "bpm_reminder_orders",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": true,
+            "indexFixed": false,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": true,
+            "multipleSelectionFixed": false,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [
+                "id"
+            ],
+            "show-operation": false,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [],
+            "list": [
+                {
+                    "label": "工单号",
+                    "columnName": "id",
+                    "type": "link",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "告警级别",
+                    "columnName": "alertLevel",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "设备IP",
+                    "columnName": "sourceIP",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "资源池",
+                    "columnName": "zyc",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "告警分类",
+                    "columnName": "sbfl",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "120",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "告警时间",
+                    "columnName": "starttime",
+                    "type": "text",
+                    "sort": true,
+                    "fixed": false,
+                    "width": "140",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": true,
+                    "convertProps": {
+                        "type": "select",
+                        "optionType": "0",
+                        "options": [
+                            {
+                                "label": "中危险",
+                                "value": "2"
+                            },
+                            {
+                                "label": "低危险",
+                                "value": "3"
+                            },
+                            {
+                                "label": "信息",
+                                "value": "4"
+                            },
+                            {
+                                "label": "未知",
+                                "value": "99"
+                            },
+                            {
+                                "label": "高危险",
+                                "value": "1"
+                            }
+                        ],
+                        "apiType": "post+json",
+                        "localProxy": "",
+                        "statusKey": "status",
+                        "statusValue": "200",
+                        "responseDataKey": "data",
+                        "option-value": "value",
+                        "option-label": "label",
+                        "separator": ","
+                    },
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "告警内容",
+                    "columnName": "gjms",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "100",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "审批意见",
+                    "columnName": "opinion",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前处理人",
+                    "columnName": "qualfiedNames",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "100",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前环节",
+                    "columnName": "taskName",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "100",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": false
+                }
+            ],
+            "operation": [],
+            "toolList": [],
+            "operation-width": "200",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    50,
+                    10,
+                    20,
+                    100,
+                    200
+                ],
+                "currentPage": 1,
+                "pageSize": 50,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/desk/remind/list"
+            },
+            "hidden": false,
+            "fixed-pagination": false,
+            "show-operation-status": []
+        }
+    ],
+    "model": {},
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "project": "webbas",
+        "labelWidth": 80,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "exportName": "bpm_reminder_orders"
+    }
+}

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.indexadapt.adapt.mirrorbizmonitordb.dao.MirrorBizMonitorIndexDao">
+
+    <resultMap id="ItemsResultMap" type="com.aspire.mirror.indexadapt.adapt.mirrorbizmonitordb.model.Items">
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="templateId" column="template_id" jdbcType="VARCHAR"/>
+        <result property="key" column="key" jdbcType="VARCHAR"/>
+        <result property="delay" column="delay" jdbcType="INTEGER"/>
+        <result property="history" column="history" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+        <result property="units" column="units" jdbcType="VARCHAR"/>
+        <result property="error" column="error" jdbcType="VARCHAR"/>
+        <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
+        <result property="sysType" column="sys_type" jdbcType="VARCHAR"/>
+        <result property="calcType" column="calc_type" jdbcType="VARCHAR"/>
+        <result property="bizIndex" column="biz_index" jdbcType="VARCHAR"/>
+        <result property="bizCalcObj" column="biz_calc_obj" jdbcType="VARCHAR"/>
+        <result property="bizCalcExp" column="biz_calc_exp" jdbcType="VARCHAR"/>
+        <result property="bizThemeId" column="biz_theme_id" jdbcType="VARCHAR"/>
+        <result property="bizIsZero" column="biz_is_zero" jdbcType="VARCHAR"/>
+        <!--<result property="bizCode" column="biz_code" jdbcType="VARCHAR"/>-->
+        <result property="bizGroup" column="biz_group" jdbcType="VARCHAR"/>
+        <result property="bizThemeExp" column="biz_theme_exp" jdbcType="VARCHAR"/>
+        <result property="moniType" column="moni_type" jdbcType="VARCHAR"/>
+        <result property="groupFlag" column="group_flag" jdbcType="VARCHAR"/>
+        <collection property="objectIds" ofType="java.lang.String" javaType="list">
+            <result column="object_id"/>
+        </collection>
+        <collection property="dimList" ofType="com.aspire.mirror.indexadapt.adapt.mirrorbizmonitordb.model.BizThemeDim" javaType="list">
+            <result column="dim_code" property="dimCode"/>
+            <result column="dim_name" property="dimName"/>
+        </collection>
+    </resultMap>
+
+	<!-- 获取待扫描(status=0)的监控项, 且 zbx_json 不为空, jkzb_code 不为空 -->
+  	<select id="listActiveBizTriggers" resultMap="ItemsResultMap" >
+    	SELECT monitor_items.item_id,
+        monitor_items.name,
+        monitor_items.type,
+        monitor_items.template_id,
+        monitor_items.key,
+        monitor_items.delay,
+        monitor_items.history,
+        monitor_items.status,
+        monitor_items.value_type,
+        monitor_items.units,
+        monitor_items.error,
+        monitor_items.data_type,
+        monitor_items.sys_type,
+        monitor_items.calc_type,
+        monitor_items.biz_index,
+        monitor_items.biz_calc_obj,
+        monitor_items.biz_calc_exp,
+        monitor_items.biz_theme_id,
+        monitor_items.biz_is_zero,
+        monitor_items.biz_group,
+        monitor_items.biz_theme_exp,
+        monitor_items.group_flag,
+        monitor_template_object.object_id,
+        monitor_biz_theme_dim.dim_code,
+        monitor_biz_theme_dim.dim_name,
+        (select mon_type from monitor_template where template_id = monitor_items.template_id) moni_type
+--         (select object_id from monitor_template_object where template_id = monitor_items.template_id) object_ids
+          FROM monitor_items monitor_items
+          left join monitor_template_object monitor_template_object on monitor_items.template_id = monitor_template_object.template_id
+          left join monitor_biz_theme_dim monitor_biz_theme_dim on monitor_biz_theme_dim.theme_id = monitor_items.biz_theme_id
+         WHERE monitor_items.biz_theme_id is not null
+           AND monitor_items.biz_calc_obj is not null
+           AND monitor_items.calc_type <![CDATA[ <> ]]> '3'
+           AND monitor_biz_theme_dim.match_flag = '1'
+    </select>
+
+    <!-- 获取待扫描(status=0)的监控项, 且 zbx_json 不为空, jkzb_code 不为空 -->
+    <select id="selectByPrimaryKey" resultMap="ItemsResultMap" parameterType="java.lang.String">
+    	SELECT monitor_items.item_id,
+        monitor_items.name,
+        monitor_items.type,
+        monitor_items.template_id,
+        monitor_items.key,
+        monitor_items.delay,
+        monitor_items.history,
+        monitor_items.status,
+        monitor_items.value_type,
+        monitor_items.units,
+        monitor_items.error,
+        monitor_items.data_type,
+        monitor_items.sys_type,
+        monitor_items.calc_type,
+        monitor_items.biz_index,
+        monitor_items.biz_calc_obj,
+        monitor_items.biz_calc_exp,
+        monitor_items.biz_theme_id,
+        monitor_items.biz_is_zero,
+        monitor_items.biz_group,
+        monitor_items.biz_theme_exp,
+        monitor_items.group_flag,
+        monitor_template_object.object_id,
+        (select mon_type from monitor_template where template_id = monitor_items.template_id) moni_type
+--         (select object_id from monitor_template_object where template_id = monitor_items.template_id) object_ids
+          FROM monitor_items monitor_items
+          left join monitor_template_object monitor_template_object on monitor_items.template_id = monitor_template_object.template_id
+         WHERE monitor_items.biz_theme_id is not null
+           AND monitor_items.biz_calc_obj is not null
+           AND monitor_items.calc_type <![CDATA[ <> ]]> '3'
+    </select>
+
+</mapper>

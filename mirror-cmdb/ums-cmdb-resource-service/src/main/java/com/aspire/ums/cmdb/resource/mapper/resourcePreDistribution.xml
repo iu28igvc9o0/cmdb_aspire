@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ResourcePreDistributionMapper">
+    <resultMap type="com.aspire.ums.cmdb.resource.entity.ResourcePreDistribution" id="ResourcePreDistribution">
+        <result property="id" column="ID" />
+        <result property="company_name" column="COMPANY_NAME" />
+        <result property="department" column="DEPARTMENT" />
+        <result property="resource_pool" column="RESOURCE_POOL" />
+        <result property="business_name" column="BUSINESS_NAME" />
+        <result property="vm_kernel_num" column="VM_KERNEL_NUM" />
+        <result property="vm_momery" column="VM_MOMERY" />
+        <result property="vm_system_disk" column="VM_SYSTEM_DISK" />
+        <result property="pm_analytical_server_b1" column="PM_ANALYTICAL_SERVER_B1" />
+        <result property="pm_distributed_server_b2" column="PM_DISTRIBUTED_SERVER_B2" />
+        <result property="pm_distributed_server_b3" column="PM_DISTRIBUTED_SERVER_B3" />
+        <result property="pm_node_server_b4" column="PM_NODE_SERVER_B4" />
+        <result property="pm_cache_server_s1" column="PM_CACHE_SERVER_S1" />
+        <result property="pm_storage_server_s3" column="PM_STORAGE_SERVER_S3" />
+        <result property="pm_vedio_server_s4" column="PM_VEDIO_SERVER_S4" />
+        <result property="pm_virtual_server_c1" column="PM_VIRTUAL_SERVER_C1" />
+        <result property="pm_high_app_server_c3" column="PM_HIGH_APP_SERVER_C3" />
+        <result property="pm_high_app_server_c4" column="PM_HIGH_APP_SERVER_C4" />
+        <result property="pm_other_server" column="PM_OTHER_SERVER" />
+        <result property="storage_distributd_file_capacity" column="STORAGE_DISTRIBUTD_FILE_CAPACITY" />
+        <result property="storage_distributd_file_performance" column="STORAGE_DISTRIBUTD_FILE_PERFORMANCE" />
+        <result property="storage_distributd_block_capacity" column="STORAGE_DISTRIBUTD_BLOCK_CAPACITY" />
+        <result property="storage_distributd_block_performance" column="STORAGE_DISTRIBUTD_BLOCK_PERFORMANCE" />
+        <result property="storage_object_capacity" column="STORAGE_OBJECT_CAPACITY" />
+        <result property="storage_fc_san_capacity" column="STORAGE_FC_SAN_CAPACITY" />
+        <result property="storage_fc_san_raid" column="STORAGE_FC_SAN_RAID" />
+        <result property="storage_back_up" column="STORAGE_BACK_UP" />
+        <result property="storage_nas" column="STORAGE_NAS" />
+        <result property="load_balancer_low" column="LOAD_BALANCER_LOW" />
+        <result property="load_balancer_middle" column="LOAD_BALANCER_MIDDLE" />
+        <result property="load_balancer_high" column="LOAD_BALANCER_HIGH" />
+        <result property="firewall" column="FIREWALL" />
+        <result property="switch_infiniband_gateway" column="SWITCH_INFINIBAND_GATEWAY" />
+        <result property="switch_infiniband_conerge" column="SWITCH_INFINIBAND_CONERGE" />
+        <result property="bandwidth_gbps_cmnet" column="BANDWIDTH_GBPS_CMNET" />
+        <result property="bandwidth_gbps_ip" column="BANDWIDTH_GBPS_IP" />
+        <result property="bandwidth_gbps_special_line" column="BANDWIDTH_GBPS_SPECIAL_LINE" />
+        <result property="other_resource" column="OTHER_RESOURCE" />
+        <result property="create_id" column="CREATE_ID" />
+        <result property="update_id" column="UPDATE_ID" />
+        <result property="update_time" column="UPDATE_TIME" />
+        <result property="status" column="STATUS" />
+        <result property="create_time" column="CREATE_TIME" />
+        <result property="remark" column="REMARK" />
+        <result property="special_line" column="SPECIAL_LINE" />
+    </resultMap>
+
+
+    <insert id="addResourcePreDistribution"   parameterType="map">
+    INSERT INTO resource_pre_distribution
+	(`ID`,`COMPANY_NAME`, `DEPARTMENT`, `RESOURCE_POOL`, `BUSINESS_NAME`, `VM_KERNEL_NUM`, `VM_MOMERY`,`VM_SYSTEM_DISK`,
+	`PM_ANALYTICAL_SERVER_B1`,`PM_DISTRIBUTED_SERVER_B2`,`PM_DISTRIBUTED_SERVER_B3`,`PM_NODE_SERVER_B4`,`PM_CACHE_SERVER_S1`,`PM_STORAGE_SERVER_S3`,`PM_VEDIO_SERVER_S4`,`PM_VIRTUAL_SERVER_C1`,`PM_HIGH_APP_SERVER_C3`,
+	`PM_HIGH_APP_SERVER_C4`,`PM_OTHER_SERVER`,`STORAGE_DISTRIBUTD_FILE_CAPACITY`,`STORAGE_DISTRIBUTD_FILE_PERFORMANCE`,`STORAGE_DISTRIBUTD_BLOCK_CAPACITY`,`STORAGE_DISTRIBUTD_BLOCK_PERFORMANCE`,`STORAGE_OBJECT_CAPACITY`,
+	`STORAGE_FC_SAN_CAPACITY`,`STORAGE_FC_SAN_RAID`,`STORAGE_BACK_UP`,`STORAGE_NAS`,`LOAD_BALANCER_LOW`,`LOAD_BALANCER_MIDDLE`,`LOAD_BALANCER_HIGH`,`FIREWALL`,`SWITCH_INFINIBAND_GATEWAY`,`SWITCH_INFINIBAND_CONERGE`,
+	`BANDWIDTH_GBPS_CMNET`,`BANDWIDTH_GBPS_IP`,`BANDWIDTH_GBPS_SPECIAL_LINE`,`OTHER_RESOURCE`,`UPDATE_TIME`,`CREATE_ID`,`UPDATE_ID`,`STATUS`,`CREATE_TIME`,`REMARK`,`SPECIAL_LINE`)
+	VALUES  (
+	#{id},#{company_name}, #{department},#{resource_pool}, #{business_name}, #{vm_kernel_num}, #{vm_momery},#{vm_system_disk},
+    #{pm_analytical_server_b1},#{pm_distributed_server_b2},#{pm_distributed_server_b3},#{pm_node_server_b4},#{pm_cache_server_s1},#{pm_storage_server_s3},#{pm_vedio_server_s4},#{pm_virtual_server_c1},#{pm_high_app_server_c3},#{pm_high_app_server_c4},
+    #{pm_other_server},#{storage_distributd_file_capacity},#{storage_distributd_file_performance},#{storage_distributd_block_capacity},#{storage_distributd_block_performance},#{storage_object_capacity},#{storage_fc_san_capacity},#{storage_fc_san_raid},
+    #{storage_back_up},#{storage_nas},#{load_balancer_low},#{load_balancer_middle},#{load_balancer_high},#{firewall},#{switch_infiniband_gateway},#{switch_infiniband_conerge},#{bandwidth_gbps_cmnet},#{bandwidth_gbps_ip},
+    #{bandwidth_gbps_special_line},#{other_resource},
+    #{update_time},#{create_id},#{update_id},#{status},#{create_time},#{remark},#{special_line}
+	)
+</insert>
+
+
+
+    <select id="getResourcePreDistributionList" resultType="map" >
+        SELECT * FROM resource_pre_distribution rpc
+        WHERE 1=1
+        <if test="null != resource_pool and '' != resource_pool">
+            and rpc.resource_pool = '${resource_pool}'
+        </if>
+        <if test="null != status and '' != status">
+            and rpc.status = '${status}'
+        </if>
+        <if test="null != primaryDepartment and '' != primaryDepartment">
+            and rdc.primary_department like '%${primaryDepartment}%'
+        </if>
+        <if
+                test="null != secondaryDepartment and '' != secondaryDepartment">
+            and rdc.secondary_department like '%${secondaryDepartment}%'
+        </if>
+        <if test="null != appSystem and '' != appSystem">
+            and rdc.app_system like '%${appSystem}%'
+        </if>
+        ORDER BY rpc.create_time desc
+        limit #{startIndex},#{rows}
+	</select>
+	
+	
+	<select id="getResourcePreDistributionCount" resultType="java.lang.Integer" >
+        SELECT count(1) FROM resource_pre_distribution rpc
+        WHERE 1=1
+        <if test="null != resource_pool and '' != resource_pool">
+            and rpc.resource_pool = '${resource_pool}'
+        </if>
+        <if test="null != primaryDepartment and '' != primaryDepartment">
+            and rdc.primary_department like '%${primaryDepartment}%'
+        </if>
+        <if
+                test="null != secondaryDepartment and '' != secondaryDepartment">
+            and rdc.secondary_department like '%${secondaryDepartment}%'
+        </if>
+        <if test="null != appSystem and '' != appSystem">
+            and rdc.app_system like '%${appSystem}%'
+        </if>
+	</select>
+	
+	<update id="updateStatus" parameterType="java.lang.String" >
+		UPDATE resource_pre_distribution
+         <trim prefix="set" suffixOverrides=",">
+		  <if test="status!=null">STATUS=#{status},</if>
+		  <if test="update_id!=null">UPDATE_ID=#{update_id},</if>
+ 		</trim>
+        WHERE ID = '${id}' AND STATUS = '0'
+	</update>
+	
+    <update id="batchUpdateDeviceAssets" parameterType="java.util.List">
+        update cmdb_device_assets
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="is_assign =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                     when id=#{item.id} then #{item.is_assign}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <insert id="saveResourcePreDistributionExcelData" parameterType="map">
+        INSERT INTO resource_pre_distribution
+        (RESOURCE_POOL,PRIMARY_DEPARTMENT,SECONDARY_DEPARTMENT,APP_SYSTEM,STATUS,VM_MODEL1,VM_MODEL2,VM_MODEL3,VM_MODEL4,VM_MODEL5,VM_MODEL6,VM_MODEL7,
+        VM_MODEL8,PM_LOW_APP_SERVER,PM_ANALYTICAL_SERVER,PM_DISTRIBUTED_SERVER,PM_CACHE_SERVER,PM_HIGH_APP_SERVER,STORAGE_DISTRIBUTD_FILE_CAPACITY,STORAGE_DISTRIBUTD_BLOCK_PERFORMANCE,STORAGE_OBJECT_CAPACITY,STORAGE_FC_SAN_CAPACITY,
+        STORAGE_IP_SAN_CAPACITY,STORAGE_FC_SAN_NAKED,STORAGE_IP_SAN_NAKED,STORAGE_BACK_UP,CMNET_ADDRESS,BANDWIDTH_GBPS_CMNET,IP_ADDRESS,BANDWIDTH_GBPS_IP,DB_MYSQL,DB_MONGODB,DB_POSTGRESQL,DB_MEMORY,DB_OTHER,CACHE_REDIS,CACHE_MEMCACHED,
+        INFO_MIDDLEWARE_ACTIVEMQ,INFO_MIDDLEWARE_KAFKA,INFO_MIDDLEWARE_ROCKETMQ,APP_MIDDLEWARE_APACHE,APP_MIDDLEWARE_JBOOS,APP_MIDDLEWARE_TOMCAT,BALANCER_NGINX,BALANCER_HAPROXY,SERVER_ZOOKEEPER,SERVER_ETCD,SEARCH_MIDDLEWARE_ES,
+        SERVER_DOCKER_REGISTRY,STREAM_JBPM,STREAM_ACTIVITY,IMAGE_OPENJDK,IMAGE_PYTHON,IMAGE_GO,IMAGE_NODEJS,IMAGE_RUBY,IMAGE_NET,CICD_JENKINS,FRAMEWORK_SPRINGCLOUD,FRAMEWORK_OTHER,CREATE_TIME)
+        VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item.resource_pool},#{item.primary_department},#{item.secondary_department},#{item.app_system},
+            #{item.status},#{item.vm_model1},#{item.vm_model2},#{item.vm_model3},#{item.vm_model4},#{item.vm_model5},#{item.vm_model6},#{item.vm_model7},#{item.vm_model8},#{item.pm_low_app_server},#{item.pm_analytical_server},
+            #{item.pm_distributed_server},#{item.pm_cache_server},#{item.pm_high_app_server},#{item.storage_distributd_file_capacity},#{item.storage_distributd_block_performance},#{item.storage_object_capacity},#{item.storage_fc_san_capacity},
+            #{item.storage_ip_san_capacity},#{item.storage_fc_san_naked},#{item.storage_ip_san_naked},#{item.storage_back_up},#{item.cmnet_address},#{item.bandwidth_gbps_cmnet},#{item.ip_address},#{item.bandwidth_gbps_ip},#{item.db_mysql},
+            #{item.db_mongodb},#{item.db_postgresql},#{item.db_memory},#{item.db_other},#{item.cache_redis},#{item.cache_memcached},#{item.info_middleware_activemq},#{item.info_middleware_kafka},#{item.info_middleware_rocketmq},#{item.app_middleware_apache},
+            #{item.app_middleware_jboos},#{item.app_middleware_tomcat},#{item.balancer_nginx},#{item.balancer_haproxy},#{item.server_zookeeper},#{item.server_etcd},#{item.search_middleware_es},#{item.server_docker_registry},#{item.stream_jbpm},
+            #{item.stream_activity},#{item.image_openjdk},#{item.image_python},#{item.image_go},#{item.image_nodejs},#{item.image_ruby},#{item.image_net},#{item.cicd_jenkins},#{item.framework_springcloud},#{item.framework_other},
+            SYSDATE())
+        </foreach>
+
+    </insert>
+
+        </mapper>

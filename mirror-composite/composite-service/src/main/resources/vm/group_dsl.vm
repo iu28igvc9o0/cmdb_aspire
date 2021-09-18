@@ -1,0 +1,34 @@
+{
+	"query": {
+		"bool": {
+			"must": [
+				#foreach($paramMultiple in ${builder.paramsMultiple.keySet()})  
+				{
+					"terms": {
+						"$paramMultiple":[ #foreach($paramMultipleItem in ${builder.paramsMultiple.get($paramMultiple)})
+							#if($velocityCount!=1),#end"$paramMultipleItem"
+						#end
+						]
+					}
+				},
+				#end 
+				 
+				{
+					"range": {
+						"${builder.timeColsName}": {
+							 "lte": ${builder.endTime},
+							 "gte": ${builder.startTime}
+						}
+					}
+				}
+			]		
+		}
+	},
+	"aggs": {
+    "group_by_label": {
+      "terms": {
+        "field": "${builder.groupColsName}"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.IpResource.mapper.CmdbPublicSegmentUpdateMapper">
+
+    <!--批量更新公网网段的数据 create by fanwenhui 20201214-->
+    <update id="batchUpdatePublicSegment">
+        update `${tableName}` set
+        <foreach collection="instanceData.keys" item="item" separator=",">
+            `${item}` = #{instanceData[${item}]}
+        </foreach>
+        <if test="instanceData.keys.size > 0">
+            ,
+        </if>
+        is_delete = 0
+        WHERE
+        public_segment_address = #{address}
+        AND idcType = #{idcType}
+    </update>
+</mapper>

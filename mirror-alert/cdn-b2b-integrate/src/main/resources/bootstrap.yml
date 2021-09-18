@@ -1,0 +1,10 @@
+
+spring:
+  jmx:
+    default-domain: cdn
+  application:
+    name: cdn-service
+  cloud:
+    config:
+      enabled: false
+

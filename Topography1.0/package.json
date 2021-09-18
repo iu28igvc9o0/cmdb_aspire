@@ -1,0 +1,30 @@
+{
+  "name": "aspire-editer",
+  "version": "1.0.0",
+  "description": "一个离线版的GraphEditor，支持保存在浏览器缓存中，和导出xml文件",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aspire-coding/aspire-editor.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aspire-coding/aspire-editor/issues"
+  },
+  "homepage": "https://github.com/aspire-coding/aspire-editor#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "file-saver": "^2.0.2",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-uglify": "^3.0.2"
+  }
+}

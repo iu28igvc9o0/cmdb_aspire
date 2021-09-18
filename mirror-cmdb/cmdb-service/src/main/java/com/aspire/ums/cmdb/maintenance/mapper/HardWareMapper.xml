@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.HardWareMapper">
+	    
+	<resultMap id="hardwareMap" type="com.aspire.ums.cmdb.maintenance.payload.Hardware" >
+	    <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="project_instance_id" property="projectInstanceId" jdbcType="VARCHAR" />
+		<result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+		<result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+		<result column="module_code" property="moduleCode" jdbcType="VARCHAR" />
+		<result column="device_serial_number" property="deviceSerialNumber" jdbcType="VARCHAR" />
+	    <result column="resource_pool" property="resourcePool" jdbcType="VARCHAR" />
+		<result column="department1" property="department1" jdbcType="VARCHAR" />
+		<result column="department2" property="department2" jdbcType="VARCHAR" />
+	    <result column="system_name" property="systemName" jdbcType="VARCHAR" />
+	    <result column="device_classify" property="deviceClassify" jdbcType="VARCHAR" />
+	    <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+		<result column="device_model" property="deviceModel" jdbcType="VARCHAR" />
+		<result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+		<result column="ip" property="ip" jdbcType="VARCHAR" />
+		<result column="assets_number" property="assetsNumber" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="VARCHAR" />
+		<result column="maintenance_type" property="maintenanceType" jdbcType="VARCHAR" />
+		<result column="device_area" property="deviceArea" jdbcType="VARCHAR" />
+		<result column="maintenance_project_type" property="maintenanceProjectType" jdbcType="VARCHAR" />
+		<result column="procure_type" property="procureType" jdbcType="VARCHAR" />
+		<result column="money" property="money" jdbcType="DECIMAL" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="project_no" property="projectNo" jdbcType="VARCHAR" />
+		<result column="service_type" property="serviceType" jdbcType="VARCHAR" />
+		<result column="contract_produce" property="contractProduce" jdbcType="VARCHAR" />
+		<result column="contract_produce_name" property="contractProduceName" jdbcType="VARCHAR" />
+		<result column="contract_produce_phone" property="contractProducePhone" jdbcType="VARCHAR" />
+		<result column="contract_produce_email" property="contractProduceEmail" jdbcType="VARCHAR" />
+		<result column="mainten_produce" property="maintenProduce" jdbcType="VARCHAR" />
+		<result column="mainten_produce_name" property="maintenProduceName" jdbcType="VARCHAR" />
+		<result column="mainten_produce_phone" property="maintenProducePhone" jdbcType="VARCHAR" />
+		<result column="mainten_produce_email" property="maintenProduceEmail" jdbcType="VARCHAR" />
+		<result column="service_start_time" property="serviceStartTime" jdbcType="DATE" />
+		<result column="warranty_date" property="warrantyDate" jdbcType="DATE" />
+		<result column="buy_mainten" property="buyMainten" jdbcType="VARCHAR" />
+		<result column="origin_buy" property="originBuy" jdbcType="VARCHAR" />
+		<result column="origin_buy_explain" property="originBuyExplain" jdbcType="VARCHAR" />
+		<result column="admin" property="admin" jdbcType="VARCHAR" />
+		<result column="pre_tax" property="preTax" jdbcType="DECIMAL" />
+		<result column="tax_rate" property="taxRate" jdbcType="VARCHAR" />
+		<result column="after_tax" property="afterTax" jdbcType="DECIMAL" />
+		<result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
+		<result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+		<result column="pay_method" property="payMethod" jdbcType="VARCHAR" />
+		<result column="discount_amount" property="discountAmount" jdbcType="DECIMAL" />
+		<result column="discount_rate" property="discountRate" jdbcType="VARCHAR" />
+	 </resultMap>
+	 <sql id="baseColumnList">
+			id,project_instance_id,instance_id,module_id,module_code,resource_pool,department1,department2,system_name,device_classify,
+			device_type,device_model,device_name,device_serial_number,ip,assets_number,project_id,service_type,maintenance_type,
+			device_area,maintenance_project_type,procure_type,money,project_no,project_name,
+			mainten_produce,mainten_produce_name,mainten_produce_email,mainten_produce_phone,contract_produce,contract_produce_name,
+		    contract_produce_email,contract_produce_phone,service_start_time,warranty_date,buy_mainten,origin_buy,
+			origin_buy_explain,admin,pre_tax,tax_rate,after_tax,unit_price,total_price,pay_method,discount_amount,discount_rate
+	 </sql>
+       
+     <!-- 动态sql -->
+    <sql id="where_sql"> 
+        <if test="systemName != null and  systemName != '' ">
+    		and system_name = #{systemName}
+    	</if>
+    	<if test="deviceName != null and  deviceName != '' ">
+    		and device_name like  CONCAT('%',#{deviceName},'%')
+    	</if>
+		<if test="warrantyDateAfter != null and warrantyDateAfter != '' and warrantyDateBefore != null and warrantyDateBefore != ''">
+			and warranty_date between '${warrantyDateBefore}' and '${warrantyDateAfter}'
+		</if>	
+		<if test="deviceSerialNumber != null and  deviceSerialNumber != '' ">
+    		and device_serial_number like  CONCAT('%',#{deviceSerialNumber},'%')
+    	</if>
+    	<if test="assetsNumber != null and  assetsNumber != '' ">
+    		and assets_number like  CONCAT('%',#{assetsNumber},'%')
+    	</if>
+    	<if test="resourcePool != null and  resourcePool != '' ">
+    		and resource_pool = #{resourcePool}
+    	</if>
+		<if test="buyMainten != null and  buyMainten != '' ">
+    		and buy_mainten = #{buyMainten}
+    	</if>   	
+    	<if test="originBuy != null and  originBuy != '' ">
+    		and origin_buy = #{originBuy}
+    	</if>
+		<if test="projectName != null and projectName != ''">
+			and project_name = #{projectName}
+		</if>
+		<if test="deviceSn != null and deviceSn != ''">
+			and device_serial_number = #{deviceSn}
+		</if>
+    </sql>
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintenance.payload.Hardware">
+        insert into cmdb_mainten_hardware (id,project_instance_id,buy_mainten,origin_buy,origin_buy_explain,admin,create_time,pre_tax,tax_rate,after_tax,unit_price,total_price,pay_method,discount_amount,discount_rate)
+        values (#{id},#{projectInstanceId},#{buyMainten},#{originBuy},#{originBuyExplain},#{admin},now(),#{preTax},#{taxRate},#{afterTax},#{unitPrice},#{totalPrice},#{payMethod},#{discountAmount},#{discountRate})
+    </insert>
+
+	<insert id="batchInsert">
+		insert into cmdb_mainten_hardware (id,project_instance_id,buy_mainten,origin_buy,origin_buy_explain,admin,create_time,pre_tax,tax_rate,after_tax,unit_price,total_price,pay_method,discount_amount,discount_rate)
+        values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.id, jdbcType=VARCHAR},
+			#{item.projectInstanceId, jdbcType=VARCHAR},
+			#{item.buyMainten, jdbcType=VARCHAR},
+			#{item.originBuy, jdbcType=VARCHAR},
+			#{item.originBuyExplain, jdbcType=VARCHAR},
+			#{item.admin, jdbcType=VARCHAR},
+			now(),
+			#{item.preTax, jdbcType=VARCHAR},
+			#{item.taxRate, jdbcType=VARCHAR},
+			#{item.afterTax, jdbcType=VARCHAR},
+			#{item.unitPrice, jdbcType=VARCHAR},
+			#{item.totalPrice, jdbcType=VARCHAR},
+			#{item.payMethod, jdbcType=VARCHAR},
+			#{item.discountAmount, jdbcType=VARCHAR},
+			#{item.discountRate, jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+    <update id="updateHardware" parameterType="com.aspire.ums.cmdb.maintenance.payload.Hardware">
+	    UPDATE cmdb_mainten_hardware
+	     <set>
+				buy_mainten=#{buyMainten},
+				origin_buy=#{originBuy},
+				origin_buy_explain=#{originBuyExplain},
+				admin=#{admin},
+				pre_tax=#{preTax},
+				tax_rate=#{taxRate},
+				after_tax=#{afterTax},
+				unit_price=#{unitPrice},
+				total_price=#{totalPrice},
+				pay_method=#{payMethod},
+				discount_amount=#{discountAmount},
+				discount_rate=#{discountRate}
+		  </set>
+		  where id = #{id}
+	 </update>
+	   
+	<update id="batchUpdateHardware" parameterType="map">
+	    update cmdb_mainten_hardware
+	     <set>
+				buy_mainten=#{buyMainten},
+				origin_buy=#{originBuy},
+				origin_buy_explain=#{originBuyExplain},
+				admin=#{admin},
+			    pre_tax=#{preTax},
+			 	tax_rate=#{taxRate},
+			    after_tax=#{afterTax},
+			    unit_price=#{unitPrice},
+			    total_price=#{totalPrice},
+			    pay_method=#{payMethod},
+			    discount_amount=#{discountAmount},
+			    discount_rate=#{discountRate}
+		 </set>
+		  where id in
+		  <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+          </foreach>
+	 </update>
+	
+	 <!-- 分页数据个数 -->
+	 <select id="getHardwareCount" resultType="Integer" >
+		select count(*) FROM
+		 (SELECT
+		 h.id,
+		 t.id project_instance_id,
+		 t.instance_id instance_id,
+		 m.id module_id,
+		 m.code module_code,
+		 t.device_sn device_serial_number,
+		 i.idcType resource_pool,
+		 i.department1 department1,
+		 i.department2 department2,
+		 i.bizSystem system_name,
+		 i.device_class device_classify,
+		 i.device_type device_type,
+		 i.device_model device_model,
+		 i.device_name device_name,
+		 i.ip,
+		 i.id assets_number,
+		 p.service_start_time service_start_time,
+		 p.service_end_time warranty_date,
+		 p.id project_id,
+		 p.service_type service_type,
+		 p.project_no project_no,
+		 p.project_name project_name,
+		 p.maintenance_type maintenance_type,
+		 p.device_area device_area,
+		 p.maintenance_project_type maintenance_project_type,
+		 p.procure_type procure_type,
+		 p.money money,
+		 h.buy_mainten,
+		 h.origin_buy,
+		 h.origin_buy_explain,
+		 h.admin,
+		 h.pre_tax,
+		 h.after_tax,
+		 h.unit_price,
+		 h.total_price,
+		 h.pay_method,
+		 h.discount_amount,
+		 h.discount_rate
+		 FROM
+		 cmdb_maintenance_project_instance t
+		 LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+		 LEFT JOIN cmdb_module m ON (i.module_id = m.id and m.is_delete = '0')
+		 LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+		 LEFT JOIN cmdb_mainten_hardware h ON (h.project_instance_id = t.id)
+		 WHERE t.is_delete = '0' ) mainten  where 1=1
+	    <include refid="where_sql" />
+	 </select>
+	
+
+	<!-- 分页数据 -->
+	<select id="getHardwareByPage" resultMap="hardwareMap" >
+	 	select <include refid="baseColumnList" /> FROM
+		(SELECT
+		h.id,
+		t.id project_instance_id,
+		t.instance_id instance_id,
+		m.id module_id,
+		m.code module_code,
+		t.device_sn device_serial_number,
+		i.idcType resource_pool,
+		i.department1 department1,
+		i.department2 department2,
+		i.bizSystem system_name,
+		i.device_class device_classify,
+		i.device_type device_type,
+		i.device_model device_model,
+		i.device_name device_name,
+		i.ip,
+		i.id assets_number,
+		p.service_start_time service_start_time,
+		p.service_end_time warranty_date,
+		p.id project_id,
+		p.service_type service_type,
+		p.maintenance_type maintenance_type,
+		p.device_area device_area,
+		p.maintenance_project_type maintenance_project_type,
+		p.procure_type procure_type,
+		p.money money,
+		p.project_no project_no,
+		p.project_name project_name,
+		p.mainten_produce mainten_produce,
+		p.mainten_produce_name mainten_produce_name,
+		p.mainten_produce_email mainten_produce_email,
+		p.mainten_produce_phone mainten_produce_phone,
+		p.contract_produce contract_produce,
+		p.contract_produce_name contract_produce_name,
+		p.contract_produce_email contract_produce_email,
+		p.contract_produce_phone contract_produce_phone,
+		h.buy_mainten,
+		h.origin_buy,
+		h.origin_buy_explain,
+		h.admin,
+		h.pre_tax,
+		h.tax_rate,
+		h.after_tax,
+		h.unit_price,
+		h.total_price,
+		h.pay_method,
+		h.discount_amount,
+		h.discount_rate
+		FROM
+		cmdb_maintenance_project_instance t
+		LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+		LEFT JOIN cmdb_module m ON (i.module_id = m.id and m.is_delete = '0')
+		LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+		LEFT JOIN cmdb_mainten_hardware h ON (h.project_instance_id = t.id)
+		WHERE t.is_delete = '0'
+		order by   IFNULL(t.instance_id, '') = '', p.service_end_time <![CDATA[ <= ]]> NOW() ,IF(p.service_end_time <![CDATA[ <= ]]> NOW(), 0,p.service_end_time),p.service_end_time DESC,
+		p.project_name,i.idcType IS NULL OR i.idcType = '', i.idcType) mainten
+		where 1=1
+	    <include refid="where_sql" />
+		<if test="pageSize != 0">
+			limit ${(pageNum -1) * pageSize}, ${pageSize}
+		</if>
+	</select>
+
+	<!-- 导出数据 -->
+	<select id="queryExportData" resultType="java.util.HashMap">
+		SELECT
+			h.id,
+			t.id project_instance_id,
+			t.instance_id instance_id,
+			m.id module_id,
+			m.code module_code,
+			t.device_sn device_serial_number,
+			i.idcType resource_pool,
+			i.department1 department1,
+			i.department2 department2,
+			i.bizSystem system_name,
+			i.device_class device_classify,
+			i.device_type device_type,
+			i.device_model device_model,
+			i.device_name device_name,
+			i.ip,
+			i.id assets_number,
+			p.service_start_time service_start_time,
+			p.service_end_time warranty_date,
+			p.id project_id,
+			p.service_type service_type,
+			p.maintenance_type maintenance_type,
+			p.device_area device_area,
+			p.maintenance_project_type maintenance_project_type,
+			p.procure_type procure_type,
+			p.money money,
+			p.project_no project_no,
+			p.project_name project_name,
+			p.mainten_produce mainten_produce,
+			p.mainten_produce_name mainten_produce_name,
+			p.mainten_produce_email mainten_produce_email,
+			p.mainten_produce_phone mainten_produce_phone,
+			p.contract_produce contract_produce,
+			p.contract_produce_name contract_produce_name,
+			p.contract_produce_email contract_produce_email,
+			p.contract_produce_phone contract_produce_phone,
+			h.buy_mainten,
+			h.origin_buy,
+			h.origin_buy_explain,
+			h.admin,
+			h.pre_tax,
+			h.tax_rate,
+			h.after_tax,
+			h.unit_price,
+			h.total_price,
+			h.pay_method,
+			h.discount_amount,
+			h.discount_rate
+		FROM cmdb_maintenance_project_instance t
+		LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+		LEFT JOIN cmdb_module m ON (i.module_id = m.id and m.is_delete = '0')
+		LEFT JOIN cmdb_maintenance_project p ON (p.id = t.project_id)
+		LEFT JOIN cmdb_mainten_hardware h ON (h.project_instance_id = t.id)
+		WHERE t.is_delete = '0'
+		<include refid="where_sql" />
+	</select>
+
+	<select id="queryIsExist" resultType="java.lang.String">
+		select Max(i.id) id from cmdb_maintenance_project_instance i, cmdb_maintenance_project p
+		where i.project_id = p.id and i.is_delete='0' and i.device_sn = #{deviceSerialNumber}
+		and DATE_FORMAT(p.service_end_time, '%Y-%m-%d') = #{warrantyDate}
+	</select>
+
+	<select id="queryIdByProjectInstanceId" resultType="java.lang.String">
+		select id from cmdb_mainten_hardware where project_instance_id = #{projectInstanceId}
+	</select>
+
+    <select id="queryByProjectId"  resultType="java.util.LinkedHashMap">
+		SELECT h.* from cmdb_mainten_hardware h where
+			EXISTS (SELECT 1 from cmdb_maintenance_project_instance mpi
+						where mpi.id = h.project_instance_id
+						and mpi.project_id = #{projectId})
+	</select>
+
+	<select id="queryInfoByNameAndDeviceSn" resultType="java.util.HashMap">
+		select
+			t.id projectInstanceId ,
+			i.idcType resourcePool,
+			i.department1 department1,
+			i.department2 department2,
+			i.bizSystem systemName,
+			i.device_class deviceClassify,
+			i.device_type deviceType,
+			i.device_model deviceModel,
+			i.device_name deviceName,
+			i.ip,
+			i.id assetsNumber,
+			p.service_end_time warrantyDate,
+			p.project_name projectName,
+			t.device_sn deviceSn,
+			p.contract_produce_name produceName,
+			p.contract_produce_phone produceConcat,
+			p.contract_produce_email producePhone,
+			p.pre_tax preTax,
+			p.tax_rate taxRate,
+			p.after_tax afterTax,
+			p.unit_price unitPrice,
+			p.total_price totalPrice,
+			p.pay_method payMethod,
+			p.discount_amount discountAmount,
+			p.discount_rate discountRate
+		from cmdb_maintenance_project_instance t
+		LEFT JOIN cmdb_instance i
+		ON ( t.instance_id = i.id AND i.is_delete = '0')
+		LEFT JOIN cmdb_maintenance_project p
+		ON (p.id = t.project_id AND p.is_delete = '0')
+		where t.is_delete = '0'
+		AND p.project_name = #{projectName}
+		AND t.device_sn = #{deviceSn}
+	</select>
+
+</mapper>

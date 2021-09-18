@@ -1,0 +1,47 @@
+/*
+* @Author: wanglei
+* @Date:   2017-05-16
+* @Last Modified by:   
+* @Last Modified time: 
+*/
+
+/* 字体类型 */
+.public_font_family:{
+	font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅 黑",Arial,sans-serif;
+}
+
+/* 主标题 Extra large（如顶部菜单） */
+.public_font_title_main {
+    font-size:20px
+}
+
+/* 标题 */
+.public_font_title_middle {
+	font-size:18px
+}
+
+/* 小标题 */
+.public_font_title_small {
+	font-size:16px
+}
+
+/* 正文 */
+.public_font_content_main {
+	font-size:14px
+}
+
+/* 辅助文字（仅用于辅助说明，或数据量大，密集，正常文本不易展现的地方使用） */
+.public_font_content_assistant {
+	font-size:12px
+}
+
+/* 字体颜色 除反白文字以外，所有字体颜色统一为#333333 */
+.public_font_font_color_main {
+	color:#333333
+}
+
+/* 粗体 */
+.public_font_font_weight_main {
+	font-weight:600
+}
+

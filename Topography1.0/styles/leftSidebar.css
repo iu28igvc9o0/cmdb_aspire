@@ -1,0 +1,60 @@
+/* 左边侧边栏的样式修改 */
+.geEditor .geMenubarContainer{
+  display: none !important;
+  height: 0;
+}
+
+.geHsplit {
+  background-color: #eee !important;
+}
+
+/*.geSidebarContainer {*/
+/*  border-top: none !important;*/
+/*  top: 40px !important;*/
+/*}*/
+/*.geToolbarContainer {*/
+/*  top: 40px !important;*/
+/*}*/
+
+/*.geDiagramContainer {*/
+/*  top: 74 !important;*/
+/*}*/
+
+.geSidebar {
+  border-bottom: 1px solid #eee !important;
+}
+
+.geEditor .geSidebarContainer>a {
+  /* background-color: red!important; */
+  height: 24px;
+  display: flex;
+  color: #666;
+  border-bottom:1px solid #eee !important;
+  flex-direction: column;
+  justify-content: center;
+}
+.getFooterContainer{
+  height: 0 !important;
+}
+
+.has-logo .geSidebarContainer { top: 50px !important;}
+.has-logo .has-logo-toolbar { top: 50px !important;}
+.has-logo .geDiagramContainer { top: 84px !important;}
+.has-logo .geHsplit { top: 50px !important;}
+
+.has-logo .geTopbarContainer {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.has-logo .geTopbarLogo {
+  width: 160px;
+  height: 40px;
+  margin-top: 5px;
+  margin-left: 10px;
+  background: url("./../images/aspire-logo.png") no-repeat;
+  background-size: contain;
+}

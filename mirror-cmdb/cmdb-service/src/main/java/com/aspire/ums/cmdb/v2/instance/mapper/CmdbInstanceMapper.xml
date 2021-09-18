@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.instance.mapper.CmdbInstanceMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.instance.payload.CmdbInstance">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR"/>
+        <result column="module_partition_id" property="modulePartitionId" jdbcType="TINYINT"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="host_name" property="hostName" jdbcType="VARCHAR"/>
+        <result column="device_class" property="deviceClass" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="device_model" property="deviceModel" jdbcType="VARCHAR"/>
+        <result column="device_class_3" property="deviceClass3" jdbcType="VARCHAR"/>
+        <result column="device_mfrs" property="deviceMfrs" jdbcType="VARCHAR"/>
+        <result column="device_status" property="deviceStatus" jdbcType="VARCHAR"/>
+        <result column="device_os_type" property="deviceOsType" jdbcType="VARCHAR"/>
+        <result column="os_detail_version" property="osDetailVersion" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+        <result column="is_assigned" property="isAssigned" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcType" jdbcType="VARCHAR"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="pod_name" property="podName" jdbcType="VARCHAR"/>
+        <result column="roomId" property="roomId" jdbcType="VARCHAR"/>
+        <result column="idc_cabinet" property="idcCabinet" jdbcType="VARCHAR"/>
+        <result column="department1" property="department1" jdbcType="VARCHAR"/>
+        <result column="department2" property="department2" jdbcType="VARCHAR"/>
+        <result column="bizSystem" property="bizSystem" jdbcType="VARCHAR"/>
+        <result column="is_ansible" property="isAnsible" jdbcType="VARCHAR"/>
+        <result column="is_ipmi_monitor" property="isIpmiMonitor" jdbcType="VARCHAR" />
+        <result column="is_pool" property="isPool" jdbcType="VARCHAR"/>
+        <result column="dept_operation" property="deptOperation" jdbcType="VARCHAR"/>
+        <result column="ops" property="ops" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR"/>
+        <result column="insert_person" property="insertPerson" jdbcType="VARCHAR"/>
+        <result column="insert_time" property="insertTime" jdbcType="VARCHAR"/>
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="device_sn" property="deviceSn" jdbcType="VARCHAR"/>
+        <result column="device_description" property="deviceDescription" jdbcType="VARCHAR"/>
+        <result column="is_important" property="isImportant" jdbcType="VARCHAR"/>
+        <result column="instance_icon_url" property="instanceIconUrl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+            *
+        FROM `cmdb_instance`
+        where is_delete = '0'
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstance">
+        SELECT
+        *
+        FROM `cmdb_instance`
+        WHERE 1=1 and is_delete='0'
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+            AND `module_id` = #{moduleId}
+        </if>
+        <if test="modulePartitionId != null and modulePartitionId != ''">
+            AND `module_partition_id` = #{modulePartitionId}
+        </if>
+        <if test="deviceName != null and deviceName != ''">
+            AND `device_name` = #{deviceName}
+        </if>
+        <if test="deviceClass != null and deviceClass != ''">
+            AND `device_class` = #{deviceClass}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            AND `device_type` = #{deviceType}
+        </if>
+        <if test="deviceClass3 != null and deviceClass3 != ''">
+            AND `device_class_3` = #{deviceClass3}
+        </if>
+        <if test="deviceMfrs != null and deviceMfrs != ''">
+            AND `device_mfrs` = #{deviceMfrs}
+        </if>
+        <if test="deviceStatus != null and deviceStatus != ''">
+            AND `device_status` = #{deviceStatus}
+        </if>
+        <if test="deviceOsType != null and deviceOsType != ''">
+            AND `device_os_type` = #{deviceOsType}
+        </if>
+        <if test="osDetailVersion != null and osDetailVersion != ''">
+            AND `os_detail_version` = #{osDetailVersion}
+        </if>
+        <if test="ip != null and ip != ''">
+            AND `ip` = #{ip}
+        </if>
+        <if test="isAssigned != null and isAssigned != ''">
+            AND `is_assigned` = #{isAssigned}
+        </if>
+        <if test="isIpmiMonitor != null and isIpmiMonitor != ''">
+            AND `is_ipmi_monitor` = #{isIpmiMonitor}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND `idcType` = #{idcType}
+        </if>
+        <if test="projectName != null and projectName != ''">
+            AND `project_name` = #{projectName}
+        </if>
+        <if test="podName != null and podName != ''">
+            AND `pod_name` = #{podName}
+        </if>
+        <if test="roomId != null and roomId != ''">
+            AND `roomId` = #{roomId}
+        </if>
+        <if test="idcCabinet != null and idcCabinet != ''">
+            AND `idc_cabinet` = #{idcCabinet}
+        </if>
+        <if test="department1 != null and department1 != ''">
+            AND `department1` = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            AND `department2` = #{department2}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            AND `bizSystem` = #{bizSystem}
+        </if>
+        <if test="isAnsible != null and isAnsible != ''">
+            AND `is_ansible` = #{isAnsible}
+        </if>
+        <if test="isPool != null and isPool != ''">
+            AND `is_pool` = #{isPool}
+        </if>
+        <if test="deptOperation != null and deptOperation != ''">
+            AND `dept_operation` = #{deptOperation}
+        </if>
+        <if test="ops != null and ops != ''">
+            AND `ops` = #{ops}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="insertPerson != null and insertPerson != ''">
+            AND `insert_person` = #{insertPerson}
+        </if>
+        <if test="insertTime != null and insertTime != ''">
+            AND `insert_time` = #{insertTime}
+        </if>
+        <if test="updatePerson != null and updatePerson != ''">
+            AND `update_person` = #{updatePerson}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+            AND `update_time` = #{updateTime}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="countByBiz" resultType="java.util.HashMap">
+        SELECT
+            department1,
+            bizSystem,COUNT(1) count
+        FROM `cmdb_instance`
+        WHERE 1=1 AND IFNULL(bizSystem, '') != ''  AND is_delete='0'
+        GROUP BY department1,bizSystem
+    </select>
+    <select id="getNetworkAndSafetyDeivce" resultType="java.util.HashMap" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbQueryInstance">
+        select idcType idc,
+               pod_name pod,
+               GROUP_CONCAT(concat_ws('_',ip,device_type) ORDER BY ip DESC SEPARATOR ',') ipString
+               from cmdb_instance
+               where device_class in ('网络设备','安全设备')
+                <if test="idcType != null and idcType != ''">
+                    AND `idcType` = #{idcType}
+                </if>
+                <if test="pod != null and pod != ''">
+                    AND `pod_name` = #{pod}
+                </if>
+                group by idcType, pod_name
+    </select>
+
+    <select id="getById" parameterType="String" resultMap="resultMap">
+        SELECT
+            `id`,
+            `device_name`,
+            `idcType`,
+            `ip`
+        FROM `cmdb_instance`
+        WHERE 1=1 and is_delete='0'
+        AND `id` = #{id}
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstance" resultMap="resultMap">
+        SELECT
+        *
+        FROM `cmdb_instance`
+        WHERE 1=1 and is_delete='0'
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="deviceName != null and deviceName != ''">
+            AND `device_name` = #{deviceName}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND `idcType` = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''">
+            AND `department1` = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+            AND `department2` = #{department2}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            AND `bizSystem` = #{bizSystem}
+        </if>
+        <if test="ip != null and ip !='' ">
+            AND `ip` = #{ip}
+        </if>
+        <if test="deviceSn != null and deviceSn != ''">
+            AND `device_sn` = #{deviceSn}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="getByIdcTypeAndIP" resultType="java.util.Map">
+        SELECT * FROM `cmdb_instance`
+        WHERE is_delete = '0'
+        AND `idcType` = #{idcType}
+        AND `ip` = #{ip}
+    </select>
+    <!-- Get one 查询 -->
+    <select id="queryDeviceByIdcTypeAndIP" resultType="java.util.Map">
+        SELECT * FROM `cmdb_instance` c
+        INNER JOIN cmdb_instance_ip_manager m ON c.id = m.instance_id
+        WHERE is_delete = '0'
+        <if test="idcType != null and idcType != ''">
+            AND c.`idcType` = #{idcType}
+        </if>
+        AND m.`ip` = #{ip}
+    </select>
+    <!-- Get one 查询 -->
+    <select id="queryModuleIdByTableNameAndId" resultType="java.lang.String">
+        SELECT moduleId FROM `${tableName}`
+        WHERE is_delete = '0' and id = #{id}
+    </select>
+
+  <update id="countSegmentIp">
+      UPDATE `${segmentTableName}` a LEFT JOIN (
+          SELECT ${segmentAddress} ,idcType, SUM(free_ip_count) `free_ip_count`, SUM(assign_ip_count) `assign_ip_count`, SUM(active_ip_count) `active_ip_count`
+          FROM (
+
+              SELECT a.`${segmentAddress}`,a.idcType,
+              CASE WHEN  b.`assign_status`!=(select id from t_cfg_dict where col_name='ipAllocationStatusType' and dict_note='已分配' and is_delete='0' limit 1) OR IFNULL(b.`assign_status`, '') = '' THEN 1 ELSE 0 END  free_ip_count,
+              CASE WHEN  b.`assign_status`=(select id from t_cfg_dict where col_name='ipAllocationStatusType' and dict_note='已分配' and is_delete='0' limit 1) THEN 1 ELSE 0 END  assign_ip_count,
+              CASE WHEN  b.`survival_status`=(select id from t_cfg_dict where col_name='survival_status' and dict_note='已存活' and is_delete='0' limit 1) THEN 1 ELSE 0 END  active_ip_count
+
+              FROM `${segmentTableName}` a
+              LEFT JOIN `${ipTableName}` b ON a.`id` = b.`id`
+              WHERE b.is_delete='0' GROUP BY a.`${segmentAddress}`, b.id
+          ) res1
+        GROUP BY `${segmentAddress}`,idcType) res
+      ON a.`${segmentAddress}` = res.`${segmentAddress}` AND a.`idcType` = res.idcType
+      SET a.`free_ip_count` = res.`free_ip_count`, a.`active_ip_count`=res.`active_ip_count`,a.`assign_ip_count`=res.`assign_ip_count`
+  </update>
+
+    <update id="countSegmentIp4Segment">
+      UPDATE `${segmentTableName}` a LEFT JOIN (
+          SELECT ${segmentAddress} ,idcType, SUM(free_ip_count) `free_ip_count`, SUM(assign_ip_count) `assign_ip_count`, SUM(active_ip_count) `active_ip_count`
+          FROM (
+
+              SELECT a.`${segmentAddress}`,a.idcType,
+              CASE WHEN  b.`assign_status`!=(select id from t_cfg_dict where col_name='ipAllocationStatusType' and dict_note='已分配' and is_delete='0' limit 1) OR IFNULL(b.`assign_status`, '') = '' THEN 1 ELSE 0 END  free_ip_count,
+              CASE WHEN  b.`assign_status`=(select id from t_cfg_dict where col_name='ipAllocationStatusType' and dict_note='已分配' and is_delete='0' limit 1) THEN 1 ELSE 0 END  assign_ip_count,
+              CASE WHEN  b.`survival_status`=(select id from t_cfg_dict where col_name='survival_status' and dict_note='已存活' and is_delete='0' limit 1) THEN 1 ELSE 0 END  active_ip_count
+
+              FROM `${segmentTableName}` a
+              LEFT JOIN `${ipTableName}` b ON a.`id` = b.`id`
+              WHERE a.`${segmentAddress}`='${segmentAddressValue}' and b.is_delete='0' GROUP BY a.`${segmentAddress}`, b.id
+          ) res1
+        GROUP BY `${segmentAddress}`,idcType) res
+      ON a.`${segmentAddress}` = res.`${segmentAddress}` AND a.`idcType` = res.idcType
+      SET a.`free_ip_count` = res.`free_ip_count`, a.`active_ip_count`=res.`active_ip_count`,a.`assign_ip_count`=res.`assign_ip_count`
+  </update>
+
+    <!-- Get one 查询 -->
+    <select id="getByInsId" resultType="java.util.Map">
+        SELECT
+        *
+        FROM `cmdb_instance`
+        WHERE 1=1 and is_delete='0'
+            AND `id` = #{id}
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="getFullInstance" parameterType="java.lang.String" resultType="java.util.Map">
+    select * from `cmdb_instance` a
+                      left join `${tableName}` b
+                                on a.id = b.instance_id
+    where a.id = #{id} and a.is_delete='0'
+</select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstance">
+    INSERT INTO `cmdb_instance`
+    (
+        `id`,
+        `module_id`,
+        `module_partition_id`,
+        `device_name`,
+        `device_class`,
+        `device_type`,
+        `device_class_3`,
+        `device_mfrs`,
+        `device_status`,
+        `device_os_type`,
+        `os_detail_version`,
+        `ip`,
+        `is_assigned`,
+        `idcType`,
+        `project_name`,
+        `pod_name`,
+        `roomId`,
+        `idc_cabinet`,
+        `department1`,
+        `department2`,
+        `bizSystem`,
+        `is_ansible`,
+        `is_ipmi_monitor`,
+        `is_pool`,
+        `dept_operation`,
+        `ops`,
+        `is_delete`,
+        `insert_person`,
+        `insert_time`,
+        `update_person`,
+        `update_time`,
+        `host_name`,
+        `device_sn`,
+        `device_description`,
+        `is_important`
+    ) VALUES (
+                 #{id, jdbcType=VARCHAR},
+                 #{moduleId, jdbcType=VARCHAR},
+                 #{modulePartitionId, jdbcType=TINYINT},
+                 #{deviceName, jdbcType=VARCHAR},
+                 #{deviceClass, jdbcType=VARCHAR},
+                 #{deviceType, jdbcType=VARCHAR},
+                 #{deviceClass3, jdbcType=VARCHAR},
+                 #{deviceMfrs, jdbcType=VARCHAR},
+                 #{deviceStatus, jdbcType=VARCHAR},
+                 #{deviceOsType, jdbcType=VARCHAR},
+                 #{osDetailVersion, jdbcType=VARCHAR},
+                 #{ip, jdbcType=VARCHAR},
+                 #{isAssigned, jdbcType=VARCHAR},
+                 #{idcType, jdbcType=VARCHAR},
+                 #{projectName, jdbcType=VARCHAR},
+                 #{podName, jdbcType=VARCHAR},
+                 #{roomId, jdbcType=VARCHAR},
+                 #{idcCabinet, jdbcType=VARCHAR},
+                 #{department1, jdbcType=VARCHAR},
+                 #{department2, jdbcType=VARCHAR},
+                 #{bizSystem, jdbcType=VARCHAR},
+                 #{isAnsible, jdbcType=VARCHAR},
+                  #{idIpmiMonitor, jdbcType=VARCHAR},
+                 #{isPool, jdbcType=VARCHAR},
+                 #{deptOperation, jdbcType=VARCHAR},
+                 #{ops, jdbcType=VARCHAR},
+                 #{isDelete, jdbcType=VARCHAR},
+                 #{insertPerson, jdbcType=VARCHAR},
+                 #{insertTime, jdbcType=VARCHAR},
+                 #{updatePerson, jdbcType=VARCHAR},
+                 #{updateTime, jdbcType=VARCHAR},
+                 #{hostName, jdbcType=VARCHAR},
+                 #{deviceSn, jdbcType=VARCHAR},
+                 #{deviceDescription, jdbcType=VARCHAR},
+                 #{isImportant, jdbcType=VARCHAR}
+             )
+</insert>
+
+    <!-- 修改记录 -->
+    <update id="update">
+    update `${tableName}`
+        set
+    <foreach collection="dataMap" item="item" separator="," >
+        `${item.filedCode}`= #{item.value}
+    </foreach>
+    where `id` = #{instanceId}
+</update>
+
+    <!-- 删除记录 -->
+    <update id="delete" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstance">
+    UPDATE `cmdb_instance` SET `is_delete` = '1'
+    WHERE
+        `id` = #{id}
+</update>
+
+    <select id="getInstanceList" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
+        select
+        <foreach collection="instanceColumns" index="index" item="instance" separator=",">
+            ci.`${instance.name}`
+        </foreach>
+        <if test="otherColumns != null and otherColumns.size > 0 ">
+            <foreach collection="otherColumns" index="index" item="other">
+                ,cio.`${other.name}`
+            </foreach>
+        </if>
+        from `cmdb_instance` ci
+        <if test="tableName != null and tableName != ''">
+            left join `${tableName}` cio on ci.id = cio.instance_id
+        </if>
+        where ci.is_delete='0'
+        <if test="outWhere != null and outWhere != ''">
+            ${outWhere}
+        </if>
+        <if test="sortColumn != null and sortColumn != ''">
+            order by ${sortColumn}
+            <if test="sortType != null and sortType != ''">
+                 ${sortType}
+            </if>
+        </if>
+        <if test="limitStart != null and limitStart != ''">
+            limit ${limitStart},${limitEnd}
+        </if>
+    </select>
+
+    <select id="getInstanceListCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1) totalCount from `cmdb_instance` ci
+        <if test="tableName != null and tableName != ''">
+            left join `${tableName}` cio on ci.id = cio.instance_id
+        </if>
+        where ci.is_delete='0'
+        <if test="outWhere != null and outWhere != ''">
+            ${outWhere}
+        </if>
+    </select>
+
+    <update id="updatePrimaryTable">
+        update `cmdb_instance` set
+        <foreach collection="filedList" separator="," item="filed">
+            ${filed.filedName} = #{filed.filedValue}
+        </foreach>
+        ,update_time = now()
+        where id=#{instanceId}
+    </update>
+
+    <update id="updateOtherTable">
+        update `cmdb_instance_${moduleCode}` set
+        <foreach collection="filedList" separator="," item="filed">
+            ${filed.filedName} = #{filed.filedValue}
+        </foreach>
+        where instance_id=#{instanceId}
+    </update>
+
+    <insert id="insertPrimaryTable">
+        insert into `cmdb_instance` (
+        <foreach collection="filedList" separator="," item="filed">
+            `${filed.filedName}`
+        </foreach>
+        ) values (
+        <foreach collection="filedList" separator="," item="filed">
+            #{filed.filedValue}
+        </foreach>
+        )
+    </insert>
+
+    <insert id="insertOtherTable">
+        insert into `cmdb_instance_${moduleCode}` (
+        <foreach collection="filedList" separator="," item="filed">
+            `${filed.filedName}`
+        </foreach>
+        ) values (
+        <foreach collection="filedList" separator="," item="filed">
+            #{filed.filedValue}
+        </foreach>
+        )
+    </insert>
+
+    <select id="getInstanceByIp" parameterType="java.util.Map" resultMap="resultMap">
+        select c.*, cm.icon_url instance_icon_url from cmdb_instance c
+        inner join cmdb_instance_ip_manager m on c.id = m.instance_id
+        inner join cmdb_code cc on cc.code_id = m.code_id
+        inner join cmdb_module cm on cm.id = c.module_id
+        where m.ip=#{ip}
+        and c.is_delete='0'
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+    </select>
+
+    <select id="getDepartmentsByIDC" resultType="java.lang.String">
+        select DISTINCT department1 from cmdb_instance
+        where is_delete='0'
+        and idcType = #{idcType}
+    </select>
+
+    <select id="getIdcById" resultType="java.util.Map">
+        SELECT
+            id uuid,
+            idc_code `code`,
+            idc_name `name`
+        FROM
+            cmdb_idc_manager
+        WHERE
+            is_delete = '否'
+        AND id = #{id}
+    </select>
+
+    <select id="getPodById" resultType="java.util.Map">
+        SELECT
+            id uuid,
+            pod_code `code`,
+            pod_name `name`
+        FROM
+            cmdb_pod_manager
+        WHERE
+            is_delete = '否'
+        AND id = #{id}
+    </select>
+
+    <select id="getRoomById" resultType="java.util.Map">
+        SELECT
+            id uuid,
+            room_code `code`,
+            room_name `name`
+        FROM
+            cmdb_room_manager
+        WHERE
+            is_delete = '否'
+        AND id = #{id}
+    </select>
+    <select id="queryServiceCount" resultType="com.aspire.ums.cmdb.instance.payload.CmdbDeviceTypeCount">
+        SELECT dt.dict_note deviceType, COUNT(dt.dict_note) count,
+        CASE
+        WHEN c3.dict_note = 'X86服务器' THEN ROUND(SUM(IFNULL(s.cpu_core_number,0)))
+        WHEN dt.dict_note = '云主机' THEN ROUND(SUM(IFNULL(s.cpu_core_number,0)))
+        WHEN dt.dict_note = '宿主机' THEN ROUND(SUM(IFNULL(s.cpu_core_number,0)))
+        END cpuCoreNumber,
+        CASE
+        WHEN c3.dict_note = 'X86服务器' THEN ROUND(SUM(IFNULL(s.memory_size,0)))
+        WHEN dt.dict_note = '云主机' THEN ROUND(SUM(IFNULL(s.memory_size,0)))
+        WHEN dt.dict_note = '宿主机' THEN ROUND(SUM(IFNULL(s.memory_size,0)))
+        END memorySize
+        FROM cmdb_instance cmdb_instance
+        LEFT JOIN t_cfg_dict c3 ON c3.id = cmdb_instance.device_class_3
+        LEFT JOIN t_cfg_dict dt ON  dt.id = cmdb_instance.device_type
+        LEFT JOIN t_cfg_dict dc ON  dc.id = cmdb_instance.device_class
+        LEFT JOIN `cmdb_instance_server` s ON cmdb_instance.id = s.id
+        LEFT JOIN cmdb_business_system b ON b.id = cmdb_instance.bizSystem
+        WHERE dc.dict_note='服务器' AND dt.dict_note IN ('X86服务器', '云主机','宿主机')
+        AND cmdb_instance.is_delete='0'
+        <if test="bizSystemList != null and bizSystemList.size > 0">
+            and b.bizSystem in (
+            <foreach collection="bizSystemList"  item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        GROUP BY device_type having COUNT(device_type) > 0
+    </select>
+
+    <select id="queryServiceCountForKG" resultType="com.aspire.ums.cmdb.instance.payload.CmdbDeviceTypeCount">
+        SELECT dt.dict_note deviceType, COUNT(dt.dict_note) count,
+        CASE
+        WHEN c3.dict_note = 'X86服务器' THEN SUM(IFNULL(s.cpu_core_number,0))
+        WHEN dt.dict_note = '虚拟机' THEN SUM(IFNULL(s.cpu_core_number,0))
+        WHEN dt.dict_note = '宿主机' THEN SUM(IFNULL(s.cpu_core_number,0))
+        END cpuCoreNumber,
+        CASE
+        WHEN c3.dict_note = 'X86服务器' THEN SUM(IFNULL(s.memory_size,0))
+        WHEN dt.dict_note = '虚拟机' THEN SUM(IFNULL(s.memory_size,0))
+        WHEN dt.dict_note = '宿主机' THEN SUM(IFNULL(s.memory_size,0))
+        END memorySize
+        FROM cmdb_instance cmdb_instance
+        LEFT JOIN t_cfg_dict c3 ON c3.id = cmdb_instance.device_class_3
+        LEFT JOIN t_cfg_dict dt ON  dt.id = cmdb_instance.device_type
+        LEFT JOIN t_cfg_dict dc ON  dc.id = cmdb_instance.device_class
+        LEFT JOIN `cmdb_instance_server` s ON cmdb_instance.id = s.id
+        WHERE dc.dict_note='服务器' AND dt.dict_note IN ('X86服务器', '虚拟机','宿主机')
+        AND cmdb_instance.is_delete='0'
+        GROUP BY dt.dict_note having COUNT(dt.dict_note) > 0
+    </select>
+
+    <select id="getProjectNameByIdcType" resultType="java.util.Map">
+       select DISTINCT project_name from cmdb_instance
+       where idcType=#{idcType} and is_delete='0' and IFNULL(project_name,'') != ''
+       order by project_name
+    </select>
+    
+    <select id="queryDeviceCountByIdctype" resultType="com.aspire.ums.cmdb.instance.payload.CmdbDeviceTypeByConditonCount">
+        SELECT  cmdb_instance.idcType
+        , case
+        when cmdb_instance.device_type = 'X86服务器' then sum(IFNULL(s.cpu_core_number,0))
+        when cmdb_instance.device_type = '云主机' then sum(IFNULL(s.cpu_core_number,0))
+        end cpuCoreNumber
+        ,
+        case
+        when cmdb_instance.device_type = 'X86服务器' then sum(IFNULL(s.memory_size,0))
+        when cmdb_instance.device_type = '云主机' then sum(IFNULL(s.memory_size,0))
+        end memorySize
+        FROM cmdb_instance cmdb_instance
+        LEFT JOIN cmdb_instance_server s ON cmdb_instance.id = s.id
+        WHERE cmdb_instance.device_class='服务器'
+        AND cmdb_instance.device_type = #{deviceType}
+        AND cmdb_instance.is_delete='0'
+        <if test="idcType != null and idcType !=''">
+        and cmdb_instance.idcType =  #{idcType}
+        </if>
+         <!--  <if test="startTime != null and endTime !=null">
+        and cmdb_instance.insert_time >=  #{startTime} and cmdb_instance.insert_time <![CDATA[<=]]> #{endTime}
+        </if>-->
+        GROUP BY idcType having COUNT(device_type) > 0
+    </select>
+    
+    <select id="queryDeviceCountByBizsystem" resultType="com.aspire.ums.cmdb.instance.payload.CmdbDeviceTypeByConditonCount">
+        SELECT  cmdb_instance.department1 ,
+            case
+                when cmdb_instance.device_type = 'X86服务器' then sum(IFNULL(s.cpu_core_number,0))
+                when cmdb_instance.device_type = '云主机' then sum(IFNULL(s.cpu_core_number,0))
+            end cpuCoreNumber,
+            case
+                when cmdb_instance.device_type = 'X86服务器' then sum(IFNULL(s.memory_size,0))
+                when cmdb_instance.device_type = '云主机' then sum(IFNULL(s.memory_size,0))
+            end memorySize
+        FROM cmdb_instance cmdb_instance
+        LEFT JOIN cmdb_instance_server s ON cmdb_instance.id = s.id
+        WHERE cmdb_instance.device_class='服务器'
+         AND cmdb_instance.device_type = #{deviceType}
+        AND cmdb_instance.is_delete='0'
+        <if test="bizSystemList != null and bizSystemList.size > 0">
+            and cmdb_instance.bizSystem in (
+            <foreach collection="bizSystemList"  item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="idcType != null and idcType !=''">
+        and cmdb_instance.idcType =  #{idcType}
+        </if>
+         <!--  <if test="startTime != null and endTime !=null">
+        and cmdb_instance.insert_time <![CDATA[<=]]> #{endTime}
+        </if>-->
+        GROUP BY department1 
+         <if test="sourceType != null and sourceType =='cpu'">
+         having cpuCoreNumber > 0
+         order by cpuCoreNumber desc
+         </if>
+         <if test="sourceType != null and sourceType =='memory'">
+         having memorySize > 0
+         order by memorySize desc
+         </if>
+    </select>
+    
+    <select id="queryDeviceCountByBizCol" resultType="com.aspire.ums.cmdb.instance.payload.CmdbDeviceTypeByConditonCount">
+        SELECT  cmdb_instance.department1 ,
+            case
+                when cmdb_instance.device_type = 'X86服务器' then sum(IFNULL(s.cpu_core_number,0))
+                when cmdb_instance.device_type = '云主机' then sum(IFNULL(s.cpu_core_number,0))
+            end cpuCoreNumber,
+            case
+                when cmdb_instance.device_type = 'X86服务器' then sum(IFNULL(s.memory_size,0))
+                when cmdb_instance.device_type = '云主机' then sum(IFNULL(s.memory_size,0))
+            end memorySize
+        FROM cmdb_instance cmdb_instance
+        LEFT JOIN cmdb_instance_server s ON cmdb_instance.id = s.id
+        WHERE cmdb_instance.device_class='服务器'
+         AND cmdb_instance.device_type = #{deviceType}
+        AND cmdb_instance.is_delete='0'
+        <if test="bizSystemList != null and bizSystemList.size > 0">
+            and cmdb_instance.bizSystem in (
+            <foreach collection="bizSystemList"  item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="idcType != null and idcType !=''">
+        and cmdb_instance.idcType =  #{idcType}
+        </if>
+         <!--  <if test="startTime != null and endTime !=null">
+        and cmdb_instance.insert_time <![CDATA[<=]]> #{endTime}
+        </if>-->
+        GROUP BY department1 
+         <if test="sourceType != null and sourceType =='cpu'">
+         having cpuCoreNumber > 0
+         order by cpuCoreNumber desc
+         </if>
+         <if test="sourceType != null and sourceType =='memory'">
+         having memorySize > 0
+         order by memorySize desc
+         </if>
+    </select>
+
+    <select id="queryEmptyCiItemCount" resultType="java.lang.Integer">
+        select count(1) totalCount from cmdb_instance c1
+        left join ${moduleTableName} c2 on c1.id = c2.instance_id
+        where c1.is_delete = '0' and IFNULL(${filedCode}, '') = ''
+        and c1.idcType=#{idcType} and c1.device_type=#{deviceType}
+    </select>
+
+    <update id="updateAllPool" parameterType="java.util.List">
+        update `cmdb_instance` set
+        is_ansible = #{status},
+        is_ipmi_monitor = #{status}
+        ,update_time = now()
+        where is_ansible !='11466' and  is_ipmi_monitor !='11466' and idcType in
+        <foreach collection="pools" item="pool" separator="," open="(" close=")">
+            #{pool}
+        </foreach>
+    </update>
+
+    <update id="updateZbxMonitorStatus" parameterType="java.util.List">
+        update `cmdb_instance` set
+        is_ansible = #{status}
+        ,update_time = now()
+        where
+              id = #{id}
+    </update>
+
+    <update id="updateProMonitorStatus" parameterType="java.util.List">
+        update `cmdb_instance` set
+        is_ipmi_monitor = #{status}
+        ,update_time = now()
+        where
+            id = #{id}
+    </update>
+
+    <select id="getInstanceBaseInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    select * from vw_instance_for_server
+    </select>
+
+    <select id="syncIpBussiness">
+        UPDATE `${ipTableName}` a
+            LEFT JOIN `${segmentTableName}`  b ON  b.is_delete='0'
+             AND a.`${ipSegment}` = b.`${segmentAddress}`
+              LEFT JOIN cmdb_instance c
+              ON a.`${ipCode}` = c.`ip`  AND  a.is_delete='0'  AND c.is_delete='0' AND b.idcType = c.idcType
+        SET a.`online_business` = c.bizSystem, a.sub_business_module = c.business_level2
+    </select>
+
+    <select id="getAllIPInstance" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
+        select
+          m.ip ip, c.*
+        from cmdb_instance_ip_manager m
+        inner join cmdb_instance c on m.instance_id = c.id
+        where c.is_delete='0' and IFNULL(m.ip, '') != ''
+        <if test="idcType != null and idcType != ''">
+            and c.idcType = #{idcType}
+        </if>
+        <if test="currentPage != null and currentPage != '' and pageSize != null and pageSize != ''">
+            limit ${(currentPage - 1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+
+    <select id="getAllIPInstanceCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1) from cmdb_instance_ip_manager m
+        inner join cmdb_instance c on m.instance_id = c.id
+        where c.is_delete='0' and IFNULL(m.ip, '') != ''
+        <if test="idcType != null and idcType != ''">
+            and c.idcType = #{idcType}
+        </if>
+    </select>
+
+    <select id="deviceCountByDeviceClass" parameterType="java.lang.String" resultType="map">
+        SELECT device_class,SUM(tCount) d_count
+        FROM (SELECT device_class, (CASE
+                    WHEN device_class = '网络设备' AND is_stack = '是' THEN 2
+                    WHEN device_class = '网络设备' AND IFNULL(is_stack, '否') = '否' THEN 1
+                    ELSE 1 END) tCount FROM cmdb_instance  WHERE is_delete = '0') t
+        WHERE 1=1
+        <if test="deviceClass != null and deviceClass != ''">
+            and FIND_IN_SET(device_class,#{deviceClass})
+        </if>
+        GROUP BY device_class
+    </select>
+
+    <select id="deviceCountByDeviceType" parameterType="java.lang.String" resultType="map">
+        SELECT
+        device_class,
+        SUM(total_count) type_count
+        FROM (SELECT
+                 `device_class`,
+                 (CASE WHEN IFNULL(device_type,'')= '' THEN '' ELSE device_type END) device_type,
+                 (CASE WHEN device_class = '网络设备' AND is_stack = '是' THEN 2
+                             WHEN device_class = '网络设备' AND IFNULL(is_stack, '否') = '否' THEN 1
+                             ELSE 1 END) total_count
+         FROM cmdb_instance
+         WHERE is_delete = '0'
+                AND NOT (device_class ='服务器' AND  device_type ='X86服务器' AND NOT device_class_3='X86服务器')
+                AND device_status != '已关闭电源'
+        ) tem_t
+        WHERE 1=1
+        <if test="deviceClass != null and deviceClass != ''">
+            and device_class = #{deviceClass}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            AND device_type = #{deviceType}
+        </if>
+        GROUP BY device_class
+        ORDER BY device_class
+    </select>
+
+    <select id="getBlockSize" resultType="map">
+        select sum(IFNULL(d.block_size,0)) block_size from cmdb_instance c
+        inner join cmdb_instance_storage_device d on c.id = d.id
+        WHERE device_type IN ('分布式块存储') AND c.is_delete = '0'
+    </select>
+
+</mapper>

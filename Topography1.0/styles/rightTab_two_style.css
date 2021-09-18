@@ -1,0 +1,91 @@
+/* 右侧设置栏 tab2 css */
+
+.geEditor .geFormatContainer>div:nth-child(3) span {
+  position: relative;
+  bottom: 3px;
+}
+
+/* .geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10) {
+  background-color: red !important;
+} */
+
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(3)>input {
+  text-align: center!important;
+  right: 63px !important;
+}
+
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(3)>div {
+  margin-top: 5px !important;
+  height: 17px !important;
+}
+
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(3)>div>div {
+  height: 22px !important;
+}
+
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(9)>input {
+  text-align: center!important;
+  right: 63px !important;
+}
+
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(9)>div>div {
+  margin-top: 1.3px;
+}
+
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>input:nth-child(2) {
+  text-align: center!important;
+  right: 174px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(3) {
+  right: 131px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>input:nth-child(4) {
+  text-align: center!important;
+  right: 63px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(5) {
+  right: 20px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(7) {
+  right: 144px !important;
+  margin-top: 6px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(8) {
+  right: 32px !important;
+  margin-top: 6px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>input:nth-child(11) {
+  text-align: center!important;
+  right: 243px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(12) {
+  right: 200px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>input:nth-child(13) {
+  text-align: center!important;
+  right: 146px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(14) {
+  right: 103px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>input:nth-child(15) {
+  text-align: center!important;
+  right: 48px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(16) {
+  right: 5px !important;
+  margin-top: 0px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(18) {
+  right: 214px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(19) {
+  right: 116px !important;
+}
+.geEditor .geFormatContainer>div:nth-child(3)>div:nth-child(10)>div:nth-child(20) {
+  right: 18px !important;
+}

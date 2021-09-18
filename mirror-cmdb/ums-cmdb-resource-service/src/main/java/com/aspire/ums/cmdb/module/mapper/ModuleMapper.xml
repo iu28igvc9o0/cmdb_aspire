@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.ModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.Module" >
+    <id column="id1" property="id" jdbcType="VARCHAR" />
+    <result column="name1" property="name" jdbcType="VARCHAR" />
+    <result column="code1" property="code" jdbcType="VARCHAR" />
+    <result column="iconUrl1" property="iconurl" jdbcType="VARCHAR" />
+    <result column="sortIndex1" property="sortindex" jdbcType="INTEGER" />
+    <result column="disabled1" property="disabled" jdbcType="VARCHAR" />
+    <result column="builtin1" property="builtin" jdbcType="VARCHAR" />
+    <result column="insertTime1" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="updateTime1" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="isDelete1" property="isdelete" jdbcType="INTEGER" />
+    <result column="parentId1" property="parentid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ModuleMap" type="com.aspire.ums.cmdb.module.entity.Module" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="iconUrl" property="iconurl" jdbcType="VARCHAR" />
+    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="disabled" property="disabled" jdbcType="VARCHAR" />
+    <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />
+    <collection column="parentId" property="childModules" resultMap="BaseResultMap"/>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, name, code, parentId, iconUrl, sortIndex, disabled, builtin, insertTime, updateTime, 
+    isDelete
+  </sql>
+	<select id="selectMaxIndex" resultType="java.lang.Integer">
+		select max(sortIndex) from cmdb_module
+	</select>
+  <select id="selectModule" resultMap="ModuleMap">
+	select * from (select <include refid="Base_Column_List"/> from cmdb_module where parentId is null and isDelete=0 order by sortIndex asc) as a
+ 	LEFT JOIN
+	(select id as id1, name as name1, code as code1, parentId as parentId1, iconUrl as iconUrl1, sortIndex as  sortIndex1, disabled as disabled1, builtin as builtin1, insertTime as insertTime1, updateTime as updateTime1, 
+    isDelete as isDelete1 from cmdb_module where parentId is not null and isDelete=0 order by sortIndex1 asc) as b ON b.parentId1 = a.id	
+  </select>
+  <select id="selectModuleByParentId" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select 
+  	<include refid="Base_Column_List"/>
+  	from cmdb_module where parentid = #{parentId}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_module
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectSelective" resultType="java.util.HashMap" parameterType="com.aspire.ums.cmdb.module.entity.Module">
+  	select <include refid="Base_Column_List" />
+  	from cmdb_module where isDelete=0
+  	<if test="id != null and id !='' ">
+    	AND id = #{id}
+  	 </if>
+  	<if test="name != null and name !='' ">
+    	AND name = #{name}
+  	 </if>
+  	<if test="code != null and code !='' ">
+    	AND code = #{code}
+  	 </if>
+  	<if test="parentid != null and parentid !='' ">
+    	AND parentId = #{parentid}
+  	 </if>
+  	<if test="iconurl != null and iconurl !='' ">
+    	AND iconUrl = #{iconurl}
+  	 </if>
+  	<if test="sortindex != null">
+    	AND sortIndex = #{sortindex}
+  	 </if>
+  	<if test="disabled != null and disabled !='' ">
+    	AND disabled = #{disabled}
+  	 </if>
+  	<if test="builtin != null and builtin !='' ">
+    	AND builtin = #{builtin}
+  	 </if>
+  	<if test="inserttime != null and inserttime !='' ">
+    	AND insertTime = #{inserttime}
+  	 </if>
+  	<if test="updatetime != null and updatetime !='' ">
+    	AND updateTime = #{updatetime}
+  	 </if>
+  </select>
+  <select id="getModuleByModuleName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_module
+    where name = #{name,jdbcType=VARCHAR} and isDelete=0 limit 0,1
+  </select>
+  <select id="selectTagByModuleId" parameterType="java.lang.String" resultType="com.aspire.ums.cmdb.module.entity.FormTag">
+  	select id,moduleId,tag from cmdb_form_tag where moduleId = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_module
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.Module" >
+    insert into cmdb_module (id, name, code, 
+      parentId, iconUrl, sortIndex, 
+      disabled, builtin, insertTime, 
+      updateTime, isDelete)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+      #{parentid,jdbcType=VARCHAR}, #{iconurl,jdbcType=VARCHAR}, #{sortindex,jdbcType=INTEGER}, 
+      #{disabled,jdbcType=VARCHAR}, #{builtin,jdbcType=VARCHAR}, #{inserttime,jdbcType=TIMESTAMP}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{isdelete,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.Module" >
+    insert into cmdb_module
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        id,
+      </if>
+      <if test="name != null and name !=''" >
+        name,
+      </if>
+      <if test="code != null and code !=''" >
+        code,
+      </if>
+      <if test="parentid != null and parentid !=''" >
+        parentId,
+      </if>
+      <if test="iconurl != null and iconurl !=''" >
+        iconUrl,
+      </if>
+      <if test="sortindex != null" >
+        sortIndex,
+      </if>
+      <if test="disabled != null and disabled !=''" >
+        disabled,
+      </if>
+      <if test="builtin != null and builtin !=''" >
+        builtin,
+      </if>
+      
+        insertTime,
+      
+      
+        updateTime,
+      
+      <if test="isdelete != null" >
+        isDelete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and name !=''" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null and code !=''" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null and parentid!=''" >
+        #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="iconurl != null and iconurl !=''" >
+        #{iconurl,jdbcType=VARCHAR},
+      </if>
+      <if test="sortindex != null" >
+        #{sortindex,jdbcType=INTEGER},
+      </if>
+      <if test="disabled != null and disabled !=''" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="builtin != null and builtin !=''" >
+        #{builtin,jdbcType=VARCHAR},
+      </if>
+      now(),
+      now(),
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.Module" >
+    update cmdb_module
+    <set >
+      <if test="name != null and name !=''" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null and code !=''" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null and parentid !=''" >
+        parentId = #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="iconurl != null and iconurl !=''" >
+        iconUrl = #{iconurl,jdbcType=VARCHAR},
+      </if>
+      <if test="sortindex != null" >
+        sortIndex = #{sortindex,jdbcType=INTEGER},
+      </if>
+      <if test="disabled != null and disabled !=''" >
+        disabled = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="builtin != null and builtin !=''" >
+        builtin = #{builtin,jdbcType=VARCHAR},
+      </if>
+      <if test="inserttime != null and inserttime !=''" >
+        insertTime = #{inserttime,jdbcType=TIMESTAMP},
+      </if>
+      updateTime=now(),
+      <if test="isdelete != null" >
+        isDelete = #{isdelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.Module" >
+    update cmdb_module
+    set name = #{name,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      parentId = #{parentid,jdbcType=VARCHAR},
+      iconUrl = #{iconurl,jdbcType=VARCHAR},
+      sortIndex = #{sortindex,jdbcType=INTEGER},
+      disabled = #{disabled,jdbcType=VARCHAR},
+      builtin = #{builtin,jdbcType=VARCHAR},
+      insertTime = #{inserttime,jdbcType=TIMESTAMP},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      isDelete = #{isdelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

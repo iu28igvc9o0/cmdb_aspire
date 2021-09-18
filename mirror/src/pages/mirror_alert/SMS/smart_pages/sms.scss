@@ -1,0 +1,109 @@
+/deep/.btn-send-record {
+    margin: 0px 4px;
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    z-index: 100;
+}
+/deep/.btnGroup-saveTemplates {
+    margin-top: 5px !important;
+}
+/deep/.sendPhones {
+    margin-bottom:10px;
+}
+/deep/.sendTemplatesTips {
+    margin-top: -2px;
+}
+
+/deep/.sendSms-wrap {
+    .el-col-6 {
+        padding-left:10px;
+        border-left: 1px solid #dcdfe6;
+        // border-bottom: 1px solid #dcdfe6;
+    }
+    .el-col-18 {
+        padding-right:10px;
+        
+    }
+
+}
+.smsTemplates-box {
+    height:80vh;
+    line-height: 1;
+    margin-top: -20px;
+    overflow: auto;
+    .smsTemplates-tag {
+        display: flex;
+    flex-direction: row;
+    justify-content: left;
+    flex-flow: wrap;
+        .smsTemplates-tag-item {
+            padding: 5px 8px;
+            border-radius: 10px;
+            margin: 0 10px 5px 0;
+            cursor: pointer;
+            &.active,&:hover {
+                background: #409EFF;
+                color: #fff;
+            }
+        }
+        
+    }
+    .smsTemplates-content {
+        overflow: auto;
+        .smsTemplates-content-item {
+            word-break: break-all;
+            line-height: 20px;
+            padding: 10px;
+        color: #bbb;
+        cursor: pointer;
+        &:hover {
+            color:#333;
+            background: #e3f1ff;
+        }
+        .operator-wrap {
+            display:none;
+            margin-bottom: 5px;
+            .icon-btn {
+                color:#269BE0;
+                font-size: rem(18);
+                margin-right:10px;
+            }
+        }
+       
+        &:hover {
+            color:#333;
+            background: #e3f1ff;
+            .operator-wrap {
+                display: block;
+            }
+            .main-wrap {
+                // text-decoration: underline;
+            }
+        }
+        }
+    }
+}
+
+.addressBook-box {
+    height:80vh;
+    line-height: 1;
+    overflow: auto;
+}
+.smsTags-box {
+    min-height:200px;
+    margin-bottom: 20px;
+    .smsTags-item {
+        margin-bottom:10px;
+    }
+}
+.sendPhones-content {
+    width:100%;
+    height:32px;
+    border: 1px solid #DCDFE6;
+    border-radius: 4px;
+}
+.sendPhones-box {
+    line-height: 1.2;
+}
+

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.code.mapper.CmdbControlTypeMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbControlType" >
+        <result column="control_id" property="controlId" jdbcType="VARCHAR" />
+        <result column="control_code" property="controlCode" jdbcType="VARCHAR" />
+        <result column="control_name" property="controlName" jdbcType="VARCHAR" />
+        <result column="is_bind_source" property="isBindSource" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `control_id`,
+        `control_code`,
+        `control_name`,
+        `is_bind_source`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_control_type
+        where is_delete = '0'
+        <if test="controlCode != null and controlCode != ''">
+            AND `control_code` like concat('%',#{controlCode},'%')
+        </if>
+        <if test="controlName != null and controlName != ''">
+            AND `control_name` like concat('%',#{controlName},'%')
+        </if>
+        order by sort_index
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbControlType">
+        SELECT
+        `control_id`,
+        `control_code`,
+        `control_name`,
+        `is_bind_source`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_control_type
+        WHERE 1=1 and is_delete = '0'
+        <if test="controlId != null and controlId != ''">
+        AND `control_id` = #{controlId}
+        </if>
+        <if test="controlCode != null and controlCode != ''">
+        AND `control_code` = #{controlCode}
+        </if>
+        <if test="controlName != null and controlName != ''">
+        AND `control_name` = #{controlName}
+        </if>
+        <if test="isBindSource != null and isBindSource != ''">
+            AND `is_bind_source` = #{isBindSource}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        order by sort_index
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbControlType" resultMap="resultMap">
+        SELECT
+        `control_id`,
+        `control_code`,
+        `control_name`,
+        `is_bind_source`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_control_type
+        WHERE 1=1
+        AND `control_id` = #{controlId}
+        AND `is_delete` = '0'
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="getById" resultMap="resultMap">
+        SELECT
+        `control_id`,
+        `control_code`,
+        `control_name`,
+        `is_bind_source`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_control_type
+        WHERE 1=1
+        AND `control_id` = #{controlId}
+        AND `is_delete` = '0'
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbControlType">
+        INSERT INTO cmdb_control_type
+        (
+            `control_id`,
+            `control_code`,
+            `control_name`,
+            `is_bind_source`,
+            `is_delete`,
+            `sort_index`
+        ) VALUES (
+            #{controlId, jdbcType=VARCHAR},
+            #{controlCode, jdbcType=VARCHAR},
+            #{controlName, jdbcType=VARCHAR},
+            #{isBindSource, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbControlType">
+        UPDATE cmdb_control_type SET
+        `control_name` = #{controlName},
+        `is_bind_source` = #{isBindSource},
+        `is_delete` = #{isDelete},
+        `sort_index` = #{sortIndex}
+        WHERE
+        `control_id` = #{controlId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.code.payload.CmdbControlType">
+        DELETE FROM cmdb_control_type
+        WHERE
+         `control_id` = #{controlId}
+    </delete>
+</mapper>

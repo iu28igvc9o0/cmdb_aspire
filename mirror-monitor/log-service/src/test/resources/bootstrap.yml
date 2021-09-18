@@ -1,0 +1,13 @@
+#spring:
+#  application:
+#    name: service
+
+spring:
+  application:
+    name: logService
+  cloud:
+    config:
+      name: pkg2-ms-log
+      profile: dev
+      uri:  http://localhost:8888
+      failFast: true

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.serverProject.mapper.CmdbNetworkLineRecordMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineRecord">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="opt_type" property="optType" jdbcType="VARCHAR"/>
+        <result column="owner_person" property="ownerPerson" jdbcType="VARCHAR"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `opt_type`,
+        `owner_person`,
+        `order_no`
+        FROM cmdb_network_line_record
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineRecord">
+        SELECT
+        `id`,
+        `is_delete`,
+        `opt_type`,
+        `owner_person`,
+        `order_no`
+        FROM cmdb_network_line_record
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="optType != null and optType != ''">
+            AND `opt_type` = #{optType}
+        </if>
+        <if test="ownerPerson != null and ownerPerson != ''">
+            AND `owner_person` = #{ownerPerson}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            AND `order_no` = #{orderNo}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineRecord" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `opt_type`,
+        `owner_person`,
+        `order_no`
+        FROM cmdb_network_line_record
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineRecord">
+        INSERT INTO cmdb_network_line_record
+        (
+            `id`,
+            `is_delete`,
+            `opt_type`,
+            `owner_person`,
+            `order_no`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT},
+            #{optType, jdbcType=VARCHAR},
+            #{ownerPerson, jdbcType=VARCHAR},
+            #{orderNo, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineRecord">
+        UPDATE cmdb_network_line_record SET
+        `is_delete` = #{isDelete},
+        `opt_type` = #{optType},
+        `owner_person` = #{ownerPerson},
+        `order_no` = #{orderNo}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineRecord">
+        DELETE FROM cmdb_network_line_record
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.mirror.alert.server.dao.monthReport.AlertsMonReportDao">
+	<select id="getDeviceData" parameterType="map"
+			resultType="com.aspire.mirror.alert.server.vo.monthReport.AlertsMonReportAlertVo">
+		SELECT
+		idc_type idcType,
+		alert_level alertLevel,
+		device_type alertIndex,
+		device_mfrs deviceMrfs,
+		device_model deviceModel,
+		pod_name pod,
+		SUM(ah.count) sCount
+		FROM (SELECT idc_type,alert_level,device_type,device_model,device_mfrs,pod_name,COUNT(1) count FROM alert_alerts
+				WHERE 1=1
+				AND idc_type = #{idcType}
+				AND alert_level = #{alertLevel}
+				AND device_type = #{deviceType}
+				<if test="startTime != null and endTime != null">
+					AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+				</if>
+				GROUP BY idc_type,alert_level,device_type,device_model
+				UNION ALL
+				SELECT idc_type,alert_level,device_type,device_model,device_mfrs,pod_name,COUNT(1) count FROM alert_alerts_his
+				WHERE 1=1
+				AND idc_type = #{idcType}
+				AND alert_level = #{alertLevel}
+				AND device_type = #{deviceType}
+				<if test="startTime != null and endTime != null">
+					AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+				</if>
+				GROUP BY idc_type,alert_level,device_type,device_model
+				) ah
+		GROUP BY idc_type,alert_level,device_type,device_model
+		ORDER BY sCount DESC
+		LIMIT 10
+	</select>
+
+	<insert id="insertMonReportAlertDevice"
+			parameterType="com.aspire.mirror.alert.server.vo.monthReport.AlertsMonReportAlertVo">
+		INSERT INTO mon_report_alert_device
+		(idc_type,alert_level,alert_index,rank,device_model,mfrs_model_option,s_count,device_mrfs,idc_pod,mon)
+		VALUES
+		(#{idcType},#{alertLevel},#{alertIndex},#{rank},#{deviceModel},#{mrfsModelOption},#{sCount},#{deviceMrfs},#{idcPod},#{month})
+	</insert>
+
+	<select id="getAlertIndexData" parameterType="map"
+			resultType="com.aspire.mirror.alert.server.vo.monthReport.AlertsMonReportAlertVo">
+		SELECT
+		idc_type idcType,
+		alert_level alertLevel,
+		item_key alertIndex,
+		key_comment alertIndexValue,
+		SUM(ah.count) sCount
+		FROM (SELECT idc_type,alert_level,key_comment,item_key,COUNT(1) count FROM alert_alerts
+					WHERE 1=1
+					AND idc_type = #{idcType}
+					AND alert_level = #{alertLevel}
+					<if test="startTime != null and endTime != null">
+						AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+					</if>
+					GROUP BY idc_type,alert_level,key_comment,item_key
+					UNION ALL
+					SELECT idc_type,alert_level,key_comment,item_key,COUNT(1) count FROM alert_alerts_his
+					WHERE 1=1
+					AND idc_type = #{idcType}
+					AND alert_level = #{alertLevel}
+					<if test="startTime != null and endTime != null">
+						AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+					</if>
+					GROUP BY idc_type,alert_level,key_comment,item_key
+					) ah
+		GROUP BY idc_type,alert_level,key_comment,item_key
+		ORDER BY sCount DESC
+		LIMIT 10
+	</select>
+
+	<insert id="insertMonReportAlertIndex"
+			parameterType="com.aspire.mirror.alert.server.vo.monthReport.AlertsMonReportAlertVo">
+		INSERT INTO mon_report_alert_index
+		(idc_type,alert_level,alert_index,alert_index_value,s_count,rank,mon,rate)
+		VALUES
+		(#{idcType},#{alertLevel},#{alertIndex},#{alertIndexValue},#{sCount},#{rank},#{month},#{rate})
+	</insert>
+
+	<select id="getAlertIdcData" parameterType="map"
+			resultType="com.aspire.mirror.alert.server.vo.monthReport.AlertsMonReportIdcTypeVo">
+		SELECT
+		ah.idc_type idcType,
+		ah.alert_level alertLevel,
+		SUM(IF(ah.device_type = 'X86服务器',ah.count,0)) serverCount,
+		SUM(IF(ah.device_type = '防火墙',ah.count,0)) fireWallCount,
+		SUM(IF(ah.device_type = '路由器',ah.count,0)) routerCount,
+		SUM(IF(ah.device_type = '交换机',ah.count,0)) exchangeCount,
+		SUM(IF(ah.device_type = '负载均衡',ah.count,0)) loadBalanceCount,
+		SUM(IF(ah.device_type = '分布式块存储',ah.count,0)) cloudStorageCount,
+		SUM(IF(ah.device_type = 'SDN控制器',ah.count,0)) sdnControllerCount,
+		SUM(IF(ah.device_type = '磁盘阵列',ah.count,0)) diskArrayCount,
+		SUM(IF(ah.device_type = '磁带库',ah.count,0)) tapeLibraryCount
+		FROM (SELECT idc_type,alert_level,device_type,COUNT(1) count FROM alert_alerts
+			WHERE 1=1
+			AND idc_type = #{idcType}
+			AND alert_level = #{alertLevel}
+			<if test="startTime != null and endTime != null">
+				AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+			</if>
+			AND FIND_IN_SET(device_type,'X86服务器,防火墙,路由器,交换机,负载均衡,分布式块存储,SDN控制器,磁盘阵列,磁带库')
+			GROUP BY idc_type,alert_level,device_type
+			UNION ALL
+			SELECT idc_type,alert_level,device_type,COUNT(1) count FROM alert_alerts_his
+			WHERE 1=1
+			AND idc_type = #{idcType}
+			AND alert_level = #{alertLevel}
+			<if test="startTime != null and endTime != null">
+				AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+			</if>
+			AND FIND_IN_SET(device_type,'X86服务器,防火墙,路由器,交换机,负载均衡,分布式块存储,SDN控制器,磁盘阵列,磁带库')
+			GROUP BY idc_type,alert_level,device_type
+		) ah
+		GROUP BY idcType,alertLevel
+	</select>
+
+	<select id="getAlertByDeviceType" parameterType="map" resultType="map">
+		SELECT
+		ah.idc_type idcType,
+		ah.device_ip ip,
+		ah.alert_level alertLevel,
+		SUM(ah.count) count
+		FROM (SELECT idc_type,device_ip,alert_level,device_type,COUNT(1) count FROM alert_alerts
+					WHERE 1=1
+					AND idc_type = #{idcType}
+					AND alert_level = #{alertLevel}
+					<if test="startTime != null and endTime != null">
+						AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+					</if>
+					AND FIND_IN_SET(device_type,'刀箱服务器')
+					GROUP BY idc_type,alert_level,device_type,device_ip
+					UNION ALL
+					SELECT idc_type,device_ip,alert_level,device_type,COUNT(1) count FROM alert_alerts_his
+					WHERE 1=1
+					AND idc_type = #{idcType}
+					AND alert_level = #{alertLevel}
+					<if test="startTime != null and endTime != null">
+						AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+					</if>
+					AND FIND_IN_SET(device_type,'刀箱服务器')
+					GROUP BY idc_type,alert_level,device_type,device_ip
+		) ah
+		GROUP BY idc_type,alert_level,device_type,device_ip
+	</select>
+
+	<insert id="insertAlertMonReportIdc" parameterType="com.aspire.mirror.alert.server.vo.monthReport.AlertsMonReportIdcTypeVo">
+		INSERT INTO mon_report_alert_idc
+		(idc_type,alert_level,server_count,firewall_count,router_count,exchange_count,load_balance_count,cloud_storage_count,sdn_controller_count,disk_arrary_count,tape_library_count,mon)
+		VALUES
+		(#{idcType},#{alertLevel},#{serverCount},#{fireWallCount},#{routerCount},#{exchangeCount},#{loadBalanceCount},#{cloudStorageCount},#{sdnControllerCount},
+		 #{diskArrayCount},#{tapeLibraryCount},#{mon})
+	</insert>
+
+	<select id="getIdcTypeAlertCount" parameterType="map" resultType="map">
+		SELECT
+		idc_type idcType,
+		SUM(count) alertSum,
+		SUM(IF(alert_level = '5',ah.count,0)) seriousSum,
+		SUM(IF(alert_level = '4',ah.count,0)) highSum,
+		SUM(IF(alert_level = '3',ah.count,0)) middleSum,
+		SUM(IF(alert_level = '2',ah.count,0)) lowSum
+		FROM (SELECT idc_type,alert_level,COUNT(1) count FROM alert_alerts
+					WHERE idc_type IS NOT null
+					<if test="startTime != null and endTime != null">
+						AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+					</if>
+					GROUP BY idc_type,alert_level
+					UNION ALL
+					SELECT idc_type,alert_level,COUNT(1) count FROM alert_alerts_his
+					WHERE idc_type IS NOT null
+					<if test="startTime != null and endTime != null">
+						AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+					</if>
+					GROUP BY idc_type,alert_level
+				 ) ah
+		 GROUP BY idc_type;
+	</select>
+
+	<insert id="insertAlertMonReportSum" parameterType="map">
+		INSERT INTO mon_report_alert_sum
+		(idc_type,alert_sum,serious_sum,high_sum,middle_sum,low_sum,mon)
+		VALUES
+		(#{idcType},#{alertSum},#{seriousSum},#{highSum},#{middleSum},#{lowSum},#{mon})
+	</insert>
+
+	<select id="getAlertIndexSum" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1) sCount
+		FROM (SELECT idc_type,alert_level,key_comment,item_key FROM alert_alerts
+				WHERE 1=1
+				<if test="startTime != null and endTime != null">
+					AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+				</if>
+				UNION ALL
+				SELECT idc_type,alert_level,key_comment,item_key FROM alert_alerts_his
+				WHERE 1=1
+				<if test="startTime != null and endTime != null">
+					AND cur_moni_time BETWEEN #{startTime} AND #{endTime}
+				</if>
+				) ah
+	</select>
+
+	<select id="viewByIdcType" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		aah.idc_type,
+		SUM(aah.count) sum,
+		SUM(IF(aah.alert_level = '5',aah.count,0)) sCount,
+		SUM(IF(aah.alert_level = '4',aah.count,0)) hCount,
+		SUM(IF(aah.alert_level = '3',aah.count,0)) mCount,
+		SUM(IF(aah.alert_level = '2',aah.count,0)) lCount
+		FROM (SELECT idc_type,alert_level,count(1) count FROM alert_alerts
+			WHERE idc_type IS NOT NULL
+			<if test="idcType != null and idcType != ''" >
+				AND idc_type = #{idcType}
+			</if>
+			<if test="month != null and month != ''">
+				AND cur_moni_time BETWEEN #{first} AND date_add(#{last}, interval 1 day)
+			</if>
+			GROUP BY idc_type,alert_level
+			UNION ALL
+			SELECT idc_type,alert_level,count(1) count FROM alert_alerts_his
+			WHERE idc_type IS NOT NULL
+			<if test="idcType != null and idcType != ''" >
+				AND idc_type = #{idcType}
+			</if>
+			<if test="month != null and month != ''">
+				AND cur_moni_time BETWEEN #{first} AND date_add(#{last}, interval 1 day)
+			</if>
+			GROUP BY idc_type,alert_level
+		) aah
+		GROUP BY idc_type
+	</select>
+
+	<select id="viewByIp" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		host_name,
+		SUM(ah.count) sCount
+		FROM (SELECT host_name,COUNT(1) count FROM alert_alerts
+			WHERE idc_type is not null
+			<if test="idcType != null and idcType != ''" >
+				AND idc_type = #{idcType}
+			</if>
+			<if test="month != null and month != ''">
+				AND cur_moni_time BETWEEN #{first} AND date_add(#{last}, interval 1 day)
+			</if>
+			<if test="deviceType != null and deviceType != ''" >
+				AND device_type = #{deviceType}
+			</if>
+			GROUP BY host_name
+			UNION ALL
+			SELECT host_name,COUNT(1) count FROM alert_alerts_his
+			WHERE idc_type is not null
+			<if test="idcType != null and idcType != ''" >
+				AND idc_type = #{idcType}
+			</if>
+			<if test="month != null and month != ''">
+				AND cur_moni_time BETWEEN #{first} AND date_add(#{last}, interval 1 day)
+			</if>
+			<if test="deviceType != null and deviceType != ''" >
+				AND device_type = #{deviceType}
+			</if>
+			GROUP BY host_name
+		) ah
+		GROUP BY host_name
+		ORDER BY sCount DESC
+		LIMIT 10
+	</select>
+	<select id="viewByKeyComment" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		key_comment ,
+		SUM(ah.count) sCount
+		FROM (SELECT key_comment,COUNT(1) count FROM alert_alerts
+		WHERE idc_type is not null
+		<if test="idcType != null and idcType != ''" >
+			AND idc_type = #{idcType}
+		</if>
+		<if test="month != null and month != ''">
+			AND cur_moni_time BETWEEN #{first} AND date_add(#{last}, interval 1 day)
+		</if>
+		<if test="deviceType != null and deviceType != ''" >
+			AND device_type = #{deviceType}
+		</if>
+		GROUP BY key_comment
+		UNION ALL
+		SELECT key_comment,COUNT(1) count FROM alert_alerts_his
+		WHERE idc_type is not null
+		<if test="idcType != null and idcType != ''" >
+			AND idc_type = #{idcType}
+		</if>
+		<if test="month != null and month != ''">
+			AND cur_moni_time BETWEEN #{first} AND date_add(#{last}, interval 1 day)
+		</if>
+		<if test="deviceType != null and deviceType != ''" >
+			AND device_type = #{deviceType}
+		</if>
+		GROUP BY key_comment
+		) ah
+		GROUP BY key_comment
+		ORDER BY sCount DESC
+		LIMIT 10
+	</select>
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.screen.mapper.CmdbScreenProblemInfoMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenProblemInfo" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="department1" property="department1" jdbcType="VARCHAR" />
+        <result column="department2" property="department2" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="classify" property="classify" jdbcType="VARCHAR" />
+        <result column="problem_desc" property="problemDesc" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--  一个问题多个回答内容，一次性查全  -->
+    <resultMap id="resultCollectMap" type="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenProblemInfo" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="department1" property="department1" jdbcType="VARCHAR" />
+        <result column="department2" property="department2" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="classify" property="classify" jdbcType="VARCHAR" />
+        <result column="problem_desc" property="problemDesc" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <collection property="answerInfoList" column="id"
+                    select="com.aspire.ums.cmdb.v3.screen.mapper.CmdbScreenAnswerInfoMapper.listByProblemId"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `title`,
+        `type`,
+        `classify`,
+        `problem_desc`,
+        `create_time`,
+        `status`,
+        `is_delete`
+        FROM cmdb_screen_problem_info
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenProblemInfoRequest">
+        SELECT
+        `id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `title`,
+        `type`,
+        `classify`,
+        `problem_desc`,
+        `create_time`,
+        `status`,
+        `is_delete`
+        FROM cmdb_screen_problem_info
+        WHERE is_delete = '0' <include refid="entity_where"/>
+        ORDER BY create_time desc
+        <if test="pageNo != null and pageSize != null">
+            limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+
+    <select id="listByEntityCount" resultType="int">
+        SELECT count(*)
+        FROM cmdb_screen_problem_info
+        WHERE is_delete = '0' <include refid="entity_where"/>
+    </select>
+
+    <sql id="entity_where">
+        <!-- 是否是管理员 -->
+        <if test="!isAdmin">
+            AND `login_name` = #{loginName}
+        </if>
+        <if test="title != null and title != ''">
+            AND `title` LIKE CONCAT('%',#{title},'%')
+        </if>
+        <if test="type != null and type != ''">
+            AND `type` = #{type}
+        </if>
+        <if test="classify != null and classify != ''">
+            AND `classify` = #{classify}
+        </if>
+        <if test="createTime != null and createTime != ''">
+            AND DATE_FORMAT(`create_time`,'%Y-%m-%d') = #{createTime}
+        </if>
+    </sql>
+
+    <!-- Get one 查询 -->
+    <select id="get" resultMap="resultCollectMap">
+        SELECT
+        `id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `title`,
+        `type`,
+        `classify`,
+        `problem_desc`,
+        `create_time`,
+        `status`,
+        `is_delete`
+        FROM cmdb_screen_problem_info
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenProblemInfo">
+        INSERT INTO cmdb_screen_problem_info
+        (
+            `id`,
+            `login_name`,
+            `user_name`,
+            `department1`,
+            `department2`,
+            `mobile`,
+            `email`,
+            `title`,
+            `type`,
+            `classify`,
+            `problem_desc`,
+            `create_time`,
+            `status`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{loginName, jdbcType=VARCHAR},
+            #{userName, jdbcType=VARCHAR},
+            #{department1, jdbcType=VARCHAR},
+            #{department2, jdbcType=VARCHAR},
+            #{mobile, jdbcType=VARCHAR},
+            #{email, jdbcType=VARCHAR},
+            #{title, jdbcType=VARCHAR},
+            #{type, jdbcType=VARCHAR},
+            #{classify, jdbcType=VARCHAR},
+            #{problemDesc, jdbcType=VARCHAR},
+            NOW(),
+            '待处理',
+            '0'
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenProblemInfo">
+        UPDATE cmdb_screen_problem_info
+        SET
+            `status` = #{status}
+        WHERE
+            `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenProblemInfo">
+        DELETE FROM cmdb_screen_problem_info
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

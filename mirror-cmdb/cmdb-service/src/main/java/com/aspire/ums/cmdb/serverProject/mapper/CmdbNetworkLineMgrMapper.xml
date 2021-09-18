@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.serverProject.mapper.CmdbNetworkLineMgrMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineMgr">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="server_line" property="serverLine" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcType" jdbcType="VARCHAR"/>
+        <result column="server_network_type" property="serverNetworkType" jdbcType="VARCHAR"/>
+        <result column="server_bill_type" property="serverBillType" jdbcType="VARCHAR"/>
+        <result column="server_bill_unit" property="serverBillUnit" jdbcType="VARCHAR"/>
+        <result column="server_line_standard" property="serverLineStandard" jdbcType="VARCHAR"/>
+        <result column="server_line_a" property="serverLineA" jdbcType="VARCHAR"/>
+        <result column="server_line_b" property="serverLineB" jdbcType="VARCHAR"/>
+        <result column="server_line_create_date" property="serverLineCreateDate" jdbcType="VARCHAR"/>
+        <result column="server_line_update_date" property="serverLineUpdateDate" jdbcType="VARCHAR"/>
+        <result column="server_line_cancal_date" property="serverLineCancalDate" jdbcType="VARCHAR"/>
+        <result column="project_belong_to" property="projectBelongTo" jdbcType="VARCHAR"/>
+        <result column="business_belong_to" property="businessBelongTo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `server_line`,
+        `idcType`,
+        `server_network_type`,
+        `server_bill_type`,
+        `server_bill_unit`,
+        `server_line_standard`,
+        `server_line_a`,
+        `server_line_b`,
+        `server_line_create_date`,
+        `server_line_update_date`,
+        `server_line_cancal_date`,
+        `project_belong_to`,
+        `business_belong_to`
+        FROM cmdb_network_line_mgr
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineMgr">
+        SELECT
+        `id`,
+        `is_delete`,
+        `server_line`,
+        `idcType`,
+        `server_network_type`,
+        `server_bill_type`,
+        `server_bill_unit`,
+        `server_line_standard`,
+        `server_line_a`,
+        `server_line_b`,
+        `server_line_create_date`,
+        `server_line_update_date`,
+        `server_line_cancal_date`,
+        `project_belong_to`,
+        `business_belong_to`
+        FROM cmdb_network_line_mgr
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="serverLine != null and serverLine != ''">
+            AND `server_line` = #{serverLine}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND `idcType` = #{idcType}
+        </if>
+        <if test="serverNetworkType != null and serverNetworkType != ''">
+            AND `server_network_type` = #{serverNetworkType}
+        </if>
+        <if test="serverBillType != null and serverBillType != ''">
+            AND `server_bill_type` = #{serverBillType}
+        </if>
+        <if test="serverBillUnit != null and serverBillUnit != ''">
+            AND `server_bill_unit` = #{serverBillUnit}
+        </if>
+        <if test="serverLineStandard != null and serverLineStandard != ''">
+            AND `server_line_standard` = #{serverLineStandard}
+        </if>
+        <if test="serverLineA != null and serverLineA != ''">
+            AND `server_line_a` = #{serverLineA}
+        </if>
+        <if test="serverLineB != null and serverLineB != ''">
+            AND `server_line_b` = #{serverLineB}
+        </if>
+        <if test="serverLineCreateDate != null and serverLineCreateDate != ''">
+            AND `server_line_create_date` = #{serverLineCreateDate}
+        </if>
+        <if test="serverLineUpdateDate != null and serverLineUpdateDate != ''">
+            AND `server_line_update_date` = #{serverLineUpdateDate}
+        </if>
+        <if test="serverLineCancalDate != null and serverLineCancalDate != ''">
+            AND `server_line_cancal_date` = #{serverLineCancalDate}
+        </if>
+        <if test="projectBelongTo != null and projectBelongTo != ''">
+            AND `project_belong_to` = #{projectBelongTo}
+        </if>
+        <if test="businessBelongTo != null and businessBelongTo != ''">
+            AND `business_belong_to` = #{businessBelongTo}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineMgr" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `server_line`,
+        `idcType`,
+        `server_network_type`,
+        `server_bill_type`,
+        `server_bill_unit`,
+        `server_line_standard`,
+        `server_line_a`,
+        `server_line_b`,
+        `server_line_create_date`,
+        `server_line_update_date`,
+        `server_line_cancal_date`,
+        `project_belong_to`,
+        `business_belong_to`
+        FROM cmdb_network_line_mgr
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineMgr">
+        INSERT INTO cmdb_network_line_mgr
+        (
+            `id`,
+            `is_delete`,
+            `server_line`,
+            `idcType`,
+            `server_network_type`,
+            `server_bill_type`,
+            `server_bill_unit`,
+            `server_line_standard`,
+            `server_line_a`,
+            `server_line_b`,
+            `server_line_create_date`,
+            `server_line_update_date`,
+            `server_line_cancal_date`,
+            `project_belong_to`,
+            `business_belong_to`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT},
+            #{serverLine, jdbcType=VARCHAR},
+            #{idcType, jdbcType=VARCHAR},
+            #{serverNetworkType, jdbcType=VARCHAR},
+            #{serverBillType, jdbcType=VARCHAR},
+            #{serverBillUnit, jdbcType=VARCHAR},
+            #{serverLineStandard, jdbcType=VARCHAR},
+            #{serverLineA, jdbcType=VARCHAR},
+            #{serverLineB, jdbcType=VARCHAR},
+            #{serverLineCreateDate, jdbcType=VARCHAR},
+            #{serverLineUpdateDate, jdbcType=VARCHAR},
+            #{serverLineCancalDate, jdbcType=VARCHAR},
+            #{projectBelongTo, jdbcType=VARCHAR},
+            #{businessBelongTo, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineMgr">
+        UPDATE cmdb_network_line_mgr SET
+        `is_delete` = #{isDelete},
+        `server_line` = #{serverLine},
+        `idcType` = #{idcType},
+        `server_network_type` = #{serverNetworkType},
+        `server_bill_type` = #{serverBillType},
+        `server_bill_unit` = #{serverBillUnit},
+        `server_line_standard` = #{serverLineStandard},
+        `server_line_a` = #{serverLineA},
+        `server_line_b` = #{serverLineB},
+        `server_line_create_date` = #{serverLineCreateDate},
+        `server_line_update_date` = #{serverLineUpdateDate},
+        `server_line_cancal_date` = #{serverLineCancalDate},
+        `project_belong_to` = #{projectBelongTo},
+        `business_belong_to` = #{businessBelongTo}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineMgr">
+        DELETE FROM cmdb_network_line_mgr
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

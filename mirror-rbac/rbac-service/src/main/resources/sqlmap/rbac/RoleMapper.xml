@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.RoleDao">
+
+	<resultMap id="RoleResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Role">
+		<id column="uuid" property="uuid" />
+		<result column="name" property="name" />
+		<result column="namespace" property="namespace" />
+		<result column="admin_role" property="adminRole" />
+		<result column="created_at" property="createdAt" />
+		<result column="updated_at" property="updatedAt" />
+		<result column="role_type" property="roleType" />
+		<result column="descr" property="describe" />
+	</resultMap>
+
+	<select id="getRoleByUUID" resultMap="RoleResultMap">
+		SELECT
+		uuid, name, namespace, admin_role, created_at,updated_at,role_type,descr
+		FROM role
+		WHERE uuid = #{uuid}
+	</select>
+
+	<select id="hasGetRoleByUUID" resultType="int">
+		SELECT count(*)
+		FROM role
+		WHERE uuid = #{uuid}
+	</select>
+
+	<select id="hasFetchRole" resultType="int">
+		SELECT
+		count(*)
+		FROM role
+		WHERE (name = #{roleUuidOrName} or uuid =
+		#{roleUuidOrName})
+		and namespace = #{namespace}
+	</select>
+
+	<select id="fetchRoleList" resultMap="RoleResultMap">
+		SELECT
+		uuid, name, namespace, admin_role, created_at,updated_at,role_type,descr
+		FROM
+		role
+		WHERE namespace = #{namespace}
+		<if test="roleNames != null and roleNames.length > 0">
+			AND
+			<foreach collection="roleNames" index="index" item="roleName"
+				open="(" separator="or" close=")">
+				name LIKE CONCAT('%', #{roleName},
+				'%')
+			</foreach>
+		</if>
+	</select>
+
+	<select id="listRoles" resultMap="RoleResultMap">
+		SELECT DISTINCT
+		r.uuid, r.name, r.namespace, r.admin_role, r.created_at,r.updated_at,r.role_type,r.descr
+		FROM
+		role r
+		left join roles_user ru on r.uuid=ru.role_uuid
+		WHERE 1=1
+		<if test="uuids != null">
+		 and r.uuid in
+			<foreach collection="uuids" index="index" item="uuid" open="("
+				separator="," close=")">
+				#{uuid}
+			</foreach>
+		</if>
+		<if test="name != null and name != ''">
+			and r.name = #{name}
+		</if>
+		<if test="namespace != null and namespace != ''">
+			and r.namespace = #{namespace}
+		</if>
+		<if test="roleType != null">
+			and r.role_type = #{roleType}
+		</if>
+		<if test="username != null">
+			and ru.username = #{username}
+		</if>
+	</select>
+	
+	<select id="childListRoles" resultMap="RoleResultMap">
+		SELECT
+		r.uuid, r.name, r.namespace, r.admin_role, r.created_at,r.updated_at,r.role_type,r.descr
+		FROM role r
+		left join role_parents p on r.uuid=p.role_uuid
+		left join role pr on p.parent_uuid=pr.uuid
+		WHERE 1=1
+		<choose>
+			<when test="uuids != null">
+			 	and p.parent_uuid in
+				<foreach collection="uuids" index="index" item="uuid" open="("
+					separator="," close=")">
+					#{uuid}
+				</foreach>
+			</when>
+			<otherwise>
+				and pr.uuid is null
+			</otherwise>
+		</choose>
+		<if test="name != null and name != ''">
+			and pr.name = #{name}
+		</if>
+		<if test="namespace != null and namespace != ''">
+			and r.namespace = #{namespace}
+		</if>
+		<if test="roleType != null">
+			and r.role_type = #{roleType}
+		</if>
+	</select>
+
+	<select id="fetchRoleDetail" resultMap="RoleResultMap">
+		SELECT
+		uuid, name, namespace, admin_role, created_at,updated_at,role_type,descr
+		FROM
+		role
+		WHERE namespace = #{namespace}
+		
+		<if test="roleUuid != null and roleUuid != ''">
+			 and  uuid=#{roleUuid}
+		</if>
+		<if test="roleUuidOrName != null and roleUuidOrName != ''">
+			 and  name=#{roleUuidOrName}
+		</if> 
+		
+		
+	</select>
+
+	<delete id="deleteRole">
+		DELETE FROM role
+		WHERE
+		(uuid = #{roleUuidOrName} or name = #{roleUuidOrName})
+		and namespace =
+		#{namespace}
+	</delete>
+
+	<delete id="deleteRoleByUuid">
+		DELETE FROM role
+		WHERE uuid = #{roleUuid}
+	</delete>
+
+	<insert id="createRole">
+		INSERT INTO role(
+		uuid,
+		name, namespace, admin_role, created_at,updated_at,role_type,descr
+		)
+		VALUES(#{uuid},#{name},#{namespace},#{adminRole},now(),now(),#{role_type},#{describe})
+	</insert>
+
+	<insert id="createRoleBatch" parameterType="list">
+		INSERT INTO role(
+		uuid, name, namespace, admin_role,
+		created_at,updated_at,role_type,descr
+		)
+		VALUES
+		<foreach collection="roleList" index="index" item="item"
+			separator=",">
+			(#{item.uuid},#{item.name},#{item.namespace},#{item.adminRole},now(),now(),#{item.roleType},#{item.describe})
+		</foreach>
+	</insert>
+
+	<update id="modifyRole" >
+		UPDATE role SET updated_at=now()
+		<if test="adminRole != null and adminRole != ''">
+			,admin_role=#{adminRole}
+		</if>
+		<if test="describe != null and describe != ''">
+			,descr=#{describe}
+		</if>
+		<if test="name != null and name != ''">
+			,name=#{name}
+		</if>
+		WHERE uuid=#{uuid}
+	</update>
+	
+	
+    <sql id="Page_List_Params">
+        <where>
+                <if test="params['uuid'] != null and  params['uuid'] != ''">
+                    and Role.uuid = #{params.uuid}
+                </if>
+                <if test="params['name'] != null and  params['name'] != ''">
+                    and Role.name = #{params.name}
+                </if>
+                <if test="params['roleType'] != null">
+                    and Role.role_type = #{params.roleType}
+                </if>
+                <if test="params['namespace'] != null and  params['namespace'] != ''">
+                    and Role.namespace = #{params.namespace}
+                </if>
+                <if test="params['adminRole'] != null">
+                    and Role.admin_role = #{params.adminRole}
+                </if>
+                <if test="params['descr'] != null and  params['descr'] != ''">
+                    and Role.descr = #{params.descr}
+                </if>
+                <if test="params['createdAt'] != null and  params['createdAt'] != ''">
+                    and Role.created_at = #{params.createdAt}
+                </if>
+                <if test="params['updatedAt'] != null and  params['updatedAt'] != ''">
+                    and Role.updated_at = #{params.updatedAt}
+                </if>
+        </where>
+    </sql>
+	
+    <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(*) FROM role Role
+        <include refid="Page_List_Params"/>
+    </select>
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.migu.tsg.microservice.atomicservice.rbac.dto.ListRolesResponse">
+        SELECT
+				 Role.uuid uuid,
+				 Role.name name,
+				 Role.role_type roleType,
+				 Role.namespace namespace,
+				 Role.admin_role adminRole,
+				 Role.descr `describe`,
+				 Role.created_at createdAt,
+				 Role.updated_at updatedAt
+        FROM role Role
+        <include refid="Page_List_Params"/>
+        order by  created_at desc
+        limit #{begin},#{pageSize}
+    </select>
+
+
+</mapper>

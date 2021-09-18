@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.mail.recipient.dao.AlertMailRecipientDao">
+    <resultMap id="recipientResultMap" type="com.aspire.mirror.mail.recipient.po.AlertMailRecipient">
+        <result property="id" column="id" jdbcType="INTEGER"></result>
+        <result property="receiver" column="recipient" jdbcType="VARCHAR"></result>
+        <result property="password" column="password" jdbcType="VARCHAR"></result>
+        <result property="receiveProtocal" column="receive_protocal" jdbcType="INTEGER"></result>
+        <result property="mailServer" column="mail_server" jdbcType="VARCHAR"></result>
+        <result property="receivePort" column="receive_port" jdbcType="VARCHAR"></result>
+        <result property="active" column="status" jdbcType="INTEGER"></result>
+        <result property="strategyNum" column="strategy_num" jdbcType="INTEGER"></result>
+        <result property="description" column="recipient_desc" jdbcType="VARCHAR"></result>
+        <result property="period" column="period" jdbcType="INTEGER"></result>
+        <result property="unit" column="period_unit" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <select id="selectActiveRecipients" resultMap="recipientResultMap">
+        SELECT * FROM alert_mail_recipients WHERE status = 1
+    </select>
+
+    <insert id="insertActiveRecipient" parameterType="com.aspire.mirror.mail.recipient.po.AlertMailRecipient">
+        INSERT INTO alert_mail_recipients(recipient, password, mail_server, receive_protocal, receive_port, status, recipient_desc, period, period_unit)
+        VALUES (#{receiver}, #{password}, #{mailServer}, #{receiveProtocal}, #{receivePort}, #{active}, #{description}, #{period}, #{unit})
+    </insert>
+
+    <update id="updateActiveRecipient" parameterType="com.aspire.mirror.mail.recipient.po.AlertMailRecipient">
+        UPDATE alert_mail_recipients
+        <set>
+            <if test="receiver != null and receiver != ''">
+                recipient = #{receiver},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="mailServer != null and mailServer != ''">
+                mail_server = #{mailServer},
+            </if>
+            <if test="receiveProtocal != null">
+                receive_protocal = #{receiveProtocal},
+            </if>
+            <if test="receivePort != null">
+                receive_port = #{receivePort},
+            </if>
+            <if test="active != null">
+                status = #{active},
+            </if>
+            <if test="description != null and description != ''">
+                recipient_desc = #{description},
+            </if>
+            <if test="period != null">
+                period = #{period},
+            </if>
+            <if test="unit != null">
+                period_unit = #{unit}
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <delete id="deleteActiveRecipient" parameterType="int">
+        UPDATE alert_mail_recipients
+        SET status = 0
+        WHERE id = #{id}
+    </delete>
+
+    <select id="countSubstance" resultType="int" parameterType="string">
+        SELECT COUNT(1) FROM alert_mail_substance WHERE receiver = #{receiver} and uid = #{uid}
+    </select>
+
+    <insert id="saveSubstance" parameterType="string">
+        INSERT INTO alert_mail_substance(receiver, uid) VALUES (#{receiver}, #{uid})
+    </insert>
+
+    <insert id="insertFailedRecord" parameterType="com.aspire.mirror.mail.recipient.po.AlertMailFailed">
+        INSERT INTO alert_mail_failed_record(receiver, method, sender, uid, message)
+        VALUES (#{receiver}, #{method}, #{sender}, #{uid}, #{message})
+    </insert>
+
+    <insert id="batchSaveSubstance" parameterType="list">
+        INSERT INTO alert_mail_substance(receiver, sender, send_time, uid, subject, content) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.receiver}, #{item.sender}, #{item.sendTime}, #{item.uid}, #{item.subject}, #{item.content})
+        </foreach>
+    </insert>
+</mapper>

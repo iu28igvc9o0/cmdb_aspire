@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsAutoRepairDao">
+
+	<resultMap type="com.aspire.mirror.ops.domain.OpsApItemType" id="apItemType">
+		<result property="id" column="id" jdbcType="BIGINT"/>
+		<result property="apItemType" column="ap_item_type" jdbcType="VARCHAR"/>
+		<result property="apItemTypeName" column="ap_item_type_name" jdbcType="VARCHAR"/>
+		<result property="sourceMark" column="source_mark" jdbcType="VARCHAR"/>
+		<result property="firstSyncTime" column="first_sync_time" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="apItemTypeAllCols">
+		id, ap_item_type, ap_item_type_name, source_mark, first_sync_time, last_update_time
+	</sql>
+	
+	<select id="queryOpsAutoRepairItemTypeList" resultMap="apItemType" 
+			parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsApItemTypeDTO$OpsAutoRepairItemTypeQueryModel">
+		select <include refid="apItemTypeAllCols" />
+		  from ops_auto_repair_item_type
+		 where 1 = 1 
+		 	<if test="apItemTypeNameLike != null and apItemTypeNameLike != ''">
+				and ap_item_type_name like CONCAT ('%', #{apItemTypeNameLike}, '%')
+			</if>
+			<if test="pageSize != null and pageSize > 0 ">
+		     	 order by id desc
+		         limit #{startIdx}, #{pageSize}
+	        </if>
+	</select>
+	
+	<select id="queryOpsAutoRepairItemTypeTotalSize" resultType="java.lang.Integer" parameterType="java.lang.Long"> 
+		select count(id) 
+		  from ops_auto_repair_item_type
+		 where 1 = 1 
+		 	<if test="apItemTypeNameLike != null and apItemTypeNameLike != ''">
+				and ap_item_type_name like CONCAT ('%', #{apItemTypeNameLike}, '%')
+			</if>
+	</select>
+	
+	<select id="queryApItemTypeByUqKeys" parameterType="java.util.Map" resultMap="apItemType">
+		select <include refid="apItemTypeAllCols" />
+		  from ops_auto_repair_item_type
+		 where source_mark = #{sourceMark}
+		   and ap_item_type = #{apItemType}
+	</select>
+	
+	<insert id="insertOpsApItemType" useGeneratedKeys="true" keyColumn="id" keyProperty="id" 
+				parameterType="com.aspire.mirror.ops.domain.OpsApItemType">
+		insert into ops_auto_repair_item_type (	
+			ap_item_type, 
+			ap_item_type_name, 
+			source_mark, 
+			first_sync_time, 
+			last_update_time
+		) values (
+			#{apItemType},
+			#{apItemTypeName},
+			#{sourceMark},
+			#{firstSyncTime},
+			#{lastUpdateTime}
+		)
+	</insert>
+	
+	<update id="updateOpsApItemType" parameterType="com.aspire.mirror.ops.domain.OpsApItemType">
+		update ops_auto_repair_item_type 
+		   set ap_item_type = #{apItemType}, source_mark = #{sourceMark}
+				<if test="apItemTypeName != null and apItemTypeName != ''">
+					, ap_item_type_name = #{apItemTypeName}
+				</if>
+				<if test="lastUpdateTime != null">
+					, last_update_time = #{lastUpdateTime}
+				</if>
+		 where ap_item_type = #{apItemType} and source_mark = #{sourceMark}     
+	</update>
+	
+	<delete id="deleteApItemTypeByUqKeys" parameterType="java.util.HashMap">
+		delete from ops_auto_repair_item_type where ap_item_type = #{apItemType} and source_mark = #{sourceMark}     
+	</delete>
+	
+	<resultMap type="com.aspire.mirror.ops.domain.OpsApItem" id="apItem">
+		<result property="id" column="id" jdbcType="BIGINT"/>
+		<result property="apItemTypeId" column="ap_item_type_id" jdbcType="BIGINT"/>
+		<result property="sourceMark" column="source_mark" jdbcType="VARCHAR"/>
+		<result property="apItemType" column="ap_item_type" jdbcType="VARCHAR"/>
+		<result property="apItemTypeName" column="ap_item_type_name" jdbcType="VARCHAR"/>
+		<result property="apItem" column="ap_item" jdbcType="VARCHAR"/>
+		<result property="apItemName" column="ap_item_name" jdbcType="VARCHAR"/>
+		<result property="apItemValueType" column="ap_item_value_type" jdbcType="INTEGER"/>
+		<result property="apItemValueUnit" column="ap_item_value_unit" jdbcType="VARCHAR"/>
+		<result property="referBySchemeFlag" column="refer_by_scheme_flag" jdbcType="INTEGER"/>
+		<result property="extendAttrsJson" column="extend_attrs" jdbcType="VARCHAR"/>
+		<result property="firstSyncTime" column="first_sync_time" jdbcType="TIMESTAMP"/>
+		<result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<sql id="apItemAllCols">
+		i.id, i.ap_item_type_id, i.ap_item, i.ap_item_name, i.ap_item_value_type, i.ap_item_value_unit, 
+		i.extend_attrs, i.first_sync_time, i.last_update_time
+	</sql>
+	
+	<select id="queryOpsAutoRepairItemListByItemTypeId" resultMap="apItem" parameterType="java.lang.Long">
+		select <include refid="apItemAllCols" />, t.source_mark, t.ap_item_type, 
+		       t.ap_item_type_name, IF(si.id, 1, 0) refer_by_scheme_flag
+		  from ops_auto_repair_item i 
+		  	   left join ops_auto_repair_item_type t on i.ap_item_type_id = t.id
+		  	   left join ops_auto_repair_scheme_item si on si.ap_item_type_id = i.ap_item_type_id 
+		  	        and si.ap_item = i.ap_item
+		 where i.ap_item_type_id = #{apItemTypeId}
+	</select>
+	
+	<select id="queryOpsAutoRepairItemByUqKeys" resultMap="apItem" parameterType="java.util.Map">
+		select <include refid="apItemAllCols" />, t.source_mark, t.ap_item_type, 
+				t.ap_item_type_name, IF(si.id, 1, 0) refer_by_scheme_flag
+		  from ops_auto_repair_item i 
+		  inner join ops_auto_repair_item_type t on i.ap_item_type_id = t.id 
+		    and t.source_mark = #{sourceMark} and t.ap_item_type = #{apItemType}
+		    and i.ap_item = #{apItem}
+		  left join ops_auto_repair_scheme_item si on si.ap_item_type_id = i.ap_item_type_id 
+		  	        and si.ap_item = i.ap_item
+	</select>
+	
+	<select id="queryReferApItemListByItemTypeKeys" resultMap="apItem" parameterType="java.util.Map">
+		select <include refid="apItemAllCols" />, t.source_mark, t.ap_item_type, 
+				t.ap_item_type_name, IF(si.id, 1, 0) refer_by_scheme_flag
+		  from ops_auto_repair_item i 
+		  inner join ops_auto_repair_item_type t on i.ap_item_type_id = t.id 
+		    	and t.source_mark = #{sourceMark} and t.ap_item_type = #{apItemType}
+		  inner join ops_auto_repair_scheme_item si on si.ap_item_type_id = i.ap_item_type_id 
+		  	        and si.ap_item = i.ap_item
+	</select>
+	
+	
+	<insert id="insertOpsApItem" useGeneratedKeys="true" keyColumn="id" keyProperty="id" 
+			parameterType="com.aspire.mirror.ops.domain.OpsApItem">
+		insert into ops_auto_repair_item (	
+			ap_item_type_id, 
+			ap_item, 
+			ap_item_name, 
+			ap_item_value_type,
+			ap_item_value_unit, 
+			extend_attrs, 
+			first_sync_time, 
+			last_update_time
+		) values (
+			#{apItemTypeId},
+			#{apItem},
+			#{apItemName},
+			#{apItemValueType},
+			#{apItemValueUnit},
+			#{extendAttrsJson},
+			#{firstSyncTime},
+			#{lastUpdateTime}
+		)
+	</insert>
+	
+	<update id="updateOpsApItem" parameterType="com.aspire.mirror.ops.domain.OpsApItem">
+		update ops_auto_repair_item
+		   set ap_item_type_id = #{apItemTypeId}, ap_item = #{apItem}
+		    <if test="apItemName != null and apItemName != ''">
+				, ap_item_name = #{apItemName}
+			</if>
+			<if test="apItemValueType != null">
+				, ap_item_value_type = #{apItemValueType}
+			</if>
+			<if test="apItemValueUnit != null and apItemValueUnit != ''">
+				, ap_item_value_unit = #{apItemValueUnit}
+			</if>
+			<if test="extendAttrsJson != null and extendAttrsJson != ''">
+				, extend_attrs = #{extendAttrsJson}
+			</if>
+			<if test="lastUpdateTime != null">
+				, last_update_time = #{lastUpdateTime}
+			</if>
+		 where ap_item_type_id = #{apItemTypeId} and ap_item = #{apItem}
+	</update>
+	
+	<delete id="deleteOpsApItemByUqKeys" parameterType="java.util.HashMap">
+		delete from ops_auto_repair_item where ap_item_type_id = #{apItemTypeId} and ap_item = #{apItem}
+	</delete>
+	
+	<delete id="deleteAllOpsApItemsByApTypeKeys" parameterType="java.util.HashMap">
+		delete from ops_auto_repair_item 
+		 where exists (select 1 from ops_auto_repair_item_type 
+		                where ops_auto_repair_item_type.id = ops_auto_repair_item.ap_item_type_id
+		                  and ops_auto_repair_item_type.source_mark = #{sourceMark} 
+		                  and ops_auto_repair_item_type.ap_item_type = #{apItemType})
+	</delete>
+	
+	<resultMap type="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairSchemeDTO" id="autoRepairScheme">
+		<result property="schemeId" column="scheme_id" jdbcType="BIGINT"/>
+		<result property="schemeName" column="scheme_name" jdbcType="VARCHAR"/>
+    	<result property="multiItemsApplyTime" column="multi_items_apply_time" jdbcType="INTEGER"/>
+    	<result property="referPipelineCount" column="refer_pipeline_count" jdbcType="INTEGER"/>
+    	<result property="description" column="description" jdbcType="VARCHAR"/>
+    	<result property="creater" column="creater" jdbcType="VARCHAR"/>
+    	<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    	<result property="updater" column="updater" jdbcType="VARCHAR"/>
+    	<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    	<collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+	</resultMap>
+
+	<insert id="insertAutoRepairScheme" useGeneratedKeys="true" keyColumn="scheme_id" keyProperty="schemeId" 
+			parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairSchemeDTO"> 
+		insert into ops_auto_repair_scheme (
+			scheme_name,
+			multi_items_apply_time,
+			refer_pipeline_count,
+			description,
+			creater,
+			create_time,
+			updater,
+			update_time
+		) values (
+			#{schemeName},
+			#{multiItemsApplyTime},
+			#{referPipelineCount},
+			#{description},
+			#{creater},
+			#{createTime},
+			#{updater},
+			#{updateTime}
+		)
+	</insert>
+	
+	<update id="updateAutoRepairScheme" parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairSchemeDTO"> 
+		update ops_auto_repair_scheme 
+		   set scheme_id = #{schemeId}
+		<if test="schemeName != null and schemeName != ''">
+			, scheme_name = #{schemeName}
+		</if>
+		<if test="multiItemsApplyTime != null">
+			, multi_items_apply_time = #{multiItemsApplyTime}
+		</if>
+		<if test="referPipelineCount != null">
+			, refer_pipeline_count = #{referPipelineCount}
+		</if>
+		<if test="description != null and description != ''">
+			, description = #{description}
+		</if>
+		<if test="updater != null and updater != ''">
+			, updater = #{updater}
+		</if>
+		<if test="updateTime != null">
+			, update_time = #{updateTime}
+		</if>
+		where scheme_id = #{schemeId}
+	</update>
+	
+	<delete id="removeAutoRepairSchemeById" parameterType="java.lang.Long">
+		delete from ops_auto_repair_scheme where scheme_id = #{schemeId} 
+	</delete>
+
+	<sql id="autoRepairSchemeAllCols">
+		s.scheme_id, s.scheme_name, s.multi_items_apply_time, s.refer_pipeline_count, 
+		s.description, s.creater, s.create_time, s.updater, s.update_time
+	</sql>
+	
+	<select id="queryAutoRepairSchemeById" resultMap="autoRepairScheme" parameterType="java.lang.Long">
+		select <include refid="autoRepairSchemeAllCols" />, gr.object_id,
+        	   gr.object_type, gr.group_relation_id, g.group_id, g.group_name
+		  from ops_auto_repair_scheme s
+		  left join ops_group_relation gr on s.scheme_id = gr.object_id and gr.object_type = 'ap_scheme'
+          left join ops_group g on g.group_id = gr.group_id
+		 where s.scheme_id = #{schemeId}
+	</select>
+	
+	<select id="queryAutoRepairSchemeCountByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(scheme_id) from ops_auto_repair_scheme where scheme_name = #{schemeName}
+	</select>
+	
+	<select id="queryAutoRepairSchemeByName" resultMap="autoRepairScheme" parameterType="java.lang.String">
+		select <include refid="autoRepairSchemeAllCols" />, gr.object_id,
+        	   gr.object_type, gr.group_relation_id, g.group_id, g.group_name
+		  from ops_auto_repair_scheme s
+			  left join ops_group_relation gr on s.scheme_id = gr.object_id and gr.object_type = 'ap_scheme'
+	          left join ops_group g on g.group_id = gr.group_id
+		 where s.scheme_name = #{schemeName}
+	</select>
+	
+	<select id="queryAutoRepairSchemeList" resultMap="autoRepairScheme"
+				parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairSchemeDTO$OpsAutoRepairSchemeQueryModel">
+		select <include refid="autoRepairSchemeAllCols" />, gr.object_id,
+        	   gr.object_type, gr.group_relation_id, g.group_id, g.group_name
+		  from ops_auto_repair_scheme s
+			   left join ops_group_relation gr on s.scheme_id = gr.object_id and gr.object_type = 'ap_scheme'
+	           left join ops_group g on g.group_id = gr.group_id
+		 where 1 = 1
+		 <if test="schemeNameLike != null and schemeNameLike != ''">
+		 	and s.scheme_name like CONCAT ('%', #{schemeNameLike}, '%')
+		 </if>
+		 <if test="groupIdList != null and groupIdList.size() > 0">
+	      	  and exists (select 1 from ops_group_relation ggrr where ggrr.group_id in 
+	      	  	<foreach collection="groupIdList" index="index" item="groupId" open="(" separator="," close=")">
+					#{groupId}
+				</foreach>
+				and s.scheme_id = ggrr.object_id and ggrr.object_type = 'ap_scheme'
+	      	  )
+	      </if>
+	      <if test="createTimeStart != null">
+			  and s.create_time &gt;= #{createTimeStart}
+	     </if>
+	      <if test="createTimeEnd != null">
+			  and s.create_time &lt;= #{createTimeEnd}
+	      </if>
+	      <if test="pageSize != null and pageSize > 0 ">
+	     	 order by s.scheme_id desc
+	         limit #{startIdx}, #{pageSize}
+          </if>	
+	</select>
+	
+	<select id="queryAutoRepairSchemeTotalSize" resultType="java.lang.Integer"
+				parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairSchemeDTO$OpsAutoRepairSchemeQueryModel">
+		 select count(s.scheme_id)
+		  from ops_auto_repair_scheme s
+		 where 1 = 1
+		 <if test="schemeNameLike != null and schemeNameLike != ''">
+		 	and s.scheme_name like CONCAT ('%', #{schemeNameLike}, '%')
+		 </if>
+		 <if test="groupIdList != null and groupIdList.size() > 0">
+	      	  and exists (select 1 from ops_group_relation ggrr where ggrr.group_id in 
+	      	  	<foreach collection="groupIdList" index="index" item="groupId" open="(" separator="," close=")">
+					#{groupId}
+				</foreach>
+				and s.scheme_id = ggrr.object_id and ggrr.object_type = 'ap_scheme'
+	      	  )
+	      </if>
+	      <if test="createTimeStart != null">
+			   and s.create_time &gt;= #{createTimeStart}
+	      </if>
+	      <if test="createTimeEnd != null">
+			   and s.create_time &lt;= #{createTimeEnd}
+	      </if>
+	</select>
+	
+	<resultMap type="com.aspire.mirror.ops.domain.OpsApSchemeItem" id="apSchemeItem">
+		<result property="id" column="id" jdbcType="BIGINT"/>
+		<result property="schemeId" column="scheme_id" jdbcType="BIGINT"/>
+		<result property="schemeName" column="scheme_name" jdbcType="VARCHAR"/>
+		<result property="sourceMark" column="source_mark" jdbcType="VARCHAR"/>
+		<result property="apItemTypeId" column="ap_item_type_id" jdbcType="BIGINT"/>
+		<result property="apItemType" column="ap_item_type" jdbcType="VARCHAR"/>
+		<result property="apItemTypeName" column="ap_item_type_name" jdbcType="VARCHAR"/>
+		<result property="apItem" column="ap_item" jdbcType="VARCHAR"/>
+		<result property="apItemName" column="ap_item_name" jdbcType="VARCHAR"/>
+		<result property="judgeSymbol" column="judge_symbol" jdbcType="VARCHAR"/>
+		<result property="judgeValue" column="judge_value" jdbcType="VARCHAR"/>
+		<result property="order" column="ord" jdbcType="INTEGER"/>
+		<result property="extendAttrsJson" column="extend_attrs" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="schemeItemAllCols">
+		i.id, i.scheme_id, i.ap_item_type_id, i.ap_item, i.judge_symbol, i.judge_value, i.ord
+	</sql>
+	
+	<select id="queryReferItemListBySchemeId" parameterType="java.lang.Long" resultMap="apSchemeItem">
+		select <include refid="schemeItemAllCols" />, ii.extend_attrs,
+			   s.scheme_name, ii.ap_item_name, t.source_mark, t.ap_item_type, t.ap_item_type_name
+		  from ops_auto_repair_scheme_item i
+		  left join ops_auto_repair_scheme s on i.scheme_id = s.scheme_id
+		  left join ops_auto_repair_item_type t on i.ap_item_type_id = t.id
+		  left join ops_auto_repair_item ii on i.ap_item_type_id = ii.ap_item_type_id and i.ap_item = ii.ap_item
+		 where i.scheme_id = #{schemeId}
+		 order by ord asc
+	</select>
+	
+	<select id="querySchemeReferItemByUqKeys" parameterType="java.util.Map" resultMap="apSchemeItem">
+		select <include refid="schemeItemAllCols" />, ii.extend_attrs,
+			   s.scheme_name, ii.ap_item_name, t.source_mark, t.ap_item_type, t.ap_item_type_name
+		   from ops_auto_repair_scheme_item i 
+		   inner join ops_auto_repair_item_type t 
+		   			on i.ap_item_type_id = t.id and i.ap_item_type_id = #{apItemTypeId} and i.ap_item = #{apItem}
+		   left join ops_auto_repair_scheme s on i.scheme_id = s.scheme_id
+		   left join ops_auto_repair_item ii on i.ap_item_type_id = ii.ap_item_type_id and i.ap_item = ii.ap_item
+	</select>
+	
+	<select id="querySchemeReferItemBySourceItemType" parameterType="java.util.Map" resultMap="apSchemeItem">
+		select <include refid="schemeItemAllCols" />, ii.extend_attrs, 
+			   s.scheme_name, ii.ap_item_name, t.source_mark, t.ap_item_type, t.ap_item_type_name
+		   from ops_auto_repair_scheme_item i 
+		   inner join ops_auto_repair_item_type t on i.ap_item_type_id = t.id 
+		   			and i.ap_item = #{apItem} and t.source_mark = #{sourceMark} and t.ap_item_type = #{apItemType} 
+		   left join ops_auto_repair_scheme s on i.scheme_id = s.scheme_id
+		   left join ops_auto_repair_item ii on i.ap_item_type_id = ii.ap_item_type_id and i.ap_item = ii.ap_item   
+	</select>
+	
+	<insert id="insertOpsApSchemeItem" useGeneratedKeys="true" keyColumn="id" keyProperty="id" >
+		insert into ops_auto_repair_scheme_item (
+			scheme_id, 
+			ap_item_type_id, 
+			ap_item, 
+			judge_symbol, 
+			judge_value, 
+			ord
+		) values (
+			#{schemeId},
+			#{apItemTypeId},
+			#{apItem},
+			#{judgeSymbol},
+			#{judgeValue},
+			#{order}
+		)
+	</insert>
+	
+	<update id="updateOpsApSchemeItem" parameterType="java.lang.Long">
+		update ops_auto_repair_scheme_item
+		   set id = #{id}
+				<if test="apItemTypeId != null">
+					, ap_item_type_id = #{apItemTypeId}
+				</if>
+				<if test="apItem != null and apItem != ''">
+					, ap_item = #{apItem}
+				</if>
+				<if test="judgeSymbol != null and judgeSymbol != ''">
+					, judge_symbol = #{judgeSymbol}
+				</if>
+				<if test="judgeValue != null and judgeValue != ''">
+					, judge_value = #{judgeValue}
+				</if>
+				<if test="order != null and order != ''">
+					, ord = #{order}
+				</if>
+		 where id = #{id}
+	</update>
+	
+	<delete id="deleteOpsApSchemeItemById" parameterType="java.lang.Long">
+		delete from ops_auto_repair_scheme_item where id = #{schemeItemId}
+	</delete>
+	
+	<delete id="deleteAllOpsApSchemeItemsBySchemeId" parameterType="java.lang.Long">
+		delete from ops_auto_repair_scheme_item where scheme_id = #{schemeId}
+	</delete>
+	
+	
+	<resultMap type="com.aspire.mirror.ops.api.domain.autorepair.OpsApSchemePipelineDTO" id="apSchemePipeline">
+		<result property="id" column="id" jdbcType="BIGINT"/>
+		<result property="schemeId" column="scheme_id" jdbcType="BIGINT"/>
+		<result property="pipelineId" column="pipeline_id" jdbcType="BIGINT"/>
+		<result property="pipelineName" column="pipeline_name" jdbcType="VARCHAR"/>
+		<result property="finishJudgeType" column="finish_judge_type" jdbcType="VARCHAR"/>
+		<result property="finishJudgeValue" column="finish_judge_value" jdbcType="VARCHAR"/>
+		<result property="finishJudgeAction" column="finish_judge_action" jdbcType="INTEGER"/>
+		<result property="order" column="ord" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<sql id="schemePipelineAllCols">
+		sp.id, sp.scheme_id, sp.pipeline_id, sp.finish_judge_type, sp.finish_judge_value, sp.finish_judge_action, sp.ord
+	</sql>
+	
+	<select id="queryReferPipelineListBySchemeId" parameterType="java.lang.Long" resultMap="apSchemePipeline">
+		select <include refid="schemePipelineAllCols" />, p.name pipeline_name 
+		  from ops_auto_repair_scheme_pipeline sp left join ops_pipeline p on sp.pipeline_id = p.pipeline_id
+		 where sp.scheme_id = #{schemeId}
+		 order by ord asc
+	</select>
+	
+	<select id="queryReferPipelineBySchemeIdAndOrder" parameterType="java.util.Map" resultMap="apSchemePipeline">
+		select <include refid="schemePipelineAllCols" />, p.name pipeline_name 
+		  from ops_auto_repair_scheme_pipeline sp left join ops_pipeline p on sp.pipeline_id = p.pipeline_id
+		 where sp.scheme_id = #{schemeId} and sp.ord = #{currPipeOrd}
+	</select>
+	
+	<select id="queryReferPipelineByUqKeys" parameterType="java.util.Map" resultMap="apSchemePipeline">
+		select <include refid="schemePipelineAllCols" />, p.name pipeline_name 
+		  from ops_auto_repair_scheme_pipeline sp left join ops_pipeline p on sp.pipeline_id = p.pipeline_id
+		 where sp.scheme_id = #{schemeId} and sp.pipeline_id = #{pipelineId}
+	</select>
+	
+	<insert id="insertOpsApSchemePipeline" useGeneratedKeys="true" keyColumn="id" keyProperty="id" 
+			parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsApSchemePipelineDTO">
+		insert into ops_auto_repair_scheme_pipeline (
+			scheme_id, 
+			pipeline_id, 
+			finish_judge_type, 
+			finish_judge_value, 
+			finish_judge_action,
+			ord
+		) values (
+			#{schemeId},
+			#{pipelineId},
+			#{finishJudgeType},
+			#{finishJudgeValue},
+			#{finishJudgeAction},
+			#{order}
+		)
+	</insert>
+	
+	<update id="updateOpsApSchemePipeline" parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsApSchemePipelineDTO">
+		update ops_auto_repair_scheme_pipeline
+		   set id = #{id}
+				<if test="finishJudgeType != null and finishJudgeType != ''">
+					, finish_judge_type = #{finishJudgeType}
+				</if>
+				<if test="finishJudgeValue != null and finishJudgeValue != ''">
+					, finish_judge_value = #{finishJudgeValue}
+				</if>
+				<if test="finishJudgeAction != null">
+					, finish_judge_action = #{finishJudgeAction}
+				</if>
+				<if test="order != null and order != ''">
+					, ord = #{order}
+				</if>
+		 where id = #{id}
+	</update>
+	
+	<delete id="deleteOpsApSchemePipelineById" parameterType="java.lang.Long">
+		delete from ops_auto_repair_scheme_pipeline where id = #{schemePipelineId}
+	</delete>
+
+	<delete id="deleteAllOpsApSchemePipelineBySchemeId" parameterType="java.lang.Long">
+		delete from ops_auto_repair_scheme_pipeline where scheme_id = #{schemeId}
+	</delete>
+	
+	
+	<resultMap type="com.aspire.mirror.ops.domain.OpsAutoRepairExecuteLog" id="autoRepairExecuteLog">
+		<result property="id" column="id" jdbcType="BIGINT"/>
+		<result property="schemeId" column="scheme_id" jdbcType="BIGINT"/>
+		<result property="schemeName" column="scheme_name" jdbcType="VARCHAR"/>
+		<result property="currentPipelineOrder" column="current_pipeline_order" jdbcType="INTEGER"/>
+		<result property="currentPipelineInstanceId" column="current_pipeline_instance_id" jdbcType="BIGINT"/>
+		<result property="currentPipelineInstanceName" column="current_pipeline_instance_name" jdbcType="VARCHAR"/>
+		<result property="executedPipeInstIdListJson" column="executed_pipe_inst_id_list" jdbcType="VARCHAR"/>
+		<result property="executedPipeInstNameListJson" column="executed_pipe_inst_name_list" jdbcType="VARCHAR"/>
+		<result property="sourceMark" column="source_mark" jdbcType="VARCHAR"/>
+		<result property="apItemType" column="ap_item_type" jdbcType="VARCHAR"/>
+		<result property="apItemTypeName" column="ap_item_type_name" jdbcType="VARCHAR"/>
+		<result property="apItem" column="ap_item" jdbcType="VARCHAR"/>
+		<result property="apItemName" column="ap_item_name" jdbcType="VARCHAR"/>
+		<result property="assetPool" column="asset_pool" jdbcType="VARCHAR"/>
+		<result property="agentIp" column="agent_ip" jdbcType="VARCHAR"/>
+		<result property="extendDataMapJson" column="extend_data" jdbcType="VARCHAR"/>
+		<result property="triggerTime" column="trigger_time" jdbcType="TIMESTAMP"/>
+		<result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+		<result property="totalTime" column="total_time" jdbcType="FLOAT"/>
+		<result property="status" column="status" jdbcType="INTEGER"/>
+		<result property="exitCode" column="exit_code" jdbcType="INTEGER"/>
+		<result property="response" column="response" jdbcType="VARCHAR"/>
+		<result property="aspNodeResult" column="aspnode_result" jdbcType="INTEGER"/>
+		<result property="aspNodeMessage" column="aspnode_msg" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="autoRepairExecuteResultAllCols">
+		id,
+		scheme_id,
+		scheme_name,
+		current_pipeline_order,
+		current_pipeline_instance_id,
+		current_pipeline_instance_name,
+		executed_pipe_inst_id_list,
+		executed_pipe_inst_name_list,
+		source_mark,
+		ap_item_type,
+		ap_item_type_name,
+		ap_item,
+		ap_item_name,
+		asset_pool,
+		agent_ip,
+		extend_data,
+		trigger_time,
+		end_time,
+		total_time,
+		status,
+		exit_code,
+		response,
+		aspnode_result,
+		aspnode_msg
+	</sql>
+	
+	<select id="queryAutoRepairExecuteResultByPipelineInstanceId" parameterType="java.lang.Long" resultMap="autoRepairExecuteLog">
+		select <include refid="autoRepairExecuteResultAllCols" /> 
+		  from ops_auto_repair_execute_log
+		 where current_pipeline_instance_id = #{pipelineInstanceId}
+	</select>
+	
+	<select id="queryAutoRepairExecuteResultById" parameterType="java.lang.Long" resultMap="autoRepairExecuteLog">
+		select <include refid="autoRepairExecuteResultAllCols" /> 
+		  from ops_auto_repair_execute_log
+		 where id = #{schemeExecLogId}
+	</select>
+	
+	<insert id="insertOpsAutoRepairExecuteResult" useGeneratedKeys="true" keyColumn="id" keyProperty="id" 
+			parameterType="com.aspire.mirror.ops.domain.OpsAutoRepairExecuteLog">
+		insert into ops_auto_repair_execute_log (
+			scheme_id,
+			scheme_name,
+			current_pipeline_order,
+			current_pipeline_instance_id,
+			current_pipeline_instance_name,
+			executed_pipe_inst_id_list,
+			executed_pipe_inst_name_list,
+			source_mark,
+			ap_item_type,
+			ap_item_type_name,
+			ap_item,
+			ap_item_name,
+			asset_pool,
+			agent_ip,
+			extend_data,
+			trigger_time,
+			end_time,
+			total_time,
+			status,
+			exit_code,
+			response,
+			aspnode_result,
+			aspnode_msg
+		) values (
+			#{schemeId},
+			#{schemeName},
+			#{currentPipelineOrder},
+			#{currentPipelineInstanceId},
+			#{currentPipelineInstanceName},
+			#{executedPipeInstIdListJson},
+			#{executedPipeInstNameListJson},
+			#{sourceMark},
+			#{apItemType},
+			#{apItemTypeName},
+			#{apItem},
+			#{apItemName},
+			#{assetPool},
+			#{agentIp},
+			#{extendDataMapJson},
+			#{triggerTime},
+			#{endTime},
+			#{totalTime},
+			#{status},
+			#{exitCode},
+			#{response},
+			#{aspNodeResult},
+			#{aspNodeMessage}
+		)
+	</insert>
+			
+	<update id="updateOpsAutoRepairExecuteResult" parameterType="com.aspire.mirror.ops.domain.OpsAutoRepairExecuteLog">
+		update ops_auto_repair_execute_log set id = #{id}
+			<if test="currentPipelineOrder != null">
+				, current_pipeline_order = #{currentPipelineOrder}
+			</if>
+			<if test="currentPipelineInstanceId != null">
+				, current_pipeline_instance_id = #{currentPipelineInstanceId}
+			</if>
+			<if test="currentPipelineInstanceName != null and currentPipelineInstanceName != ''">
+				, current_pipeline_instance_name = #{currentPipelineInstanceName}
+			</if>
+			<if test="executedPipeInstIdListJson != null and executedPipeInstIdListJson != ''">
+				, executed_pipe_inst_id_list = #{executedPipeInstIdListJson}
+			</if>
+			<if test="executedPipeInstNameListJson != null and executedPipeInstNameListJson != ''">
+				, executed_pipe_inst_name_list = #{executedPipeInstNameListJson}
+			</if>
+			<if test="endTime != null">
+				, end_time = #{endTime}
+			</if>
+			<if test="totalTime != null">
+				, total_time = #{totalTime}
+			</if>
+			<if test="status != null">
+				, status = #{status}
+			</if>
+			<if test="exitCode != null">
+				, exit_code = #{exitCode}
+			</if>
+			<if test="response != null and response != ''">
+				, response = #{response}
+			</if>	
+			<if test="aspNodeResult != null">
+				, aspnode_result = #{aspNodeResult}
+			</if>	
+			<if test="aspNodeMessage != null and aspNodeMessage != ''">
+				, aspnode_msg = #{aspNodeMessage}
+			</if>	
+		where id = #{id}
+	</update>
+	
+	<select id="queryOpsAutoRepairExecHistoryList" resultMap="autoRepairExecuteLog"
+			parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairExecuteLogDTO$OpsApExecHistoryQueryModel">
+		select <include refid="autoRepairExecuteResultAllCols" /> 
+		  from ops_auto_repair_execute_log
+		 where 1 = 1
+		 	<if test="schemeNameLike != null and schemeNameLike != ''">
+				and scheme_name like CONCAT ('%', #{schemeNameLike}, '%')
+			</if>
+			<if test="pipeInstNameLike != null and pipeInstNameLike != ''">
+				and executed_pipe_inst_name_list like CONCAT ('%', #{pipeInstNameLike}, '%')
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="createTimeStart != null">
+				and trigger_time &gt;= #{createTimeStart}
+			</if>
+			<if test="createTimeEnd != null">
+				and trigger_time &lt;= #{createTimeEnd}
+			</if>  
+			<if test="pageSize != null and pageSize > 0 ">
+		        order by id desc
+		        limit #{startIdx}, #{pageSize}
+	        </if>	
+	</select>
+	
+	<select id="queryOpsAutoRepairExecHistoryListTotalSize" resultType="java.lang.Integer"
+			parameterType="com.aspire.mirror.ops.api.domain.autorepair.OpsAutoRepairExecuteLogDTO$OpsApExecHistoryQueryModel">
+		select count(id)
+		  from ops_auto_repair_execute_log
+		 where 1 = 1
+		 	<if test="schemeNameLike != null and schemeNameLike != ''">
+				and scheme_name like CONCAT ('%', #{schemeNameLike}, '%')
+			</if>
+			<if test="pipeInstNameLike != null and pipeInstNameLike != ''">
+				and executed_pipe_inst_name_list like CONCAT ('%', #{pipeInstNameLike}, '%')
+			</if>
+			<if test="status != null">
+				and status = #{status}
+			</if>
+			<if test="createTimeStart != null">
+				and trigger_time &gt;= #{createTimeStart}
+			</if>
+			<if test="createTimeEnd != null">
+				and trigger_time &lt;= #{createTimeEnd}
+			</if>  
+	</select>
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.CircleMapper" >
+    <resultMap id="CircleResultMap" type="com.aspire.ums.cmdb.maintain.entity.Circle" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="`name`" property="name" jdbcType="VARCHAR" />
+        <result column="`code`" property="code" jdbcType="VARCHAR" />
+        <result column="`dec`" property="dec" jdbcType="VARCHAR"/>
+        <result column="`type`" property="type" jdbcType="INTEGER" />
+        <result column="isTop" property="isTop" jdbcType="INTEGER" />
+        <result column="insertTime" property="insertTime" jdbcType="DATE" />
+        <result column="updateTime" property="updateTime" jdbcType="DATE" />
+        <result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+    </resultMap>
+    
+    <sql id="Circle_Column_List" >
+        id, `name`, `code`, `dec`, `type`, isTop, insertTime, updateTime, isDelete 
+    </sql>
+
+    <select id="getAll" parameterType="com.aspire.ums.cmdb.maintain.entity.Circle"   resultType="java.util.HashMap"  >
+       SELECT cc.*,
+       (SELECT COUNT(1)  FROM  cmdb_instance_circle cic, cmdb_instance ci WHERE cc.id = cic.circleId AND cic.instanceId = ci.id AND ci.isDelete=0) AS instanceNum,
+       (SELECT COUNT(1)  FROM  cmdb_config_log ccl WHERE ccl.circleId = cc.id and  ccl.insertTime >=  DATE_SUB(CURDATE(), INTERVAL 30 DAY)) AS activeNum
+	   FROM cmdb_circle cc
+	   WHERE cc.isDelete = 0 
+		<if test="name!=null and name!=''">  
+		    AND cc.name  like concat('%', #{name}, '%')
+		</if>  
+        order by cc.isTop DESC, cc.insertTime DESC
+    </select>
+
+    <select id="getOne" parameterType="java.lang.String" resultMap="CircleResultMap" >
+        SELECT 
+       <include refid="Circle_Column_List" />
+	   FROM cmdb_circle
+	   WHERE id = #{id} AND isDelete = 0
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.Circle" >
+       INSERT INTO 
+       		cmdb_circle
+       		(id, `name`, `code`, `dec`, `type`, isTop, insertTime, updateTime, isDelete) 
+       	VALUES
+       		(#{id}, #{name}, #{code}, #{dec}, #{type}, 0,  NOW(),  NOW(), 0)
+    </insert>
+    
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.Circle" >
+       UPDATE 
+       		cmdb_circle 
+       SET 
+       	<if test="isTop != null">isTop = #{isTop},</if>
+       	<if test="name!=null and name!=''">  
+		    `name`  =  #{name},
+		</if> 
+       	<if test="dec!=null and dec!=''">  
+		    `dec`  =  #{dec},
+		</if> 
+		<if test="code!=null and code!=''">  
+		    `code`  =  #{code},
+		</if> 
+		<if test="isDelete!=null and isDelete!=''">  
+		    isDelete  =  #{isDelete},
+		</if> 
+     	updateTime = NOW()
+       WHERE 
+       		id = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_circle 
+       WHERE 
+       		 id =#{id}
+    </delete>
+    
+    <select id="getInstance" parameterType="java.lang.String" resultType="java.util.HashMap"  >
+       SELECT ci.*,
+       (SELECT cc.name  FROM  cmdb_instance_circle cic, cmdb_circle cc WHERE ci.id = cic.instanceId  AND cic.circleId = cc.id) AS circleName,
+       (SELECT cm.name  FROM  cmdb_module cm WHERE cm.id = ci.moduleId ) AS moduleName,
+	   FROM cmdb_instance ci 
+	   WHERE ci.isDelete = 0 and  ci.name  like '%$name$%'
+    </select>
+    
+  <delete id="deleteInstance" parameterType="java.lang.String" >
+       update
+       		 cmdb_instance 
+       set isDelete = 1
+       WHERE 
+       		 id =#{id}
+    </delete>
+    
+     <select id="getByCondition" parameterType="com.aspire.ums.cmdb.maintain.entity.Circle"   resultMap="CircleResultMap"  >
+       SELECT 
+     <include refid="Circle_Column_List" />
+	   FROM cmdb_circle cc
+	   WHERE cc.isDelete = 0 
+		<if test="name!=null and name!=''">  
+		    AND cc.name  =  #{name}
+		</if>  
+
+    </select>
+
+
+    <select id="getInstanceByView" parameterType="java.util.HashMap"   resultType="java.util.HashMap"  >
+                       SELECT DISTINCT ci.id, ci.name , ci.moduleId, DATE_FORMAT(ci.insertTime, '%Y-%c-%d %h:%i:%s' ) insertTime, DATE_FORMAT(ci.updateTime, '%Y-%c-%d %h:%i:%s' ) updateTime, 
+         cm.name moduleName,cit.`name`  tagName FROM cmdb_instance ci
+                                               LEFT JOIN cmdb_module cm ON ci.moduleId = cm.id and cm.isDelete = 0 and  cm.disabled='false'
+                                               LEFT JOIN (SELECT GROUP_CONCAT(NAME) `name`, instanceId FROM cmdb_instance_tag  GROUP BY instanceId) cit ON ci.id = cit.instanceId
+         <if test="defaultView == 'false' or defaultView == '' or defaultView == null">   
+          inner join cmdb_maintain_view_condition cmvc on ci.moduleId = cmvc.moduleId  and cmvc.viewId =  #{viewId}
+          inner join cmdb_maintain_view cmv on cmvc.viewId = cmv.id 
+         </if>
+          inner join cmdb_instance_circle cic on ci.id = cic.instanceId and cic.circleId = #{circleId} 
+
+         
+              where 1 = 1   AND ci.isDelete = 0
+        <if test="name!=null and name!=''">  
+		    AND ci.name  like concat('%', #{name}, '%')
+		</if>  
+		<if test="moduleId!=null and moduleId!=''">  
+		    AND ci.moduleId  =  #{moduleId}
+		</if>  
+	    <if test="tagName!=null and tagName!=''">  
+		    AND cit.name like concat('%', #{tagName}, '%')
+		</if> 
+		<if test="insertStartTime!=null and insertStartTime!=''">  
+		    AND ci.insertTime >=  str_to_date(#{insertStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="insertEndTime!=null and insertEndTime!=''">  
+		    AND str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s') >= ci.insertTime 
+		</if> 
+		
+		<if test="updateStartTime!=null and updateStartTime!=''">  
+		    AND ci.updateTime >=  str_to_date(#{updateStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="updateEndTime!=null and updateEndTime!=''">  
+		    AND str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s') >= ci.updateTime 
+		</if> 
+                                   
+    </select>
+    
+     <select id="getInstanceByModule" parameterType="java.util.HashMap"   resultType="java.util.HashMap"  >
+         SELECT DISTINCT ci.id, ci.name , ci.moduleId, date_format(ci.insertTime, '%Y-%c-%d %h:%i:%s' ) insertTime, date_format(ci.updateTime, '%Y-%c-%d %h:%i:%s' ) updateTime, 
+         cm.name moduleName, cit.name tagName, cc.name  circleName
+                                               FROM cmdb_instance ci
+                                               left join cmdb_module cm on ci.moduleId = cm.id and cm.isDelete = 0 and  cm.disabled='false' 
+                                               left join cmdb_instance_tag cit on ci.id = cit.instanceId
+                                               LEFT join cmdb_instance_circle cic on ci.id = cic.instanceId
+                                               LEFT join cmdb_circle cc on cc.id =  cic.circleId and cc.isDelete = 0 
+         
+              where 1 = 1   AND ci.isDelete = 0
+        <if test="circleId!=null and circleId!=''">  
+		    AND cic.circleId  =  #{circleId}
+		</if>        
+        <if test="name!=null and name!=''">  
+		    AND ci.name  like concat('%', #{name}, '%')
+		</if>  
+		<if test="moduleId!=null and moduleId!=''">  
+		    AND ci.moduleId  =  #{moduleId}
+		</if>  
+	    <if test="tagName!=null and tagName!=''">  
+		    AND cit.name =  #{tagName}
+		</if> 
+		<if test="insertStartTime!=null and insertStartTime!=''">  
+		    AND ci.insertTime >=  str_to_date(#{insertStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="insertEndTime!=null and insertEndTime!=''">  
+		    AND str_to_date(#{insertEndTime},'%Y-%m-%d %H:%i:%s') >= ci.insertTime 
+		</if> 
+		
+		<if test="updateStartTime!=null and updateStartTime!=''">  
+		    AND ci.updateTime >=  str_to_date(#{updateStartTime},'%Y-%m-%d %H:%i:%s') and str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s')
+		</if> 
+		<if test="updateEndTime!=null and updateEndTime!=''">  
+		    AND str_to_date(#{updateEndTime},'%Y-%m-%d %H:%i:%s') >= ci.updateTime 
+		</if> 
+                                   
+    </select>
+    
+       <select id="getHistoryByInstance" parameterType="java.util.HashMap"   resultType="java.util.HashMap"  >
+      
+        select id, `name`, `action`, `owner`, ownerName, `desc`, circleId, circleName, date_format(insertTime, '%Y-%m-%d %H:%i:%s' ) insertTime, instanceId ,moduleName from cmdb_config_log
+         
+              where 1 = 1 
+        <if test="name!=null and name!=''">  
+		    AND name  like concat('%', #{name}, '%')
+		</if> 
+		<if test="circleId!=null and circleId!=''">  
+		    AND circleId = #{circleId}
+		</if> 
+		<if test="instanceId!=null and instanceId!=''">  
+		    AND instanceId = #{instanceId}
+		</if>
+	    order by insertTime desc
+                                   
+    </select>
+    
+     <select id="getHistoryByRelation" parameterType="java.util.HashMap"   resultType="java.util.HashMap"  >
+      
+        select id, `name`, instanceId, circleId, relationName, targetName, `action`, `owner`, ownerName, date_format(insertTime, '%Y-%m-%d %H:%i:%s' ) insertTime  from cmdb_relation_log
+         
+              where 1 = 1 
+        <if test="name!=null and name!=''">  
+		    AND name  like concat('%', #{name}, '%')
+		</if> 
+		<if test="circleId!=null and circleId!=''">  
+		    AND circleId = #{circleId}
+		</if> 
+	    order by insertTime desc
+                                   
+    </select>
+
+</mapper>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenBizSystemDeviceDetailMapper">
+
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.index.payload.ScreenBizSystemDeviceDetail">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="date_display" jdbcType="VARCHAR" property="dateDisplay"/>
+        <result column="statist_date" jdbcType="VARCHAR" property="statistDate"/>
+        <result column="cpu_max" jdbcType="VARCHAR" property="cpuMax"/>
+        <result column="memory_max" jdbcType="VARCHAR" property="memoryMax"/>
+        <result column="cpu_avg" jdbcType="VARCHAR" property="cpuAvg"/>
+        <result column="memory_avg" jdbcType="VARCHAR" property="memoryAvg"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="instance_id" jdbcType="VARCHAR" property="instanceId"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="base_sql">
+        id, device_type, biz_system, ip, resource_pool, date_display, statist_date, cpu_max, memory_max, cpu_avg, memory_avg, insert_time
+    </sql>
+
+    <insert id="batchInsert" parameterType="com.aspire.ums.cmdb.index.payload.ScreenBizSystemDeviceDetail">
+        insert into screen_bizsystem_device_detail(<include refid="base_sql"/>)
+        values
+          <foreach collection="list" item="item" separator=",">
+              (#{item.id, jdbcType=VARCHAR},
+              #{item.deviceType, jdbcType=VARCHAR},
+              #{item.bizSystem, jdbcType=VARCHAR},
+              #{item.ip, jdbcType=VARCHAR},
+              #{item.resourcePool, jdbcType=VARCHAR},
+              #{item.dateDisplay, jdbcType=VARCHAR},
+              #{item.statistDate, jdbcType=VARCHAR},
+              #{item.cpuMax, jdbcType=VARCHAR},
+              #{item.memoryMax, jdbcType=VARCHAR},
+              #{item.cpuAvg, jdbcType=VARCHAR},
+              #{item.memoryAvg, jdbcType=VARCHAR},
+              #{item.insertTime, jdbcType=TIMESTAMP})
+          </foreach>
+    </insert>
+
+    <delete id="delete">
+        delete from  screen_bizsystem_device_detail
+        where  1=1 <include refid="where_sql"/>
+        <if test="monthlyTime != null and monthlyTime != ''">
+            and statist_date = #{monthlyTime}
+        </if>
+    </delete>
+
+    <select id="list" resultMap="resultMap">
+        select tc.id instance_id,
+            d.cpu_avg,
+            d.memory_avg,
+            d.cpu_max,
+            d.memory_max,
+            d.date_display,
+            d.statist_date
+        from (
+            select cpu_avg,memory_avg,cpu_max,memory_max,date_display,statist_date,ip,resource_pool
+            from screen_bizsystem_device_detail
+            where biz_system = #{bizSystem} and device_type = #{deviceType} and DATE_FORMAT(statist_date,'%Y-%m') = #{monthlyTime}
+        ) d
+        left join (
+            select c.id, m.ip, idc.idc_name idcType
+            from cmdb_instance c
+            inner join cmdb_instance_ip_manager m on c.id = m.instance_id
+            left join cmdb_idc_manager idc on c.idcType = idc.id
+            where c.bizSystem IN (SELECT id FROM cmdb_business_system WHERE bizSystem = #{bizSystem})
+            and c.is_delete = '0'
+        ) tc on d.ip = tc.ip and d.resource_pool = tc.idcType
+        order by d.ip,d.resource_pool,d.statist_date
+    </select>
+
+    <sql id="where_sql">
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            and biz_system = #{bizSystem}
+        </if>
+    </sql>
+
+    <select id="getDevTypeAndBizSystemList" resultType="java.util.HashMap">
+        SELECT
+          device_type deviceType,
+          biz_system bizSystem
+        FROM screen_resource_allocation
+        where is_delete = '0' and device_type in ('物理机','虚拟机') and monthly_time = #{monthlyTime}
+        GROUP BY device_type,biz_system
+    </select>
+</mapper>

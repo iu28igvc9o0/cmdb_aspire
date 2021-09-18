@@ -1,0 +1,51 @@
+server:
+  port: 18888
+
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      
+druid:
+  url: jdbc:mysql://127.0.0.1:3306/test
+  username: root
+  password: root
+  useUnicode: true
+  characterEncoding: UTF8
+  useSSL: false
+
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*/*Mapper.xml
+  type-aliases-package: 
+     org.springboot.sample.entity
+
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+      
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: true
+  file: ./scan/dir/logService.log
+
+log:
+  hosts: 172.30.150.38:9200
+  userName: 123
+  password: 456
+  needAuth: true
+  maxTotalConnectionPerRoute: 1
+  maxTotalConnection: 10  
+  multiThreaded: false
+  readTimeout:  20000

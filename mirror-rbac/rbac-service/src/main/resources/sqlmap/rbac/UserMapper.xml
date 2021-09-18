@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     UserSql
+	描述:     数据访问语句
+	作者:     曾祥华
+	时间:     2019-03-07 16:05:29
+ -->
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.UserDao">
+
+	<resultMap type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.User" id="baseResultMap">
+		<result property="uuid" column="uuid" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="userType" column="user_type" jdbcType="INTEGER"/>
+		<result property="deptId" column="dept_Id" jdbcType="VARCHAR"/>
+		<result property="no" column="no" jdbcType="VARCHAR"/>
+		<result property="sex" column="sex" jdbcType="INTEGER"/>
+		<result property="mail" column="mail" jdbcType="VARCHAR"/>
+		<result property="address" column="address" jdbcType="VARCHAR"/>
+		<result property="phone" column="phone" jdbcType="VARCHAR"/>
+		<result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+		<result property="ldapId" column="ldapId" jdbcType="VARCHAR"/>
+		<result property="picture" column="picture" jdbcType="VARCHAR"/>
+		<result property="namespace" column="namespace" jdbcType="VARCHAR"/>
+		<result property="code" column="code" jdbcType="VARCHAR"/>
+		<result property="fax" column="fax" jdbcType="VARCHAR"/>
+		<result property="post" column="post" jdbcType="VARCHAR"/>
+		<result property="relationPerson" column="relation_person" jdbcType="VARCHAR"/>
+		<result property="descr" column="descr" jdbcType="VARCHAR"/>
+		<result property="ldapPasswordUpdatetime" column="ldap_password_updatetime" jdbcType="VARCHAR"/>
+		<result property="ldapStatus" column="ldap_status" jdbcType="VARCHAR"/>
+		<collection property="deptList" ofType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department">
+			<id property="uuid" column="dept_uuid"/>
+			<result property="name" column="dept_name"/>
+			<result property="deptType" column="dept_type"/>
+			<result property="parentId" column="parent_id"/>
+		</collection>
+	</resultMap>
+	
+	<sql id="User_Base_Column">
+				uuid,
+				name,
+				user_type,
+				dept_Id,
+				no,
+				sex,
+				mail,
+				address,
+				phone,
+				mobile,
+				ldapId,
+				namespace,
+				descr,
+				code,
+				fax,
+				relation_person,
+				post,
+				ldap_password_updatetime,
+				ldap_status
+	</sql>
+	
+	<sql id="User_Query_List_Sharing">
+		<where>
+				and User.uuid=uuid
+				and User.name=name
+				and User.user_type=userType
+				and User.dept_Id=deptId
+				and User.no=no
+				and User.sex=sex
+				and User.mail=mail
+				and User.address=address
+				and User.phone=phone
+				and User.mobile=mobile
+				and User.ldapId=ldapId
+				and User.namespace=namespace
+				and User.descr=descr
+				and User.code=code
+				and User.fax=fax
+				and User.relation_person=relationPerson
+				and User.post=post
+		</where>
+	</sql>
+
+    <sql id="Page_List_Params">
+				<if test="params['search'] != null and  params['search'] != ''">
+					and (User.code like "%"#{params.search}"%" or User.name like "%"#{params.search}"%" or User.mobile like "%"#{params.search}"%" or  User.mail like "%"#{params.search}"%")
+				</if>
+                <if test="params['uuid'] != null and  params['uuid'] != ''">
+                    and User.uuid = #{params.uuid}
+                </if>
+                <if test="params['name'] != null and  params['name'] != ''">
+                    and User.name = #{params.name}
+                </if>
+                <if test="params['userType'] != null and  params['userType'] != ''">
+                    and User.user_type = #{params.userType}
+                </if>
+<!--                <if test="params['deptId'] != null and  params['deptId'] != ''">-->
+<!--                    and User.dept_Id = #{params.deptId}-->
+<!--                </if>-->
+                <if test="params['no'] != null and  params['no'] != ''">
+                    and User.no = #{params.no}
+                </if>
+                <if test="params['sex'] != null and  params['sex'] != ''">
+                    and User.sex = #{params.sex}
+                </if>
+                <if test="params['mail'] != null and  params['mail'] != ''">
+                    and User.mail = #{params.mail}
+                </if>
+                <if test="params['address'] != null and  params['address'] != ''">
+                    and User.address = #{params.address}
+                </if>
+                <if test="params['phone'] != null and  params['phone'] != ''">
+                    and User.phone = #{params.phone}
+                </if>
+                <if test="params['mobile'] != null and  params['mobile'] != ''">
+                    and User.mobile = #{params.mobile}
+                </if>
+                <if test="params['ldapId'] != null and  params['ldapId'] != ''">
+                    and User.ldapId = #{params.ldapId}
+                </if>
+                <if test="params['namespace'] != null and  params['namespace'] != ''">
+                    and User.namespace = #{params.namespace}
+                </if>
+                <if test="params['descr'] != null and  params['descr'] != ''">
+                    and User.descr = #{params.descr}
+                </if>
+                <if test="params['code'] != null and  params['code'] != ''">
+                    and User.code like "%"#{params.code}"%"
+                </if>
+                <if test="params['fax'] != null and  params['fax'] != ''">
+                    and User.fax = #{params.fax}
+                </if>
+                <if test="params['relationPerson'] != null and  params['relationPerson'] != ''">
+                    and User.relation_person = #{params.relationPerson}
+                </if>
+                <if test="params['post'] != null and  params['post'] != ''">
+                    and User.post = #{params.post}
+                </if>
+				<!--<if test="params['deptIdString'] != null and  params['deptIdString'] != ''">-->
+					<!--and deptuser.dept_Id in ( ${params.deptIdString} )-->
+				<!--</if>-->
+				<if test="params['deptId'] != null and params['deptId'] != ''">
+					and deptuser.dept_Id =#{params.deptId}
+				</if>
+                
+    </sql>
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.entity.User">
+		insert into user
+		(<include refid="User_Base_Column" />,picture
+		)values(
+			
+			#{uuid,jdbcType=VARCHAR} ,
+			#{name,jdbcType=VARCHAR} ,
+			#{userType,jdbcType=INTEGER} ,
+			#{deptId,jdbcType=VARCHAR} ,
+			#{no,jdbcType=VARCHAR} ,
+			#{sex,jdbcType=INTEGER} ,
+			#{mail,jdbcType=VARCHAR} ,
+			#{address,jdbcType=VARCHAR} ,
+			#{phone,jdbcType=VARCHAR} ,
+			#{mobile,jdbcType=VARCHAR} ,
+			#{ldapId,jdbcType=VARCHAR} ,
+			#{namespace,jdbcType=VARCHAR} ,
+			#{descr,jdbcType=VARCHAR} ,
+			#{code,jdbcType=VARCHAR} ,
+			#{fax,jdbcType=VARCHAR} ,
+			#{relationPerson,jdbcType=VARCHAR} ,
+			#{post,jdbcType=VARCHAR} ,
+		    #{ldapPasswordUpdatetime,jdbcType=VARCHAR},
+			#{ldapStatus,jdbcType=VARCHAR},
+			#{picture,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertBatch" parameterType="com.migu.tsg.microservice.atomicservice.rbac.entity.User">
+		insert into user
+		(<include refid="User_Base_Column" />,picture
+		)values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.uuid,jdbcType=VARCHAR} ,
+			#{item.name,jdbcType=VARCHAR} ,
+			#{item.userType,jdbcType=INTEGER} ,
+			#{item.deptId,jdbcType=VARCHAR} ,
+			#{item.no,jdbcType=VARCHAR} ,
+			#{item.sex,jdbcType=INTEGER} ,
+			#{item.mail,jdbcType=VARCHAR} ,
+			#{item.address,jdbcType=VARCHAR} ,
+			#{item.phone,jdbcType=VARCHAR} ,
+			#{item.mobile,jdbcType=VARCHAR} ,
+			#{item.ldapId,jdbcType=VARCHAR} ,
+			#{item.namespace,jdbcType=VARCHAR} ,
+			#{item.descr,jdbcType=VARCHAR} ,
+			#{item.code,jdbcType=VARCHAR} ,
+			#{item.fax,jdbcType=VARCHAR} ,
+			#{item.relationPerson,jdbcType=VARCHAR} ,
+			#{item.post,jdbcType=VARCHAR} ,
+			#{item.ldapPasswordUpdatetime,jdbcType=VARCHAR},
+			#{item.ldapStatus,jdbcType=VARCHAR},
+			#{item.picture,jdbcType=VARCHAR}
+			)
+		</foreach>
+		ON duplicate KEY UPDATE
+		name = values(name) ,
+		dept_id = values(dept_id) ,
+		mail = values(mail) ,
+		mobile = values(mobile),
+		ldapId = values(ldapId),
+		descr = values(descr)
+	</insert>
+	<!-- 列表 -->
+	<select id="selectByPrimaryKeyArrays" parameterType="java.util.List" resultMap="baseResultMap">
+		select
+		User.uuid uuid,
+		User.name name,
+		User.user_type user_type,
+		User.dept_id dept_id,
+		User.no no,
+		User.sex sex,
+		User.mail mail,
+		User.address address,
+		User.phone phone,
+		User.mobile mobile,
+		User.ldapId ldap_id,
+		User.namespace namespace,
+		User.descr descr,
+		User.code code,
+		User.fax fax,
+		User.relation_person relation_person,
+		User.post post,
+		User.ldap_password_updatetime ldap_password_updatetime,
+		User.ldap_status ldap_status,
+		User.picture,
+		dept.uuid dept_uuid,
+		dept.name dept_name,
+		dept.dept_type dept_type,
+		dept.parent_id parent_id
+		FROM user User , department_user deptuser, department dept
+		where User.uuid = deptuser.user_id and  deptuser.dept_Id=dept.uuid
+		and User.uuid in
+        <foreach collection="array" index="index" item="uuid"
+                 open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+	</select>
+	
+	<!-- 详情 -->
+	<select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+		select 
+		 User.uuid uuid,
+		 User.name name,
+		 User.user_type user_type,
+		 User.dept_id dept_id,
+		 User.no no,
+		 User.sex sex,
+		 User.mail mail,
+		 User.address address,
+		 User.phone phone,
+		 User.mobile mobile,
+		 User.ldapId ldap_id,
+		 User.namespace namespace,
+		User.descr descr,
+		User.code code,
+		User.fax fax,
+		User.relation_person relation_person,
+		User.post post,
+		User.ldap_password_updatetime ldap_password_updatetime,
+		User.ldap_status ldap_status,
+		User.picture,
+		dept.uuid dept_uuid,
+		dept.name dept_name,
+		dept.dept_type dept_type,
+		dept.parent_id parent_id
+		FROM user User , department_user deptuser, department dept
+		where User.uuid = deptuser.user_id and  deptuser.dept_Id=dept.uuid
+		and User.uuid = #{userId}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.User">
+		update user User set uuid = #{uuid}
+		
+		<if test="name != null">
+			, User.name = #{name}
+		</if>
+		<if test="userType != null">
+			, User.user_type = #{userType}
+		</if>
+		<if test="deptId != null">
+			, User.dept_Id = #{deptId}
+		</if>
+		<if test="no != null">
+			, User.no = #{no}
+		</if>
+		<if test="sex != null">
+			, User.sex = #{sex}
+		</if>
+		<if test="mail != null">
+			, User.mail = #{mail}
+		</if>
+		<if test="address != null">
+			, User.address = #{address}
+		</if>
+		<if test="phone != null">
+			, User.phone = #{phone}
+		</if>
+		<if test="mobile != null">
+			, User.mobile = #{mobile}
+		</if>
+		<if test="ldapId != null">
+			, User.ldapId = #{ldapId}
+		</if>
+		<if test="namespace != null">
+			, User.namespace = #{namespace}
+		</if>
+		
+		<if test="picture != null">
+			, User.picture = #{picture}
+		</if>
+		<if test="descr != null">
+			, User.descr = #{descr}
+		</if>
+		<if test="code != null">
+			, User.code = #{code}
+		</if>
+		<if test="fax != null">
+			, User.fax = #{fax}
+		</if>
+		<if test="relationPerson != null">
+			, User.relation_person = #{relationPerson}
+		</if>
+		<if test="post != null">
+			, User.post = #{post}
+		</if>
+		<if test="ldapPasswordUpdatetime != null">
+			, User.ldap_password_updatetime = #{ldapPasswordUpdatetime}
+		</if>
+		<if test="ldapStatus != null">
+			, User.ldap_status = #{ldapStatus}
+		</if>
+		where uuid = #{uuid}
+	</update>
+	<update id="modifyBatchByLdapIdAndNamespace" parameterType="java.util.List">
+		<foreach collection="list" separator=";" item="item"  index="index" open="" close="">
+		update user User set User.namespace = #{item.namespace}, User.ldapId = #{item.ldapId}
+		<if test="item.name != null">
+			, User.name = #{item.name}
+		</if>
+		<if test="item.userType != null">
+			, User.user_type = #{item.userType}
+		</if>
+		<if test="item.deptId != null">
+			, User.dept_Id = #{item.deptId}
+		</if>
+		<if test="item.no != null">
+			, User.no = #{item.no}
+		</if>
+		<if test="item.sex != null">
+			, User.sex = #{item.sex}
+		</if>
+		<if test="item.mail != null">
+			, User.mail = #{item.mail}
+		</if>
+		<if test="item.address != null">
+			, User.address = #{item.address}
+		</if>
+		<if test="item.phone != null">
+			, User.phone = #{item.phone}
+		</if>
+		<if test="item.mobile != null">
+			, User.mobile = #{item.mobile}
+		</if>
+		<if test="item.picture != null">
+			, User.picture = #{item.picture}
+		</if>
+		<if test="item.descr != null">
+			, User.descr = #{item.descr}
+		</if>
+		<if test="item.code != null">
+			, User.code = #{item.code}
+		</if>
+		<if test="item.fax != null">
+			, User.fax = #{item.fax}
+		</if>
+		<if test="item.relationPerson != null">
+			, User.relation_person = #{item.relationPerson}
+		</if>
+		<if test="item.post != null">
+			, User.post = #{item.post}
+		</if>
+		<if test="item.ldapPasswordUpdatetime != null">
+			, User.ldap_password_updatetime = #{item.ldapPasswordUpdatetime}
+		</if>
+		<if test="item.ldapStatus != null">
+			, User.ldap_status = #{item.ldapStatus}
+		</if>
+		where  User.namespace = #{item.namespace} and  User.ldapId = #{item.ldapId}
+		</foreach>
+	</update>
+	<!-- 删除 -->
+	<update id="deleteByPrimaryKey" parameterType="string">
+		delete from user where uuid = #{userId}
+	</update>
+
+    <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(distinct User.uuid) FROM user User , department_user deptuser, department dept
+		where User.uuid = deptuser.user_id and deptuser.dept_Id=dept.uuid
+        <include refid="Page_List_Params"/>
+    </select>
+    
+    <select id="queryList" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.User" resultMap="baseResultMap">
+		select
+				User.uuid uuid,
+				User.name name,
+				User.user_type user_type,
+				User.dept_id dept_id,
+				User.no no,
+				User.sex sex,
+				User.mail mail,
+				User.address address,
+				User.phone phone,
+				User.mobile mobile,
+				User.ldapId ldap_id,
+				User.namespace namespace,
+				User.descr descr,
+				User.code code,
+				User.fax fax,
+				User.relation_person relation_person,
+				User.post post,
+				User.ldap_password_updatetime ldap_password_updatetime,
+				User.ldap_status ldap_status,
+				dept.uuid dept_uuid,
+				dept.name dept_name,
+				dept.dept_type dept_type,
+				dept.parent_id parent_id
+				 
+        FROM user User , department_user deptuser, department dept
+		where User.uuid = deptuser.user_id and  deptuser.dept_Id=dept.uuid
+        <if test="name != null">
+			and User.name = #{name}
+		</if>
+		<if test="userType != null">
+			and User.user_type = #{userType}
+		</if>
+		<if test="deptId != null">
+			and deptuser.dept_Id = #{deptId}
+		</if>
+		<if test="no != null">
+			and User.no = #{no}
+		</if>
+		<if test="sex != null">
+			and User.sex = #{sex}
+		</if>
+		<if test="mail != null">
+			and User.mail = #{mail}
+		</if>
+		<if test="address != null">
+			and User.address = #{address}
+		</if>
+		<if test="phone != null">
+			and User.phone = #{phone}
+		</if>
+		<if test="mobile != null">
+			and User.mobile = #{mobile}
+		</if>
+		<if test="ldapId != null">
+			<choose>
+                <when test="ldapId=='is_null'">
+                    and (User.ldapId is null or User.ldapId='')
+                </when>
+                <otherwise>
+					and User.ldapId = #{ldapId}
+                </otherwise>
+            </choose>
+		</if>
+		<if test="namespace != null">
+			and User.namespace = #{namespace}
+		</if>
+		<if test="descr != null">
+			and User.descr = #{descr}
+		</if>
+		<if test="code != null">
+			and User.code = #{code}
+		</if>
+		<if test="fax != null">
+			and User.fax = #{fax}
+		</if>
+		<if test="relationPerson != null">
+			and User.relation_person = #{relationPerson}
+		</if>
+		<if test="post != null">
+			and User.post = #{post}
+		</if>
+		<if test="ldapPasswordUpdatetime != null">
+			and User.ldap_password_updatetime = #{ldapPasswordUpdatetime}
+		</if>
+		<if test="ldapStatus != null">
+			and User.ldap_status = #{ldapStatus}
+		</if>
+		<!--<if test="deptIdString != null and deptIdString != ''">-->
+			<!--and deptuser.dept_Id in ( ${deptIdString} )-->
+		<!--</if>-->
+		<if test="deptId != null and deptId != ''">
+			and deptuser.dept_Id =#{deptId}
+		</if>
+		<if test="deptIds != null and deptIds.size > 0">
+			and deptuser.dept_Id in (
+			<foreach collection="deptIds"  item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+        order by  User.uuid ASC
+    </select>
+    
+    <select id="queryListForExcel" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.User" resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.User">
+		SELECT  User.uuid uuid,
+		User.name name,
+		User.user_type userType,
+		group_concat(dept.name) deptId,
+		User.no no,
+		User.sex sex,
+		User.mail mail,
+		User.address address,
+		User.phone phone,
+		User.mobile mobile,
+		User.ldapId ldapId,
+		User.namespace namespace,
+		User.descr descr,
+		User.code code,
+		User.fax fax,
+		u.name relationPerson,
+		User.post post
+		FROM user User
+		left join user u on User.relation_person=u.uuid
+		inner join department_user deptuser on User.uuid = deptuser.user_id
+		inner join  department dept on deptuser.dept_Id=dept.uuid
+        where 1=1
+        <if test="name != null">
+			and User.name = #{name}
+		</if>
+		<if test="userType != null">
+			and User.user_type = #{userType}
+		</if>
+		<if test="deptId != null">
+			and User.dept_Id = #{deptId}
+		</if>
+		<if test="no != null">
+			and User.no = #{no}
+		</if>
+		<if test="sex != null">
+			and User.sex = #{sex}
+		</if>
+		<if test="mail != null">
+			and User.mail = #{mail}
+		</if>
+		<if test="address != null">
+			and User.address = #{address}
+		</if>
+		<if test="phone != null">
+			and User.phone = #{phone}
+		</if>
+		<if test="mobile != null">
+			and User.mobile = #{mobile}
+		</if>
+		<if test="ldapId != null">
+			and User.ldapId = #{ldapId}
+		</if>
+		<if test="namespace != null">
+			and User.namespace = #{namespace}
+		</if>
+		<if test="descr != null">
+			and User.descr = #{descr}
+		</if>
+		<if test="code != null">
+			and User.code like "%"#{code}"%"
+		</if>
+		<if test="fax != null">
+			and User.fax = #{fax}
+		</if>
+		<if test="relationPerson != null">
+			and User.relation_person = #{relationPerson}
+		</if>
+		<if test="post != null">
+			and User.post = #{post}
+		</if>
+		<!--<if test="deptIdString != null and deptIdString != ''">-->
+			<!--and deptuser.dept_Id in ( ${deptIdString} )-->
+		<!--</if>-->
+		<if test="deptId != null and deptId != ''">
+			and deptuser.dept_Id =#{deptId}
+		</if>
+		group by User.uuid
+		order by  User.uuid ASC
+    </select>
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+		select
+		User.uuid uuid,
+		User.name name,
+		User.user_type user_type,
+		User.dept_id dept_id,
+		User.no no,
+		User.sex sex,
+		User.mail mail,
+		User.address address,
+		User.phone phone,
+		User.mobile mobile,
+		User.ldapId ldap_id,
+		User.namespace namespace,
+		User.descr descr,
+		User.code code,
+		User.fax fax,
+		User.relation_person relation_person,
+		User.post post,
+		User.ldap_password_updatetime ldap_password_updatetime,
+		User.ldap_status ldap_status,
+		dept.uuid dept_uuid,
+		dept.name dept_name,
+		dept.dept_type dept_type
+
+		FROM user User , department_user deptuser, department dept
+		where User.uuid = deptuser.user_id and deptuser.dept_Id=dept.uuid
+        <include refid="Page_List_Params"/>
+        order by  User.uuid ASC, dept.dept_type desc
+        limit #{begin},#{pageSize}
+    </select>
+	<select id="selectByLdapIdAndNamespace" parameterType="java.lang.String" resultMap="baseResultMap">
+		select
+		<include refid="User_Base_Column"/>
+		from user User
+		WHERE namespace = #{namespace} and ldapId = #{ldapId}
+	</select>
+	<select id="getByDefId" parameterType="java.lang.String" resultMap="baseResultMap">
+		select
+		User.uuid uuid,
+		User.name name,
+		User.user_type user_type,
+		User.dept_id dept_id,
+		User.no no,
+		User.sex sex,
+		User.mail mail,
+		User.address address,
+		User.phone phone,
+		User.mobile mobile,
+		User.ldapId ldapId,
+		User.namespace namespace,
+		User.descr descr,
+		User.code code,
+		User.fax fax,
+		User.relation_person relation_person,
+		User.post post,
+		User.ldap_password_updatetime ldap_password_updatetime,
+		User.ldap_status ldap_status,
+		dept.uuid dept_uuid,
+		dept.name dept_name,
+		dept.dept_type dept_type
+
+		FROM user User , department_user deptuser, department dept
+		where User.uuid = deptuser.user_id and deptuser.dept_Id=dept.uuid
+		and deptuser.dept_id in (
+		<foreach collection="deptId.split(',')"  item="item" index="index" separator=",">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+		)
+		order by  User.uuid ASC, dept.dept_type desc
+	</select>
+	
+	<select id="getAll" parameterType="java.util.List" resultMap="baseResultMap">
+		select
+		User.uuid uuid,
+		User.name name,
+		User.user_type user_type,
+		User.dept_id dept_id,
+		User.no no,
+		User.sex sex,
+		User.mail mail,
+		User.address address,
+		User.phone phone,
+		User.mobile mobile,
+		User.ldapId ldapId,
+		User.namespace namespace,
+		User.descr descr,
+		User.code code,
+		User.fax fax,
+		User.relation_person relation_person,
+		User.post post,
+		User.ldap_password_updatetime ldap_password_updatetime,
+		User.ldap_status ldap_status,
+		User.picture,
+		dept.uuid dept_uuid,
+		dept.name dept_name,
+		dept.dept_type dept_type,
+		dept.parent_id parent_id
+		FROM user User left join department_user deptuser on User.uuid = deptuser.user_id
+		left join department dept on deptuser.dept_Id=dept.uuid
+	</select>
+
+	<select id="getUuidBy" parameterType="java.lang.String" resultType="String">
+		select uuid
+		from user User
+		WHERE namespace = #{namespace} and ldapId = #{ldapId}
+	</select>
+	
+	<insert id="addDefaultRoleForUms">
+		insert into roles_user (role_uuid,namespace,username,assigned_at)
+   	 	select 'cadcd1e8-3e9c-4dc9-a49f-ddb44ba44f89', 'alauda', ldapid,now() from `user` u
+    	where u.ldapId  is not null and ldapId != '' and not exists (select 1 from roles_user r where u.ldapId = r.username)
+	</insert>
+	
+	<insert id="addDefaultUserClassifyAccountForUms">
+		INSERT INTO t_user_classify_account (user_classify_uuid,user_uuid) 
+	 	select '9f05464a-30da-423f-a38a-c7d7f0d36371', uuid from `user` u
+		where not exists (select 1 from t_user_classify_account t where u.uuid = t.user_uuid)
+	</insert>
+</mapper>

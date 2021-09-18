@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     ModuleCustomizedViewSql
+	描述:     数据访问语句
+ -->
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.ModuleCustomizeViewdDao">
+
+	<resultMap type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomizedView" id="baseResultMap">
+	 <id column="id" jdbcType="VARCHAR" property="id" />
+		<result property="userId" column="user_id" jdbcType="VARCHAR"/>
+		<result property="moduleId" column="module_id" jdbcType="VARCHAR"/>
+		<result property="systemId" column="systemId" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+		<result property="describe" column="describe_" jdbcType="VARCHAR"/>
+		<result property="content" column="content" jdbcType="VARCHAR"/>
+		<result property="pageType" column="page_type" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="ModuleCustomizedView_Base_Column">
+				id,
+				user_id,
+				name,
+				module_id,
+				systemId,
+				create_time,
+				describe_,
+				content,
+				page_type
+	</sql>
+	
+	
+	
+	
+
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomizedView">
+		insert into t_cfg_module_customizedView
+			(<include refid="ModuleCustomizedView_Base_Column" />
+		)values(
+	        #{id,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR} ,
+			#{name,jdbcType=VARCHAR} ,
+			#{moduleId,jdbcType=VARCHAR} ,
+			#{systemId,jdbcType=VARCHAR} ,
+			#{createTime,jdbcType=TIMESTAMP} ,
+			#{describe,jdbcType=VARCHAR} ,
+			#{content,jdbcType=VARCHAR},
+			#{pageType,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	
+	<!-- 修改 -->
+	<update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomizedView">
+		update t_cfg_module_customizedView ModuleCustomized set id = #{id}
+		<if test="name != null">
+			, ModuleCustomized.name = #{name}
+		</if>
+		<if test="content != null">
+			, ModuleCustomized.content = #{content}
+		</if>
+		
+		<if test="describe != null">
+			, ModuleCustomized.describe_ = #{describe}
+		</if>
+		<if test="systemId != null">
+			, ModuleCustomized.systemId = #{systemId}
+		</if>
+		<if test="moduleId != null">
+			, ModuleCustomized.module_id = #{moduleId}
+		</if>
+		<if test="pageType != null">
+			, ModuleCustomized.page_type = #{pageType}
+		</if>
+		where  id = #{id}
+	</update> 
+	
+	<!-- 删除 -->
+	<update id="deleteByPrimaryKey" parameterType="string">
+		delete from t_cfg_module_customizedView where id = #{id} 
+	</update>
+	
+	<!-- 列表 -->
+	<!-- <select id="selectByPrimaryKeyArrays" parameterType="java.util.List" resultMap="baseResultMap">
+		select
+		<include refid="ModuleCustomized_Base_Column" />
+		from t_cfg_module_customized ModuleCustomized
+		WHERE user_id in
+        <foreach collection="array" index="index" item="userId"
+                 open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+	</select> -->
+	
+	
+	
+	<!-- 详情 -->
+	<select id="select" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomizedView"   resultMap="baseResultMap">
+		select 
+		<include refid="ModuleCustomizedView_Base_Column" />
+		from t_cfg_module_customizedView ModuleCustomized where 1=1
+		<if test="id != null">
+			and ModuleCustomized.id = #{id}
+		</if>
+		<if test="name != null">
+			and ModuleCustomized.name = #{name}
+		</if>
+		<if test="userId != null">
+			and ModuleCustomized.user_id = #{userId}
+		</if>
+		<if test="moduleId != null">
+			and ModuleCustomized.module_id = #{moduleId}
+		</if>
+		<if test="systemId != null">
+			and ModuleCustomized.systemId = #{systemId}
+		</if>
+		order by  ModuleCustomized.create_time desc
+	</select>
+	
+	
+	
+	
+
+    
+</mapper>

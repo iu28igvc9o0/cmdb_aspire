@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.zabbixintegrate.daoCmdb.AlertRestfulDao">
+    
+    <resultMap type="com.aspire.mirror.zabbixintegrate.bean.HwSyncLog" id="baseResultLogMap">
+        <result property="fromTime" column="from_time" jdbcType="VARCHAR"/>
+        <result property="toTime" column="to_time" jdbcType="VARCHAR"/>
+        <result property="execTime" column="exec_time" jdbcType="TIMESTAMP"/>
+        <result property="execDuration" column="exec_duration" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="statusCode" column="status_code" jdbcType="INTEGER"/>
+        <result property="configType" column="config_type" jdbcType="VARCHAR"/>
+         <result property="url" column="url" jdbcType="VARCHAR"/>
+          <result property="idcTypeTag" column="idcType_tag" jdbcType="VARCHAR"/>
+    </resultMap>
+   
+
+ 
+    <select id="getHwSyncLog"  resultMap="baseResultLogMap">
+        select
+      from_time,to_time,exec_time,exec_duration,status,content,create_time,status_code
+      ,config_type,url,idcType_tag
+        from hw_sync_log 
+        where status='success'
+         and idcType_tag = #{idcTypeTag} and config_type =  #{configType} 
+         order by from_time desc
+         limit 1
+    </select>
+     <insert id="insertHwSyncLog" parameterType="com.aspire.mirror.zabbixintegrate.bean.HwSyncLog">
+		insert into
+			hw_sync_log(from_time,to_time,exec_time,exec_duration,status,content,create_time,status_code
+			,config_type,url,idcType_tag)
+        values(
+			#{fromTime,jdbcType=VARCHAR} ,
+			#{toTime,jdbcType=VARCHAR} ,
+			#{execTime,jdbcType=TIMESTAMP} ,
+			#{execDuration,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{content,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{statusCode,jdbcType=INTEGER},
+			#{configType,jdbcType=VARCHAR},
+			#{url,jdbcType=VARCHAR},
+			#{idcTypeTag,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	  <insert id="insertIndicatorInfoHw" parameterType="com.aspire.mirror.zabbixintegrate.bean.IndicatorInfoHw">
+		insert into
+			indicator_info_hw
+			(indicator_id,data_type,data_unit,en_us,zh_cn,group_en_us,group_zh_cn
+			,tag,indicator_name,item,operator
+			,operator_value,update_time,zh_cn_obj_type,obj_type_id,tag_type,monitor_status,history_type)
+        values
+          <foreach collection="list" item="field" index="index"  separator=",">
+          (
+                #{field.indicator_id,jdbcType=BIGINT} ,
+			#{field.data_type,jdbcType=VARCHAR} ,
+			#{field.data_unit,jdbcType=VARCHAR} ,
+			#{field.en_us,jdbcType=VARCHAR} ,
+			#{field.zh_cn,jdbcType=VARCHAR} ,
+			#{field.group_en_us,jdbcType=VARCHAR} ,
+			#{field.group_zh_cn,jdbcType=VARCHAR} ,
+			#{field.tag,jdbcType=VARCHAR} ,
+			#{field.indicator_name,jdbcType=VARCHAR} ,
+			#{field.item,jdbcType=VARCHAR} ,
+			#{field.operator,jdbcType=VARCHAR} ,
+			#{field.operator_value,jdbcType=VARCHAR} ,
+			#{field.update_time,jdbcType=TIMESTAMP} ,
+			#{field.zh_cn_obj_type,jdbcType=VARCHAR} ,
+			#{field.obj_type_id,jdbcType=BIGINT} ,
+			#{field.tag_type,jdbcType=INTEGER} ,
+			#{field.monitor_status,jdbcType=INTEGER},
+			#{field.history_type,jdbcType=VARCHAR}  
+			)
+            </foreach>
+         on duplicate key update
+          indicator_id = values(indicator_id),
+            data_type =  values(data_type),
+		data_unit =	 values(data_unit),
+		en_us =	 values(en_us),
+		zh_cn =	 values(zh_cn),
+		group_en_us =	 values(group_en_us),
+			group_zh_cn =  values(group_zh_cn),
+		tag =	 values(tag),
+			indicator_name =  values(indicator_name),
+		update_time =	 values(update_time),
+		zh_cn_obj_type =	 values(zh_cn_obj_type),
+		obj_type_id =	 values(obj_type_id),
+			tag_type =  values(tag_type)
+	</insert>
+	
+	<insert id="insertInstanceHw" parameterType="com.aspire.mirror.zabbixintegrate.bean.InstanceHw">
+		insert into
+			instance_hw
+			(id,extraSpecs,class_Name,privateIps,hostId,nativeId,bizRegionId,status
+			,update_time,tag_type,monitor_status,instance_info,idcType,locales,regionId)
+        values
+          <foreach collection="list" item="field" index="index" separator=",">
+          (
+                #{field.id,jdbcType=VARCHAR} ,
+			#{field.extraSpecs,jdbcType=VARCHAR} ,
+			#{field.class_Name,jdbcType=VARCHAR} ,
+			#{field.privateIps,jdbcType=VARCHAR} ,
+			#{field.hostId,jdbcType=VARCHAR} ,
+			#{field.nativeId,jdbcType=VARCHAR} ,
+			#{field.bizRegionId,jdbcType=VARCHAR} ,
+			#{field.status,jdbcType=VARCHAR} ,
+			#{field.update_time,jdbcType=TIMESTAMP} ,
+			#{field.tag_type,jdbcType=INTEGER} ,
+			#{field.monitor_status,jdbcType=INTEGER} ,
+			#{field.instance_info,jdbcType=VARCHAR},
+			#{field.idcType,jdbcType=VARCHAR},
+			#{field.locales,jdbcType=VARCHAR},
+			#{field.regionId,jdbcType=VARCHAR}
+			)
+            </foreach>
+         on duplicate key update
+            id=  values(id),
+			extraSpecs =values(extraSpecs),
+			class_Name = values(class_Name),
+			privateIps =values(privateIps),
+			hostId = values(hostId),
+			nativeId = values(nativeId),
+			bizRegionId =values(bizRegionId),
+			status = values(status),
+			update_time = values(update_time),
+			tag_type =values(tag_type),
+			instance_info = values(instance_info),
+			locales = values(locales),
+			regionId = values(regionId)
+	</insert>
+	
+	<select id="getInstanceHwPageList"  resultType="com.aspire.mirror.zabbixintegrate.bean.InstanceHw">
+        select
+      id,extraSpecs,class_Name,privateIps,hostId,nativeId,bizRegionId,status
+			,update_time,tag_type,monitor_status,instance_info,idcType,locales,regionId
+        from instance_hw 
+        where 
+          tag_type = #{tagType}  and monitor_status = #{monitorStatus}
+            <if test="status != null and status !=''">
+              and  status = #{status}
+            </if>
+          <if test="idcTypeList != null">
+              and  idcType in
+               (
+                <foreach collection="idcTypeList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+         <if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+    </select>
+    
+    <select id="getInstanceHwPageListCount"  resultType="Integer">
+        select
+      count(*)
+        from instance_hw 
+        where 
+          tag_type = #{tagType}  and monitor_status = #{monitorStatus}
+          <if test="status != null and status !=''">
+              and  status = #{status}
+            </if>
+          <if test="idcTypeList != null ">
+              and  idcType in 
+              (
+                <foreach collection="idcTypeList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+    </select>
+    
+     <select id="getIndicatorList"  resultType="com.aspire.mirror.zabbixintegrate.bean.IndicatorInfoHw">
+        select
+      indicator_id,data_type,data_unit,en_us,zh_cn,group_en_us,group_zh_cn
+			,tag,indicator_name,item,operator
+			,operator_value,update_time,zh_cn_obj_type,obj_type_id,history_type
+        from indicator_info_hw 
+        where 
+          tag_type = #{tagType}  and monitor_status = #{monitorStatus}
+          <if test="objTypeId != null">
+              and  obj_type_id = #{objTypeId}
+            </if>
+    </select>
+     <select id="getIndicatorObjTypeIdList"  resultType="String">
+        select
+      distinct obj_type_id from indicator_info_hw
+        where 
+          tag_type = #{tagType}  and monitor_status = #{monitorStatus}
+    </select>
+     
+</mapper>

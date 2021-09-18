@@ -1,0 +1,226 @@
+server:
+  port: 8761
+version: /v1
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+middleware.configuration.switch:
+  kafka: false
+  redis: false
+
+kafka:
+  topic:
+    topic_system_alerts: TOPIC_SYSTEM_ALERTS      # 系统告警kafka主题
+    topic_zabbix_delete: TOPIC_ZABBIX_DELETE
+    topic_zabbix_item: TOPIC_ZABBIX_ITEM
+    topic_zabbix_trigger: TOPIC_ZABBIX_TRIGGER
+    topic_zabbix_trends: TOPIC_ZABBIX_TRENDS
+
+druid:
+#  url: jdbc:mysql://10.12.70.38:3306/mirror?useUnicode=true&useSSL=false&characterEncoding=UTF-8
+#  username: root
+#  password: mirror@123
+   url: jdbc:oracle:thin:@10.1.203.50:1522:db12c
+   username: bmc_dev
+   password: bmc_dev_50
+   driver-class-name: oracle.jdbc.driver.OracleDriver
+
+
+mybatis:
+  mapperLocations:
+    - classpath*:oraclesqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+# 告警事件监听
+alert.event.listener:
+  AlertEventNotifier:   # 监听实现名
+    switch: true        # 监听开关
+    awareLevel: 4       # 告警级别:  1-提示 2-低 3-中 4-高 5-严重
+    kafkaServers: vmhadoop12:9092,vmhadoop13:9092,vmhadoop14:9092
+    kafkaTopic: ZW-Monitor
+
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+
+  kafka: # kafka 配置
+    bootstrap-servers: 10.12.70.40:9092
+    producer:
+      retries: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: consumer_alert_service
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 2000
+      session.timeout.ms: 20000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区至少1个消费线程
+    properties:
+      session.timeout.ms: 60000
+  jackson:
+    time-zone: GMT+8
+
+  mail: # JavaMailSender 邮件发送的配置
+    switch: true # 是否发送邮件,默认值为fasle
+    host: szmail.aspire-tech.com
+    port: 25
+    username: pengguihua@aspirecn.com
+    password: 'peng!234'
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: false
+          starttls: # TLS协议
+            enable: false
+            required: false
+  #          port: 465
+  #          socketFactory: # SSL协议
+  #            class: javax.net.ssl.SSLSocketFactory
+
+sample:
+  zipkin:
+    enabled: true
+
+###-----redisson配置
+redisson:
+  alert.clear.count.interval: 48      # 告警清除缓存redis超时时间，单位为小时
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    #password: foo
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://192.168.183.131:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: null
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+    - "redis://127.0.0.1:7004"
+    - "redis://127.0.0.1:7001"
+    - "redis://127.0.0.1:7000"
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: info
+    com.aspire.mirror.alert: info
+    org.springframework.data: debug
+    com.aspire.mirror.alert.server.dao: DEBUG
+    com.aspire.mirror.template: info
+  file: ./logs/alert-service.log
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000
+
+FLOW_KEY: gzsjclgd0523
+FULLNAME: admin
+ORDER_AUTOGEN_LEVEL: 4,5
+
+WSDL_URL: http://10.1.4.245:58080/bpmx/service/ProcessService?wsdl
+
+orderAutoGen.cron: 0 0/5 *  * * ?
+
+bpm.alert.Url: http://10.12.9.238:8086/bpmx/service/ProcessService?wsdl
+bpm.alert.flowkey: gjcllc
+bpm.alert.acount: admin
+bpm.alert.method: start
+bpm.alert.namepace: http://impl.webservice.platform.hotent.com/
+bpm.alert.model: <data>{"main":{"fields":{"deviceType":"@{device_class}","sourceIP":"@{device_ip}","pool":"@{idc_type}","alarmId":"@{alert_id}","objectName":"@{moni_object}","detail":"@{@{moni_index}","starttime":"@{alert_start_time}","lev":"@{alert_level}","objectId":"@{event_id}"}},"sub":[],"opinion":[]}</data>
+
+
+recipient:
+  client:
+    url: http://127.0.0.1:8088/v1/alerts/recipient/task
+
+bdc_notify_url: http://10.1.121.65:8888/bmserver/api/alert/v1.0/notify.ajax
+
+
+
+sms:
+  url: http://127.0.0.1:2000/test
+  target: test
+  password: pasw
+
+systemType: simple
+
+sls:
+  ftp:
+    download:
+      host: 192.168.183.131
+      port: 21
+      user: ftpadmin
+      password: 11qq!!QQ
+      mode: pasv
+      path: /scan_report/pkg_ops_report
+    upload:
+      host: 192.168.183.131
+      port: 21
+      user: ftpadmin
+      password: 11qq!!QQ
+      path: /scan_report_upload/pkg_ops_report
+  local:
+    store: D:/aspire/scan_report
+    download:
+  bpm:
+    token:
+      url: http://10.12.8.194:8088/auth
+      user: admin
+      password: 123456
+    upload:
+      url: http://117.132.183.206:8085/portal/system/file/upload

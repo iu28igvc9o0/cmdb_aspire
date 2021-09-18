@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     DepartmentSql
+	描述:     数据访问语句
+	作者:     曾祥华
+	时间:     2019-03-04 16:04:48
+ -->
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.DepartmentDao">
+
+	<resultMap type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department" id="baseResultMap">
+		<result property="uuid" column="uuid" jdbcType="VARCHAR"/>
+		<result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="no" column="no" jdbcType="VARCHAR"/>
+		<result property="deptType" column="dept_type" jdbcType="INTEGER"/>
+		<result property="descr" column="descr" jdbcType="VARCHAR"/>
+		<result property="level" column="level" jdbcType="INTEGER"/>
+		<result property="namespace" column="namespace" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="Department_Base_Column">
+				uuid,
+				parent_id,
+				name,
+				no,
+				dept_type,
+				descr,
+				level,
+				namespace
+	</sql>
+
+	<sql id="Department_Query_List_Sharing">
+		<where>
+				and Department.uuid=uuid
+				and Department.parent_id=parentId
+				and Department.name=name
+				and Department.no=no
+				and Department.dept_type=deptType
+				and Department.descr=descr
+				and Department.level=level
+				and Department.namespace=namespace
+		</where>
+	</sql>
+
+    <sql id="Page_List_Params">
+        <where>
+                <if test="params['uuid'] != null and  params['uuid'] != ''">
+                    and Department.uuid = #{params.uuid}
+                </if>
+                <if test="params['parentId'] != null and  params['parentId'] != ''">
+                    and Department.parent_id = #{params.parentId}
+                </if>
+                <if test="params['name'] != null and  params['name'] != ''">
+                    and Department.name = #{params.name}
+                </if>
+                <if test="params['no'] != null and  params['no'] != ''">
+                    and Department.no = #{params.no}
+                </if>
+                <if test="params['deptType'] != null and  params['deptType'] != ''">
+                    and Department.dept_type = #{params.deptType}
+                </if>
+                <if test="params['descr'] != null and  params['descr'] != ''">
+                    and Department.descr = #{params.descr}
+                </if>
+                <if test="params['level'] != null and  params['level'] != ''">
+                    and Department.level = #{params.level}
+                </if>
+                <if test="params['namespace'] != null and  params['namespace'] != ''">
+                    and Department.namespace = #{params.namespace}
+                </if>
+        </where>
+    </sql>
+
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.entity.Department">
+		insert into department
+		(<include refid="Department_Base_Column" />
+		)values(
+		#{uuid,jdbcType=VARCHAR} ,
+		#{parentId,jdbcType=VARCHAR} ,
+		#{name,jdbcType=VARCHAR} ,
+		#{no,jdbcType=VARCHAR} ,
+		#{deptType,jdbcType=INTEGER} ,
+		#{descr,jdbcType=VARCHAR} ,
+		#{level,jdbcType=INTEGER} ,
+		#{namespace,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 列表 -->
+	<select id="selectByPrimaryKeyArrays" parameterType="java.util.List" resultMap="baseResultMap">
+		select
+		<include refid="Department_Base_Column" />
+		from department Department
+		WHERE uuid in
+        <foreach collection="array" index="index" item="uuid"
+                 open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+	</select>
+	
+	<!-- 详情 -->
+	<select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+		select 
+		<include refid="Department_Base_Column"/>
+		from department Department where uuid = #{departmentId}
+	</select>
+	<select id="selectByParentId" parameterType="String" resultMap="baseResultMap">
+		select
+		<include refid="Department_Base_Column"/>
+		from department Department where parent_id = #{parentId}
+	</select>
+	<!-- 修改 -->
+	<update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department">
+		update department Department set uuid = #{uuid}
+		<if test="parentId != null">
+			, Department.parent_id = #{parentId}
+		</if>
+		<if test="name != null">
+			, Department.name = #{name}
+		</if>
+		<if test="no != null">
+			, Department.no = #{no}
+		</if>
+		<if test="deptType != null">
+			, Department.dept_type = #{deptType}
+		</if>
+		<if test="descr != null">
+			, Department.descr = #{descr}
+		</if>
+		<if test="level != null">
+			, Department.level = #{level}
+		</if>
+		<if test="namespace != null">
+			, Department.namespace = #{namespace}
+		</if>
+		where uuid = #{uuid}
+	</update> 
+	
+	<!-- 删除 -->
+	<update id="deleteByPrimaryKey" parameterType="string">
+		delete from department where uuid = #{departmentId}
+	</update>
+
+    <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(*) FROM department Department
+        <include refid="Page_List_Params"/>
+    </select>
+    
+    <select id="queryList"  parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department"  resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department">
+        SELECT
+				 Department.uuid uuid,
+				 Department.parent_id parentId,
+				 Department.name name,
+				 Department.no no,
+				 Department.dept_type deptType,
+				 Department.descr descr,
+				 Department.level level,
+				 Department.namespace namespace
+        FROM department Department
+        where 1=1
+        <if test="parentId != null">
+			and Department.parent_id = #{parentId}
+		</if>
+		<if test="top">
+			and (Department.parent_id IS NULL or Department.parent_id = '')
+		</if>
+		
+		<if test="name != null">
+			and Department.name = #{name}
+		</if>
+		<if test="no != null">
+			and Department.no = #{no}
+		</if>
+		<if test="deptType != null">
+			and Department.dept_type = #{deptType}
+		</if>
+		<if test="descr != null">
+			and Department.descr = #{descr}
+		</if>
+		<if test="level != null">
+			and Department.level = #{level}
+		</if>
+		<if test="namespace != null">
+			and Department.namespace = #{namespace}
+		</if>
+        order by  Department.uuid ASC
+    </select>
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department">
+        SELECT
+				 Department.uuid uuid,
+				 Department.parent_id parentId,
+				 Department.name name,
+				 Department.no no,
+				 Department.dept_type deptType,
+				 Department.descr descr,
+				 Department.level level,
+				 Department.namespace namespace
+        FROM department Department
+        <include refid="Page_List_Params"/>
+        order by  Department.uuid ASC
+        limit #{begin},#{pageSize}
+    </select>
+
+	<select id="queryByDeptId"  parameterType="string"  resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.Department">
+		SELECT
+		Department.uuid uuid,
+		Department.parent_id parentId,
+		Department.name name,
+		Department.no no,
+		Department.dept_type deptType,
+		Department.descr descr,
+		Department.level level,
+		Department.namespace namespace
+		FROM department Department
+		where 1=1
+		<if test="deptId != null and deptId != ''">
+			and Department.parent_id = #{deptId}
+		</if>
+		<if test="deptId == null or deptId == ''">
+			and (Department.parent_id is null or  Department.parent_id ='')
+		</if>
+		order by  Department.uuid ASC
+	</select>
+
+	<sql id="insertForeachEntitySql">
+		(
+		#{entity.uuid,jdbcType=VARCHAR},
+		#{entity.parentId,jdbcType=VARCHAR},
+		#{entity.name,jdbcType=VARCHAR},
+		#{entity.no,jdbcType=VARCHAR},
+		#{entity.deptType,jdbcType=INTEGER},
+		#{entity.descr,jdbcType=VARCHAR},
+		#{entity.level,jdbcType=INTEGER},
+		#{entity.namespace,jdbcType=VARCHAR}
+		)
+	</sql>
+
+	<sql id="insertForeachSql">
+		<foreach collection="list" item="entity" index= "index" separator =",">
+			<include refid="insertForeachEntitySql" />
+		</foreach>
+	</sql>
+
+	<sql id="onDuplicateKeyUpdate">
+		`name` = values(`name`),
+		`no` = values(`no`),
+		parent_id = values(`parent_id`),
+		dept_type= values(`dept_type`),
+		descr = values(`descr`),
+		`level` = values(`level`),
+		namespace = values(`namespace`)
+	</sql>
+
+	<!-- 新增 -->
+	<insert id="insertOrUpdateBatchParam" parameterType="java.util.List">
+		insert into department (
+		<include refid="Department_Base_Column" />
+		) values <include refid="insertForeachSql" />
+		on duplicate key update <include refid="onDuplicateKeyUpdate" />
+	</insert>
+
+	<delete id="batchDeleteByPrimaryKey" parameterType="java.util.List">
+		delete from department
+		<where>
+			uuid in
+			<foreach collection="list" item="departmentId" separator="," open="(" close=")">
+				#{departmentId}
+			</foreach>
+		</where>
+	</delete>
+	
+	<select id="getAll" parameterType="java.util.List" resultMap="baseResultMap">
+		select
+		<include refid="Department_Base_Column" />
+		from department Department
+	</select>
+
+	<select id="queryDepartAndUserByDeptId" parameterType="string"
+			resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.DepartmentUserTree">
+		SELECT
+		dept.uuid uuid,
+		dept.parent_id parentId,
+		`name`,
+		NULL `code`,
+		'depart' `type`
+		FROM
+		department dept
+		<where>
+			<if test="deptId != null and deptId != ''">
+				and dept.parent_id = #{deptId}
+			</if>
+			<if test="deptId == null or deptId == ''">
+				and (dept.parent_id is null or dept.parent_id ='')
+			</if>
+		</where>
+		<if test="deptId != null and deptId != ''">
+			UNION
+			SELECT
+			u.uuid,
+			dept.uuid parent_id,
+			u.`name` `name`,
+			u.`code` `code`,
+			'user' `type`
+			FROM
+			department_user du
+			JOIN department dept ON du.dept_id = dept.uuid
+			JOIN `user` u ON du.user_id = u.uuid
+			<where>
+				du.dept_id = #{deptId}
+				and dept.uuid!='179744684'
+			</where>
+		</if>
+	</select>
+
+</mapper>

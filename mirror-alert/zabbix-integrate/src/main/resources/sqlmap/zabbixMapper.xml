@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.zabbixintegrate.dao.ZabbixDao">
+	
+    <resultMap type="com.aspire.mirror.zabbixintegrate.domain.ZabbixAlertScanIndex" id="scanIndex">
+    	<result property="id" column="id" jdbcType="VARCHAR"/>
+    	<result property="scanIndex" column="scan_index" jdbcType="BIGINT"/>
+    	<result property="updateTime" column="update_time" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.zabbixintegrate.domain.RawAlert" id="rawAlert">
+    	<result property="alertId" column="alertid" jdbcType="VARCHAR"/>
+    	<result property="eventId" column="eventid" jdbcType="VARCHAR"/>
+    	<result property="subject" column="subject" jdbcType="VARCHAR"/>
+    	<result property="clock" column="clock" jdbcType="VARCHAR"/>
+    	<result property="message" column="message" jdbcType="VARCHAR"/>
+		<result property="actionId" column="actionid" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.zabbixintegrate.domain.ItemIdMapMoniObj" id="itemIdMapMoniObj">
+    	<result property="itemId" column="itemId" jdbcType="INTEGER"/>
+    	<result property="moniObject" column="moniObject" jdbcType="VARCHAR"/>
+    </resultMap>
+
+	<resultMap type="com.aspire.mirror.zabbixintegrate.domain.AlertProxyIdc" id="alertProxyIdcResultMap">
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="proxyName" column="proxy_name" jdbcType="VARCHAR"/>
+		<result property="idc" column="idc" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+
+    <select id="fetchScanIndex" resultMap="scanIndex" parameterType="java.lang.Integer">
+        select id, scan_index, update_time from alert_scan_index where id = #{id}
+    </select>
+	<select id="selectAllProxyIdc" resultMap="alertProxyIdcResultMap">
+		select id, proxy_name, idc, remark from alert_proxy_idc
+	</select>
+	<insert id="insertScanIndex" parameterType="com.aspire.mirror.zabbixintegrate.domain.ZabbixAlertScanIndex">
+		insert into alert_scan_index(id, scan_index, update_time)
+		 values (#{id}, #{scanIndex}, #{updateTime, jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="updateScanIndex" parameterType="com.aspire.mirror.zabbixintegrate.domain.ZabbixAlertScanIndex">
+		update alert_scan_index set scan_index = #{scanIndex}, update_time = #{updateTime} 
+		 where id = #{id} and scan_index != #{scanIndex}
+	</update>
+	
+	<select id="fetchAlertEventList" resultMap="rawAlert" parameterType="java.util.Map" databaseId="oracle">
+		<![CDATA[
+		  select * from (
+			  select alertid, eventid, subject, clock, ConvertNCLOB(message) message, actionid
+			    from alerts 
+			    where alertid > #{startScanIndex}
+			     and actionid in 
+		]]>     
+			     <foreach collection="actionIdArr" index="index" item="actionId" open="(" separator="," close=")">
+		            #{actionId}
+		        </foreach>
+		<![CDATA[
+			   order by alertid asc 
+			) where rownum <= #{batchCount}   
+		]]>    	
+	</select>
+	
+	<select id="fetchAlertEventList" resultMap="rawAlert" parameterType="java.util.Map" databaseId="mysql">
+		<![CDATA[
+		  select a.* from (
+			  select alertid, eventid, subject, clock, message, actionid
+			    from alerts 
+			    where alertid > #{startScanIndex}
+			     and actionid in 
+		]]>     
+			     <foreach collection="actionIdArr" index="index" item="actionId" open="(" separator="," close=")">
+		            #{actionId}
+		        </foreach>
+		<![CDATA[
+			   order by alertid asc 
+			) a limit #{batchCount}   
+		]]>    	
+	</select>
+	
+	<select id="fetchMoniObjByItemIdArr" parameterType="java.util.List" resultMap="itemIdMapMoniObj">
+		select c.itemid as itemId, b.name as moniObject from items_applications c, applications b 
+		 where c.applicationid = b.applicationid
+		   and c.itemid in 	
+		   <foreach collection="list" index="index" item="itemId" open="(" separator="," close=")">
+               #{itemId}
+           </foreach>
+	</select>
+	
+</mapper>

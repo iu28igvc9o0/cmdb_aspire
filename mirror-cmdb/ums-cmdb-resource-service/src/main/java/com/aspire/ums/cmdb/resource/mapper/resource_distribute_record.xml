@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ResourceDistributionRecordMapper">
+    <resultMap type="com.aspire.ums.cmdb.resource.entity.ResourceDistributionRecord" id="ResourceDistributionRecord">
+        <result property="id" column="ID" />
+        <result property="pre_distribute_id" column="PRE_DISTRIBUTE_ID" />
+        <result property="device_id" column="DEVICE_ID" />
+        <result property="device_ip" column="DEVICE_IP" />
+        <result property="operate_content" column="OPERATE_CONTENT" />
+        <result property="operate_id" column="OPERATE_ID" />
+        <result property="operate_time" column="OPERATE_TIME" />
+        <result property="remark" column="REMARK" />
+    </resultMap>
+
+
+    <insert id="insertBatch"   parameterType="java.util.List">
+    INSERT INTO resource_distribute_record
+	(`ID`,`PRE_DISTRIBUTE_ID`, `DEVICE_ID`, `DEVICE_IP`, `OPERATE_CONTENT`, `OPERATE_ID`, `OPERATE_TIME`,`REMARK`)
+	VALUES 
+    <foreach collection ="list" item="item" separator ="," index="index">
+         (
+         #{item.id},#{item.pre_distribute_id}, #{item.device_id},#{item.device_ip}, #{item.operate_content}
+         , #{item.operate_id}, #{item.operate_time},#{item.remark}
+	)
+    </foreach > 
+</insert>
+
+        </mapper>

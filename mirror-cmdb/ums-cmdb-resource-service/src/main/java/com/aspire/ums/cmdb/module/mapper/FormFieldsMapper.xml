@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.FormFieldsMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.FormFields" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="key" property="key" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="formId" property="formid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, key, name, sortIndex, formId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_form_fields
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_form_fields
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByformId" parameterType="java.lang.String" >
+    delete from cmdb_form_fields
+    where formId = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.FormFields" >
+    insert into cmdb_form_fields (id, `key`, name, 
+      sortIndex, formId)
+    values (#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{sortindex,jdbcType=INTEGER}, #{formid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.FormFields" >
+    insert into cmdb_form_fields
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        id,
+      </if>
+      <if test="key != null and key !=''" >
+        `key`,
+      </if>
+      <if test="name != null and name !=''" >
+        name,
+      </if>
+      <if test="sortindex != null" >
+        sortIndex,
+      </if>
+      <if test="formid != null and formid !=''" >
+        formId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="key != null and key !=''" >
+        #{key,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and name !=''" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sortindex != null" >
+        #{sortindex,jdbcType=INTEGER},
+      </if>
+      <if test="formid != null and sortindex !=''" >
+        #{formid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.FormFields" >
+    update cmdb_form_fields
+    <set >
+      <if test="key != null" >
+        key = #{key,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sortindex != null" >
+        sortIndex = #{sortindex,jdbcType=INTEGER},
+      </if>
+      <if test="formid != null" >
+        formId = #{formid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.FormFields" >
+    update cmdb_form_fields
+    set key = #{key,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      sortIndex = #{sortindex,jdbcType=INTEGER},
+      formId = #{formid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

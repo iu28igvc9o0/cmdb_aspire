@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.common.mapper.QueryMapper" >
+    <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.common.entity.QueryEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="queryName" property="queryName" jdbcType="VARCHAR" />
+        <result column="user" property="user" jdbcType="VARCHAR" />
+        <result column="menuType" property="menuType" jdbcType="VARCHAR"/>
+        <result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+        <result column="queryInfo" property="queryInfo" jdbcType="VARCHAR" />
+        <result column="insertTime" property="insertTime" jdbcType="TIMESTAMP" />
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="getQueryConditionByModuleIdAndUserAndMenuType" resultMap="BaseResultMap">
+        select * from cmdb_column_query_condition where 1= 1
+        <if test="moduleId != '' and moduleId != null">
+            and moduleId = #{moduleId}
+        </if>
+        <if test="moduleId != '' and moduleId != null">
+            and `user` = #{user}
+        </if>
+        <if test="menuType != '' and menuType != null">
+            and menuType = #{menuType}
+        </if>
+    </select>
+
+    <insert id="insertVO" parameterType="com.aspire.ums.cmdb.common.entity.QueryEntity">
+        INSERT INTO `cmdb_column_query_condition` (`id`, `queryName`, `user`, `menuType`, `moduleId`, `queryInfo`, `insertTime`, `updateTime`)
+        VALUES (#{id,jdbcType=VARCHAR}, #{queryName,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR}, #{menuType,jdbcType=VARCHAR},
+        #{moduleId,jdbcType=VARCHAR}, #{queryInfo,jdbcType=VARCHAR}, #{insertTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP});
+    </insert>
+
+    <update id="updateVO" parameterType="com.aspire.ums.cmdb.common.entity.QueryEntity">
+        UPDATE `cmdb_column_query_condition` SET `queryInfo`= #{queryInfo}, `updateTime`= now() WHERE `id` = #{id};
+    </update>
+
+    <delete id="deleteVO" parameterType="com.aspire.ums.cmdb.common.entity.QueryEntity">
+        DELETE FROM `cmdb_column_query_condition` WHERE `id` = #{id}
+    </delete>
+</mapper>

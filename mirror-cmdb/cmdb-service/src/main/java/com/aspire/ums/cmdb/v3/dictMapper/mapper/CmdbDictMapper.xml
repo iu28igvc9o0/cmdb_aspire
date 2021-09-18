@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.dictMapper.mapper.CmdbDictMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.dictMapper.payload.CmdbDictMapperEntity">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="mapper_dict_type" property="mapperDictType" jdbcType="VARCHAR"/>
+        <result column="mapper_dict_code" property="mapperDictCode" jdbcType="VARCHAR"/>
+        <result column="ums_dict_code" property="umsDictCode" jdbcType="VARCHAR"/>
+        <result column="ums_dict_name" property="umsDictName" jdbcType="VARCHAR"/>
+        <result column="mapper_device_type" property="mapperDeviceType" jdbcType="VARCHAR"/>
+        <result column="mapper_source" property="mapperSource" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="listByEntity" parameterType="com.aspire.ums.cmdb.v3.dictMapper.payload.CmdbDictMapperEntity" resultMap="resultMap">
+        SELECT
+        `id`,
+        `mapper_dict_type`,
+        `mapper_dict_code`,
+        `ums_dict_code`,
+        `ums_dict_name`,
+        `mapper_device_type`,
+        `mapper_source`
+        FROM cmdb_dict_mapper
+        where 1=1
+        <if test="mapperDictType != null and mapperDictType != ''">
+            and mapper_dict_type = #{mapperDictType}
+        </if>
+        <if test="mapperDictCode != null and mapperDictCode != ''">
+            and mapper_dict_code = #{mapperDictCode}
+        </if>
+        <if test="mapperDeviceType != null and mapperDeviceType != ''">
+            and mapper_device_type = #{mapperDeviceType}
+        </if>
+        <if test="mapperSource != null and mapperSource != ''">
+            and mapper_source = #{mapperSource}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ConfigDictMapper">
+<select id="getDictConfig" resultType="java.util.HashMap"  parameterType="java.lang.String">
+ SELECT * from config_dict where DELETE_FLAG = '0'
+ 	<if test="null !=label and '' != label">
+		       and LABEL like upper(concat('%',#{label},'%'))
+	 </if>
+	 <if test="null !=value and '' !=value">
+		       and VALUE = #{value}
+	 </if>
+	 <if test="null !=value2 and '' !=value2">
+		       and VALUE != #{value2}
+	 </if>
+	 <if test="null !=type and '' !=type">
+		       and TYPE = #{type}
+	 </if>
+	 <if test="null !=parentId">
+		       and PARENT_ID = #{parentId}
+	 </if>
+	 <if test="null !=description and '' !=description">
+		       and DESCRIPTION like CONCAT('%',#{description},'%')
+	 </if>
+	 <if test="null != id and '' != id">
+		       and ID = #{id}
+	 </if>
+	 <if test="null != editId and '' != editId">
+		       and ID != #{editId}
+	 </if>
+	 <if test="null != sort and '' != sort">
+		       order by ${sort}
+	 </if> 
+</select>
+
+</mapper>

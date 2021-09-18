@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.log.server.dao.LogAlertRuleDao">
+
+	<resultMap type="com.aspire.mirror.log.server.dao.po.LogAlertRuleDetailDTO" id="LogAlertRuleDetailMap">
+		<result property="uuid" column="uuid" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="description" column="description" jdbcType="VARCHAR"/>
+		<result property="runStatus" column="run_status" jdbcType="VARCHAR"/>
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+		<result property="ip" column="ip" jdbcType="VARCHAR"/>
+		<result property="keyComment" column="key_comment" jdbcType="VARCHAR"/>
+		<result property="include" column="include" jdbcType="VARCHAR"/>
+		<result property="includeKey" column="include_key" jdbcType="VARCHAR"/>
+		<result property="noInclude" column="no_include" jdbcType="VARCHAR"/>
+		<result property="noIncludeKey" column="no_include_key" jdbcType="VARCHAR"/>
+		<result property="filterTime" column="filter_time" jdbcType="INTEGER"/>
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+		<result property="creator" column="creator" jdbcType="VARCHAR"/>
+		<result property="userName" column="user_name" jdbcType="VARCHAR"/>
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+		<!--<collection property="alertCount" column="uuid" select="com.aspire.mirror.log.server.dao.LogAlertRuleDao.getAlertCount" />-->
+	</resultMap>
+
+	<sql id="baseSelectHand">
+		SELECT
+		uuid,
+		name,
+		description,
+		run_status,
+		idc_type,
+		ip,
+		key_comment ,
+		filter_time,
+		DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+		creator,
+		user_name,
+		alert_level,
+		include,
+		include_key,
+		no_include,
+		no_include_key
+	</sql>
+
+	<insert id="createLogAlertRule" parameterType="com.aspire.mirror.log.server.dao.po.CreateLogAlertRuleReqDTO">
+		INSERT INTO log_alert_rule
+		(uuid,name,description,run_status,idc_type,ip,key_comment,filter_time,create_time,creator,user_name,alert_level,include,include_key,no_include,no_include_key)
+		VALUES
+		(#{uuid},#{name},#{description},#{runStatus},#{idcType},#{ip},#{keyComment},#{filterTime},NOW(),#{creator},#{userName},#{alertLevel},#{include},#{includeKey},#{noInclude},#{noIncludeKey})
+	</insert>
+
+	<select id="getLogAlertRuleDetail" parameterType="java.lang.String" resultMap="LogAlertRuleDetailMap">
+        <include refid="baseSelectHand"/>
+		FROM
+		log_alert_rule
+		WHERE
+		uuid = #{uuid}
+	</select>
+
+	<delete id="deleteLogAlertRule" parameterType="java.util.List">
+		DELETE FROM
+		log_alert_rule
+		WHERE
+		uuid IN
+		<foreach collection="list" item="uuid" open="(" close=")" separator=",">
+			#{uuid}
+		</foreach>
+	</delete>
+
+	<select id="getLogAlertRuleListCount"  resultType="java.lang.Integer"
+			parameterType="com.aspire.mirror.log.server.dao.po.LogAlertRuleListReqDTO">
+		SELECT COUNT(1)
+		FROM
+		log_alert_rule
+		WHERE
+		1=1
+		<if test="name != '' and name != null">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+		<if test="idcType != '' and idcType != null">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="ip != '' and ip != null">
+			AND ip LIKE  concat('%',#{ip},'%')
+		</if>
+		<if test="runStatus != '' and runStatus != null">
+			AND run_status = #{runStatus}
+		</if>
+	</select>
+
+	<select id="getLogAlertRuleListData"  resultType="com.aspire.mirror.log.server.dao.po.LogAlertRuleDetailDTO"
+			parameterType="com.aspire.mirror.log.server.dao.po.LogAlertRuleListReqDTO">
+		<!--<include refid="baseSelectHand"/>-->
+		SELECT
+		r.uuid,
+		r.name,
+		r.description,
+		r.run_status runStatus,
+		r.idc_type idcType,
+		r.ip,
+		r.key_comment keyComment,
+		r.filter_time filterTime,
+		DATE_FORMAT(r.create_time,'%Y-%m-%d %H:%i:%s') as createTime ,
+		r.creator,
+		r.user_name userName,
+		r.alert_level alertLevel,
+		r.include,
+		r.include_key includeKey,
+		r.no_include noInclude,
+		r.no_include_key noIncludeKey,
+		l.alertCount
+		FROM
+		log_alert_rule r
+		LEFT JOIN (SELECT log_alert_rule_uuid,COUNT(log_alert_rule_uuid) alertCount
+					FROM log_alert_linked
+					GROUP BY log_alert_rule_uuid) l ON r.uuid=l.log_alert_rule_uuid
+		WHERE
+		1=1
+		<if test="name != '' and name != null">
+			AND name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+			
+		</if>
+		<if test="idcType != '' and idcType != null">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="ip != '' and ip != null">
+			AND ip LIKE  concat('%',#{ip},'%')
+		</if>
+		<if test="runStatus != '' and runStatus != null">
+			AND run_status = #{runStatus}
+		</if>
+		ORDER BY create_time DESC
+		<if test="isPage != -1">
+			LIMIT #{begin},#{pageSize}
+		</if>
+	</select>
+
+	<select id="getLogAlertRuleDetailByName" parameterType="java.lang.String" resultMap="LogAlertRuleDetailMap">
+		<include refid="baseSelectHand"/>
+		FROM
+		log_alert_rule
+		WHERE
+		name = #{name}
+	</select>
+
+	<update id="updateRunStatusByUuid" parameterType="map" >
+		UPDATE log_alert_rule SET run_status = #{runStatus} WHERE uuid IN
+		<foreach collection="uuidList" item="uuid" open="(" close=")" separator=",">
+			#{uuid}
+		</foreach>
+	</update>
+
+    <update id="updateLogAlertRule" parameterType="com.aspire.mirror.log.server.dao.po.CreateLogAlertRuleReqDTO">
+        UPDATE log_alert_rule
+        SET
+        name = #{name},
+        run_status = #{runStatus},
+        description = #{description},
+        idc_type = #{idcType},
+        ip = #{ip},
+        key_comment = #{keyComment},
+        include = #{include},
+        include_key = #{includeKey},
+        no_include = #{noInclude},
+        no_include_key = #{noIncludeKey},
+        filter_time = #{filterTime},
+        alert_level = #{alertLevel}
+        WHERE
+        uuid = #{uuid}
+    </update>
+
+	<insert id="insertLogAlertLinked" parameterType="com.aspire.mirror.log.server.dao.po.CreateLogAlertLinkedReqDTO">
+		INSERT INTO log_alert_linked (log_alert_rule_uuid,alert_id)
+		VALUES (#{logAlertRuleUuid},#{AlertId})
+	</insert>
+	<delete id="deleteLogAlertLinkedById" parameterType="java.util.List">
+		DELETE FROM log_alert_linked
+		WHERE log_alert_rule_uuid IN
+		<foreach collection="list" item="uuid" open="(" close=")" separator=",">
+			#{uuid}
+		</foreach>
+	</delete>
+	<select id="getAlertCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		FROM log_alert_linked
+		WHERE log_alert_rule_uuid = #{uuid}
+	</select>
+
+</mapper>

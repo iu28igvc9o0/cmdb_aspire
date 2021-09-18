@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.systemManager.mapper.OrgManagerMapper" >
+
+    <resultMap id="orgManager" type="com.aspire.ums.cmdb.systemManager.entity.OrgManager">
+        <id property="id" column="id" />
+        <result property="orgName" column="orgName" />
+        <result property="orgType" column="orgType" />
+        <result property="pid" column="parent_id" />
+        <result property="remark" column="remark" />
+        <result property="isdel" column="isdel" />
+    </resultMap>
+
+    <select id="getOrgManagerDataCount" resultType="java.lang.Integer">
+        select count(1) from cmdb_org_system
+        <where>
+            isdel != 1
+            <if test="orgName != null and orgName != ''">
+                and orgName like '%${orgName}%'
+            </if>
+            <if test="orgType != null and orgType != ''">
+                and orgType = #{orgType}
+            </if>
+            <choose>
+                <when test="pid != null and pid != ''">
+                    and parent_id = #{pid}
+                </when>
+                <otherwise>
+                    and parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <select id="getOrgManagerData"
+            resultType="com.aspire.ums.cmdb.systemManager.entity.OrgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark,
+        isdel
+        from cmdb_org_system
+        <where>
+            isdel != 1
+            <if test="orgName != null and orgName != ''">
+                and orgName like '%${orgName}%'
+            </if>
+            <if test="orgType != null and orgType != ''">
+                and orgType = #{orgType}
+            </if>
+            <choose>
+                <when test="pid != null and pid != ''">
+                    and parent_id = #{pid}
+                </when>
+                <otherwise>
+                    and parent_id = '0'
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <select id="getOrgManagerByPid"
+            resultMap="orgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark
+        from cmdb_org_system where parent_id = #{pid} and  isdel != 1
+    </select>
+    <select id="getOrgManagerById"
+            resultMap="orgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark,
+        isdel
+        from cmdb_org_system where id = #{id}
+    </select>
+
+    <insert id="insert">
+      insert into cmdb_org_system (id,orgName,orgType,parent_id,remark,isdel)
+      values (#{id},#{orgName},#{orgType},#{pid},#{remark},0)
+    </insert>
+    <update id="updateByPrimaryKey">
+        update cmdb_org_system
+        <set>
+            orgName = #{orgName},
+            orgType = #{orgType},
+            parent_id = #{pid},
+            remark = #{remark}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+    <update id="delete" parameterType="java.lang.String">
+        update cmdb_org_system
+        <set>
+            isdel = 1
+        </set>
+        <where>
+            id = #{id} or parent_id = #{id}
+        </where>
+    </update>
+
+    <select id="getParentOrg" resultMap="orgManager">
+        select
+        id,
+        orgName
+        from cmdb_org_system where  isdel != 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     BizThemeDimSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-10-23 20:39:16
+ -->
+<mapper namespace="com.aspire.mirror.theme.server.dao.LogThemeFlushTimeDao">
+    <select id="getFlushTime" resultType="java.lang.String">
+        select flush_time from monitor_log_theme_flush_time
+    </select>
+    <select id="setFlushTime" parameterType="java.lang.String">
+        update monitor_log_theme_flush_time set flush_time = #{flushTime}
+    </select>
+</mapper>

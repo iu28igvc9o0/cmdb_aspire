@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.code.mapper.CmdbModuleCodeGroupMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup" >
+        <result column="group_id" property="groupId" jdbcType="VARCHAR" />
+        <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <collection property="codeList" column="{groupId=group_id, moduleId=module_id}" select="com.aspire.ums.cmdb.v2.code.mapper.CmdbCodeMapper.getCodeListByGroupId"/>
+
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `group_id`,
+        `group_name`,
+        `module_id`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_module_code_group
+        order by `sort_index`
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">
+        SELECT
+            a.`group_id`,
+            a.`group_name`,
+            a.`module_id`,
+            a.`is_delete`,
+            a.`sort_index`
+        FROM
+          cmdb_module_code_group a
+        WHERE
+          a.group_id IN (
+            SELECT
+            b.group_id
+            FROM
+            cmdb_v3_module_code_setting b
+            WHERE
+            b.module_id = #{moduleId}
+            AND b.is_delete = '0'
+          )
+          AND a.is_delete = 0
+          AND a.module_id = #{moduleId}
+          <if test="groupId != null and groupId != ''">
+            AND a.`group_id` = #{groupId}
+          </if>
+          <if test="groupName != null and groupName != ''">
+            AND a.`group_name` = #{groupName}
+          </if>
+          <if test="moduleId != null and moduleId != ''">
+            AND a.`module_id` = #{moduleId}
+          </if>
+          <if test="sortIndex != null and sortIndex != ''">
+            AND a.`sort_index` = #{sortIndex}
+          </if>
+          group by a.group_id
+          order by `sort_index`
+    </select>
+    <!--<select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">-->
+        <!--SELECT-->
+        <!--`group_id`,-->
+        <!--`group_name`,-->
+        <!--`module_id`,-->
+        <!--`is_delete`,-->
+        <!--`sort_index`-->
+        <!--FROM cmdb_module_code_group-->
+        <!--WHERE 1=1-->
+        <!--<if test="groupId != null and groupId != ''">-->
+            <!--AND `group_id` = #{groupId}-->
+        <!--</if>-->
+        <!--<if test="groupName != null and groupName != ''">-->
+            <!--AND `group_name` = #{groupName}-->
+        <!--</if>-->
+        <!--<if test="moduleId != null and moduleId != ''">-->
+            <!--AND `module_id` = #{moduleId}-->
+        <!--</if>-->
+        <!--<if test="isDelete != null and isDelete != ''">-->
+            <!--AND `is_delete` = #{isDelete}-->
+        <!--</if>-->
+        <!--<if test="sortIndex != null and sortIndex != ''">-->
+            <!--AND `sort_index` = #{sortIndex}-->
+        <!--</if>-->
+        <!--order by `sort_index`-->
+    <!--</select>-->
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup" resultMap="resultMap">
+        SELECT
+        `group_id`,
+        `group_name`,
+        `module_id`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_module_code_group
+        WHERE 1=1
+        AND `group_id` = #{groupId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">
+        INSERT INTO cmdb_module_code_group
+        (
+            `group_id`,
+            `group_name`,
+            `module_id`,
+            `is_delete`,
+            `sort_index`
+        ) VALUES (
+            #{groupId, jdbcType=VARCHAR},
+            #{groupName, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">
+        INSERT INTO cmdb_module_code_group
+        (
+        `group_id`,
+        `group_name`,
+        `module_id`,
+        `is_delete`,
+        `sort_index`
+        ) VALUES
+                 <foreach collection="list" item="item" index="index" separator="," >
+                     (
+                     #{item.groupId},
+                     #{item.groupName},
+                     #{item.moduleId},
+                     #{item.isDelete},
+                     #{item.sortIndex}
+                     )
+                 </foreach>
+
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">
+        UPDATE cmdb_module_code_group SET
+        `group_name` = #{groupName},
+        `module_id` = #{moduleId},
+        `is_delete` = #{isDelete},
+        `sort_index` = #{sortIndex}
+        WHERE
+        `group_id` = #{groupId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">
+        DELETE FROM cmdb_module_code_group
+        WHERE
+         `group_id` = #{groupId}
+    </delete>
+
+    <delete id="deleteBySelective" parameterType="com.aspire.ums.cmdb.code.payload.CmdbModuleCodeGroup">
+        DELETE FROM cmdb_module_code_group
+        WHERE 1=1
+        <if test="groupId != null and groupId != ''">
+            AND `group_id` = #{groupId}
+        </if>
+        <if test="groupName != null and groupName != ''">
+            AND `group_name` = #{groupName}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+            AND `module_id` = #{moduleId}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+            AND `sort_index` = #{sortIndex}
+        </if>
+    </delete>
+
+    <delete id="deleteByModuleId" parameterType="java.lang.String">
+        DELETE FROM cmdb_module_code_group
+        WHERE  `module_id` = #{moduleId}
+    </delete>
+</mapper>

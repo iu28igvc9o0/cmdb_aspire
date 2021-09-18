@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.AlertNotifyTemplateMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyTemplate">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="template_name" property="templateName" jdbcType="VARCHAR"/>
+        <result column="sms_template" property="smsTemplate" jdbcType="VARCHAR"/>
+        <result column="email_template" property="emailTemplate" jdbcType="VARCHAR"/>
+        <result column="is_email_merge" property="isEmailMerge" jdbcType="VARCHAR"/>
+        <result column="email_merge_template" property="emailMergeTemplate" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR"/>
+        <result column="creater" property="creater" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="updater" property="updater" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, template_name, sms_template, email_template, is_email_merge, email_merge_template, is_delete, subject,creater, create_time, updater, update_time
+    </sql>
+
+    <select id="selectByName" parameterType="java.lang.String" resultMap="resultMap">
+        select <include refid="Base_Column_List"/>
+        from alert_notify_template where template_name = #{templateName} and is_delete = '1'
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyTemplate">
+        INSERT INTO alert_notify_template
+        (
+            `id`,
+            `template_name`,
+            `sms_template`,
+            `email_template`,
+            `is_email_merge`,
+            `email_merge_template`,
+            `is_delete`,
+            `creater`,
+            `create_time`,
+            `updater`,
+            `update_time`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{templateName, jdbcType=VARCHAR},
+            #{smsTemplate, jdbcType=VARCHAR},
+            #{emailTemplate, jdbcType=VARCHAR},
+            #{isEmailMerge, jdbcType=VARCHAR},
+            #{emailMergeTemplate, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=VARCHAR},
+            #{creater, jdbcType=INTEGER},
+            #{createTime, jdbcType=TIMESTAMP},
+            #{updater, jdbcType=VARCHAR},
+            #{updateTime, jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertNotifyTemplate">
+        UPDATE alert_notify_template SET
+        `template_name` = #{templateName},
+        `sms_template` = #{smsTemplate},
+        `email_template` = #{emailTemplate},
+        `is_email_merge` = #{isEmailMerge},
+        `email_merge_template` = #{emailMergeTemplate},
+        `is_delete` = #{isDelete},
+        `updater` = #{updater},
+        `update_time` = #{updateTime}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="deleteByName" parameterType="java.lang.String">
+        update alert_notify_template set is_delete = '0' where template_name = #{templateName}
+    </update>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     BizItemHistorySql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-11-15 16:47:38
+ -->
+<mapper namespace="com.aspire.mirror.template.server.dao.BizItemHistoryDao">
+
+	<resultMap type="com.aspire.mirror.template.server.dao.po.BizItemHistory" id="baseResultMap">
+		<result property="id" column="id" jdbcType="VARCHAR"/>
+		<result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+		<result property="logValue" column="log_value" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+		<result property="logStartTime" column="log_start_time" jdbcType="TIMESTAMP"/>
+		<result property="themeId" column="theme_id" jdbcType="VARCHAR"/>
+		<result property="cron" column="cron" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="baseWhereClause">
+		<where>
+			<!--
+			1 = 1
+			<if test="params['keyword'] != null and  params['keyword'] != ''">
+				EXAMPLE_NAME like '%${params.keyword}%'
+			</if>
+			-->
+			<if test="params['keyword'] != null and  params['keyword'] != ''">
+				item_id like CONCAT('%', #{params.keyword}, '%')
+			</if>
+		</where>
+	</sql>
+	<sql id="baseColumnList">
+		id,item_id,log_value,create_time,log_start_time,theme_id,cron
+	</sql>
+	
+	<!-- 新增 -->
+	<insert id="add" parameterType="com.aspire.mirror.template.server.dao.po.BizItemHistory">
+		insert into 
+			monitor_biz_item_history(id,item_id,log_value,create_time,log_start_time,theme_id,cron) 
+		values(
+			#{id,jdbcType=VARCHAR} ,
+			#{itemId,jdbcType=VARCHAR} ,
+			#{logValue,jdbcType=VARCHAR} ,
+			#{createTime,jdbcType=TIMESTAMP},
+			#{logStartTime,jdbcType=TIMESTAMP},
+			#{themeId,jdbcType=VARCHAR} ,
+			#{cron,jdbcType=VARCHAR} 
+		)
+	</insert>
+	
+	<!-- 列表 -->
+	<select id="list" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		from monitor_biz_item_history
+		<if test="params != null">
+			<include refid="baseWhereClause" />
+		</if>
+	</select>
+	
+	<!-- 详情 -->
+	<select id="get" parameterType="String" resultMap="baseResultMap">
+		select 
+		<include refid="baseColumnList"/>
+		from monitor_biz_item_history t where id = #{id}
+	</select>
+	
+	<!-- 修改 -->
+	<update id="mod" parameterType="com.aspire.mirror.template.server.dao.po.BizItemHistory">
+		update monitor_biz_item_history set id = #{id}
+		<if test="itemId != null">
+			, item_id = #{itemId}
+		</if>
+		<if test="logValue != null">
+			, log_value = #{logValue}
+		</if>
+		<if test="createTime != null">
+			, create_time = #{createTime}
+		</if>
+		<if test="logStartTime != null">
+			, log_start_time = #{logStartTime}
+		</if>
+		<if test="themeId != null">
+			, theme_id = #{themeId}
+		</if>
+		<if test="cron != null">
+			, cron = #{cron}
+		</if>
+		where id = #{id}
+	</update> 
+	
+	<!-- 删除 -->
+	<update id="del" parameterType="string">
+		delete from monitor_biz_item_history where id = #{id}
+	</update>
+</mapper>

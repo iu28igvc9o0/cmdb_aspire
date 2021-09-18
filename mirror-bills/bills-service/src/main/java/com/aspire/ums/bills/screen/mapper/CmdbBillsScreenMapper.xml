@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.bills.screen.mapper.CmdbBillsScreenMapper" >
+
+    <select id="getMonthBillsWithResourceType" parameterType="string" resultType="java.util.HashMap">
+        SELECT cfg.dict_note deviceType,SUM(bills.need_pay) totalMoney
+        FROM cmdb_bills_month_record bills
+            LEFT JOIN (SELECT id,dict_note FROM ${tableName}.t_cfg_dict WHERE col_name = 'bills_device_type' and is_delete = 0) cfg
+                    ON bills.device_type_id = cfg.id
+        WHERE charge_time = #{chargeTime} and is_delete = 0 and department_id = #{department}
+            <if test="idcType != null and idcType != ''">
+                and idc_id = #{idcType}
+            </if>
+            and device_type_id IN (SELECT child.id
+                                    FROM ${tableName}.t_cfg_dict child
+                                    LEFT JOIN ${tableName}.t_cfg_dict parent ON child.up_dict = parent.id
+                                    WHERE child.col_name = 'bills_device_type' and parent.dict_note = #{resourceType})
+        GROUP BY bills.device_type_id
+    </select>
+
+    <select id="getQuotaAndBillsWithBiz" parameterType="string" resultType="java.util.HashMap">
+        SELECT
+            b.id,
+            biz.bizSystem,
+            b.business_system_id bizSystemId,
+            idc.idc_name idcName,
+            b.idc_id idcId,
+            org.orgName,
+            b.discountBeforePay,
+            b.totalMoney,
+            SUM(IFNULL(q.ljs_allocation_amount,0)) ljs,
+            SUM(IFNULL(q.yzj_allocation_amount,0)) yzj,
+            ROUND(SUM(IFNULL(q.fcsan_allocation_amount,0)
+            + IFNULL(q.ipsan_allocation_amount,0)
+            + IFNULL(q.bfcc_allocation_amount,0)
+            + IFNULL(q.dxcc_allocation_amount,0)
+            + IFNULL(q.kcc_allocation_amount,0)
+            + IFNULL(q.wjcc_allocation_amount,0)),2) cczy
+        FROM (
+            SELECT id,business_system_id,idc_id,SUM(need_pay) totalMoney,SUM(discount_before_pay) discountBeforePay
+            FROM cmdb_bills_month_record
+            WHERE department_id = #{department} and charge_time = #{chargeTime} and is_delete = 0
+            GROUP BY business_system_id,idc_id
+        ) b
+            LEFT JOIN ${tableName}.cmdb_business_quota q ON (q.owner_biz_system = b.business_system_id
+                                                                and q.idcType = b.idc_id and q.is_delete = 0)
+            LEFT JOIN ${tableName}.cmdb_business_system biz ON (biz.id = b.business_system_id and biz.is_delete = 0)
+            LEFT JOIN ${tableName}.cmdb_org_system org ON (org.id = biz.department2 and org.is_delete = 0)
+            LEFT JOIN ${tableName}.cmdb_idc_manager idc ON (idc.id = b.idc_id and idc.is_delete = 0)
+        WHERE b.totalMoney > 0
+        GROUP BY business_system_id,idc_id
+        ORDER BY biz.bizSystem,org.orgName
+    </select>
+
+    <select id="getQuotaWithBiz" parameterType="string" resultType="java.util.HashMap">
+        SELECT
+            SUM(IFNULL(ljs_allocation_amount,0)) ljs_allocation_amount,
+            SUM(IFNULL(yyfwq_allocation_amount,0)) yyfwq_allocation_amount,
+            SUM(IFNULL(fxxfwq_allocation_amount,0)) fxxfwq_allocation_amount,
+            SUM(IFNULL(fbsfwq_allocation_amount,0)) fbsfwq_allocation_amount,
+            SUM(IFNULL(hcxfwq_allocation_amount,0)) hcxfwq_allocation_amount,
+            SUM(IFNULL(gdyyfwq_allocation_amount,0)) gdyyfwq_allocation_amount,
+            SUM(IFNULL(djdfwq_allocation_amount,0)) djdfwq_allocation_amount,
+            SUM(IFNULL(yzj_allocation_amount,0)) yzj_allocation_amount,
+            SUM(IFNULL(yzj_vcpu_allocation_amount,0)) yzj_vcpu_allocation_amount,
+            SUM(IFNULL(yzj_memory_allocation_amount,0)) yzj_memory_allocation_amount,
+            SUM(IFNULL(ROUND(fcsan_allocation_amount,2),0)) fcsan_allocation_amount,
+            SUM(IFNULL(ROUND(ipsan_allocation_amount,2),0)) ipsan_allocation_amount,
+            SUM(IFNULL(ROUND(kcc_allocation_amount,2),0)) kcc_allocation_amount,
+            SUM(IFNULL(ROUND(wjcc_allocation_amount,2),0)) wjcc_allocation_amount,
+            SUM(IFNULL(ROUND(dxcc_allocation_amount,2),0)) dxcc_allocation_amount,
+            SUM(IFNULL(ROUND(bfcc_allocation_amount,2),0)) bfcc_allocation_amount
+        FROM ${tableName}.cmdb_business_quota q
+        LEFT JOIN ${tableName}.cmdb_business_system b ON (q.owner_biz_system = b.id and b.is_delete = 0)
+        WHERE owner_biz_system = #{bizSystem} and idcType = #{idcType}
+            and (b.department1 = #{department} or b.department2 = #{department}) and q.is_delete = 0
+        GROUP BY owner_biz_system,idcType
+    </select>
+
+    <select id="getQuotaAndBillsWithResourceType" parameterType="string" resultType="java.util.HashMap">
+        SELECT cfg.dict_code code,cfg.dict_note note,b.totalMoney
+        FROM(
+            SELECT device_type_id,SUM(need_pay) totalMoney
+            FROM cmdb_bills_month_record
+            WHERE charge_time = #{chargeTime} and department_id = #{department} and is_delete = 0
+                and business_system_id = #{bizSystem} and idc_id = #{idcType}
+                and device_type_id IN (SELECT child.id
+                                        FROM ${tableName}.t_cfg_dict child
+                                        LEFT JOIN ${tableName}.t_cfg_dict parent ON child.up_dict = parent.id
+                                        WHERE child.col_name = 'bills_device_type' and parent.dict_note = #{resourceType})
+            GROUP BY device_type_id
+        ) b
+        LEFT JOIN (SELECT id,dict_code,dict_note FROM ${tableName}.t_cfg_dict WHERE is_delete = 0) cfg
+                    ON cfg.id = b.device_type_id
+    </select>
+
+    <!-- deal_type = 1表示收入，也就是缴费 -->
+    <!--<select id="getAccountRevenueRecord" parameterType="string" resultType="java.util.HashMap">-->
+        <!--SELECT-->
+            <!--DATE_FORMAT(CONCAT(rd.deal_month,'-01'),'%Y.%m') xKey,-->
+            <!--DATE_FORMAT(rd.insert_time,'%Y.%m.%d %H:%i:%s') dealTime,-->
+            <!--amount-->
+        <!--FROM cmdb_bills_account_record rd-->
+		<!--LEFT JOIN cmdb_bills_account_balance bl ON rd.account_id = bl.id-->
+        <!--WHERE rd.deal_type = 1 and DATE_FORMAT(CONCAT(rd.deal_month,'-01'),'%Y') = #{year} and rd.is_delete = 0 and bl.department_id = #{department}-->
+        <!--ORDER BY deal_month-->
+    <!--</select>-->
+
+    <select id="getAccountRevenueRecord" parameterType="string" resultType="java.util.HashMap">
+        SELECT REPLACE(mon.month, '-', '.') xKey,IFNULL(res.need_pay,0) amount
+        FROM
+            (
+                SELECT
+                    DATE_FORMAT(@lastDay := LAST_DAY( DATE_ADD(@lastDay,INTERVAL 1 MONTH ) ) ,'%Y-%m'  ) MONTH
+                FROM
+                    (SELECT @lastDay := DATE_ADD(DATE_ADD(concat(#{year},'-12-01'),INTERVAL 0 MONTH),INTERVAL -12 MONTH) MONTH FROM cmdb_bills_month_bill  LIMIT 12) a
+            ) mon
+                LEFT JOIN
+                (
+                    SELECT charge_time,need_pay  FROM `cmdb_bills_month_bill` WHERE is_delete=0  AND  department_id=#{department}
+                    GROUP BY charge_time
+                )res ON mon.month = res.charge_time
+        ORDER BY mon.month
+    </select>
+
+
+
+    <select id="getAccountInfo" parameterType="string" resultType="java.util.HashMap">
+        SELECT truncate(needPay,2)  needPay, round(realPay,2) realPay, round(monthTotal,2) monthTotal,  round(grandTotal,2) grandTotal,
+             round(IFNULL(grandTotal, 0) - IFNULL(balance, 0),2) balance,  round(accountCode,2) accountCode,  round(accountManager,2) accountManager,  round(accountManagerPhone,2) accountManagerPhone  FROM (
+        SELECT
+            SUM(need_pay) needPay,
+            SUM(need_pay) monthTotal,
+            IFNULL((
+                SELECT SUM(r.amount) grandTotal
+                FROM cmdb_bills_account_record r
+                LEFT JOIN cmdb_bills_account_balance b ON (r.account_id = b.id and b.is_delete = 0)
+                WHERE b.department_id = #{department} AND r.deal_type = 1 AND r.is_delete = 0
+                AND r.deal_month = #{monthEnd}
+            ),0) realPay,
+            IFNULL((
+                SELECT SUM(r.amount) grandTotal
+                FROM cmdb_bills_account_record r
+                LEFT JOIN cmdb_bills_account_balance b ON (r.account_id = b.id and b.is_delete = 0)
+                WHERE b.department_id = #{department} AND r.deal_type = 1 AND r.is_delete = 0
+                AND r.deal_month BETWEEN #{monthBegin} AND #{monthEnd}
+            ),0) grandTotal,
+            (
+                SELECT SUM(need_pay)
+                FROM cmdb_bills_month_bill
+                WHERE department_id = #{department} AND is_delete = 0
+                AND charge_time BETWEEN #{monthBegin} AND #{monthEnd}
+            ) balance,
+            b.account_code accountCode,
+            c.contact accountManager,
+            c.contact_number accountManagerPhone,
+            c.contact_email_address account_manager_email,
+            c.orgName orgName
+        FROM cmdb_bills_month_bill m
+        LEFT JOIN cmdb_bills_account_balance b ON (b.department_id = m.department_id and b.is_delete = 0)
+        left join ${tableName}.cmdb_org_system c on b.department_id = c.id and c.is_delete=0
+        WHERE m.is_delete = 0 and m.charge_time = #{monthEnd} and m.department_id = #{department}
+        GROUP BY m.department_id
+        ) t
+    </select>
+
+    <select id="getAllQuota" parameterType="string" resultType="hashmap">
+        SELECT
+            b.bizSystem bizName,
+            b.dep2Name,
+            b.department2,
+            b.dep1Name,
+            b.department1,
+            owner_biz_system biz,
+            b.business_concat businessConcat,
+            b.business_concat_phone businessConcatPhone,
+            idc.idc_name idcName,
+            idcType idc,
+            pod.pod_name podName,
+            pod,
+            IFNULL(ljs_allocation_amount,0) ljs_allocation_amount,
+            IFNULL(yyfwq_allocation_amount,0) yyfwq_allocation_amount,
+            IFNULL(fxxfwq_allocation_amount,0) fxxfwq_allocation_amount,
+            IFNULL(fbsfwq_allocation_amount,0) fbsfwq_allocation_amount,
+            IFNULL(hcxfwq_allocation_amount,0) hcxfwq_allocation_amount,
+            IFNULL(gdyyfwq_allocation_amount,0) gdyyfwq_allocation_amount,
+            IFNULL(djdfwq_allocation_amount,0) djdfwq_allocation_amount,
+            IFNULL(yzj_allocation_amount,0) yzj_allocation_amount,
+            IFNULL(yzj_vcpu_allocation_amount,0) yzj_vcpu_allocation_amount,
+            IFNULL(yzj_memory_allocation_amount,0) yzj_memory_allocation_amount,
+            IFNULL(fcsan_allocation_amount,0) fcsan_allocation_amount,
+            IFNULL(ipsan_allocation_amount,0) ipsan_allocation_amount,
+            IFNULL(kcc_allocation_amount,0) kcc_allocation_amount,
+            IFNULL(wjcc_allocation_amount,0) wjcc_allocation_amount,
+            IFNULL(dxcc_allocation_amount,0) dxcc_allocation_amount,
+            IFNULL(bfcc_allocation_amount,0) bfcc_allocation_amount
+        FROM ${tableName}.cmdb_business_quota q
+        LEFT JOIN (
+            SELECT biz.id,biz.business_concat,biz.business_concat_phone,biz.bizSystem,biz.is_delete,
+                        biz.department1,org1.orgName dep1Name,
+                        biz.department2,org2.orgName dep2Name
+            FROM ${tableName}.cmdb_business_system biz
+            LEFT JOIN ${tableName}.cmdb_org_system org1 ON (biz.department1 = org1.id AND org1.is_delete = 0)
+            LEFT JOIN ${tableName}.cmdb_org_system org2 ON (biz.department2 = org2.id AND org2.is_delete = 0)
+        ) b ON (q.owner_biz_system = b.id AND b.is_delete = 0)
+        LEFT JOIN ${tableName}.cmdb_idc_manager idc ON (q.idcType = idc.id AND idc.is_delete = 0)
+        LEFT JOIN ${tableName}.cmdb_pod_manager pod ON (q.pod = pod.id AND pod.is_delete = 0)
+        WHERE (b.department1 = #{department} OR b.department2 = #{department}) and q.is_delete = 0
+    </select>
+
+    <select id="getAllPrice" resultType="hashmap">
+        SELECT idc_id idcId,
+            GROUP_CONCAT(cfg.dict_code) codes,
+            GROUP_CONCAT(p.price) prices
+        FROM cmdb_bills_price p
+        LEFT JOIN (SELECT id,dict_code from ${tableName}.t_cfg_dict where col_name = 'bills_device_type' and is_delete = 0) cfg
+            ON p.device_type_id = cfg.id
+        WHERE p.is_delete = 0
+        GROUP BY idc_id
+    </select>
+
+    <select id="getAllMonthBills" parameterType="string" resultType="hashmap">
+        SELECT
+            business_system_id bizId,
+            idc_id idcId,
+            pod_id podId,
+            GROUP_CONCAT(cfg.dict_code) codes,
+            GROUP_CONCAT(need_pay) pays,
+            SUM(need_pay) totalMoney
+        FROM cmdb_bills_month_record r
+        LEFT JOIN (SELECT id,dict_code from ${tableName}.t_cfg_dict where col_name = 'bills_device_type' and is_delete = 0) cfg
+            ON r.device_type_id = cfg.id
+        WHERE r.charge_time = #{chargeTime} and department_id = #{department} and r.is_delete = 0
+        GROUP BY business_system_id,idc_id,pod_id
+    </select>
+
+    <select id="getSpecificBillsWithResourceType" parameterType="string" resultType="hashmap">
+        SELECT
+            idc.idc_name idcName,
+            cfg.dict_note deviceType,
+            round(SUM(bills.need_pay),2) totalMoney
+        FROM cmdb_bills_month_record bills
+                LEFT JOIN (SELECT id,dict_note FROM ${tableName}.t_cfg_dict WHERE col_name = 'bills_device_type' and is_delete = 0) cfg
+                                ON bills.device_type_id = cfg.id
+                LEFT JOIN ${tableName}.cmdb_idc_manager idc ON (bills.idc_id = idc.id AND idc.is_delete = 0)
+        WHERE bills.is_delete = 0 AND charge_time = #{chargeTime} AND department_id = #{department}
+                and device_type_id IN (SELECT id
+                                        FROM ${tableName}.t_cfg_dict
+                                        WHERE col_name = 'bills_device_type' and up_dict = #{resourceType})
+        GROUP BY bills.idc_id,bills.device_type_id
+        ORDER BY bills.idc_id,bills.device_type_id
+    </select>
+</mapper>

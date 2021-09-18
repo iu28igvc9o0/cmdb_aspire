@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.FormTagMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.FormTag" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="moduleId" property="moduleid" jdbcType="VARCHAR" />
+    <result column="tag" property="tag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, moduleId, tag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_form_tag
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByModuleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_form_tag
+    where moduleId = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectTagIdByModuleId" parameterType="java.lang.String" resultType="java.lang.String">
+  	select id from cmdb_form_tag where moduleId = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_form_tag
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.FormTag" >
+    insert into cmdb_form_tag (id, moduleId, tag
+      )
+    values (#{id,jdbcType=VARCHAR}, #{moduleid,jdbcType=VARCHAR}, #{tag,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.FormTag" >
+    insert into cmdb_form_tag
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        id,
+      </if>
+      <if test="moduleid != null and moduleid !=''" >
+        moduleId,
+      </if>
+      <if test="tag != null and tag !=''" >
+        tag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null and moduleid !=''" >
+        #{moduleid,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null and tag !=''" >
+        #{tag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.FormTag" >
+    update cmdb_form_tag
+    <set >
+      <if test="moduleid != null" >
+        moduleId = #{moduleid,jdbcType=VARCHAR},
+      </if>
+      <if test="tag != null" >
+        tag = #{tag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.FormTag" >
+    update cmdb_form_tag
+    set moduleId = #{moduleid,jdbcType=VARCHAR},
+      tag = #{tag,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

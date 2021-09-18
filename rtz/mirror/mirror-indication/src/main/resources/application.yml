@@ -1,0 +1,74 @@
+server:
+  port: 28503
+  context-path: /mirror
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true #当出现404错误时,是否直接抛出异常
+  resources:
+    add-mappings: false #是否开启默认的资源处理
+
+logging:
+  # config: classpath:log4j2.yml
+  level:
+    org.springframework.web.servlet.DispatcherServlet: ERROR
+    org.apache.cxf: DEBUG
+#    com.aspire.mirror.dao: debug
+#    tk.mybatis.mapper.common.base.select: debug #输出mybatis select SQL
+#    tk.mybatis.mapper.common.base.update: debug #输出mybatis update SQL
+#    tk.mybatis.mapper.common.base.insert: debug #输出mybatis insert SQL
+#    tk.mybatis.mapper.common.base.delete: debug #输出mybatis delete SQL
+
+mybatis:
+  mapperLocations:
+  - classpath*:mapper/mirror/*Mapper.xml
+  - classpath*:mapper/fileCheck/*Mapper.xml
+  type-aliases-package:
+    org.springboot.sample.entity
+  configLocation: classpath:mybatis-config.xml
+
+#druid:
+#  url: jdbc:mysql://10.14.0.166:3306/nationalweb_indexexception_test?useUnicode=true&characterEncoding=UTF-8
+#  username: root
+#  password: cmcc1234
+#  useUnicode: true
+#  characterEncoding: UTF8
+#  useSSL: false
+
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/rtz_indication?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useUnicode: true
+  characterEncoding: UTF8
+  useSSL: false
+
+envconfig:
+  alertAgent:
+    server: "10.12.70.40:9092"
+  nationalWeb:
+    wsdl: http://10.12.70.38:8110/familyopen/services/
+    qName: http://national.server.webservice.family.cmcc.com/
+    autoSendTopic: "IndexExceptionWarning"
+    sendTopic: "IndexExceptionAlertForTest"
+  realNationalWeb:
+    wsdl: http://10.12.9.238:8110/familyopen/services/
+    qName: http://national.server.webservice.family.cmcc.com/
+    autoSendTopic: "IndexExceptionAlertForTest"
+    sendTopic: "IndexExceptionAlertForTest"
+  fileCheck:
+    autoSendTopic: "IndexExceptionAlertForTest"
+    sendTopic: "IndexExceptionAlertForTest"
+
+#envconfig:
+#  alertAgent:
+#    server: "vmhadoop12:9092,vmhadoop13:9092,vmhadoop14:9092"
+#  nationalWeb:
+#    autoSendTopic: "IndexExceptionWarning"
+#    sendTopic: "IndexExceptionAlert"
+#  realNationalWeb:
+#    autoSendTopic: "IndexExceptionAlert"
+#    sendTopic: "IndexExceptionAlertForTest"
+#  fileCheck:
+#    autoSendTopic: "IndexExceptionAlert"
+#    sendTopic: "IndexExceptionAlert"

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.sync.mapper.SyncMapper">
+	<resultMap id="CmdbSyncFormResultMap" type="com.aspire.ums.cmdb.sync.entity.CmdbSyncForm">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="module_code" property="moduleCode" jdbcType="VARCHAR" />
+		<result column="form_code" property="formCode" jdbcType="VARCHAR" />
+		<result column="sync_code" property="syncCode" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ModuleResultMap" type="com.aspire.ums.cmdb.sync.entity.Module">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="InstanceResultMap" type="com.aspire.ums.cmdb.sync.entity.Instance">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+		<result column="insertTime" property="insertTime" jdbcType="TIMESTAMP" />
+		<result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="isDelete" property="isDelete" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="FormResultMap" type="com.aspire.ums.cmdb.sync.entity.Form">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="moduleId" property="moduleid" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="defaultValue" property="defaultvalue" jdbcType="VARCHAR" />
+		<result column="required" property="required" jdbcType="VARCHAR" />
+		<result column="builtin" property="builtin" jdbcType="VARCHAR" />
+		<result column="hidden" property="hidden" jdbcType="VARCHAR" />
+		<result column="keyAttr" property="keyattr" jdbcType="VARCHAR" />
+		<result column="rate" property="rate" jdbcType="VARCHAR" />
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+		<result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+		<result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+		<result column="isDelete" property="isdelete" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="getByModuleCode" resultMap="CmdbSyncFormResultMap"
+		parameterType="java.lang.String">
+		SELECT id,module_code,form_code,sync_code
+		FROM cmdb_sync_form
+		WHERE module_code = #{moduleCode}
+	</select>
+
+	<select id="getModuleByCode" resultMap="ModuleResultMap"
+		parameterType="java.lang.String">
+		SELECT id,name,code
+		FROM cmdb_module
+		WHERE code = #{code,jdbcType=VARCHAR} and isDelete = 0 limit 1
+	</select>
+	
+	<select id="getInstanceIdsByModuleId" resultType="java.lang.String"
+		parameterType="java.lang.String">
+		SELECT id
+		FROM cmdb_instance
+		WHERE moduleId = #{moduleId,jdbcType=VARCHAR} and isDelete = 0
+	</select>
+
+	<select id="getInstance" resultMap="InstanceResultMap"
+		parameterType="com.aspire.ums.cmdb.sync.entity.Instance">
+		SELECT id,name,moduleId,insertTime,updateTime,isDelete
+		FROM cmdb_instance
+		WHERE isDelete = 0
+		<if test="moduleId!=null and moduleId!=''">
+			AND moduleId = #{moduleId}
+		</if>
+		<if test="name!=null and name!=''">
+			AND name = #{name}
+		</if>
+		limit 1
+	</select>
+
+	<select id="getFormByModuleId" resultMap="FormResultMap"
+		parameterType="java.lang.String">
+		select
+		id, moduleId, name, code, type, defaultValue, required, builtin, hidden,
+		keyAttr,
+		rate, unit, sortIndex, insertTime, updateTime, isDelete
+		from cmdb_form
+		where moduleId = #{moduleId,jdbcType=VARCHAR}
+		and isDelete = 0
+	</select>
+
+	<insert id="insertInstance" parameterType="com.aspire.ums.cmdb.sync.entity.Instance">
+		INSERT INTO
+		cmdb_instance
+		(id, `name`, moduleId, insertTime, updateTime, isDelete)
+		VALUES
+		(#{id}, #{name}, #{moduleId}, NOW(), NOW(), 0)
+	</insert>
+
+	<insert id="insertFormValue" parameterType="java.util.List">
+		INSERT INTO
+		cmdb_instance_form_value
+		(id, formId, formCode, formValue, instanceId)
+		VALUES
+		<foreach collection="list" item="obj" index="index" separator=",">
+			(#{obj.id}, #{obj.formId}, #{obj.formCode}, #{obj.formValue},
+			#{obj.instanceId})
+		</foreach>
+	</insert>
+	
+	<insert id="insertFormOptions" parameterType="java.util.List">
+		 insert into cmdb_form_options 
+		 VALUES
+		<foreach collection="list" item="obj" index="index" separator=",">
+			(#{obj.id}, #{obj.name}, #{obj.value}, #{obj.isdefault},
+			#{obj.color}, #{obj.parentid}, #{obj.formid})
+		</foreach>
+	</insert>
+
+	<delete id="deleteFormValue" parameterType="java.lang.String">
+		DELETE FROM
+		cmdb_instance_form_value
+		WHERE instanceId = #{instanceId,jdbcType=VARCHAR}
+	</delete>
+	
+	<delete id="deleteInstance" parameterType="java.lang.String">
+		update 
+		cmdb_instance
+		set isDelete = 1,updateTime = now()
+		WHERE id = #{instanceId,jdbcType=VARCHAR}
+	</delete>
+	
+	<delete id="deleteFormOptions" parameterType="java.lang.String">
+		DELETE FROM
+		cmdb_form_options
+		WHERE formId = #{formId,jdbcType=VARCHAR}
+	</delete>
+</mapper>

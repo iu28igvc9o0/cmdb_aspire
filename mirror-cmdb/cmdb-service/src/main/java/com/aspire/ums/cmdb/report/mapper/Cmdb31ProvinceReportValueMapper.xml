@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.report.mapper.Cmdb31ProvinceReportValueMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="report_id" property="reportId" jdbcType="VARCHAR" />
+        <result column="setting_id" property="settingId" jdbcType="VARCHAR" />
+        <result column="report_value" property="reportValue" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `report_id`,
+        `setting_id`,
+        `report_value`
+        FROM cmdb_31_province_report_value
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue">
+        SELECT
+        `id`,
+        `report_id`,
+        `setting_id`,
+        `report_value`
+        FROM cmdb_31_province_report_value
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="reportId != null and reportId != ''">
+        AND `report_id` = #{reportId}
+        </if>
+        <if test="settingId != null and settingId != ''">
+        AND `setting_id` = #{settingId}
+        </if>
+    </select>
+        <select id="listUniqueValues" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport" resultType="java.lang.String">
+            SELECT
+            `report_value`
+            FROM cmdb_31_province_report_value
+            WHERE setting_id = #{settingId}
+                  and
+            report_id in (
+            select id from cmdb_31_province_report
+            where province_name = #{report.provinceName}
+            and submit_month = #{report.submitMonth}
+            and resource_owner = #{report.resourceOwner}
+                )
+        </select>
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue" resultMap="resultMap">
+        SELECT
+        `id`,
+        `report_id`,
+        `setting_id`,
+        `report_value`
+        FROM cmdb_31_province_report_value
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue">
+        INSERT INTO cmdb_31_province_report_value
+        (
+            `id`,
+            `report_id`,
+            `setting_id`,
+            `report_value`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{reportId, jdbcType=VARCHAR},
+            #{settingId, jdbcType=VARCHAR},
+            #{reportValue, jdbcType=VARCHAR}
+        )
+                 ON DUPLICATE KEY UPDATE
+                                      report_value = VALUES( report_value )
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="java.util.List">
+        INSERT INTO cmdb_31_province_report_value
+        (
+            `id`,
+            `report_id`,
+            `setting_id`,
+            `report_value`
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            ( #{item.id, jdbcType=VARCHAR},
+            #{item.reportId, jdbcType=VARCHAR},
+            #{item.settingId, jdbcType=VARCHAR},
+            #{item.reportValue, jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        report_value = VALUES( report_value )
+
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue">
+        UPDATE cmdb_31_province_report_value SET
+        `report_id` = #{reportId},
+        `setting_id` = #{settingId},
+        `report_value` = #{reportValue}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue">
+        DELETE FROM cmdb_31_province_report_value
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <delete id="deleteByReportId" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportValue">
+        DELETE FROM cmdb_31_province_report_value
+        WHERE `report_id` = #{reportId}
+    </delete>
+
+    <delete id="deleteByProvinceAndMonth" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        delete from cmdb_31_province_report_value where report_id in (
+          select id from cmdb_31_province_report where resource_owner=#{resourceOwner}
+            and province_name=#{provinceName} and submit_month=#{submitMonth}
+        )
+    </delete>
+
+    <delete id="deleteByCurrReportIds">
+        delete from cmdb_31_province_report_value where report_id in (
+            select id from cmdb_31_province_report where resource_owner=#{reportInfo.resourceOwner}
+                                                     and province_name=#{reportInfo.provinceName}
+                                                     and submit_month=#{reportInfo.submitMonth}
+        and `id` not in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+</mapper>

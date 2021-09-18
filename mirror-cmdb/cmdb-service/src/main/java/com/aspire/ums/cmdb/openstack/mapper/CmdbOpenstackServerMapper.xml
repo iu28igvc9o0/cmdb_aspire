@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.openstack.mapper.CmdbOpenstackServerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="server_id" property="serverId" jdbcType="VARCHAR" />
+        <result column="event_id" property="eventId" jdbcType="VARCHAR" />
+        <result column="hname" property="hname" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+        <result column="launchedAt" property="launchedAt" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="org" property="org" jdbcType="VARCHAR" />
+        <result column="powerState" property="powerState" jdbcType="VARCHAR" />
+        <result column="rootDeviceName" property="rootDeviceName" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="sname" property="sname" jdbcType="VARCHAR" />
+        <result column="src_create_time" property="srcCreateTime" jdbcType="DATE" />
+        <result column="src_creator" property="srcCreator" jdbcType="VARCHAR" />
+        <result column="src_modify_time" property="srcModifyTime" jdbcType="DATE" />
+        <result column="src_modifier" property="srcModifier" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `server_id`,
+        `event_id`,
+        `hname`,
+        `description`,
+        `launchedAt`,
+        `name`,
+        `org`,
+        `powerState`,
+        `rootDeviceName`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_server
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer">
+        SELECT
+        `id`,
+        `instance_id`,
+        `server_id`,
+        `event_id`,
+        `hname`,
+        `description`,
+        `launchedAt`,
+        `name`,
+        `org`,
+        `powerState`,
+        `rootDeviceName`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_server
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="serverId != null and serverId != ''">
+        AND `server_id` = #{serverId}
+        </if>
+        <if test="eventId != null and eventId != ''">
+        AND `event_id` = #{eventId}
+        </if>
+        <if test="hname != null and hname != ''">
+        AND `hname` = #{hname}
+        </if>
+        <if test="description != null and description != ''">
+        AND `description` = #{description}
+        </if>
+        <if test="launchedAt != null and launchedAt != ''">
+        AND `launchedAt` = #{launchedAt}
+        </if>
+        <if test="name != null and name != ''">
+        AND `name` = #{name}
+        </if>
+        <if test="org != null and org != ''">
+        AND `org` = #{org}
+        </if>
+        <if test="powerState != null and powerState != ''">
+        AND `powerState` = #{powerState}
+        </if>
+        <if test="rootDeviceName != null and rootDeviceName != ''">
+        AND `rootDeviceName` = #{rootDeviceName}
+        </if>
+        <if test="status != null and status != ''">
+        AND `status` = #{status}
+        </if>
+        <if test="sname != null and sname != ''">
+        AND `sname` = #{sname}
+        </if>
+        <if test="srcCreateTime != null and srcCreateTime != ''">
+        AND `src_create_time` = #{srcCreateTime}
+        </if>
+        <if test="srcCreator != null and srcCreator != ''">
+        AND `src_creator` = #{srcCreator}
+        </if>
+        <if test="srcModifyTime != null and srcModifyTime != ''">
+        AND `src_modify_time` = #{srcModifyTime}
+        </if>
+        <if test="srcModifier != null and srcModifier != ''">
+        AND `src_modifier` = #{srcModifier}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+        <if test="version != null and version != ''">
+        AND `version` = #{version}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `server_id`,
+        `event_id`,
+        `hname`,
+        `description`,
+        `launchedAt`,
+        `name`,
+        `org`,
+        `powerState`,
+        `rootDeviceName`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_server
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="getByInstanceId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `server_id`,
+        `event_id`,
+        `hname`,
+        `description`,
+        `launchedAt`,
+        `name`,
+        `org`,
+        `powerState`,
+        `rootDeviceName`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_server
+        WHERE 1=1
+        AND `instance_id` = #{instanceId}
+    </select>
+
+    <select id="findByInstanceId" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `server_id`,
+        `event_id`,
+        `hname`,
+        `description`,
+        `launchedAt`,
+        `name`,
+        `org`,
+        `powerState`,
+        `rootDeviceName`,
+        `status`,
+        `sname`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_server
+        WHERE 1=1
+        AND `instance_id` = #{instanceId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer">
+        INSERT INTO cmdb_openstack_server
+        (
+            `id`,
+            `instance_id`,
+            `server_id`,
+            `event_id`,
+            `hname`,
+            `description`,
+            `launchedAt`,
+            `name`,
+            `org`,
+            `powerState`,
+            `rootDeviceName`,
+            `status`,
+            `sname`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{serverId, jdbcType=VARCHAR},
+            #{eventId, jdbcType=VARCHAR},
+            #{hname, jdbcType=VARCHAR},
+            #{description, jdbcType=VARCHAR},
+            #{launchedAt, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{org, jdbcType=VARCHAR},
+            #{powerState, jdbcType=VARCHAR},
+            #{rootDeviceName, jdbcType=VARCHAR},
+            #{status, jdbcType=VARCHAR},
+            #{sname, jdbcType=VARCHAR},
+            #{srcCreateTime, jdbcType=DATE},
+            #{srcCreator, jdbcType=VARCHAR},
+            #{srcModifyTime, jdbcType=DATE},
+            #{srcModifier, jdbcType=VARCHAR},
+            #{version, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_openstack_server
+        (
+            `id`,
+            `instance_id`,
+            `server_id`,
+            `event_id`,
+            `hname`,
+            `description`,
+            `launchedAt`,
+            `name`,
+            `org`,
+            `powerState`,
+            `rootDeviceName`,
+            `status`,
+            `sname`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+         (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.instanceId, jdbcType=VARCHAR},
+            #{item.serverId, jdbcType=VARCHAR},
+            #{item.eventId, jdbcType=VARCHAR},
+            #{item.hname, jdbcType=VARCHAR},
+            #{item.description, jdbcType=VARCHAR},
+            #{item.launchedAt, jdbcType=VARCHAR},
+            #{item.name, jdbcType=VARCHAR},
+            #{item.org, jdbcType=VARCHAR},
+            #{item.powerState, jdbcType=VARCHAR},
+            #{item.rootDeviceName, jdbcType=VARCHAR},
+            #{item.status, jdbcType=VARCHAR},
+            #{item.sname, jdbcType=VARCHAR},
+            #{item.srcCreateTime, jdbcType=DATE},
+            #{item.srcCreator, jdbcType=VARCHAR},
+            #{item.srcModifyTime, jdbcType=DATE},
+            #{item.srcModifier, jdbcType=VARCHAR},
+            #{item.version, jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer">
+        UPDATE cmdb_openstack_server SET
+        `instance_id` = #{instanceId},
+        `server_id` = #{serverId},
+        `event_id` = #{eventId},
+        `hname` = #{hname},
+        `description` = #{description},
+        `launchedAt` = #{launchedAt},
+        `name` = #{name},
+        `org` = #{org},
+        `powerState` = #{powerState},
+        `rootDeviceName` = #{rootDeviceName},
+        `status` = #{status},
+        `sname` = #{sname},
+        `src_create_time` = #{srcCreateTime},
+        `src_creator` = #{srcCreator},
+        `src_modify_time` = #{srcModifyTime},
+        `src_modifier` = #{srcModifier},
+        `version` = #{version}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateByInstanceId" parameterType="java.util.HashMap">
+        UPDATE cmdb_openstack_server
+        <set>
+            <if test="_parameter.containsKey('description') ">
+                description =  #{description},
+            </if>
+            <if test="_parameter.containsKey('name') ">
+                `name` =  #{name},
+            </if>
+            <if test="_parameter.containsKey('id') ">
+                server_id =  #{id},
+            </if>
+            <if test="_parameter.containsKey('hname') ">
+                hname =  #{hname},
+            </if>
+            <if test="_parameter.containsKey('sname') ">
+                sname =  #{sname},
+            </if>
+            <if test="_parameter.containsKey('launchedAt') ">
+                launchedAt =  #{launchedAt},
+            </if>
+            <if test="_parameter.containsKey('org') ">
+                org =  #{org},
+            </if>
+            <if test="_parameter.containsKey('powerState') ">
+                powerState =  #{powerState},
+            </if>
+            <if test="_parameter.containsKey('rootDeviceName') ">
+                rootDeviceName =  #{rootDeviceName},
+            </if>
+            <if test="_parameter.containsKey('status') ">
+                status =  #{status},
+            </if>
+            <if test="_parameter.containsKey('_version') ">
+                version =  #{_version},
+            </if>
+        </set>
+        WHERE instance_id=#{instanceId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer">
+        DELETE FROM cmdb_openstack_server
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <delete id="deleteByInstanceId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackServer">
+        DELETE FROM cmdb_openstack_server
+        WHERE
+         `instance_id` = #{instanceId}
+    </delete>
+</mapper>

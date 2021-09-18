@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.indexadapt.adapt.migubizmonitordb.dao.MiguBizMonitorIndexDao">
+
+    <resultMap id="bizTrigger" type="com.aspire.mirror.indexadapt.adapt.migubizmonitordb.model.BusinessTrigger">
+		<result property="id" column="ID" jdbcType="VARCHAR" />
+        <result column="TRIGGER_NAME" property="triggerName" jdbcType="VARCHAR" />
+        <result column="KEY_NAME" property="keyName" jdbcType="VARCHAR" />
+        <result column="KEY_WORD" property="keyWord" jdbcType="VARCHAR" />
+        <result column="TRIGGER_DESC" property="triggerDesc" jdbcType="VARCHAR" />
+        <result column="TRIGGER_INDEX" property="triggerIndex" jdbcType="VARCHAR" />
+        <result column="CODE" property="code" jdbcType="VARCHAR" />
+        <result column="SYS_CODE" property="sysCode" jdbcType="VARCHAR" />
+        <result column="TRIGGER_CONTENT" property="triggerContent" jdbcType="VARCHAR" />
+        <result column="TRIGGER_TYPE" property="triggerType" jdbcType="VARCHAR" />
+        <result column="TRIGGER_LEVEL" property="triggerLevel" jdbcType="VARCHAR" />
+        <result column="TRIGGER_TIME_UNIT" property="triggerTimeUnit" jdbcType="VARCHAR" />
+        <result column="TRIGGER_TIME_VALUE" property="triggerTimeValue" jdbcType="VARCHAR" />
+        <result column="TRIGGER_VALUE_TYPE" property="triggerValueType" jdbcType="VARCHAR" />
+        <result column="TRIGGER_COMPARE" property="triggerCompare" jdbcType="VARCHAR" />
+        <result column="TRIGGER_THRESHOLD" property="triggerThreShold" jdbcType="VARCHAR" />
+        <result column="TRIGGER_CHECK_UNIT" property="triggerCheckUnit" jdbcType="VARCHAR" />
+        <result column="TRIGGER_CHECK_VALUE" property="triggerCheckValue" jdbcType="VARCHAR" />
+        <result column="TRIGGER_REMARK" property="triggerRemark" jdbcType="VARCHAR" />
+        <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+        <result column="CREATE_BY_NAME" property="createByName" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="DATE" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="DATE" />
+        <result column="ZABBIX_ITEMID" property="zabbixItemId" jdbcType="VARCHAR" />
+        <result column="ZABBIX_TRIGGERID" property="zabbixTriggerId" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="TRIGGER_SECTION_MIN" property="triggerSectionMin" jdbcType="VARCHAR" />
+        <result column="TRIGGER_SECTION_MAX" property="triggerSectionMax" jdbcType="VARCHAR" />
+        <result column="TRIGGER_BASELINE" property="triggerBaseline" jdbcType="VARCHAR" />
+        <result column="ISZERO" property="isZero" jdbcType="VARCHAR" />
+        <result column="ztsj" property="ztsj" jdbcType="VARCHAR" />
+        <result column="calculation_type" property="calculationType" jdbcType="VARCHAR" />
+        <result column="cycle_value" property="cycleValue" jdbcType="VARCHAR" />
+        <result column="cycle_type" property="cycleType" jdbcType="VARCHAR" />
+        <result column="zbx_json" property="zbxJson" jdbcType="VARCHAR" />
+        <result column="zbx_calculation" property="monitorStatics" jdbcType="VARCHAR" />
+        <result column="data_status" property="dataStatus" jdbcType="VARCHAR" />
+        <result column="jkzb_code" property="jkzbCode" jdbcType="VARCHAR" />
+        <result column="ITEM_ID" property="item_id" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<!-- 获取待扫描(status=0)的监控项, 且 zbx_json 不为空, jkzb_code 不为空 -->
+  	<select id="listActiveBizTriggers" resultMap="bizTrigger" >
+    	SELECT ID,TRIGGER_NAME,KEY_NAME,TRIGGER_DESC,TRIGGER_INDEX,CODE,SYS_CODE,TRIGGER_CONTENT,TRIGGER_TYPE,
+        	   TRIGGER_LEVEL,TRIGGER_TIME_UNIT,TRIGGER_TIME_VALUE,TRIGGER_VALUE_TYPE,TRIGGER_COMPARE,TRIGGER_THRESHOLD, 
+               TRIGGER_CHECK_UNIT,TRIGGER_CHECK_VALUE,TRIGGER_REMARK,CREATE_BY,CREATE_BY_NAME,CREATE_TIME,UPDATE_TIME, 
+               ZABBIX_ITEMID,ZABBIX_TRIGGERID,STATUS,TRIGGER_SECTION_MIN,TRIGGER_SECTION_MAX,TRIGGER_BASELINE,ISZERO,
+               ztsj,calculation_type,cycle_value,cycle_type,zbx_json,zbx_calculation,data_status,jkzb_code,ITEM_ID
+          FROM UMS_BUSINESS_TRIGGER  
+         WHERE ZABBIX_STATUS = 0 
+           AND zbx_json is not null
+           AND jkzb_code is not null
+           AND data_status = '0'
+           AND STATUS = '0'		
+    </select>
+
+</mapper>

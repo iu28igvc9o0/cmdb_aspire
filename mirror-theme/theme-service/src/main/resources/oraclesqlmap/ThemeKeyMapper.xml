@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.theme.server.dao.ThemeKeyDao">
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.mirror.theme.server.dao.po.ThemeKey">
+		insert into
+			monitor_theme_key (theme_id,dim_code)
+		values(
+			#{themeId,jdbcType=VARCHAR} ,
+			#{dimCode,jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+    <delete id="deleteByThemeId" parameterType="java.lang.String">
+        delete from monitor_theme_key where theme_id=#{themeId}
+    </delete>
+
+
+    <resultMap id="baseResultMap" type="com.aspire.mirror.theme.server.dao.po.ThemeKey">
+        <result property="themeId" column="theme_id" jdbcType="VARCHAR"/>
+        <result property="dimCode" column="dim_code" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="selectByThemeId" parameterType="java.lang.String" resultMap="baseResultMap">
+        select theme_id,dim_code from monitor_theme_key where theme_id=#{themeId}
+    </select>
+</mapper>

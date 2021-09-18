@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.model.AlertFieldDao">
+
+    <!--<resultMap id="AlertFieldMap" type="com.aspire.mirror.alert.server.dao.model.po.AlertFieldDetailDTO">-->
+        <!--<result property="id" column="id" jdbcType="INTEGER"/>-->
+        <!--<result property="alertId" column="alert_id" jdbcType="VARCHAR"/>-->
+        <!--<result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>-->
+        <!--<result property="id" column="id" jdbcType="VARCHAR"/>-->
+    <!--</resultMap>-->
+
+    <insert id="insertAlertModel"
+            parameterType="com.aspire.mirror.alert.server.vo.model.AlertFieldVo">
+        INSERT INTO alert_model_field
+        (id, model_id, field_code, field_name, field_type, is_lock, jdbc_type, jdbc_length, jdbc_tip, ci_field_code, is_ci_params,
+         params_name, ci_field_name, is_list_show, list_show_sort, list_show_name, list_show_pattern, is_detail_show, detail_show_sort,
+         detail_show_name, detail_show_pattern, is_query_param, query_param_sort, query_param_name, query_param_type, query_param_source,
+         is_derive_field, derive_field_sort, derive_field_name, derive_field_type, derive_field_source, creator, create_time, table_column_widch
+        )
+        VALUES
+        (#{id}, #{modelId}, #{fieldCode}, #{fieldName}, #{fieldType}, #{isLock}, #{dataType}, #{dataLength}, #{dataTip}, #{ciCode}, #{isCiParams},
+         #{paramsName}, #{paramCode}, #{isListShow}, #{listShowSort}, #{listShowName}, #{listShowPattern}, #{isDetailShow}, #{detailShowSort},
+         #{detailShowName}, #{detailShowPattern}, #{isQueryParam}, #{queryParamSort}, #{queryParamName}, #{queryParamType}, #{queryParamSource},
+         #{isDeriveField}, #{deriveFieldSort}, #{deriveFieldName}, #{deriveFieldType}, #{deriveFieldSource}, #{creator}, #{createTime}, #{tableColumnWidth}
+        )
+    </insert>
+
+    <select id="getAlertFieldDetailById" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.dao.model.po.AlertField">
+        SELECT
+         id, model_id modelId, field_code fieldCode, field_name fieldName, field_type fieldType, is_lock isLock, jdbc_type dataType, jdbc_length dataLength,
+         jdbc_tip dataTip, ci_field_code ciCode, is_ci_params isCiParams, params_name paramsName, ci_field_name paramCode, is_list_show isListShow, list_show_sort listShowSort,
+         list_show_name listShowName, list_show_pattern listShowPattern, is_detail_show isDetailShow, detail_show_sort detailShowSort,
+         detail_show_name detailShowName, detail_show_pattern detailShowPattern, is_query_param isQueryParam, query_param_sort queryParamSort, query_param_name queryParamName,
+         query_param_type queryParamType, query_param_source queryParamSource, is_derive_field isDeriveField, derive_field_sort deriveFieldSort, derive_field_name deriveFieldName,
+         derive_field_type deriveFieldType, derive_field_source deriveFieldSource, creator, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%S') createTime,
+         updater, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%S') updateTime,table_column_widch tableColumnWidth
+        FROM alert_model_field
+        WHERE id = #{id}
+    </select>
+
+    <delete id="deleteAlertFieldDetailById" parameterType="java.lang.String">
+        DELETE FROM alert_model_field
+        WHERE 1=1
+        <if test="id != null and id != ''" >
+            AND id = #{id}
+        </if>
+        <if test="modelId != null and modelId != ''" >
+            AND model_id = #{modelId}
+        </if>
+    </delete>
+
+    <sql id="baseQuerySql">
+        <if test="modelId != null and modelId != ''">
+            AND FIND_IN_SET(model_id,#{modelId})
+        </if>
+        <if test="fieldType != null and fieldType != ''">
+            AND field_type = #{fieldType}
+        </if>
+        <if test="searchText != null and searchText != ''">
+            AND (field_code like "%"#{searchText}"%" OR field_name like "%"#{searchText}"%")
+        </if>
+    </sql>
+
+    <select id="getAlertFieldListByModelId" resultType="com.aspire.mirror.alert.server.dao.model.po.AlertField">
+        SELECT
+        id, model_id modelId, field_code fieldCode, field_name fieldName, field_type fieldType, is_lock isLock, jdbc_type dataType, jdbc_length dataLength,
+        jdbc_tip dataTip, ci_field_code ciCode, is_ci_params isCiParams, params_name paramsName, ci_field_name paramCode, is_list_show isListShow, list_show_sort listShowSort,
+        list_show_name listShowName, list_show_pattern listShowPattern, is_detail_show isDetailShow, detail_show_sort detailShowSort,
+        detail_show_name detailShowName, detail_show_pattern detailShowPattern, is_query_param isQueryParam, query_param_sort queryParamSort, query_param_name queryParamName,
+        query_param_type queryParamType, query_param_source queryParamSource, is_derive_field isDeriveField, derive_field_sort deriveFieldSort, derive_field_name deriveFieldName,
+        derive_field_type deriveFieldType, derive_field_source deriveFieldSource, creator, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%S') createTime,
+        updater, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%S') updateTime,table_column_widch tableColumnWidth
+        FROM alert_model_field
+        WHERE 1=1
+        <include refid="baseQuerySql"/>
+        ORDER BY field_type
+        <if test="pageNum != null and pageSize != null">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+    <select id="getAlertFieldListCountByModelId" resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM alert_model_field
+        WHERE 1=1
+        <include refid="baseQuerySql"/>
+    </select>
+
+    <update id="updateLockStatus" parameterType="java.lang.String">
+        UPDATE alert_model_field
+        SET is_lock = #{isLock}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateAlertField"
+            parameterType="com.aspire.mirror.alert.server.vo.model.AlertFieldVo">
+        UPDATE alert_model_field
+        SET is_lock = #{isLock},
+            jdbc_length = #{dataLength},
+            jdbc_tip = #{dataTip},
+            field_type = #{fieldType},
+            ci_field_code = #{ciCode},
+            is_ci_params = #{isCiParams},
+            params_name = #{paramsName},
+            ci_field_name = #{paramCode},
+            is_list_show = #{isListShow},
+            list_show_sort = #{listShowSort},
+            list_show_name = #{listShowName},
+            list_show_pattern = #{listShowPattern},
+            table_column_widch = #{tableColumnWidth},
+            is_detail_show = #{isDetailShow},
+            detail_show_sort = #{detailShowSort},
+            detail_show_name = #{detailShowName},
+            detail_show_pattern = #{detailShowPattern},
+            is_query_param = #{isQueryParam},
+            query_param_sort = #{queryParamSort},
+            query_param_name = #{queryParamName},
+            query_param_type = #{queryParamType},
+            query_param_source = #{queryParamSource},
+            is_derive_field = #{isDeriveField},
+            derive_field_sort = #{deriveFieldSort},
+            derive_field_name = #{deriveFieldName},
+            derive_field_type = #{deriveFieldType},
+            derive_field_source = #{deriveFieldSource},
+            updater = #{updater},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    <select id="getAlertFieldListByTableName" resultType="com.aspire.mirror.alert.server.vo.model.AlertFieldVo">
+        SELECT
+        af.id, model_id modelId, field_code fieldCode, field_name fieldName, field_type fieldType, is_lock isLock, jdbc_type dataType, jdbc_length dataLength,
+        jdbc_tip dataTip, ci_field_code ciCode, is_ci_params isCiParams, params_name paramsName, ci_field_name paramCode, is_list_show isListShow, list_show_sort listShowSort,
+        list_show_name listShowName, list_show_pattern listShowPattern, is_detail_show isDetailShow, detail_show_sort detailShowSort,
+        detail_show_name detailShowName, detail_show_pattern detailShowPattern, is_query_param isQueryParam, query_param_sort queryParamSort, query_param_name queryParamName,
+        query_param_type queryParamType, query_param_source queryParamSource, is_derive_field isDeriveField, derive_field_sort deriveFieldSort, derive_field_name deriveFieldName,
+        derive_field_type deriveFieldType, derive_field_source deriveFieldSource, af.creator,
+        af.updater,table_column_widch tableColumnWidth
+        FROM alert_model_field af INNER JOIN alert_model am on af.model_id=am.id
+        <where>
+        <if test="tableName != null and tableName != ''">
+            AND am.table_name = #{tableName}
+        </if>
+        </where>
+        <choose>
+            <when test="sort != null and sort != ''">
+                order by ${sort}
+            </when>
+            <otherwise>
+                order by list_show_sort
+            </otherwise>
+        </choose>
+    </select>
+    <select id="addFieldColumn" parameterType="map">
+        ALTER TABLE `${tableName}` ADD COLUMN `${fieldCode}` ${jdbcType}(${jdbcLength}) NULL
+        <if test="jdbcTip != null and jdbcTip != ''">
+            COMMENT #{jdbcTip}
+        </if>
+    </select>
+
+    <select id="deleteFieldColumn" parameterType="java.lang.String">
+        ALTER TABLE `${tableName}` DROP COLUMN `${fieldCode}`
+    </select>
+
+</mapper>

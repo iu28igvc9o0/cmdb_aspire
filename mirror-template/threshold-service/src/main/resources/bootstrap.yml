@@ -1,0 +1,14 @@
+
+spring:
+  application:
+    name: threshold-service
+  jmx:
+    default-domain: threshold
+  cloud:
+    config:
+      name: ms-threshold
+      label: ${GIT_BRANCH:master}
+      profile: ${ENV_TYPE:dev}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}
+      failFast: true
+      enabled: false

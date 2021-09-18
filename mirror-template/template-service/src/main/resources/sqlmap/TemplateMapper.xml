@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.TemplateDao">
+
+    <resultMap id="TemplateResultMap" type="com.aspire.mirror.template.server.dao.po.Template">
+        <result property="templateId" column="template_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="funType" column="fun_type" jdbcType="VARCHAR"/>
+        <result property="monType" column="mon_type" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="sysType" column="sys_type" jdbcType="VARCHAR"/>
+        <result property="zabbixTemplateId" column="zabbix_template_id" jdbcType="VARCHAR"/>
+        <result property="proxyIdentity" column="proxy_identity" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Template_Base_Column">
+        monitor_template.template_id,
+        monitor_template.name,
+        monitor_template.description,
+        monitor_template.create_time,
+        monitor_template.type,
+        monitor_template.update_time,
+        monitor_template.fun_type,
+        monitor_template.mon_type,
+        monitor_template.status,
+        monitor_template.sys_type,
+        monitor_template.proxy_identity,
+        monitor_template.zabbix_template_id,
+        monitor_template.creater,
+        monitor_template.updater
+    </sql>
+
+    <sql id="Template_Query_List_Sharing">
+        <where>
+            <if test="templateId != null ">
+                and monitor_template.template_id = #{templateId}
+            </if>
+            <if test="name != null ">
+                and monitor_template.name = #{name}
+            </if>
+            <if test="description != null ">
+                and monitor_template.description = #{description}
+            </if>
+            <if test="createTime != null ">
+                and monitor_template.create_time = #{createTime}
+            </if>
+            <if test="type != null ">
+                and monitor_template.type = #{type}
+            </if>
+            <if test="updateTime != null ">
+                and monitor_template.update_time = #{updateTime}
+            </if>
+            <if test="funType != null ">
+                and monitor_template.fun_type = #{funType}
+            </if>
+            <if test="monType != null ">
+                and monitor_template.mon_type = #{monType}
+            </if>
+            <if test="status != null ">
+                and monitor_template.status = #{status}
+            </if>
+            <if test="sysType != null ">
+                and monitor_template.sys_type = #{sysType}
+            </if>
+            <if test="zabbixTemplateId != null ">
+                and monitor_template.zabbix_template_id = #{zabbixTemplateId}
+            </if>
+            <if test="proxyIdentity != null ">
+                and monitor_template.proxy_identity = #{proxyIdentity}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="templateId"
+                 open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        INSERT INTO monitor_template (
+        <include refid="Template_Base_Column"/>
+        ) VALUES (
+        #{templateId,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        #{description,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{type,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{funType,jdbcType=VARCHAR},
+        #{monType,jdbcType=VARCHAR},
+        #{status,jdbcType=VARCHAR},
+        #{sysType,jdbcType=VARCHAR},
+        #{proxyIdentity,jdbcType=VARCHAR},
+        #{zabbixTemplateId,jdbcType=VARCHAR},
+        #{creater,jdbcType=VARCHAR},
+        #{updater,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="templateId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        INSERT INTO monitor_template (
+        <include refid="Template_Base_Column"/>
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{templateId,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{description,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{type,jdbcType=VARCHAR},
+            #{item.updateTime,jdbcType=TIMESTAMP},
+            #{funType,jdbcType=VARCHAR},
+            #{sysType,jdbcType=VARCHAR},
+            #{proxyIdentity,jdbcType=VARCHAR},
+            #{zabbixTemplateId,jdbcType=VARCHAR},
+            #{creater,jdbcType=VARCHAR},
+            #{updater,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM monitor_template WHERE template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List">
+        DELETE FROM monitor_template WHERE template_id in
+        <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        DELETE FROM monitor_template WHERE template_id = #{templateId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        UPDATE monitor_template monitor_template
+        <set>
+            <if test="templateId != null">
+                monitor_template.template_id = #{templateId},
+            </if>
+            <if test="name != null">
+                monitor_template.name = #{name},
+            </if>
+            <if test="description != null">
+                monitor_template.description = #{description},
+            </if>
+            <if test="type != null">
+                monitor_template.type = #{type},
+            </if>
+            <if test="updateTime != null">
+                monitor_template.update_time = #{updateTime},
+            </if>
+            <if test="updater != null">
+                monitor_template.updater = #{updater},
+            </if>
+            <if test="funType != null">
+                monitor_template.fun_type = #{funType},
+            </if>
+            <if test="monType != null">
+                monitor_template.mon_type = #{monType},
+            </if>
+            <if test="status != null">
+                monitor_template.status = #{status},
+            </if>
+            <if test="sysType != null">
+                monitor_template.sys_type = #{sysType},
+            </if>
+            <if test="proxyIdentity != null">
+                monitor_template.proxy_identity = #{proxyIdentity},
+            </if>
+            <if test="zabbixTemplateId != null">
+                monitor_template.zabbix_template_id = #{zabbixTemplateId},
+            </if>
+        </set>
+        WHERE template_id = #{templateId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        UPDATE monitor_template monitor_template
+        SET
+        monitor_template.template_id = #{templateId},
+        monitor_template.name = #{name},
+        monitor_template.description = #{description},
+        monitor_template.type = #{type},
+        monitor_template.update_time = #{updateTime},
+        monitor_template.mon_type = #{monType},
+        monitor_template.status = #{status},
+        monitor_template.sys_type = #{sysType},
+        monitor_template.zabbix_template_id = #{zabbixTemplateId},
+        monitor_template.proxy_identity = #{proxyIdentity}
+        WHERE template_id = #{templateId}
+    </update>
+    <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(*) FROM monitor_template monitor_template
+        <include refid="Page_List_Params"/>
+    </select>
+    <sql id="Page_List_Params">
+        <where>
+            <if test="params['funType'] != null and  params['funType'] != ''">
+                and monitor_template.fun_type = #{params.funType}
+            </if>
+            <if test="params['name'] != null and  params['name'] != ''">
+                and monitor_template.name like CONCAT('%', #{params.name}, '%')
+            </if>
+            <if test="params['type'] != null and  params['type'] != ''">
+                and monitor_template.type = #{params.type}
+            </if>
+            <if test="params['monType'] != null and  params['monType'] != ''">
+                and monitor_template.mon_type = #{params.monType}
+            </if>
+            <if test="params['createTimeStart'] != null and  params['createTimeStart'] != ''">
+                and monitor_template.create_time &gt;= str_to_date(#{params.createTimeStart}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params['createTimeEnd'] != null and  params['createTimeEnd'] != ''">
+                and monitor_template.create_time &lt;= str_to_date(#{params.createTimeEnd}, '%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="params['status'] != null and  params['status'] != ''">
+                and monitor_template.status = #{params.status}
+            </if>
+            <if test="params['sysType'] != null and  params['sysType'] != ''">
+                and monitor_template.sys_type = #{params.sysType}
+            </if>
+            <if test="params['proxyIdentity'] != null and  params['proxyIdentity'] != ''">
+                and monitor_template.proxy_identity = #{params.proxyIdentity}
+            </if>
+            <if test="params['zabbixTemplateId'] != null and  params['zabbixTemplateId'] != ''">
+                and monitor_template.zabbix_template_id = #{params.zabbixTemplateId}
+            </if>
+            <if test="params['resFilterMap'] != null">
+                <if test="params['resFilterMap'].authAccounts != null and params['resFilterMap'].authAccounts .size > 0">
+                    and monitor_template.creater in (
+                    <foreach collection="params['resFilterMap'].authAccounts" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>
+                    )
+                </if>
+            </if>
+        </where>
+    </sql>
+    <select id="pageList" resultMap="TemplateResultMap" parameterType="com.aspire.mirror.common.entity.Page">
+        select
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        <include refid="Page_List_Params"/>
+        order by create_time desc
+        limit #{begin},#{pageSize}
+    </select>
+    <select id="selectByPrimaryKey" resultMap="TemplateResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        WHERE template_id = #{templateId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="TemplateResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        WHERE template_id in
+        <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </select>
+    <select id="selectByPrimaryKeyArraysAndProxyIdentity" resultMap="TemplateResultMap">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        where template_id in
+        <foreach collection="templateIdArray" index="index" item="templateId"
+                 open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+        <if test="proxyIdentity != null and proxyIdentity != ''">
+            and (proxy_identity = '' or proxy_identity = #{proxyIdentity})
+        </if>
+    </select>
+    <select id="select" resultMap="TemplateResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        <include refid="Template_Query_List_Sharing"/>
+    </select>
+    <select id="selectZabbixSyncTemplate" resultMap="TemplateResultMap">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        where sys_type='zabbix' and zabbix_template_id != '' and zabbix_template_id is not null
+    </select>
+    <select id="selectByName" resultMap="TemplateResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        FROM monitor_template monitor_template
+        where monitor_template.name = #{name}
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer"
+            parameterType="com.aspire.mirror.template.server.dao.po.Template">
+        SELECT COUNT(*) FROM monitor_template monitor_template
+        <include refid="Template_Query_List_Sharing"/>
+    </select>
+    <select id="selectByNameAndZabbixTemplateId" resultMap="TemplateResultMap">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        from monitor_template monitor_template
+        where monitor_template.name = #{name} and monitor_template.zabbix_template_id = #{zabbixTemplateId}
+    </select>
+    <select id="selectByZabbixTemplateIdAndProxyIdentity" resultMap="TemplateResultMap">
+        SELECT
+        <include refid="Template_Base_Column"/>
+        from monitor_template monitor_template
+        where monitor_template.zabbix_template_id = #{zabbixTemplateId} and monitor_template.proxy_identity = #{proxyIdentity}
+    </select>
+</mapper>

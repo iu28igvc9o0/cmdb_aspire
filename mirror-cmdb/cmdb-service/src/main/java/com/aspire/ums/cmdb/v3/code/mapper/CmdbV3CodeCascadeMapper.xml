@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeCascadeMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbV3CodeCascade" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="sub_code_id" property="subCodeId" jdbcType="VARCHAR" />
+        <result column="sub_filed_code" property="subFiledCode" jdbcType="VARCHAR" />
+        <result column="sql_string" property="sqlString" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `code_id`,
+        `sub_code_id`,
+        `sql_string`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_cascade
+        where `is_delete` = 0
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeCascade">
+        SELECT
+        `id`,
+        `code_id`,
+        `sub_code_id`,
+        `sql_string`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_cascade
+        WHERE 1=1 and `is_delete` = 0
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="subCodeId != null and subCodeId != ''">
+        AND `sub_code_id` = #{subCodeId}
+        </if>
+        <if test="sqlString != null and sqlString != ''">
+        AND `sql_string` = #{sqlString}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="getByCodeId" resultMap="resultMap">
+        SELECT
+            a.`id`,
+            a.`code_id`,
+            a.`sub_code_id`,
+            b.`filed_code` `sub_filed_code`,
+            a.`sql_string`,
+            a.`sort_index`,
+            a.`is_delete`
+        FROM cmdb_v3_code_cascade a
+         LEFT JOIN cmdb_code b ON a.`sub_code_id` = b.`code_id`
+        WHERE a.`is_delete` = 0 AND  a.`code_id` = #{codeId}
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeCascade" resultMap="resultMap">
+        SELECT
+        `id`,
+        `code_id`,
+        `sub_code_id`,
+        `sql_string`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_cascade
+        WHERE 1=1
+        AND `id` = #{id}
+        and `is_delete` = 0
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeCascade">
+        INSERT INTO cmdb_v3_code_cascade
+        (
+            `id`,
+            `code_id`,
+            `sub_code_id`,
+            `sql_string`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{subCodeId, jdbcType=VARCHAR},
+            #{sqlString, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            0
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeCascade">
+        UPDATE cmdb_v3_code_cascade SET
+        `sql_string` = #{sqlString},
+        `sort_index` = #{sortIndex},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="deleteByCodeId" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeCascade">
+        UPDATE cmdb_v3_code_cascade SET `is_delete` = 1
+        WHERE `code_id` = #{codeId}
+    </delete>
+
+    <!-- list查询 -->
+    <select id="getByChildCodeId" resultMap="resultMap">
+        SELECT
+            a.`id`,
+            a.`code_id`,
+            a.`sub_code_id`,
+            a.`sql_string`,
+            a.`sort_index`,
+            a.`is_delete`
+        FROM
+            cmdb_v3_code_cascade a
+        WHERE
+            a.`is_delete` = 0
+        AND a.`sub_code_id` = #{codeId}
+    </select>
+</mapper>

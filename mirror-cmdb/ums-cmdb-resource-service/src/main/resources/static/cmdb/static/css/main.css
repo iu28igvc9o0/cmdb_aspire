@@ -1,0 +1,233 @@
+/*
+* @Author: moyumin
+* @Date:   2017-04-07 15:12:47
+* @Last Modified by:   limingpei
+* @Last Modified time: 2017-06-02 11:26:27
+*/
+
+
+/* ::-webkit-scrollbar{width:0px;} */
+
+.el-row {
+    margin-bottom: 0px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+.el-dropdown-menu{
+    font-size:14px;
+}
+
+.header .el-tabs__header {
+    border-bottom: 0px;
+    margin: 18px 0px 0px;
+}
+
+.header .el-tabs__header .el-tabs__active-bar {
+    height: 6px;
+}
+
+.header .el-tabs__header .el-tabs__item {
+    font-size: 16px;
+    line-height: 24px;
+    padding: 0 24px;
+    color: #ffffff;
+}
+
+.leftnav .el-menu {
+    border-radius: 0;
+}
+
+.leftnav li.el-menu--dark {
+    background-color: #e6e6e6;
+}
+
+.leftnav li.el-menu-item {
+    background-color: #e6e6e6;
+    border-bottom: 1px solid #dcdcdc;
+    color: #333;
+}
+
+.leftnav li.el-menu-item.selected {
+    background-color: #20a0ff;
+    color: #ffffff;
+}
+
+.leftnav li.el-menu-item:hover {
+    background-color: #20a0ff;
+    color: #ffffff;
+    border:0;
+}
+
+.leftnav .el-submenu div.el-submenu__title {
+    background-color: #e6e6e6;
+    border-bottom: 1px solid #dcdcdc;
+    color: #333;
+}
+
+.leftnav .el-menu--dark .el-submenu .el-menu .el-menu-item:hover {
+    background-color: #20a0ff;
+    color: #ffffff;
+    border:0;
+}
+
+.el-input__inner:focus {
+    outline: 0;
+    border-color: #bfcbd9 !important;
+}
+
+.el-input__inner:hover {
+    outline: 0;
+    border-color: #bfcbd9 !important;
+}
+
+
+input {
+    outline: none;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+p,
+blockquote,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+pre,
+form,
+fieldset,
+legend,
+button,
+input,
+textarea,
+th,
+td {
+    margin: 0px;
+    padding: 0px;
+    font-family: "微软雅黑", "Helvetica Neue";
+}
+
+body {
+    background-color: #e6e6e6;
+}
+
+html,
+body,
+#app {
+    height: 100%;
+}
+
+.container>.el-dialog__wrapper {
+    background-color: rgba(000, 000, 000, 0.2);
+}
+
+.layout1 {
+    width: 100%;
+    background: #fff;
+    padding: 0 30px 26px 30px;
+    box-sizing: border-box;
+    border-top: 1px solid #f0f0f0;
+    border-right: 0px;
+    border-bottom: 0px solid #e6e6e6;
+    border-left: 0px solid #e6e6e6;
+}
+
+.layout1:after {
+    content: "";
+    display: block;
+    clear: both;
+    height: 0px;
+    line-height: 0px;
+    visibility: hidden;
+}
+
+.layout2 {
+    width: 50%;
+    float: left;
+    background: #fff;
+    box-sizing: border-box;
+    border-top: 0px solid #e3e3e3;
+    border-right: 0px;
+    border-bottom: 0px solid #e3e3e3;
+}
+
+.kuang-header {
+    border: 0px;
+    height: auto;
+    width: 100%;
+    padding: 0px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.kuang-body {
+    width: 100%;
+    height: 272px;
+    padding: 0px 0px 0px 0px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.kuang-body .kuang-type {
+    height: 100%;
+    width: 50px;
+    position: absolute;
+    top: 0px;
+    z-index: 999;
+}
+
+.kuang-body .chart {
+    height: 100%;
+    width: 100%;
+    padding-left: 50px;
+    box-sizing: border-box;
+}
+
+.layout2+.layout2 {
+    border-left: 1px solid #f0f0f0;
+}
+
+.container {
+    background-color: #fff;
+    color: #333333;
+    padding-bottom: 30px;
+}
+
+.container:after {
+    content: "";
+    display: block;
+    clear: both;
+    height: 0px;
+    line-height: 0px;
+    visibility: hidden;
+}
+
+.kuang {
+    width: 100%;
+}
+
+.kuang-header .title-text {
+    font-weight: bold;
+    line-height: 72px;
+    float: left;
+    font-size: 14px;
+    color: #333333;
+}
+
+.kuang-header .kuang-header-menu {
+    float: right;
+    margin: 18px 0;
+}
+
+.kuang-header .el-select.dateSelect {
+    width: 90px;
+}

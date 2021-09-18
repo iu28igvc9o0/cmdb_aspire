@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.report.mapper.Cmdb31ProvinceTableMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceTable" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="resource_owner" property="resourceOwner" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="show_page" property="showPage" jdbcType="VARCHAR" />
+        <result column="contain" property="contain" jdbcType="VARCHAR" />
+        <result column="enable_merge_title" property="enableMergeTitle" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `resource_owner`,
+        `name`,
+        `show_page`,
+        `contain`,
+        `enable_merge_title`,
+        `sort_index`
+    </sql>
+
+
+    <select id="listByOwnerAndPage" resultMap="resultMap">
+        select
+        <include refid="baseColumn"/>
+        from `cmdb_31_province_table`
+        where 1=1
+        <if test="resourceOwner != null and resourceOwner != ''">
+            and resource_owner=#{resourceOwner}
+        </if>
+          <if test="showPage != null and showPage != ''">
+              and locate(#{showPage}, show_page)
+          </if>
+        order by sort_index
+    </select>
+    <select id="getById"  resultMap="resultMap">
+        select
+        <include refid="baseColumn"/>
+        from `cmdb_31_province_table`
+        where id=#{id}
+    </select>
+    <select id="getByName"  resultMap="resultMap">
+        select
+        <include refid="baseColumn"/>
+        from `cmdb_31_province_table`
+        where name = #{name}
+    </select>
+
+</mapper>

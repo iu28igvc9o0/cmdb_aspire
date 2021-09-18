@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="36px" height="36px" viewBox="0 0 36 36" enable-background="new 0 0 36 36" xml:space="preserve">
+<path fill="#FF0000" d="M34,28c0,1.657-1.343,3-3,3H5c-1.657,0-3-1.343-3-3V8c0-1.657,1.343-3,3-3h26c1.657,0,3,1.343,3,3V28z">
+	<animate attributeName="opacity" from="1" to="0" begin="0s" dur="2s" repeatCount="indefinite" />
+</path>
+<g>
+	<rect x="13" y="9" fill="#FFAF2E" width="11" height="2"/>
+	<rect x="13" y="12" fill="#FFAF2E" width="5" height="2"/>
+	<rect x="19" y="12" fill="#FFAF2E" width="5" height="2"/>
+	<rect x="13" y="15" fill="#FFAF2E" width="11" height="2"/>
+	<rect x="13" y="18" fill="#FFAF2E" width="5" height="2"/>
+	<rect x="19" y="18" fill="#FFAF2E" width="5" height="2"/>
+	<rect x="13" y="21" fill="#FFAF2E" width="11" height="2"/>
+	<rect x="13" y="24" fill="#FFAF2E" width="5" height="2"/>
+	<rect x="19" y="24" fill="#FFAF2E" width="5" height="2"/>
+</g>
+<polygon fill="#FCFCFC" points="31.084,15.166 28,13.166 28,14 25,14 25,16 28,16 28,17.166 "/>
+<polygon fill="#FCFCFC" points="31.084,21.166 28,19.166 28,20 25,20 25,22 28,22 28,23.166 "/>
+<polygon fill="#FCFCFC" points="12.084,18.166 9,16.166 9,17 6,17 6,19 9,19 9,20.166 "/>
+<polygon fill="#FCFCFC" points="11.318,14.316 10.552,10.723 9.845,11.43 7.723,9.309 6.309,10.723 8.431,12.844 7.723,13.551 "/>
+<polygon fill="#FCFCFC" points="11.317,21.015 7.724,21.781 8.431,22.488 6.31,24.61 7.724,26.024 9.845,23.902 10.552,24.61 "/>
+</svg>

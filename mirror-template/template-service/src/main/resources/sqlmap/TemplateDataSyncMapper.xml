@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.TemplateDataSyncDao">
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.TemplateDataSync">
+        insert into monitor_template_data_sync (
+            sync_data_type,
+            data_id,
+            operate_type
+        ) values (
+            #{syncDataType,jdbcType=VARCHAR},
+            #{dataId,jdbcType=VARCHAR},
+            #{operateType,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertBatch"  parameterType="com.aspire.mirror.template.server.dao.po.TemplateDataSync">
+        insert into monitor_template_data_sync (
+        sync_data_type,
+        data_id,
+        operate_type
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.syncDataType,jdbcType=VARCHAR},
+            #{item.dataId,jdbcType=VARCHAR},
+            #{item.operateType,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <select id="selectByStartSyncIdAndSyncType" parameterType="java.lang.Integer" resultType="com.aspire.mirror.template.server.dao.po.TemplateDataSync">
+        select monitor_template_data_sync.sync_id syncId,
+            monitor_template_data_sync.sync_data_type syncDataType,
+            monitor_template_data_sync.data_id dataId,
+            monitor_template_data_sync.operate_type operateType
+            from monitor_template_data_sync monitor_template_data_sync
+            where 1=1
+            <if test="startSyncId != 0">
+                and monitor_template_data_sync.sync_id > #{startSyncId}
+            </if>
+            <if test="syncType != null and syncType !=''">
+                and monitor_template_data_sync.sync_data_type = #{syncType}
+            </if>
+            order by monitor_template_data_sync.sync_id asc
+    </select>
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.code.mapper.CmdbCodeValidateMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbCodeValidate" >
+        <result column="validate_id" property="validateId" jdbcType="VARCHAR" />
+        <result column="validate_name" property="validateName" jdbcType="VARCHAR" />
+        <result column="validate_func" property="validateFunc" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `validate_id`,
+        `validate_name`,
+        `validate_func`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_code_validate
+        where `is_delete` = '否'
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeValidate">
+        SELECT
+        `validate_id`,
+        `validate_name`,
+        `validate_func`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_code_validate
+        where `is_delete` = '否'
+        <if test="validateId != null and validateId != ''">
+        AND `validate_id` = #{validateId}
+        </if>
+        <if test="validateName != null and validateName != ''">
+        AND `validate_name` = #{validateName}
+        </if>
+        <if test="validateFunc != null and validateFunc != ''">
+        AND `validate_func` = #{validateFunc}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+    </select>
+
+    <select id="getValidateListByCodeId" resultMap="resultMap">
+        SELECT
+        `validate_id`,
+        `validate_name`,
+        `validate_func`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_code_validate ccv
+        where `is_delete` = '否'
+        and EXISTS (select * from cmdb_module_code_validate cv where cv.validate_id = ccv.validate_id and cv.`code_id`=#{codeId})
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeValidate" resultMap="resultMap">
+        SELECT
+        `validate_id`,
+        `validate_name`,
+        `validate_func`,
+        `is_delete`,
+        `sort_index`
+        FROM cmdb_code_validate
+        where `is_delete` = '否'
+        AND `validate_id` = #{validateId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeValidate">
+        INSERT INTO cmdb_code_validate
+        (
+            `validate_id`,
+            `validate_name`,
+            `validate_func`,
+            `is_delete`,
+            `sort_index`
+        ) VALUES (
+            #{validateId, jdbcType=VARCHAR},
+            #{validateName, jdbcType=VARCHAR},
+            #{validateFunc, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeValidate">
+        UPDATE cmdb_code_validate SET
+        `validate_name` = #{validateName},
+        `validate_func` = #{validateFunc},
+        `is_delete` = #{isDelete},
+        `sort_index` = #{sortIndex}
+        WHERE
+        `validate_id` = #{validateId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.code.payload.CmdbCodeValidate">
+        DELETE FROM cmdb_code_validate
+        WHERE
+         `validate_id` = #{validateId}
+    </delete>
+</mapper>

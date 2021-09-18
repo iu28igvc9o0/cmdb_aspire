@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: scada-service
+  cloud:
+    config:
+      enabled: true
+      name: ms-scada
+      label: ${GIT_BRANCH:master}
+      profile: ${ENV_TYPE:dev}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}
+      failFast: true
+
+
+#spring:
+#  application:
+#    name: dh-service
+#  cloud:
+#    config:
+#      name: ms-dh
+#      profile: ${ENV_TYPE:prod}
+#      discovery: 
+#        enabled: true
+#        serviceId: config-server
+#      failFast: true
+#ftp:
+#  host: 10.12.70.40
+#  port: 21
+#  username: ftpadmin
+#  password: 11qq!!QQ
+
+logging:
+  level:
+    com.dy.springboot.server.mapper: info
+    com.aspire.mirror.scada.dao: info
+    com.aspire.mirror.dh: info
+  file: /opt/data/logs/scada.log

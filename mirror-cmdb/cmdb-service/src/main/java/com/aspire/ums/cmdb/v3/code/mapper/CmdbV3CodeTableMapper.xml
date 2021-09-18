@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.code.mapper.CmdbV3CodeTableMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.code.payload.CmdbV3CodeTable" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="col_title" property="colTitle" jdbcType="VARCHAR" />
+        <result column="col_key" property="colKey" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `code_id`,
+        `col_title`,
+        `col_key`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_table
+        where `is_delete` = 0
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeTable">
+        SELECT
+        `id`,
+        `code_id`,
+        `col_title`,
+        `col_key`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_table
+        WHERE 1=1 and `is_delete` = 0
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="colTitle != null and colTitle != ''">
+        AND `col_title` = #{colTitle}
+        </if>
+        <if test="colKey != null and colKey != ''">
+        AND `col_key` = #{colKey}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- list 查询 -->
+    <select id="getByCodeId" resultMap="resultMap">
+        SELECT
+        `id`,
+        `code_id`,
+        `col_title`,
+        `col_key`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_table
+        WHERE `is_delete` = 0 AND `code_id` = #{codeId}
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeTable" resultMap="resultMap">
+        SELECT
+        `id`,
+        `code_id`,
+        `col_title`,
+        `col_key`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_code_table
+        WHERE 1=1
+        AND `id` = #{id}
+        AND `code_id` = #{codeId}
+        AND `is_delete` = 0
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeTable">
+        INSERT INTO cmdb_v3_code_table
+        (
+            `id`,
+            `code_id`,
+            `col_title`,
+            `col_key`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{colTitle, jdbcType=VARCHAR},
+            #{colKey, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            0
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeTable">
+        UPDATE cmdb_v3_code_table SET
+        `col_title` = #{colTitle},
+        `col_key` = #{colKey},
+        `sort_index` = #{sortIndex},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="deleteByCodeId" parameterType="com.aspire.ums.cmdb.code.payload.CmdbV3CodeTable">
+        UPDATE cmdb_v3_code_table SET `is_delete` = 1
+        WHERE `code_id` = #{codeId}
+    </delete>
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.derive.AlertDeriveMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.derive.po.AlertDerive">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="device_relation_type" property="deviceRelationType" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="effective_date" property="effectiveDate" jdbcType="TIMESTAMP"/>
+        <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP"/>
+        <result column="operate_user" property="operateUser" jdbcType="VARCHAR"/>
+        <result column="derive_active_timeout" property="deriveActiveTimeout" jdbcType="INTEGER"/>
+        <result column="alert_threshold" property="alertThreshold" jdbcType="INTEGER"/>
+        <result column="option_condition" property="optionCondition" jdbcType="VARCHAR"/>
+        <result column="alert_setting" property="alertSetting" jdbcType="VARCHAR"/>
+        <result column="creater" property="creater" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="editer" property="editer" jdbcType="VARCHAR"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="alertCount" property="alertCount" jdbcType="INTEGER"/>
+        <result column="deriveAlertCount" property="deriveAlertCount" jdbcType="INTEGER"/>
+        <result column="newestDeriveDate" property="newestDeriveDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, description, status, effective_date, expire_date, operate_user, option_condition,alert_setting,
+        creater, created_at, editer, updated_at, derive_active_timeout, alert_threshold, device_relation_type
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_derive where is_delete=0
+    </select>
+    <!-- list查询 -->
+    <select id="listEffective" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_derive where is_delete=0 and status = '1' and (effective_date is null or date_format(effective_date,'%Y-%m-%d-%H-%i-%S') <![CDATA[<]]> date_format(now(),'%Y-%m-%d-%H-%i-%S'))
+        and (expire_date is null or date_format(expire_date,'%Y-%m-%d-%H-%i-%S') <![CDATA[>]]> date_format(now(),'%Y-%m-%d-%H-%i-%S'))
+    </select>
+    <!-- list查询 -->
+    <select id="listAutoRelease" resultType="java.lang.String">
+        SELECT id
+        FROM alert_derive where is_delete=0 and status = '1' and (expire_date <![CDATA[<]]>  now() or effective_date <![CDATA[>]]>  expire_date)
+    </select>
+    <sql id="findPageWithWhere">
+        <where>
+            is_delete=0
+            <if test="id != null">
+                and id = #{id,jdbcType=BIGINT}
+            </if>
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%',#{name,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="effectiveDate != null">
+                and effective_date = #{effectiveDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="effectiveDateFrom != null and effectiveDateFrom != ''">
+                and (effective_date is null or date_format(effective_date,'%Y-%m-%d') <![CDATA[<=]]> #{effectiveDateFrom,jdbcType=VARCHAR})
+            </if>
+            <if test="effectiveDateTo != null and effectiveDateTo != ''">
+                and (expire_date is null or date_format(expire_date,'%Y-%m-%d') <![CDATA[>=]]> #{effectiveDateTo,jdbcType=VARCHAR})
+            </if>
+            <if test="expireDate != null">
+                and expire_date = #{expireDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="operateUser != null and operateUser != ''">
+                and operate_user = #{operateUser,jdbcType=VARCHAR}
+            </if>
+            <if test="optionCondition != null and optionCondition != ''">
+                and option_condition = #{optionCondition,jdbcType=VARCHAR}
+            </if>
+            <if test="alertSetting != null and alertSetting != ''">
+                and alert_setting = #{alertSetting,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null and creater != ''">
+                and creater = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt,jdbcType=TIMESTAMP}
+            </if>
+            <if test="editer != null and editer != ''">
+                and editer = #{editer,jdbcType=VARCHAR}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </sql>
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.mirror.alert.server.dao.derive.po.AlertDerive">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_derive
+        <include refid="findPageWithWhere"/> order by created_at desc
+    </select>
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_derive
+        WHERE id = #{id} and is_delete=0
+    </select>
+    <select id="checkName" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_derive
+        WHERE name = #{name} and is_delete=0
+    </select>
+    <select id="findPageWithResult" parameterType="com.aspire.mirror.alert.server.vo.derive.AlertDeriveVo"
+            resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/> ,alertCount,deriveAlertCount, newestDeriveDate
+        from alert_derive a left JOIN (SELECT derive_id, count(distinct derive_alert_id) alertCount, count(derive_id) deriveAlertCount, max(cur_moni_time) newestDeriveDate from alert_derive_alerts GROUP BY derive_id
+        ) b on a.id=b.derive_id
+        <include refid="findPageWithWhere"/> order by created_at desc
+        limit #{begin},#{pageSize}
+    </select>
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.vo.derive.AlertDeriveVo"
+            resultType="Integer">
+        select count(1)
+        from alert_derive
+        <include refid="findPageWithWhere"/>
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.derive.po.AlertDerive" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO alert_derive
+        (
+            `name`,
+            `description`,
+            `device_relation_type`,
+            `status`,
+            `effective_date`,
+            `expire_date`,
+            `derive_active_timeout`,
+            `alert_threshold`,
+            `operate_user`,
+            `option_condition`,
+            `alert_setting`,
+            `creater`,
+            `created_at`,
+            `editer`,
+            `updated_at`
+        ) VALUES (
+            #{name, jdbcType=VARCHAR},
+            #{description, jdbcType=VARCHAR},
+            #{deviceRelationType, jdbcType=VARCHAR},
+            #{status, jdbcType=VARCHAR},
+            #{effectiveDate, jdbcType=TIMESTAMP},
+            #{expireDate, jdbcType=TIMESTAMP},
+            #{deriveActiveTimeout, jdbcType=INTEGER},
+            #{alertThreshold, jdbcType=INTEGER},
+            #{operateUser, jdbcType=VARCHAR},
+            #{optionCondition, jdbcType=VARCHAR},
+            #{alertSetting, jdbcType=VARCHAR},
+            #{creater, jdbcType=VARCHAR},
+            #{createdAt, jdbcType=TIMESTAMP},
+            #{editer, jdbcType=VARCHAR},
+            #{updatedAt, jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.mirror.alert.server.dao.derive.po.AlertDerive">
+        UPDATE alert_derive SET
+        `name` = #{name},
+        `description` = #{description},
+        `device_relation_type` = #{deviceRelationType},
+        `status` = #{status},
+        `effective_date` = #{effectiveDate, jdbcType=TIMESTAMP},
+        `expire_date` = #{expireDate, jdbcType=TIMESTAMP},
+        `derive_active_timeout` = #{deriveActiveTimeout, jdbcType=INTEGER},
+        `alert_threshold` = #{alertThreshold, jdbcType=INTEGER},
+        `operate_user` = #{operateUser},
+        `option_condition` = #{optionCondition},
+        `alert_setting` = #{alertSetting},
+        `editer` = #{editer},
+        `updated_at` = #{updatedAt, jdbcType=TIMESTAMP}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <update id="delete" parameterType="java.lang.String">
+        UPDATE alert_derive SET
+        `is_delete` = 1, updated_at=now()
+        WHERE
+        `id` in
+        <foreach collection="ids" index="index" item="id"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <update id="status" parameterType="java.lang.String">
+        UPDATE alert_derive SET
+        `status` = #{status}, updated_at=now()
+        WHERE
+        `id` in
+        <foreach collection="ids" index="index" item="id"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

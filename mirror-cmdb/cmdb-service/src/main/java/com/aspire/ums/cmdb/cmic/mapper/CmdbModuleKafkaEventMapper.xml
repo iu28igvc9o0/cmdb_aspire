@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.cmic.mapper.CmdbModuleKafkaEventMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.cmic.payload.CmdbModuleKafkaEvent" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="need_sync_module_id" property="needSyncModuleId" jdbcType="VARCHAR" />
+        <result column="kafka_handler_class_id" property="kafkaHandlerClassId" jdbcType="VARCHAR" />
+        <result column="kafka_address" property="kafkaAddress" jdbcType="VARCHAR" />
+        <result column="topic" property="topic" jdbcType="VARCHAR" />
+        <result column="partition" property="partition" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="listByModuleId" resultMap="resultMap">
+        SELECT
+        `id`,
+        `need_sync_module_id`,
+        `kafka_handler_class_id`,
+        `kafka_address`,
+        `topic`,
+        `partition`
+        FROM cmdb_module_kafka_event
+        where need_sync_module_id = #{needSyncModuleId}
+        AND is_delete = 0
+    </select>
+
+
+</mapper>

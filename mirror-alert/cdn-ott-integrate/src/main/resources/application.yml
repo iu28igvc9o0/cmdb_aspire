@@ -1,0 +1,56 @@
+  
+spring: 
+
+  elasticsearch.rest: 
+    uris: https://111.12.92.124:7200
+    username: elastic 
+    password: 9pQAowQGourtb0wkr1Wu
+    connectionTimeout: PT5S
+    readTimeout: PT5M
+    
+#  elasticsearch.rest: 
+#    uris: http://10.12.70.63:9200
+#    connectionTimeout: PT2S
+#    readTimeout: PT5M
+
+  cloud:
+    config:
+      enabled: false
+
+
+  datasource.druid: 
+    url: jdbc:mysql://10.12.70.40:3306/DEPLOY_PROXY
+    username: root
+    password: 1234@qwer
+    useSSL: false
+    initial-size: 0
+    max-active: 8
+    min-idle: 0
+    max-wait: -1
+
+mybatis: 
+  mapper-locations: 
+    - 'classpath*:sqlmap/*Mapper.xml' 
+    
+local: 
+  config:
+    es-run-action: 
+      req5xx-percent: 
+        switch: false
+        sum_total_count_floor: 1000     # 总请求数下限, 少于该值则不参与计算
+        serious_level_floor_val: 0.2    # 严重级别阈值
+        high_level_floor_val: 0.1       # 高级别阈值
+        middle_level_floor_val: 0.05    # 中级别阈值
+        low_level_floor_val: 0.02       # 低级别阈值
+
+        
+matric-alert: 
+  business-source: OTT
+  service-url: http://127.0.0.1:29920
+          
+logging: 
+  config: classpath:log4j2.yml
+  level:
+    org.springframework: info
+    com.aspire.cdn.esdatawrap: info  
+  

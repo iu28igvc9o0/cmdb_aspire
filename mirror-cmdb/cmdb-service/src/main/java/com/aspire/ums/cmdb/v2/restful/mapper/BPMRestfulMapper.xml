@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.restful.mapper.BPMRestfulMapper" >
+    <select id="queryBizSystemQuote" resultType="java.util.LinkedHashMap">
+        select c.*,b.*,q.* from cmdb_business_quota q
+        inner join cmdb_business_system b on b.id = q.owner_biz_system and b.is_delete = '0'
+        inner join cmdb_business c on c.id = q.id and c.is_delete = '0'
+        inner join cmdb_idc_manager m on q.idcType = m.id and m.is_delete = '0'
+        inner join cmdb_pod_manager p on q.pod = p.id and p.is_delete = '0'
+        where q.is_delete = '0'
+        <if test="idcType != null and idcType != ''">
+            and m.idc_name = #{idcType}
+        </if>
+        <if test="podName != null and podName != ''">
+            and p.pod_name = #{podName}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            and b.bizSystem = #{bizSystem}
+        </if>
+    </select>
+
+    <sql id="bizSystemListByAccountSql">
+        SELECT  b.*,
+        o1.`orgName` `department1_orgName_name`,
+        t1.`dict_note` `system_status_dict_note_name`,
+        t3.`dict_note` `is_no_assessment_dict_note_name`,
+        o2.`orgName` `department2_orgName_name`
+        FROM cmdb_business_system b
+        INNER JOIN cmdb_business d ON (d.`id` = b.`id` AND `d`.`is_delete` = '0' )
+        left join cmdb_org_system o1 on (b.`department1`=o1.`id`and o1.`is_delete` = '0')
+        left join t_cfg_dict t1 on (b.`system_status`=t1.`id`and t1.`is_delete` = '0')
+        left join cmdb_org_system o2 on (b.`department2`=o2.`id`and o2.`is_delete` = '0')
+        left join t_cfg_dict t3 on (b.`is_no_assessment`=t3.`id`and t3.`is_delete` = '0')
+        WHERE business_concat_account = #{account} AND t1.dict_note = '正常运行' AND b.is_delete = '0' AND d.is_delete = '0'
+        <if test="bizSystem !=null and bizSystem != ''">
+            and bizSystem like concat('%', #{bizSystem}, '%')
+        </if>
+    </sql>
+
+    <select id="getBizSystemListByAccount" resultType="java.util.LinkedHashMap">
+        <include refid="bizSystemListByAccountSql"></include>
+        limit ${(currentPage - 1) * pageSize },${pageSize}
+    </select>
+
+    <select id="getBizSystemListByAccountCount" resultType="java.lang.Integer">
+        select count(1) from (
+            <include refid="bizSystemListByAccountSql"></include>
+        ) a
+    </select>
+
+    <sql id="bizSystemListByOrgDepartmentIds">
+        SELECT  b.*,
+        o1.`orgName` `department1_orgName_name`,
+        t1.`dict_note` `system_status_dict_note_name`,
+        t3.`dict_note` `is_no_assessment_dict_note_name`,
+        o2.`orgName` `department2_orgName_name`
+        FROM cmdb_business_system b
+        INNER JOIN cmdb_business d ON (d.`id` = b.`id` AND `d`.`is_delete` = '0' )
+        left join cmdb_org_system o1 on (b.`department1`=o1.`id`and o1.`is_delete` = '0')
+        left join t_cfg_dict t1 on (b.`system_status`=t1.`id`and t1.`is_delete` = '0')
+        left join cmdb_org_system o2 on (b.`department2`=o2.`id`and o2.`is_delete` = '0')
+        left join t_cfg_dict t3 on (b.`is_no_assessment`=t3.`id`and t3.`is_delete` = '0')
+        WHERE t1.dict_note = '正常运行' AND b.is_delete = '0' AND d.is_delete = '0'
+        AND ( b.`department1` IN
+        (
+        SELECT o.id FROM cmdb_org_system o
+        INNER JOIN cmdb_dict d ON o.`id` = d.`id` AND d.`is_delete` = '0'
+        WHERE o.`source_id` IN
+        <foreach collection="deptList" item="deptId" open="(" close=")" separator=",">
+            #{deptId}
+        </foreach>
+        )
+        OR b.`department2` IN
+        (
+        SELECT o.id FROM cmdb_org_system o
+        INNER JOIN cmdb_dict d ON o.`id` = d.`id` AND d.`is_delete` = '0'
+        WHERE o.`source_id` IN
+        <foreach collection="deptList" item="deptId" open="(" close=")" separator=",">
+            #{deptId}
+        </foreach>
+        ))
+        <if test="bizSystem !=null and bizSystem != ''">
+            and bizSystem like concat('%', #{bizSystem}, '%')
+        </if>
+    </sql>
+
+    <select id="getBizSystemListByOrgDepartmentIds" resultType="java.util.LinkedHashMap">
+        <include refid="bizSystemListByOrgDepartmentIds"></include>
+        limit ${(currentPage - 1) * pageSize },${pageSize}
+    </select>
+
+    <select id="getBizSystemListByOrgDepartmentIdsCount" resultType="java.lang.Integer">
+        select count(1) from (
+            <include refid="bizSystemListByOrgDepartmentIds"></include>
+        ) a
+    </select>
+</mapper>

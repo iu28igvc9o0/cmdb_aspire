@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.mail.recipient.dao.AlertMailFilterStrategyDao">
+    <resultMap id="strategyResultMap" type="com.aspire.mirror.mail.recipient.po.AlertMailFilterStrategy">
+        <result column="id" property="id" jdbcType="INTEGER"></result>
+        <result column="filter_id" property="filterId" jdbcType="VARCHAR"></result>
+        <result column="alert_field" property="alertField" jdbcType="VARCHAR"></result>
+        <result column="mail_field" property="mailField" jdbcType="INTEGER"></result>
+        <result column="field_match_val" property="fieldMatchValue" jdbcType="VARCHAR"></result>
+        <result column="use_reg" property="useReg" jdbcType="INTEGER"></result>
+        <result column="field_match_reg" property="fieldMatchReg" jdbcType="VARCHAR"></result>
+        <result column="field_match_target" property="fieldMatchTarget" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <select id="selectStrategiesByFilterId" parameterType="string" resultMap="strategyResultMap">
+        SELECT *
+        FROM alert_mail_resolve_strategy
+        WHERE filter_id = #{filterId}
+    </select>
+</mapper>

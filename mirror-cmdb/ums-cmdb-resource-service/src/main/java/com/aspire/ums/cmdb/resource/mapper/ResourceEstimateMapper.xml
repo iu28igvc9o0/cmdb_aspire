@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ResourceEstimateMapper">
+    <resultMap id="resourceEstimateMap" type="com.aspire.ums.cmdb.resource.entity.ResourceEstimate" >
+        <result property="id" column="ID"/>
+        <result property="resource_pool" column="RESOURCE_POOL"/>
+        <result property="status" column="STATUS"/>
+        <result property="vm_model1" column="VM_MODEL1" />
+        <result property="vm_model2" column="VM_MODEL2" />
+        <result property="vm_model3" column="VM_MODEL3" />
+        <result property="vm_model4" column="VM_MODEL4" />
+        <result property="vm_model5" column="VM_MODEL5" />
+        <result property="vm_model6" column="VM_MODEL6" />
+        <result property="vm_model7" column="VM_MODEL7" />
+        <result property="vm_model8" column="VM_MODEL8" />
+        <result property="pm_low_app_server" column="PM_LOW_APP_SERVER" />
+        <result property="pm_analytical_server" column="PM_ANALYTICAL_SERVER" />
+        <result property="pm_distributed_server" column="PM_DISTRIBUTED_SERVER" />
+        <result property="pm_cache_server" column="PM_CACHE_SERVER" />
+        <result property="pm_high_app_server" column="PM_HIGH_APP_SERVER" />
+        <result property="storage_distributd_file_capacity" column="STORAGE_DISTRIBUTD_FILE_CAPACITY" />
+        <result property="storage_distributd_block_performance" column="STORAGE_DISTRIBUTD_BLOCK_PERFORMANCE" />
+        <result property="storage_object_capacity" column="STORAGE_OBJECT_CAPACITY" />
+        <result property="storage_fc_san_capacity" column="STORAGE_FC_SAN_CAPACITY" />
+        <result property="storage_ip_san_capacity" column="STORAGE_IP_SAN_CAPACITY" />
+        <result property="storage_fc_san_naked" column="STORAGE_FC_SAN_NAKED" />
+        <result property="storage_ip_san_naked" column="STORAGE_IP_SAN_NAKED" />
+        <result property="storage_back_up" column="STORAGE_BACK_UP" />
+        <result property="cmnet_address" column="CMNET_ADDRESS" />
+        <result property="bandwidth_gbps_cmnet" column="BANDWIDTH_GBPS_CMNET" />
+        <result property="ip_address" column="IP_ADDRESS" />
+        <result property="bandwidth_gbps_ip" column="BANDWIDTH_GBPS_IP" />
+        <result property="create_id" column="CREATE_ID"/>
+        <result property="create_time" column="CREATE_TIME"/>
+        <result property="update_id" column="UPDATE_ID"/>
+        <result property="update_time" column="UPDATE_TIME"/>
+        <result property="remark" column="REMARK"/>
+    </resultMap>
+
+    <select id="isClosedByPoolName" parameterType="string" resultType="int">
+        select count(1) from resource_estimate where status != '0' and resource_pool = #{resourcePool}
+    </select>
+    <select id="getResourcePoolAll_config" resultType="String">
+        SELECT Label from config_dict where type='idcType' and DELETE_FLAG=0
+    </select>
+
+    <select id="getResourceEstimate_All" resultMap="resourceEstimateMap" parameterType="java.util.Map">
+        select re.id,re.create_id,re.create_time,re.update_id,re.update_time,
+        re.resource_pool,re.status,re.vm_model1,re.vm_model2,re.vm_model3,re.vm_model4,re.vm_model5,re.vm_model6,re.vm_model7,re.
+        vm_model8,re.pm_low_app_server,re.pm_analytical_server,re.pm_distributed_server,re.pm_cache_server,re.pm_high_app_server,re.storage_distributd_file_capacity,re.storage_distributd_block_performance,re.storage_object_capacity,re.storage_fc_san_capacity,re.
+        storage_ip_san_capacity,re.storage_fc_san_naked,re.storage_ip_san_naked,re.storage_back_up,re.cmnet_address,re.bandwidth_gbps_cmnet,re.ip_address,re.bandwidth_gbps_ip,re.remark,
+        ROUND(IFNULL(sum(rbd.count),0)/(IFNULL(re.vm_model1,0) +
+        IFNULL(re.vm_model2,0)+
+        IFNULL(re.vm_model3,0)+
+        IFNULL(re.vm_model4,0)+
+        IFNULL(re.vm_model5,0)+
+        IFNULL(re.vm_model6,0)+
+        IFNULL(re.vm_model7,0)+
+        IFNULL(re.vm_model8,0)+
+        IFNULL(re.pm_low_app_server,0)+
+        IFNULL(re.pm_analytical_server,0)+
+        IFNULL(re.pm_distributed_server,0)+
+        IFNULL(re.pm_cache_server,0)+
+        IFNULL(re.pm_high_app_server,0)) * 100 , 1) rate
+        from resource_estimate as re
+        LEFT JOIN resource_build as rb on rb.estimate_id = re.id
+        LEFT JOIN resource_build_detail as rbd on rbd.build_id = rb.id
+        where 1=1
+        <!--<if test="null != resourcePool and '' != resourcePool">
+            and re.resource_pool like concat('%','${resourcePool}','%')
+        </if>-->
+        <if test="null != resourcePool and '' != resourcePool">
+            and re.resource_pool = #{resourcePool}
+        </if>
+        <if test="null != status and '' != status and '-1' != status">
+            and re.status = #{status}
+        </if>
+        group by re.id
+        <if test="null != startIndex and null != limit">
+        limit #{startIndex}, #{limit}
+        </if>
+    </select>
+
+    <select id="getResourceEstimate_All_count" resultType="java.util.Map" parameterType="java.util.Map">
+        select count(1) as total from resource_estimate where 1=1
+        <!--<if test="null != resourcePool and '' != resourcePool">
+            and resource_pool like concat('%','${resourcePool}','%')
+        </if>-->
+        <if test="null != resourcePool and '' != resourcePool">
+            and resource_pool = #{resourcePool}
+        </if>
+        <if test="null != status and '' != status and '-1' != status">
+            and status = #{status}
+        </if>
+    </select>
+
+    <select id="getCollectByCollectIds" resultMap="resourceEstimateMap" parameterType="String">
+        select
+        SUM(vm_model1) vm_model1,SUM(vm_model2) vm_model2,SUM(vm_model3) vm_model3,SUM(vm_model4) vm_model4,
+        SUM(vm_model5) vm_model5,SUM(vm_model6) vm_model6,SUM(vm_model7) vm_model7,
+        SUM(vm_model8) vm_model8,SUM(pm_low_app_server) pm_low_app_server,SUM(pm_analytical_server) pm_analytical_server,
+        SUM(pm_cache_server) pm_cache_server,SUM(pm_high_app_server) pm_high_app_server,SUM(storage_distributd_file_capacity) storage_distributd_file_capacity,
+        SUM(storage_distributd_block_performance) storage_distributd_block_performance,SUM(storage_object_capacity) storage_object_capacity,
+        SUM(storage_fc_san_capacity) storage_fc_san_capacity,SUM(storage_ip_san_capacity) storage_ip_san_capacity,
+        SUM(storage_fc_san_naked) storage_fc_san_naked,SUM(storage_ip_san_naked) storage_ip_san_naked,
+        SUM(storage_back_up) storage_back_up,SUM(cmnet_address) cmnet_address,SUM(bandwidth_gbps_cmnet) bandwidth_gbps_cmnet,
+        SUM(ip_address) ip_address,SUM(bandwidth_gbps_ip) bandwidth_gbps_ip from resource_demand_collect
+        where id in
+        <foreach collection="collectIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="addEstimate" parameterType="com.aspire.ums.cmdb.resource.entity.ResourceEstimate" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into resource_estimate
+        ( resource_pool,status,vm_model1,vm_model2,vm_model3,vm_model4,vm_model5,vm_model6,vm_model7,
+        vm_model8,pm_low_app_server,pm_analytical_server,pm_distributed_server,pm_cache_server,pm_high_app_server,storage_distributd_file_capacity,storage_distributd_block_performance,storage_object_capacity,storage_fc_san_capacity,
+        storage_ip_san_capacity,storage_fc_san_naked,storage_ip_san_naked,storage_back_up,cmnet_address,bandwidth_gbps_cmnet,ip_address,bandwidth_gbps_ip,create_id,create_time,remark)
+        values (#{resource_pool},'1',#{vm_model1,jdbcType=NUMERIC},#{vm_model2,jdbcType=NUMERIC},#{vm_model3,jdbcType=NUMERIC},#{vm_model4,jdbcType=NUMERIC},#{vm_model5,jdbcType=NUMERIC},#{vm_model6,jdbcType=NUMERIC},#{vm_model7,jdbcType=NUMERIC},#{
+		vm_model8,jdbcType=NUMERIC},#{pm_low_app_server,jdbcType=NUMERIC},#{pm_analytical_server,jdbcType=NUMERIC},#{pm_distributed_server,jdbcType=NUMERIC},#{pm_cache_server,jdbcType=NUMERIC},#{pm_high_app_server,jdbcType=NUMERIC},#{storage_distributd_file_capacity,jdbcType=NUMERIC},#{storage_distributd_block_performance,jdbcType=NUMERIC},#{storage_object_capacity,jdbcType=NUMERIC},#{storage_fc_san_capacity,jdbcType=NUMERIC},#{
+		storage_ip_san_capacity,jdbcType=NUMERIC},#{storage_fc_san_naked,jdbcType=NUMERIC},#{storage_ip_san_naked,jdbcType=NUMERIC},#{storage_back_up,jdbcType=NUMERIC},#{cmnet_address,jdbcType=NUMERIC},#{bandwidth_gbps_cmnet,jdbcType=NUMERIC},#{ip_address,jdbcType=NUMERIC},#{bandwidth_gbps_ip,jdbcType=NUMERIC},#{create_id,jdbcType=NUMERIC},#{create_time,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateEstimate" parameterType="string">
+        update resource_estimate
+        <set>
+            <if test="resource_pool != null">resource_pool='${resource_pool}',</if>
+            vm_model1= #{vm_model1,jdbcType=VARCHAR},
+            vm_model2= #{vm_model2,jdbcType=VARCHAR},
+            vm_model3= #{vm_model3,jdbcType=VARCHAR},
+            vm_model4= #{vm_model4,jdbcType=VARCHAR},
+            vm_model5= #{vm_model5,jdbcType=VARCHAR},
+            vm_model6= #{vm_model6,jdbcType=VARCHAR},
+            vm_model7= #{vm_model7,jdbcType=VARCHAR},
+            vm_model8= #{vm_model8,jdbcType=VARCHAR},
+            pm_low_app_server= #{pm_low_app_server,jdbcType=VARCHAR},
+            pm_analytical_server= #{pm_analytical_server,jdbcType=VARCHAR},
+            pm_distributed_server= #{pm_distributed_server,jdbcType=VARCHAR},
+            pm_cache_server= #{pm_cache_server,jdbcType=VARCHAR},
+            pm_high_app_server= #{pm_high_app_server,jdbcType=VARCHAR},
+            storage_distributd_file_capacity= #{storage_distributd_file_capacity,jdbcType=VARCHAR},
+            storage_distributd_block_performance= #{storage_distributd_block_performance,jdbcType=VARCHAR},
+            storage_object_capacity= #{storage_object_capacity,jdbcType=VARCHAR},
+            storage_fc_san_capacity= #{storage_fc_san_capacity,jdbcType=VARCHAR},
+            storage_ip_san_capacity= #{storage_ip_san_capacity,jdbcType=VARCHAR},
+            storage_fc_san_naked= #{storage_fc_san_naked,jdbcType=VARCHAR},
+            storage_ip_san_naked= #{storage_ip_san_naked,jdbcType=VARCHAR},
+            storage_back_up= #{storage_back_up,jdbcType=VARCHAR},
+            cmnet_address= #{cmnet_address,jdbcType=VARCHAR},
+            bandwidth_gbps_cmnet= #{bandwidth_gbps_cmnet,jdbcType=VARCHAR},
+            ip_address= #{ip_address,jdbcType=VARCHAR},
+            bandwidth_gbps_ip= #{bandwidth_gbps_ip,jdbcType=VARCHAR},
+            update_id= #{update_id},
+            update_time= #{update_time},
+            remark = #{remark,jdbcType=VARCHAR}
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateResourceDeamandCollectEstimateId" parameterType="java.util.Map">
+        update resource_demand_collect set  estimate_id = #{estimateId}
+        where id in
+        <foreach collection="collectIdList" index="index" item="cid" open="(" separator="," close=")">
+            #{cid}
+        </foreach>
+    </update>
+
+    <update id="closeEstimate" parameterType="string" >
+        update resource_estimate set status = '0',update_id= #{username},update_time= NOW()
+        where id = #{id}
+    </update>
+</mapper>

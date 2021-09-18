@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <contextName>Cmdb</contextName>
+    <property name="LOG_PATH" value="G:/opt/data/logs/" />
+    <property name="APPDIR" value="cmdb" />
+
+    <!-- 定义全局参数常量,生产环境设置为INFO级别 -->
+    <property name="log.level" value="INFO"/>
+    <!-- 活动文件的大小 -->
+    <property name="max.file.size" value="100MB"/>
+    <!-- 保留的归档文件的最大数量 -->
+    <property name="log.maxHistory" value="30"/>
+    <!-- 控制所有归档日志文件的总大小 -->
+    <property name="total.size.cap" value="1GB"/>
+	<!-- 日志的展现格式 -->
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level [%t] [%X{traceId}] %logger Line:%-3L - %msg%n"/>
+
+    <!-- error级别滚动记录 -->
+    <appender name="FILEERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPDIR}/log_error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APPDIR}/error/log-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${max.file.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 日志文件最大的保存历史 数量-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- warn级别滚动记录 -->
+    <appender name="FILEWARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPDIR}/log_warn.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APPDIR}/warn/log-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${max.file.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 日志文件最大的保存历史 数量-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- info级别滚动记录 -->
+    <appender name="FILEINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APPDIR}/log_info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APPDIR}/info/log-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${max.file.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 日志文件最大的保存历史 数量-->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <!--此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>-->
+    </appender>
+
+    <!-- Springframework level -->
+    <logger name="org.springframework" level="info" />
+    <!-- mybatis level -->
+    <logger name="com.ibatis" level="${log.level}" />
+    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="${log.level}" />
+    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="${log.level}" />
+    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="${log.level}" />
+    <logger name="java.sql.Connection" level="INFO" />
+    <logger name="java.sql.Statement" level="${log.level}" />
+    <logger name="java.sql.PreparedStatement" level="${log.level}" />
+    <logger name="java.sql.ResultSet" level="INFO" />
+    <logger name="org.apache.ibatis" level="INFO" />
+    <logger name="org.mybatis.spring" level="INFO" />
+    <logger name="org.mybatis" level="INFO" />
+
+
+    <!-- 生产环境下，将此级别配置为适合的级别，以免日志文件太多或影响程序性能 -->
+    <root level="INFO">
+        <appender-ref ref="FILEERROR" />
+        <appender-ref ref="FILEWARN" />
+        <appender-ref ref="FILEINFO" />
+        <!-- 生产环境将请stdout去掉 -->
+        <appender-ref ref="STDOUT" />
+    </root>
+    <logger name="com.aspire.ums.cmdb.maintain.mapper" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+</configuration>

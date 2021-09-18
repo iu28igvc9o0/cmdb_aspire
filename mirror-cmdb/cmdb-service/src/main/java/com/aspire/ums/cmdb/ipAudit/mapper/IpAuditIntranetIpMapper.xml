@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.ipAudit.mapper.IpAuditIntranetIpMapper" >
+    <resultMap type="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpAddressPool" id="cmdbIpAddressPoolMap">
+        <result property="id" column="id" jdbcType="VARCHAR" />
+        <result property="instanceId" column="instance_id" jdbcType="VARCHAR" />
+        <result property="ip" column="ip" jdbcType="VARCHAR" />
+        <result property="iptype" column="iptype" jdbcType="VARCHAR" />
+        <result property="mac" column="mac" jdbcType="VARCHAR" />
+        <result property="resource" column="resource" jdbcType="VARCHAR" />
+        <result property="time" column="time" jdbcType="TIMESTAMP" />
+        <result property="gateway" column="gateway" jdbcType="VARCHAR" />
+        <result property="eventId" column="event_id" jdbcType="VARCHAR" />
+        <result property="srcCreator" column="src_creator" jdbcType="VARCHAR" />
+        <result property="srcCreateTime" column="src_create_time" jdbcType="TIMESTAMP" />
+        <result property="srcOptTime" column="src_opt_time" jdbcType="TIMESTAMP" />
+        <result property="srcPreOptTime" column="src_pre_opt_time" jdbcType="TIMESTAMP" />
+        <result property="version" column="version" jdbcType="INTEGER" />
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+        <result property="delFlag" column="del_flag" jdbcType="CHAR" />
+    </resultMap>
+    <resultMap type="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpRepositoryInnerIp" id="cmdbIpRepositoryInnerIpMap">
+        <result property="id" column="id" jdbcType="VARCHAR" />
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER" />
+        <result property="ip" column="ip" jdbcType="VARCHAR" />
+        <result property="dc" column="idcType" jdbcType="VARCHAR" />
+        <result property="assignStatus" column="assign_status" jdbcType="VARCHAR" />
+        <result property="assignUser" column="assign_user" jdbcType="VARCHAR" />
+        <result property="assignTime" column="assign_time" jdbcType="VARCHAR" />
+        <result property="survivalStatus" column="survival_status" jdbcType="VARCHAR" />
+        <result property="deviceName" column="device_name" jdbcType="VARCHAR" />
+        <result property="interfaceName" column="interface_name" jdbcType="VARCHAR" />
+        <result property="firstSurvivalTime" column="first_survival_time" jdbcType="VARCHAR" />
+        <result property="latestSurvivalTime" column="latest_survival_time" jdbcType="VARCHAR" />
+        <result property="requestPerson" column="request_person" jdbcType="VARCHAR" />
+        <result property="requestProcessId" column="request_process_id" jdbcType="VARCHAR" />
+        <result property="requestTime" column="request_time" jdbcType="VARCHAR" />
+        <result property="usefulLife" column="useful_life" jdbcType="VARCHAR" />
+        <result property="isCmdbManager" column="is_cmdb_manager" jdbcType="VARCHAR" />
+        <result property="onlineBusiness" column="online_business" jdbcType="VARCHAR" />
+        <result property="subBusinessModule" column="sub_business_module" jdbcType="VARCHAR" />
+        <result property="networkSegmentOwner" column="network_segment_owner" jdbcType="VARCHAR" />
+        <result property="innerIpUse" column="inner_ip_use" jdbcType="VARCHAR" />
+        <!--========网段信息==========-->
+        <result property="segmentId" column="segment_id" jdbcType="VARCHAR" />
+        <result property="networkGataway" column="network_gataway" jdbcType="VARCHAR" />
+        <result property="networkSegmentAddress" column="network_segment_address" jdbcType="VARCHAR" />
+        <result property="ipType" column="ip_type" jdbcType="VARCHAR" />
+        <result property="freeIpCount" column="free_ip_count" jdbcType="VARCHAR" />
+        <result property="vlanNumber" column="vlan_number" jdbcType="VARCHAR" />
+        <result property="safeRegion" column="safe_region" jdbcType="VARCHAR" />
+        <result property="firstBusinessSystem" column="first_business_system" jdbcType="VARCHAR" />
+        <result property="activeIpCount" column="active_ip_count" jdbcType="VARCHAR" />
+        <result property="assignIpCount" column="assign_ip_count" jdbcType="VARCHAR" />
+        <result property="aloneBusinessSystem" column="alone_business_system" jdbcType="VARCHAR" />
+        <result property="innerSegmentType" column="inner_segment_type" jdbcType="VARCHAR" />
+        <result property="innerSegmentSubType" column="inner_segment_sub_type" jdbcType="VARCHAR" />
+        <result property="innerSegmentIpType" column="inner_segment_ip_type" jdbcType="VARCHAR" />
+        <result property="isPool" column="is_pool" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="cmdbIpEntityMap" type="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpEntity">
+        <result property="ip" column="ip" jdbcType="VARCHAR" />
+        <result property="idcType" column="idc_type" jdbcType="INTEGER" />
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+        <result property="ipType" column="ip_type" jdbcType="VARCHAR" />
+        <result property="deviceStatus" column="device_status" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getMaxCheckNum" resultType="java.lang.Long">
+        SELECT MAX(check_num) FROM ip_audit_surviving_unplanned_intranet_ip
+    </select>
+
+    <select id="getAllSurvivingIpEntity1" resultMap="cmdbIpEntityMap">
+        -- 存活IP
+        SELECT ip, resource AS idc_type, gateway AS device_ip, '存活IP扫描' AS ip_type FROM cmdb_ip_address_pool
+        where ip != '' and ip IS NOT NULL and resource != '' and resource is not null and del_flag = 0 and LOWER(iptype) = 'ipv4'
+        and time >= DATE(NOW())
+        union
+        SELECT ip, resource AS idc_type, srcip AS device_ip, '存活IP扫描' AS ip_type
+        FROM cmdb_ip_arp_pool
+        where ip != '' and ip IS NOT NULL and resource != '' and resource is not null and del_flag = 0 and LOWER(iptype) = 'ipv4'
+        and time >= DATE(NOW())
+        union
+        SELECT ip, resource AS idc_type, srcip AS device_ip, '存活IP扫描' AS ip_type
+        FROM cmdb_ip_conf_pool
+        where ip != '' and ip IS NOT NULL and resource != '' and resource is not null and del_flag = 0 and LOWER(iptype) = 'ipv4'
+        and time >= DATE(NOW())
+    </select>
+    <select id="getAllSurvivingIpEntity2" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type FROM
+        (
+		-- ip
+        SELECT ip, idcType, ip AS device_ip, 'CMDB' AS ip_type FROM cmdb_instance WHERE is_delete = 0
+        and ip != '' and ip is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getAllSurvivingIpEntity3" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type FROM
+        (
+        -- other ip
+        SELECT o.ip_address AS ip, a.idcType, a.ip AS device_ip, 'CMDB' AS ip_type FROM cmdb_instance_server_ip o
+        JOIN cmdb_instance a ON o.device_id = a.id WHERE o.is_delete = 0 AND a.is_delete = 0
+        and ip_address != '' and ip_address is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getAllSurvivingIpEntity4" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type FROM
+        (
+        -- 业务IP1
+        SELECT business_ip1 AS ip, idcType, ip AS device_ip, 'CMDB' AS ip_type FROM cmdb_instance WHERE is_delete = 0
+        and business_ip1 != '' and business_ip1 is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getAllSurvivingIpEntity5" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type FROM
+        (
+		-- 业务IP2
+        SELECT business_ip2 AS ip, idcType, ip AS device_ip, 'CMDB' AS ip_type FROM cmdb_instance WHERE is_delete = 0
+        and business_ip2 != '' and business_ip2 is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getAllSurvivingIpEntity6" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type FROM
+        (
+		-- console IP
+        SELECT c.console_ip AS ip, i.idcType, i.ip AS device_ip, 'CMDB' AS ip_type FROM cmdb_instance_console c
+        JOIN cmdb_instance i ON i.id = c.id
+        WHERE i.is_delete = 0 AND c.is_delete = 0
+        and console_ip != '' and console_ip is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIp1" resultType="java.lang.String">
+        -- cmdb all ip
+        SELECT DISTINCT t.ip AS ip FROM
+        (
+        -- ip
+        SELECT ip, idcType FROM cmdb_instance WHERE is_delete = 0
+        and ip != '' and ip is not null and idcType != '' and idcType is not null
+        ) t
+        WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIp2" resultType="java.lang.String">
+        -- cmdb all ip
+        SELECT DISTINCT t.ip AS ip FROM
+        (
+        -- other ip
+        SELECT o.ip_address AS ip, a.idcType FROM cmdb_instance_server_ip o
+        JOIN cmdb_instance a ON o.device_id = a.id WHERE o.is_delete = 0 AND a.is_delete = 0
+        and ip_address != '' and ip_address is not null and idcType != '' and idcType is not null
+        ) t
+        WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIp3" resultType="java.lang.String">
+        -- cmdb all ip
+        SELECT DISTINCT t.ip AS ip FROM
+        (
+        -- 业务IP1
+        SELECT business_ip1 AS ip, idcType FROM cmdb_instance WHERE is_delete = 0
+        and business_ip1 != '' and business_ip1 is not null and idcType != '' and idcType is not null
+        ) t
+        WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIp4" resultType="java.lang.String">
+        -- cmdb all ip
+        SELECT DISTINCT t.ip AS ip FROM
+        (
+        -- 业务IP2
+        SELECT business_ip2 AS ip, idcType FROM cmdb_instance WHERE is_delete = 0
+        and business_ip2 != '' and business_ip2 is not null and idcType != '' and idcType is not null
+        ) t
+        WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIp5" resultType="java.lang.String">
+        -- cmdb all ip
+        SELECT DISTINCT t.ip AS ip FROM
+        (
+        -- console IP
+        SELECT c.console_ip AS ip, i.idcType FROM cmdb_instance_console c
+        JOIN cmdb_instance i ON i.id = c.id
+        WHERE i.is_delete = 0 AND c.is_delete = 0
+        and console_ip != '' and console_ip is not null and idcType != '' and idcType is not null
+        ) t
+        WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <!-- 自动采集IP -->
+    <select id="getCmdbAllIp6" resultType="java.lang.String">
+        SELECT DISTINCT t.ip AS ip FROM
+        (
+        SELECT other_ip AS ip, idcType FROM cmdb_instance WHERE is_delete = 0
+        and other_ip != '' and other_ip is not null and idcType != '' and idcType is not null
+        ) t
+        WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpEntity1" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT distinct t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type, t.device_status FROM
+        (
+		-- ip
+        SELECT ip, idcType, ip AS device_ip, '管理IP' AS ip_type, device_status FROM cmdb_instance WHERE is_delete = 0
+        and ip != '' and ip is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpEntity2" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT distinct t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type, t.device_status FROM
+        (
+        -- other ip
+        SELECT o.ip_address AS ip, a.idcType, a.ip AS device_ip, '其他IP' AS ip_type, device_status FROM cmdb_instance_server_ip o
+        JOIN cmdb_instance a ON o.device_id = a.id WHERE o.is_delete = 0 AND a.is_delete = 0
+        and ip_address != '' and ip_address is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpEntity3" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT distinct t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type, t.device_status FROM
+        (
+        -- 业务IP1
+        SELECT business_ip1 AS ip, idcType, ip AS device_ip, '业务IP1' AS ip_type, device_status FROM cmdb_instance WHERE is_delete = 0
+        and business_ip1 != '' and business_ip1 is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpEntity4" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT distinct t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type, t.device_status FROM
+        (
+		-- 业务IP2
+        SELECT business_ip2 AS ip, idcType, ip AS device_ip, '业务IP2' AS ip_type, device_status FROM cmdb_instance WHERE is_delete = 0
+        and business_ip2 != '' and business_ip2 is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getCmdbAllIpEntity5" resultMap="cmdbIpEntityMap">
+        -- cmdb all ip
+        SELECT distinct t.ip, t.idcType AS idc_type, t.device_ip, t.ip_type, t.device_status FROM
+        (
+		-- console IP
+        SELECT c.console_ip AS ip, i.idcType, i.ip AS device_ip, 'consoleIP' AS ip_type, device_status FROM cmdb_instance_console c
+        JOIN cmdb_instance i ON i.id = c.id
+        WHERE i.is_delete = 0 AND c.is_delete = 0
+        and console_ip != '' and console_ip is not null and idcType != '' and idcType is not null
+        ) t
+		WHERE
+        t.ip != '' AND t.ip IS NOT NULL
+        AND t.idcType != '' AND t.idcType IS NOT NULL
+    </select>
+    <select id="getIpRepositoryIntranetIp" resultType="java.lang.String">
+        SELECT DISTINCT i.ip AS ip FROM cmdb_ip_repository_inner_ip i
+        JOIN cmdb_ip_repository_inner_segment s
+        ON s.network_segment_address = i.network_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        WHERE i.is_delete = 0 AND s.is_delete = 0
+    </select>
+    <select id="getIpRepositoryIntranetIpEntity" resultMap="cmdbIpRepositoryInnerIpMap">
+        SELECT i.*, s.idcType,
+        s.`id` AS segment_id,
+        s.`network_gataway`,
+        s.`network_segment_address`,
+        s.`ip_type`,
+        s.`free_ip_count`,
+        s.`vlan_number`,
+        s.`safe_region`,
+        s.`first_business_system`,
+        s.`active_ip_count`,
+        s.`assign_ip_count`,
+        s.`idcType`,
+        s.`alone_business_system`,
+        s.`inner_segment_type`,
+        s.`inner_segment_sub_type`,
+        s.`inner_segment_ip_type`,
+        s.`is_pool`
+        FROM cmdb_ip_repository_inner_ip i
+        JOIN cmdb_ip_repository_inner_segment s
+        ON s.network_segment_address = i.network_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        WHERE i.is_delete = 0 AND s.is_delete = 0
+    </select>
+    <select id="getIpRepositoryAssignedIntranetIp" resultMap="cmdbIpRepositoryInnerIpMap">
+        SELECT i.*, s.idcType FROM cmdb_ip_repository_inner_ip i
+        JOIN cmdb_ip_repository_inner_segment s
+        ON s.network_segment_address = i.network_segment_owner
+        JOIN cmdb_ip_repository r ON
+        (
+        r.id = s.id
+        AND r.is_delete = 0
+        AND r.module_id = (SELECT id from cmdb_module WHERE `code` = 'ip_repository_inner_segment')
+        )
+        WHERE i.is_delete = 0 AND s.is_delete = 0 AND i.assign_status =
+        (SELECT id FROM t_cfg_dict WHERE col_name = 'ipAllocationStatusType' AND dict_note = '已分配' AND is_delete = '0' LIMIT 1)
+    </select>
+    <select id="getCollectionIp" resultMap="cmdbIpEntityMap">
+        SELECT ip, resource AS idc_type, gateway AS device_ip, '存活IP扫描' AS ip_type FROM cmdb_ip_address_pool
+        and time >= DATE(NOW()) and resource is not null and resource != ''
+    </select>
+    <!-- 全量IP采集：cmdb_ip_address_pool、cmdb_ip_arp_pool、cmdb_ip_conf_pool-->
+    <select id="getCollectionIpEntity" resultMap="cmdbIpAddressPoolMap" parameterType="java.lang.String">
+        SELECT * FROM cmdb_ip_address_pool i WHERE LOWER(i.iptype) = #{ipType} and del_flag = '0'
+        and time >= DATE(NOW())
+        union
+        SELECT id, instance_id, ip, iptype, mac, resource, time, srcip AS gateway, event_id, src_creator, src_create_time,
+        src_opt_time, src_pre_opt_time, version, create_time, update_time, del_flag
+        FROM cmdb_ip_arp_pool where LOWER(iptype) = #{ipType} and del_flag = '0'
+        and time >= DATE(NOW())
+        union
+        SELECT id, instance_id, ip, iptype, mac, resource, time, srcip AS gateway, event_id, src_creator, src_create_time,
+        src_opt_time, src_pre_opt_time, version, create_time, update_time, del_flag
+        FROM cmdb_ip_conf_pool where LOWER(iptype) = #{ipType} and del_flag = '0'
+        and time >= DATE(NOW())
+    </select>
+
+    <!-- 查询其他IP表关联主机资产表，获取资产管理的IPv6 新增 fanwenhui 20200527 -->
+    <select id="getCmdbAllIp4Ipv6" resultType="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpEntity">
+        SELECT DISTINCT a.ip_address AS ip, b.idcType, b.ip AS deviceIp,'CMDB' AS ipType
+        FROM cmdb_instance_server_ip a
+        JOIN cmdb_instance b ON b.id = a.device_id WHERE a.is_delete = 0
+    </select>
+
+    <!-- 查询从自动化采集过来的ipv6 新增 fanwenhui 20200527 -->
+    <select id="getAutoIpv6" resultType="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpEntity" parameterType="java.util.Map">
+        SELECT ip, resource AS idcType, gateway AS deviceIp, #{ipTypeName} AS ipType
+        FROM cmdb_ip_address_pool
+        WHERE ip != '' and ip IS NOT NULL AND del_flag = 0 AND iptype = #{ipType}
+        and time >= DATE(NOW())
+        UNION
+        SELECT ip, resource AS idcType, srcip AS deviceIp, #{ipTypeName} AS ipType
+        FROM cmdb_ip_arp_pool
+        WHERE ip != '' and ip IS NOT NULL AND del_flag = 0 AND iptype = #{ipType}
+        and time >= DATE(NOW())
+        UNION
+        SELECT ip, resource AS idcType, srcip AS deviceIp, #{ipTypeName} AS ipType
+        FROM cmdb_ip_conf_pool
+        WHERE ip != '' and ip IS NOT NULL AND del_flag = 0 AND iptype = #{ipType}
+        and time >= DATE(NOW())
+    </select>
+
+    <!--通过内网IP管理资产表的设备IP、业务ip1、业务ip2、consoleip 新增 fanwenhui 20200530-->
+    <select id="getPublicIpInfoList" resultType="com.aspire.ums.cmdb.ipAudit.entity.CmdbIpEntity">
+    SELECT * FROM
+    (
+        SELECT a.OUTER_IP AS ip,b.idcType,a.FW_IP AS deviceIp,'deviceIp' AS ipType FROM cmdb_pubnet_mapped_ipinfo a
+        LEFT JOIN cmdb_instance b ON b.ip = a.FW_IP
+        UNION
+        SELECT a.OUTER_IP AS ip,b.idcType,a.FW_IP AS deviceIp,'businessIp1' AS ipType FROM cmdb_pubnet_mapped_ipinfo a
+        LEFT JOIN cmdb_instance b ON b.business_ip1 = a.FW_IP
+        UNION
+        SELECT a.OUTER_IP AS ip,b.idcType,a.FW_IP AS deviceIp,'businessIp2' AS ipType FROM cmdb_pubnet_mapped_ipinfo a
+        LEFT JOIN cmdb_instance b ON b.business_ip2 = a.FW_IP
+        UNION
+        SELECT a.OUTER_IP AS ip,b.idcType,a.FW_IP AS device_ip,'consoleIp' AS ip_type FROM cmdb_pubnet_mapped_ipinfo a
+        LEFT JOIN cmdb_instance_console c ON c.console_ip = a.FW_IP
+        LEFT JOIN cmdb_instance b ON b.id = c.id
+    ) t WHERE t.idcType IS NOT NULL GROUP BY t.ip
+    </select>
+
+    <!-- 各种下拉数据值 -->
+    <select id="getBusinessConfigDict" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        SELECT id, business_name AS `value` FROM cmdb_business_line WHERE 1=1
+        <if test="type != null and type == 'business1'">
+            and parentBusiness = '' or parentBusiness is null
+        </if>
+        <if test="pid != null and pid != ''">
+            AND parentBusiness = #{pid}
+        </if>
+        ORDER BY business_name ASC
+    </select>
+    <select id="getNetworkSegmentConfigDict" resultType="java.util.HashMap">
+        SELECT c.id, c.dict_code AS `value` FROM t_cfg_dict c WHERE c.col_name = 'inner_segment_type'
+        AND c.delete_flag = 0
+    </select>
+    <select id="getNetworkSegmentSubConfigDict" resultType="java.util.HashMap" parameterType="java.lang.String">
+        SELECT c.id, c.dict_code AS `value` FROM t_cfg_dict c
+        WHERE c.col_name = 'inner_sub_segment_type' AND c.delete_flag = 0
+        -- AND c.dict_code != '全部'
+        <if test="pid != null and pid != ''">
+            AND c.up_dict = #{pid}
+        </if>
+    </select>
+    <select id="getFinancialBusinessConfigDict" resultType="java.util.HashMap">
+        SELECT id, orgName AS `value`
+        FROM (
+        SELECT tt.*,`ref_tb_parent_id`.`orgName` `parent_id_orgName_name`
+        FROM (
+        SELECT *
+        FROM (
+        SELECT `org_system`.`remark`,`org_system`.`parent_id`,`org_system`.`orgType`,`org_system`.`orgName`,`dict`.`insert_person`,`dict`.`dict_type`,`dict`.`module_id`,`dict`.`update_person`,`dict`.`insert_time`,`dict`.`id`,`dict`.`update_time`
+        FROM cmdb_org_system `org_system`
+        INNER JOIN cmdb_dict `dict` ON (`dict`.`id` = `org_system`.`id` AND `dict`.`is_delete` = 0)
+        INNER JOIN cmdb_module `cm` ON dict.module_id = cm.id
+        WHERE org_system.`is_delete` = 0 AND cm.`code` = 'org_system') t
+        WHERE 1=1 AND parent_id != '0') tt
+        LEFT JOIN cmdb_org_system ref_tb_parent_id ON (`tt`.`parent_id`=`ref_tb_parent_id`.`id` AND `ref_tb_parent_id`.`is_delete` = '0')) res
+        ORDER BY orgName ASC
+    </select>
+    <select id="getDeviceStatusConfigDict" resultType="java.util.Map">
+        SELECT c.id, c.dict_code AS `value` FROM t_cfg_dict c WHERE c.col_name = 'deviceStatus' AND c.is_delete = '0'
+    </select>
+
+    <!-- 更新IP地址库相关表字段信息 -->
+    <update id="updateIpRepositoryInnerSegmentInfo" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        UPDATE cmdb_ip_repository_inner_ip SET
+        <if test="requestPerson != null">
+            request_person = #{request_person},
+        </if>
+        <if test="requestTime != null">
+            request_time = #{requestTime},
+        </if>
+        <if test="requestOrder != null">
+            request_process_id = #{requestOrder},
+        </if>
+        <if test="expirationDate != null">
+            useful_life = #{expirationDate},
+        </if>
+        <if test="ipUse != null">
+            inner_ip_use = #{ipUse},
+        </if>
+        <where>
+            <if test="ipIds != null and ipIds.size() > 0">
+                and id in
+                <foreach collection="ipIds" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
+    <update id="updateIpRepositoryInnerIpInfo" parameterType="com.aspire.ums.cmdb.ipAudit.payload.IpAuditUpdateRequest">
+        UPDATE cmdb_ip_repository_inner_segment SET
+        <if test="businessName1 != null">
+            first_business_system = #{businessName1},
+        </if>
+        <if test="businessName2 != null">
+            alone_business_system = #{businessName2},
+        </if>
+        <where>
+            <if test="segmentIds != null and segmentIds.size() > 0">
+                and id in
+                <foreach collection="segmentIds" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
+    <select id="getDictOfAssigned" resultType="java.lang.String">
+        SELECT id FROM t_cfg_dict WHERE col_name = 'ipAllocationStatusType' AND dict_note = '已分配' AND is_delete = '0' LIMIT 1
+    </select>
+    <select id="getIpUseStatusTypeDict" resultType="java.util.Map">
+        SELECT id, dict_note AS text FROM t_cfg_dict t WHERE col_name = 'ipUseStatusType' AND delete_flag = '0';
+    </select>
+</mapper>

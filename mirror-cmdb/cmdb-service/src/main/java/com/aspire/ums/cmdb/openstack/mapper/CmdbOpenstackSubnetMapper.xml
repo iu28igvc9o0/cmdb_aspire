@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.openstack.mapper.CmdbOpenstackSubnetMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="subnet_id" property="subnetId" jdbcType="VARCHAR" />
+        <result column="event_id" property="eventId" jdbcType="VARCHAR" />
+        <result column="hname" property="hname" jdbcType="VARCHAR" />
+        <result column="ip_version" property="ipVersion" jdbcType="VARCHAR" />
+        <result column="cidr" property="cidr" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="org" property="org" jdbcType="VARCHAR" />
+        <result column="sname" property="sname" jdbcType="VARCHAR" />
+        <result column="dhcp_enable" property="dhcpEnable" jdbcType="VARCHAR" />
+        <result column="gateway_ip" property="gatewayIp" jdbcType="VARCHAR" />
+        <result column="src_create_time" property="srcCreateTime" jdbcType="DATE" />
+        <result column="src_creator" property="srcCreator" jdbcType="VARCHAR" />
+        <result column="src_modify_time" property="srcModifyTime" jdbcType="DATE" />
+        <result column="src_modifier" property="srcModifier" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `subnet_id`,
+        `event_id`,
+        `hname`,
+        `ip_version`,
+        `cidr`,
+        `name`,
+        `org`,
+        `sname`,
+        `dhcp_enable`,
+        `gateway_ip`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_subnet
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet">
+        SELECT
+        `id`,
+        `instance_id`,
+        `subnet_id`,
+        `event_id`,
+        `hname`,
+        `ip_version`,
+        `cidr`,
+        `name`,
+        `org`,
+        `sname`,
+        `dhcp_enable`,
+        `gateway_ip`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_subnet
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="subnetId != null and subnetId != ''">
+        AND `subnet_id` = #{subnetId}
+        </if>
+        <if test="eventId != null and eventId != ''">
+        AND `event_id` = #{eventId}
+        </if>
+        <if test="hname != null and hname != ''">
+        AND `hname` = #{hname}
+        </if>
+        <if test="ipVersion != null and ipVersion != ''">
+        AND `ip_version` = #{ipVersion}
+        </if>
+        <if test="cidr != null and cidr != ''">
+        AND `cidr` = #{cidr}
+        </if>
+        <if test="name != null and name != ''">
+        AND `name` = #{name}
+        </if>
+        <if test="org != null and org != ''">
+        AND `org` = #{org}
+        </if>
+        <if test="sname != null and sname != ''">
+        AND `sname` = #{sname}
+        </if>
+        <if test="dhcpEnable != null and dhcpEnable != ''">
+        AND `dhcp_enable` = #{dhcpEnable}
+        </if>
+        <if test="gatewayIp != null and gatewayIp != ''">
+        AND `gateway_ip` = #{gatewayIp}
+        </if>
+        <if test="srcCreateTime != null and srcCreateTime != ''">
+        AND `src_create_time` = #{srcCreateTime}
+        </if>
+        <if test="srcCreator != null and srcCreator != ''">
+        AND `src_creator` = #{srcCreator}
+        </if>
+        <if test="srcModifyTime != null and srcModifyTime != ''">
+        AND `src_modify_time` = #{srcModifyTime}
+        </if>
+        <if test="srcModifier != null and srcModifier != ''">
+        AND `src_modifier` = #{srcModifier}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+        <if test="version != null and version != ''">
+        AND `version` = #{version}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `subnet_id`,
+        `event_id`,
+        `hname`,
+        `ip_version`,
+        `cidr`,
+        `name`,
+        `org`,
+        `sname`,
+        `dhcp_enable`,
+        `gateway_ip`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_subnet
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="getByInstanceId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `subnet_id`,
+        `event_id`,
+        `hname`,
+        `ip_version`,
+        `cidr`,
+        `name`,
+        `org`,
+        `sname`,
+        `dhcp_enable`,
+        `gateway_ip`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_subnet
+        WHERE `instance_id` = #{instanceId}
+    </select>
+
+    <select id="findByInstanceId" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `subnet_id`,
+        `event_id`,
+        `hname`,
+        `ip_version`,
+        `cidr`,
+        `name`,
+        `org`,
+        `sname`,
+        `dhcp_enable`,
+        `gateway_ip`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_subnet
+        WHERE `instance_id` = #{instanceId}
+    </select>
+
+    <select id="findByInstanceIdList" parameterType="java.util.List" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `subnet_id`,
+        `event_id`,
+        `hname`,
+        `ip_version`,
+        `cidr`,
+        `name`,
+        `org`,
+        `sname`,
+        `dhcp_enable`,
+        `gateway_ip`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_subnet
+        <where>
+            instance_id in
+            <foreach collection="list" separator="," item="instanceId" open="(" close=")">
+                #{instanceId,jdbcType=VARCHAR}
+            </foreach>
+        </where>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet">
+        INSERT INTO cmdb_openstack_subnet
+        (
+            `id`,
+            `instance_id`,
+            `subnet_id`,
+            `event_id`,
+            `hname`,
+            `ip_version`,
+            `cidr`,
+            `name`,
+            `org`,
+            `sname`,
+            `dhcp_enable`,
+            `gateway_ip`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{subnetId, jdbcType=VARCHAR},
+            #{eventId, jdbcType=VARCHAR},
+            #{hname, jdbcType=VARCHAR},
+            #{ipVersion, jdbcType=VARCHAR},
+            #{cidr, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{org, jdbcType=VARCHAR},
+            #{sname, jdbcType=VARCHAR},
+            #{dhcpEnable, jdbcType=VARCHAR},
+            #{gatewayIp, jdbcType=VARCHAR},
+            #{srcCreateTime, jdbcType=DATE},
+            #{srcCreator, jdbcType=VARCHAR},
+            #{srcModifyTime, jdbcType=DATE},
+            #{srcModifier, jdbcType=VARCHAR},
+            #{version, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_openstack_subnet
+        (
+            `id`,
+            `instance_id`,
+            `subnet_id`,
+            `event_id`,
+            `hname`,
+            `ip_version`,
+            `cidr`,
+            `name`,
+            `org`,
+            `sname`,
+            `dhcp_enable`,
+            `gateway_ip`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.instanceId, jdbcType=VARCHAR},
+            #{item.subnetId, jdbcType=VARCHAR},
+            #{item.eventId, jdbcType=VARCHAR},
+            #{item.hname, jdbcType=VARCHAR},
+            #{item.ipVersion, jdbcType=VARCHAR},
+            #{item.cidr, jdbcType=VARCHAR},
+            #{item.name, jdbcType=VARCHAR},
+            #{item.org, jdbcType=VARCHAR},
+            #{item.sname, jdbcType=VARCHAR},
+            #{item.dhcpEnable, jdbcType=VARCHAR},
+            #{item.gatewayIp, jdbcType=VARCHAR},
+            #{item.srcCreateTime, jdbcType=DATE},
+            #{item.srcCreator, jdbcType=VARCHAR},
+            #{item.srcModifyTime, jdbcType=DATE},
+            #{item.srcModifier, jdbcType=VARCHAR},
+            #{item.version, jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet">
+        UPDATE cmdb_openstack_subnet SET
+        `instance_id` = #{instanceId},
+        `subnet_id` = #{subnetId},
+        `event_id` = #{eventId},
+        `hname` = #{hname},
+        `ip_version` = #{ipVersion},
+        `cidr` = #{cidr},
+        `name` = #{name},
+        `org` = #{org},
+        `sname` = #{sname},
+        `dhcp_enable` = #{dhcpEnable},
+        `gateway_ip` = #{gatewayIp},
+        `src_create_time` = #{srcCreateTime},
+        `src_creator` = #{srcCreator},
+        `src_modify_time` = #{srcModifyTime},
+        `src_modifier` = #{srcModifier},
+        `version` = #{version}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateByInstanceId" parameterType="java.util.HashMap">
+        UPDATE cmdb_openstack_subnet
+        <set>
+            <if test="_parameter.containsKey('cidr') ">
+                cidr =  #{cidr},
+            </if>
+            <if test="_parameter.containsKey('id') ">
+                subnet_id =  #{id},
+            </if>
+            <if test="_parameter.containsKey('gatewayIP') ">
+                gateway_ip =  #{gatewayIP},
+            </if>
+            <if test="_parameter.containsKey('name') ">
+                name =  #{name},
+            </if>
+            <if test="_parameter.containsKey('hname') ">
+                hname =  #{hname},
+            </if>
+            <if test="_parameter.containsKey('sname') ">
+                sname =  #{sname},
+            </if>
+            <if test="_parameter.containsKey('ipVersion') ">
+                ip_version =  #{ipVersion},
+            </if>
+            <if test="_parameter.containsKey('version') ">
+                version =  #{version},
+            </if>
+        </set>
+        WHERE instance_id=#{instanceId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackSubnet">
+        DELETE FROM cmdb_openstack_subnet
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <delete id="deleteByInstanceId" parameterType="java.lang.String">
+        DELETE FROM cmdb_openstack_subnet
+        WHERE
+         `instance_id` = #{instanceId}
+    </delete>
+
+    <delete id="deleteByInstanceIdList" parameterType="list">
+        DELETE FROM cmdb_openstack_subnet WHERE instance_id IN
+        <foreach collection="list" item="instanceId" index="index" open="(" close=")" separator=",">
+            #{instanceId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+    <select id="getAllInstanceId" resultType="java.lang.String">
+        SELECT distinct instance_id FROM cmdb_openstack_subnet
+    </select>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.collect.mapper.CmdbSyncSuyanRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.cmdb.agent.collect.entity.CmdbSyncSuyanRelation">
+        <result column="suyan_pod_id" property="suyanPodId" jdbcType="VARCHAR" />
+        <result column="suyan_pod_name" property="suyanPodName" jdbcType="VARCHAR" />
+        <result column="ums_pod_id" property="umsPodId" jdbcType="VARCHAR" />
+        <result column="suyan_idc_name" property="suyanIdcName" jdbcType="VARCHAR" />
+        <result column="ums_idc_id" property="umsIdcId" jdbcType="VARCHAR" />
+        <result column="suyan_project_name" property="suyanProjectName" jdbcType="VARCHAR" />
+        <result column="ums_project_id" property="umsProjectId" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="baseColumn">
+        suyan_pod_id,suyan_pod_name,pod.id ums_pod_id,suyan_idc_name,idc.id ums_idc_id,
+        suyan_project_name,project.id ums_project_id
+    </sql>
+    <select id="list" resultMap="resultMap">
+        select <include refid="baseColumn"/> from cmdb_sync_suyan_relation r
+        left join cmdb_idc_manager idc on r.suyan_idc_name = idc.idc_name
+        left join cmdb_pod_manager pod on r.suyan_pod_name = pod.pod_name
+        left join cmdb_project_manager project on r.suyan_project_name = project.project_name
+        <if test="suyanPodId != '' and suyanPodId != null">
+          where suyan_pod_id = #{suyanPodId}
+        </if>
+    </select>
+
+    <insert id="insert">
+      insert into cmdb_sync_suyan_relation values (
+      #{suyan_pod_id},#{suyan_pod_name},#{suyan_idc_name},#{suyan_project_name}
+                                                  )
+    </insert>
+
+    <insert id="insertByBatch">
+        insert into cmdb_sync_suyan_relation values
+        <foreach collection="relations" item="item" separator=",">
+            (#{suyan_pod_id},#{suyan_pod_name},#{suyan_idc_name},#{suyan_project_name}   )
+        </foreach>
+    </insert>
+
+    <delete id="clear">
+        delete from cmdb_sync_suyan_relation
+    </delete>
+
+</mapper>

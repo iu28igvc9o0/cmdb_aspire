@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.aspire.ums.cmdb.allocate.mapper.AllocateNetsegmentMapper">
+	    
+	 <resultMap type="com.aspire.ums.cmdb.allocate.entity.AllocateNetsegment" id="allocateNetsegmentMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="hostnet" property="hostnet" jdbcType="VARCHAR" />
+		<result column="domain_id" property="domainId" jdbcType="VARCHAR" />
+		<result column="network_segment" property="networkSegment" jdbcType="VARCHAR" />
+		 
+	 </resultMap>
+	 
+	 <sql id="baseColumnList">
+		id,hostnet,domain_id,network_segment
+	 </sql>
+	 
+	
+
+	 <insert id="insertAllocateNetsegment" parameterType="com.aspire.ums.cmdb.allocate.entity.AllocateNetsegment">
+	 
+	    INSERT INTO cmdb_allocate_netsegment( hostnet,domain_id,network_segment  ) 
+		values(
+		#{hostnet,jdbcType=VARCHAR},
+		#{domainId,jdbcType=VARCHAR},
+		#{networkSegment,jdbcType=VARCHAR} 
+		)
+	 </insert>
+	 
+	 
+	 <select id="selectAllocateNetsegmentBydomainId" parameterType="String" resultMap="allocateNetsegmentMap">
+		select
+		<include refid="baseColumnList" />
+		from cmdb_allocate_netsegment t where domain_id = #{id} and flag=0
+	 </select>
+	 
+	 
+	 <!-- 查询域名 -->
+	 <select id="selectAllocateNetsegmentByName" parameterType="map" resultMap="allocateNetsegmentMap">
+		select
+		<include refid="baseColumnList" />
+		from cmdb_allocate_netsegment t where  flag=0 and hostnet = #{hostnet} and network_segment = #{netsegment}	
+	 </select>
+	 
+	
+	 
+	 <!-- 删除 -->
+	 <delete id="deleteAllocateNetsegmentByDomainId" parameterType="String">
+		update  cmdb_allocate_netsegment set flag = 1 where  domain_id = #{domainId}	 
+		
+	 </delete>
+	 
+	 
+	 
+	  <!-- 删除 -->
+	 <delete id="deleteAllocateNetsegmentById" parameterType="String">
+		update cmdb_allocate_netsegment set flag = 1 where id = #{id}  
+	 </delete>
+	 
+	  <!-- 查询网段下的ip数 -->
+	 <select id="getIPAddressCountByNetsegId" parameterType="String" resultType="Integer">
+		select count(*) FROM  cmdb_allocate_ipaddress  where  flag=0 and network_id = #{netSegid}	
+	 </select>
+	
+	
+	 
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     ModuleCustomizedSql
+	描述:     数据访问语句
+	作者:     曾祥华
+	时间:     2019-07-17 14:04:59
+ -->
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.ModuleCustomizedDao">
+
+	<resultMap type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomized" id="baseResultMap">
+		<result property="userId" column="user_id" jdbcType="VARCHAR"/>
+		<result property="moduleId" column="module_id" jdbcType="VARCHAR"/>
+		<result property="content" column="content" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="ModuleCustomized_Base_Column">
+				user_id,
+				module_id,
+				content
+	</sql>
+	
+	<sql id="ModuleCustomized_Query_List_Sharing">
+		<where>
+				and ModuleCustomized.user_id=userId
+				and ModuleCustomized.module_id=moduleId
+				and ModuleCustomized.content=content
+		</where>
+	</sql>
+
+    <sql id="Page_List_Params">
+        <where>
+                <if test="params['userId'] != null and  params['userId'] != ''">
+                    and ModuleCustomized.user_id = #{params.userId}
+                </if>
+                <if test="params['moduleId'] != null and  params['moduleId'] != ''">
+                    and ModuleCustomized.module_id = #{params.moduleId}
+                </if>
+                <if test="params['content'] != null and  params['content'] != ''">
+                    and ModuleCustomized.content = #{params.content}
+                </if>
+        </where>
+    </sql>
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomized">
+		insert into t_cfg_module_customized
+			(<include refid="ModuleCustomized_Base_Column" />
+		)values(
+			#{userId,jdbcType=VARCHAR} ,
+			#{moduleId,jdbcType=VARCHAR} ,
+			#{content,jdbcType=VARCHAR} 
+		)
+	</insert>
+	
+	<!-- 列表 -->
+	<select id="selectByPrimaryKeyArrays" parameterType="java.util.List" resultMap="baseResultMap">
+		select
+		<include refid="ModuleCustomized_Base_Column" />
+		from t_cfg_module_customized ModuleCustomized
+		WHERE user_id in
+        <foreach collection="array" index="index" item="userId"
+                 open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+	</select>
+	
+	<!-- 详情 -->
+	<select id="selectByPrimaryKey" parameterType="String" resultMap="baseResultMap">
+		select 
+		<include refid="ModuleCustomized_Base_Column"/>
+		from t_cfg_module_customized ModuleCustomized where user_id = #{userId}
+	</select>	
+	
+	<!-- 详情 -->
+	<select id="select" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomized"  resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomized">
+		select 
+		<include refid="ModuleCustomized_Base_Column"/>
+		from t_cfg_module_customized ModuleCustomized where 1=1
+		<if test="moduleId != null">
+			and ModuleCustomized.module_id = #{moduleId}
+		</if>
+		<if test="userId != null">
+			and ModuleCustomized.user_id = #{userId}
+		</if>
+		<if test="content != null">
+			and ModuleCustomized.content = #{content}
+		</if>
+	</select>
+	
+	<!-- 修改 -->
+	<update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomized">
+		update t_cfg_module_customized ModuleCustomized set user_id = #{userId}
+		<if test="moduleId != null">
+			, ModuleCustomized.module_id = #{moduleId}
+		</if>
+		<if test="content != null">
+			, ModuleCustomized.content = #{content}
+		</if>
+		where user_id = #{userId} and module_id = #{moduleId}
+	</update> 
+	
+	<!-- 删除 -->
+	<update id="deleteByPrimaryKey" parameterType="string">
+		delete from t_cfg_module_customized where user_id = #{userId}
+	</update>
+
+    <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(*) FROM t_cfg_module_customized ModuleCustomized
+        <include refid="Page_List_Params"/>
+    </select>
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ModuleCustomized">
+        SELECT
+				 ModuleCustomized.user_id userId,
+				 ModuleCustomized.module_id moduleId,
+				 ModuleCustomized.content content
+        FROM t_cfg_module_customized ModuleCustomized
+        <include refid="Page_List_Params"/>
+        order by  ModuleCustomized.user_id ASC
+        limit #{begin},#{pageSize}
+    </select>
+</mapper>

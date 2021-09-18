@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.v2.assessment.mapper.EquipmentProblemMapper">
+	  
+	    
+	<resultMap type="com.aspire.ums.cmdb.v2.assessment.entity.EquipmentProblem" id="equipmentProblemMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="problem_name" property="problemName" jdbcType="VARCHAR" />
+	    <result column="problem_level" property="problemLevel" jdbcType="VARCHAR" />
+	    <result column="province" property="province" jdbcType="VARCHAR"/>
+		<result column="city" property="city" jdbcType="VARCHAR" />
+	    <result column="device_mfrs" property="produce" jdbcType="VARCHAR" />
+	    <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+		<result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+	    <result column="config_type" property="configType" jdbcType="VARCHAR" />
+	    <result column="begin_date" property="beginDate" jdbcType="TIMESTAMP" />
+	    <result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="solve_date" property="solveDate" jdbcType="TIMESTAMP" />
+	    <result column="problem_demand" property="problemDemand" jdbcType="VARCHAR" />
+		<result column="problem_person" property="problemPerson" jdbcType="VARCHAR" />
+		<result column="person" property="person" jdbcType="VARCHAR" />
+	    <result column="phone" property="phone" jdbcType="VARCHAR" />
+	    <result column="detail" property="detail" jdbcType="VARCHAR" />
+	    <result column="assess_status" property="assessStatus" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="quarter" property="quarter" jdbcType="VARCHAR" />
+	</resultMap>
+
+	 
+	 <sql id="baseColumnList">
+		id,problem_name,problem_level,province,city,device_mfrs,device_type,device_name,config_type,begin_date,status,       
+        solve_date,problem_demand,problem_person,person,phone,detail,assess_status,create_time,update_time,quarter
+		 
+	 </sql>
+
+       
+     <!-- 动态sql -->
+    <sql id="where_sql"> 
+        <if test="systemName != null and  systemName != '' ">
+    		and system_name = #{systemName}
+    	</if>
+    	<if test="deviceName != null and  deviceName != '' ">
+    		and device_name like  CONCAT('%',#{deviceName},'%')
+    	</if>
+	    <if test="warrantyDateBefore != null ">
+			 and warranty_date &gt;= '${warrantyDateBefore}'
+		</if>
+		<if test="warrantyDateAfter != null ">
+			and warranty_date &lt;= '${warrantyDateAfter}'
+		</if>	
+		<if test="deviceSerialNumber != null and  deviceSerialNumber != '' ">
+    		and device_serial_number like  CONCAT('%',#{deviceSerialNumber},'%')
+    	</if>
+    	  
+    	<if test="admin != null and  admin != '' ">
+    		and admin like  CONCAT('%',#{admin},'%')
+    	</if>
+	
+    </sql>
+    
+
+	 <insert id="insertEquipmentProblem"   parameterType="com.aspire.ums.cmdb.v2.assessment.entity.EquipmentProblem">
+	    INSERT INTO cmdb_equipment_problem(id,problem_name,problem_level,province,city,device_mfrs,device_type,device_name,config_type,begin_date,status,
+        solve_date,problem_demand,problem_person,person,phone,detail,assess_status,create_time,update_time,quarter )
+		values
+		 <foreach collection="list" index="index" item="item" separator="," >
+		 (
+	  #{item.id,jdbcType=VARCHAR} ,
+		#{ item.problemName,jdbcType=VARCHAR} ,
+		#{ item.problemLevel,jdbcType=VARCHAR} ,
+		#{ item.province,jdbcType=VARCHAR} ,
+		#{ item.city,jdbcType=VARCHAR} ,
+		#{ item.produce,jdbcType=VARCHAR} ,
+		#{ item.deviceType,jdbcType=VARCHAR} ,
+		#{ item.deviceName,jdbcType=VARCHAR},
+		#{ item.configType,jdbcType=VARCHAR} ,
+		#{ item.beginDate ,jdbcType=TIMESTAMP} ,
+		#{ item.status,jdbcType=VARCHAR} ,
+		#{ item.solveDate,jdbcType=TIMESTAMP} ,
+		#{ item.problemDemand,jdbcType=VARCHAR},
+		#{ item.problemPerson,jdbcType=VARCHAR},
+		#{ item.person,jdbcType=VARCHAR} ,
+		#{ item.phone,jdbcType=VARCHAR} ,
+		#{ item.detail,jdbcType=VARCHAR},
+		#{ item.assessStatus,jdbcType=VARCHAR},
+		#{ item.createTime,jdbcType=TIMESTAMP},
+		#{ item.updateTime,jdbcType=TIMESTAMP},
+		 #{ item.quarter,jdbcType=VARCHAR}
+		)
+		 </foreach>
+
+		ON DUPLICATE KEY UPDATE
+		 problem_name =  VALUES(problem_name),
+		problem_level =  VALUES(problem_level),
+		province =  VALUES(province),
+		city = VALUES(city),
+	  device_mfrs = VALUES(device_mfrs),
+	 device_Type =  VALUES(device_Type),
+	device_name =  VALUES(device_name),
+	config_type =  VALUES(config_type),
+	begin_date = VALUES(begin_date),
+		status = VALUES(status),
+		solve_date =  VALUES(solve_date),
+		 problem_demand =  VALUES(problem_demand),
+	  problem_person = VALUES(problem_person),
+		person = VALUES(person),
+		phone =  VALUES(phone),
+		detail =  VALUES(detail),
+		 assess_status =  VALUES(assess_status),
+	 update_time = VALUES(update_time),
+		 quarter = VALUES(quarter)
+	 </insert>
+
+
+  
+	 <update id="updateEquipmentProblem" parameterType="com.aspire.ums.cmdb.v2.assessment.entity.EquipmentProblem">
+	 
+	    update cmdb_equipment_problem
+	     <set>
+	       <if test="problemName != null and  problemName != '' ">
+		   		problem_name=#{problemName},
+		   </if>
+		   <if test="problemLevel != null and  problemLevel != '' ">
+		   		problem_level=#{problemLevel},
+		   </if>
+		   <if test="province != null and  province != '' ">
+		   		province=#{province},
+		   </if>
+		   <if test="city != null and  city != '' ">
+		   		city=#{city},
+		   </if>
+		   <if test="produce != null and  produce != '' ">
+		   		device_mfrs=#{produce},
+		   </if>
+		   <if test="deviceType != null and  deviceType != '' ">
+		   		device_type=#{deviceType},
+		   </if>
+		   <if test="deviceName != null and  deviceName != '' ">
+		   		device_name=#{deviceName},
+		   </if>
+		    <if test="configType != null and  configType != '' ">
+		   		config_type=#{configType},
+		   </if>
+		   <if test="beginDate != null and  beginDate != ''  ">
+			   begin_date=#{beginDate},
+
+		   </if>
+		   <if test="status != null and  status != '' ">
+		   		status=#{status},
+		   </if>
+		   <if test="solveDate != null and  solveDate != '' ">
+			   solve_date=#{solveDate},
+		   </if>
+		   <if test="problemDemand != null and  problemDemand != '' ">
+		   		problem_demand=#{problemDemand},
+		   </if>
+			 <if test="problemPerson != null and  problemPerson != '' ">
+				 problem_person=#{problemPerson},
+			 </if>
+		   <if test="person != null and  person != '' ">
+		   		person=#{person},
+		   </if>
+		   <if test="phone != null and  phone != '' ">
+		   		phone=#{phone},
+		   </if>
+		    <if test="detail != null and  detail != '' ">
+		   		detail=#{detail},
+		   </if>
+		    <if test="assessStatus != null and  assessStatus != '' ">
+		   		assess_status=#{assessStatus},
+		   </if>
+			 <if test="updateTime != null and  updateTime != '' ">
+				 updateTime = #{updateTime})
+			 </if>
+		   
+		  </set>
+		  where id = #{id}
+	     
+	 </update>
+	 
+	 
+	  <!-- 删除数据 -->
+	 <delete id="deleteEquipmentProblem" parameterType="String">
+	     delete from cmdb_equipment_problem where  id = #{id}
+     </delete>
+
+	<!-- 删除数据 -->
+	<delete id="deleteByBatch" parameterType="String">
+		delete from cmdb_equipment_problem where  id in
+			<foreach collection="list" item="item" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+	</delete>
+	 
+	 
+	 
+	<update id="approveEquipmentProblem"  parameterType="map">
+	 
+	    update cmdb_equipment_problem
+	     set
+		   		assess_status=#{assessStatus} ,
+				 update_time=#{updateTime}
+
+		   where quarter=#{quarter}
+		    
+
+    		and province = #{province}
+
+    	  	     
+	 </update>
+	 
+	 
+	 
+	<!-- 分页数据个数 -->
+	 <select id="getEquipmentProblemCount" resultType="Integer" parameterType="map">
+		select count(*) FROM  cmdb_equipment_problem
+		where quarter=#{quarter}
+	    <if test="province != null and  province != '' ">
+    		and province = #{province}
+    	</if> 
+	       
+	 </select>
+	
+
+	<!-- 分页数据 -->
+	<select id="selectEquipmentProblemByPage" parameterType="map" resultMap="equipmentProblemMap" >
+	 	select <include refid="baseColumnList" /> FROM  cmdb_equipment_problem
+		where quarter=#{quarter}
+	    <if test="province != null and  province != '' ">
+    		and province = #{province}
+    	</if>
+		order by create_time
+    	limit #{pageNo},#{pageSize}
+	    
+	</select> 
+	 
+
+	<insert id="saveEquipmentProblemList" parameterType="java.util.List">
+		INSERT INTO cmdb_equipment_problem (problem_name,problem_level,province,city,device_mfrs,device_type,device_name,config_type,begin_date,status,
+		solve_date,problem_demand,problem_person,person,phone,detail,assess_status,create_time,update_time,quarter)
+		VALUES
+		<foreach collection="list" item="item" index="index"  separator=","  >
+		  ( #{ item.problemName,jdbcType=VARCHAR} ,
+			#{ item.problemLevel,jdbcType=VARCHAR} ,
+			#{ item.province,jdbcType=VARCHAR} ,
+			#{ item.city,jdbcType=VARCHAR} ,
+			#{ item.deviceMfrs,jdbcType=VARCHAR} ,
+			#{ item.deviceType,jdbcType=VARCHAR} ,
+			#{ item.deviceName,jdbcType=VARCHAR},
+			#{ item.configType,jdbcType=VARCHAR} ,
+			#{ item.beginDate ,jdbcType=TIMESTAMP} ,
+			#{ item.status,jdbcType=VARCHAR} ,
+			#{ item.solveDate,jdbcType=TIMESTAMP} ,
+			#{ item.problemDemand,jdbcType=VARCHAR},
+			#{ item.problemPerson,jdbcType=VARCHAR},
+			#{ item.person,jdbcType=VARCHAR} ,
+			#{ item.phone,jdbcType=VARCHAR} ,
+			#{ item.detail,jdbcType=VARCHAR} ,
+			#{ item.assessStatus,jdbcType=VARCHAR} ,
+			#{ item.createTime,jdbcType=TIMESTAMP},
+			#{ item.updateTime,jdbcType=TIMESTAMP},
+			#{ item.quarter,jdbcType=VARCHAR})
+		</foreach>		 
+			  
+	</insert> 
+	      
+	
+	 <select id="selectEquipmentProblemById" parameterType="String" resultMap="equipmentProblemMap">
+		select   <include refid="baseColumnList" /> 
+		from cmdb_equipment_problem    
+		where  id = #{id} 
+	 </select>
+	 	    
+	 
+	<!-- 查询数据 -->
+	<select id="getEquipmentProblemList" parameterType="map" resultMap="equipmentProblemMap" >
+	 	select   
+	 	<include refid="baseColumnList" />
+	 	FROM  cmdb_equipment_problem
+	 	where quarter=#{quarter}
+	    <if test="province != null and  province != '' ">
+    		and province = #{province}
+    	</if>
+    	 <!--<if test="person != null and  person != '' ">-->
+    		<!--and person = #{person}-->
+    	<!--</if>   -->
+		order by create_time
+
+	</select> 
+	 
+ 
+	 
+</mapper>

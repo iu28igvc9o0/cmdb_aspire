@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.collectUnknown.mapper.CmdbCollectUnknownMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.collectUnknown.payload.CmdbCollectUnknown" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="idcType" property="idcType" jdbcType="VARCHAR" />
+        <result column="idcType_name" property="idcTypeName" jdbcType="VARCHAR" />
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+        <result column="device_type_name" property="deviceTypeName" jdbcType="VARCHAR" />
+        <result column="device_class" property="deviceClass" jdbcType="VARCHAR" />
+        <result column="vm_name" property="vmName" jdbcType="VARCHAR" />
+        <result column="other_ip" property="otherIp" jdbcType="VARCHAR" />
+        <result column="exsi_ip" property="existIp" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="data_from" property="dataFrom" jdbcType="VARCHAR" />
+        <result column="handle_status" property="handleStatus" jdbcType="TINYINT" />
+        <result column="commit_user" property="commitUser" jdbcType="VARCHAR" />
+        <result column="commit_time" property="commitTime" jdbcType="TIMESTAMP" />
+        <result column="handle_user" property="handleUser" jdbcType="VARCHAR" />
+        <result column="handle_time" property="handleTime" jdbcType="TIMESTAMP" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumnList">
+      id,instanceId,ip,idcType,device_name,device_type,data_from,handle_status,commit_user,commit_time,handle_user,
+      handle_time,remark
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.collectUnknown.payload.CmdbCollectUnknown">
+        INSERT INTO cmdb_collect_notfound ( id,instanceId,ip,idcType,device_name,device_type,vm_name,exsi_ip,other_ip,data_from,handle_status,commit_user,commit_time,handle_user,
+            handle_time,remark) VALUES
+            (#{id, jdbcType=VARCHAR},
+             #{instanceId, jdbcType=VARCHAR},
+             #{ip, jdbcType=VARCHAR},
+             #{idcType, jdbcType=VARCHAR},
+             #{deviceName, jdbcType=VARCHAR},
+             #{deviceType, jdbcType=VARCHAR},
+             #{vmName, jdbcType=VARCHAR},
+             #{existIp, jdbcType=VARCHAR},
+             #{otherIp, jdbcType=VARCHAR},
+             #{dataFrom, jdbcType=VARCHAR},
+             #{handleStatus, jdbcType=TINYINT},
+             #{commitUser, jdbcType=VARCHAR},
+             #{commitTime, jdbcType=TIMESTAMP},
+             #{handleUser, jdbcType=VARCHAR},
+             #{handleTime, jdbcType=TIMESTAMP},
+             #{remark, jdbcType=VARCHAR})
+    </insert>
+
+    <select id="list" parameterType="com.aspire.ums.cmdb.collectUnknown.payload.CmdbCollectUnknownQuery" resultMap="resultMap">
+        select  nf.*, idc.idc_name idcType_name, dict.dict_note device_type_name,
+               dict2.id device_class,vm_name,exsi_ip,other_ip,m.id module_id
+        from cmdb_collect_notfound nf
+        left join cmdb_idc_manager idc on nf.idcType = idc.id
+        left join t_cfg_dict dict on nf.device_type = dict.id and dict.col_name='device_type' and ifnull(dict.is_delete, 0) =0
+        LEFT JOIN t_cfg_dict dict2 ON dict.up_dict = dict2.id AND dict2.col_name='device_class'
+        left join cmdb_module m on dict.dict_note = m.name and m.is_delete=0
+        where idc.is_delete =0
+        <if test="ip != '' and ip != null">
+          and ip like concat('%', #{ip}, '%')
+        </if>
+        <if test="idcType != '' and idcType != null">
+            and idcType like concat('%', #{idcType}, '%')
+        </if>
+        <if test="deviceType != '' and deviceType != null">
+            and device_type like concat('%', #{deviceType}, '%')
+        </if>
+        <if test="deviceName != '' and deviceName != null">
+            and device_name like concat('%', #{deviceName}, '%')
+        </if>
+        <if test="dataFrom != '' and dataFrom != null">
+            and data_from like concat('%', #{dataFrom}, '%')
+        </if>
+        <if test="handleStatus != null">
+            and handle_status = #{handleStatus}
+        </if>
+        <include refid="Page_List_Params"></include>
+        <if test="handleStatus != 0">
+            order by handle_time desc
+        </if>
+        <if test="handleStatus == 0">
+            order by commit_time desc
+        </if>
+        <if test="pageNum != null and pageSize != null">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+
+    <sql id="Page_List_Params">
+        <choose>
+            <when test="authDeviceIdList == null or authDeviceIdList.size == 0">
+                <if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">
+                    and device_type in (
+                    <foreach collection="authDeviceTypeList" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>)
+                </if>
+                <if test="authIdcIdList != null and authIdcIdList.size > 0">
+                    and idcType in (
+                    <foreach collection="authIdcIdList" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>)
+                </if>
+            </when>
+            <otherwise>
+                and instanceId in (
+                <foreach collection="authDeviceIdList" item="item" index="index" separator=",">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>)
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="listCount" parameterType="com.aspire.ums.cmdb.collectUnknown.payload.CmdbCollectUnknownQuery" resultType="java.lang.Integer">
+        select  count(1)
+        from cmdb_collect_notfound nf
+      left join cmdb_idc_manager idc on nf.idcType = idc.id
+        left join t_cfg_dict dict on nf.device_type = dict.id and dict.col_name='device_type' and ifnull(dict.is_delete, 0) =0
+        LEFT JOIN t_cfg_dict dict2 ON dict.up_dict = dict2.id AND dict2.col_name='device_class'
+        left join cmdb_module m on dict.dict_note = m.name and m.is_delete=0
+        where idc.is_delete =0
+        <if test="ip != '' and ip != null">
+            and ip like concat('%', #{ip}, '%')
+        </if>
+        <if test="idcType != '' and idcType != null">
+            and idcType like concat('%', #{idcType}, '%')
+        </if>
+        <if test="deviceType != '' and deviceType != null">
+            and device_type like concat('%', #{deviceType}, '%')
+        </if>
+        <if test="handleStatus != null">
+            and handle_status = #{handleStatus}
+        </if>
+        <if test="dataFrom != '' and dataFrom != null">
+            and data_from = #{dataFrom}
+        </if>
+        <include refid="Page_List_Params"></include>
+        order by commit_time desc
+    </select>
+
+    <select id="countShieldAndUnhand"  resultType="java.lang.Integer">
+        select  count(1)
+        from cmdb_collect_notfound
+        where 1=1
+          and ip = #{ip}
+          and idcType = #{idcType}
+          and handle_status in (0, 2)
+    </select>
+    <select id="get"  resultMap="resultMap">
+        select   <include refid="baseColumnList"/>
+        FROM cmdb_collect_notfound
+        where id = #{id}
+    </select>
+    <update id="update" parameterType="com.aspire.ums.cmdb.collectUnknown.payload.CmdbCollectUnknown">
+        UPDATE cmdb_collect_notfound SET
+        handle_status =  #{handleStatus},
+        handle_user =  #{handleUser},
+         instanceId = #{instanceId},
+         device_name = #{deviceName},
+        device_type = #{deviceType},
+        vm_name = #{vmName},
+        exsi_ip = #{existIp},
+        other_ip = #{otherIp},
+        handle_time = #{handleTime}
+        where id = #{id}
+    </update>
+</mapper>

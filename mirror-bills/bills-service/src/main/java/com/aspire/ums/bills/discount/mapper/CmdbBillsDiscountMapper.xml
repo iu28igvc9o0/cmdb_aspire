@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.aspire.ums.bills.discount.mapper.CmdbBillsDiscountMapper">
+
+    <!-- 获取租户折扣树数据 -->
+    <select id="queryDeptTreeData" resultType="HashMap">
+        select s.id as id, s.orgName as name, s.parent_id as pId,
+            'dept' as resType from ${tablePrefix}.cmdb_org_system s
+        where s.is_delete = 0 and s.parent_id = '0'
+        union all
+        select s.id as id, s.orgName as name, s.parent_id as pId,
+            'dept' as resType from ${tablePrefix}.cmdb_org_system s
+        where s.is_delete = 0 and s.parent_id != '0'
+    </select>
+
+    <!-- 获取资源池折扣树数据 -->
+    <select id="getPoolTreeData" resultType="HashMap">
+        select idc.id as id, idc.idc_name as name, 'pool' as resType
+        from ${tablePrefix}.cmdb_idc_manager idc
+        where idc.is_delete = '0' order by idc.sort_index
+    </select>
+
+    <!-- 获取资源折扣树数据 -->
+    <select id="getResourceTreeData" resultType="HashMap">
+        select d.id as id, d.dict_note as name, 'resource' as resType,
+            '0' as pId from ${tablePrefix}.t_cfg_dict d
+        where d.is_delete = '0' and d.col_name = 'resource_type'
+        union all
+        select d.id as id, d.dict_note as name, 'resource' as resType,
+            d.up_dict as pId from ${tablePrefix}.t_cfg_dict d
+        where d.is_delete = '0' and d.col_name = 'bills_device_type'
+    </select>
+
+    <!-- 获取部门下属业务系统列表 -->
+    <select id="getBusinessList" resultType="HashMap">
+        select s.id as id, s.bizSystem as businessName,
+            'dept' as resType,
+        <choose>
+            <when test="dept2 != null">
+                s.department2 as pId
+            </when>
+            <otherwise>
+                s.department1 as pId
+            </otherwise>
+        </choose>
+        from ${tablePrefix}.cmdb_business_system s
+        where s.is_delete = '0'
+        <if test="dept1 != null">
+            and s.department1 = #{dept1}
+            and s.department2 is null
+        </if>
+        <if test="dept2 != null">
+            and s.department2 = #{dept2}
+        </if>
+    </select>
+
+    <!-- 获取折扣列表 -->
+    <select id="getDiscountList" resultType="HashMap">
+        select d.id, d.discount, d.res_type as resType
+        from cmdb_bills_discount d
+        where d.is_delete = '0' and d.res_type = #{type}
+    </select>
+
+    <!-- 获取折扣信息 -->
+    <select id="getDiscountById" resultType="HashMap">
+        select d.id,
+               case
+                   when d.res_type = 'pool'
+                       then idc.idc_name
+                   else org.orgname end resName,
+               d.discount, d.res_type as resType
+        from cmdb_bills_discount d
+        left join ${tablePrefix}.cmdb_idc_manager idc on d.id = idc.id
+        left join ${tablePrefix}.cmdb_org_system org on d.id = org.id
+        where d.is_delete = '0' and d.id = #{id}
+    </select>
+
+    <!-- 提交折扣信息 -->
+    <insert id="commitDiscount" parameterType="com.aspire.ums.bills.discount.payload.CmdbBillsDiscount">
+        insert into cmdb_bills_discount (res_id, id, discount,
+            res_type, insert_time, insert_person, update_time,
+            update_person, is_delete
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.resId}, #{item.id}, #{item.discount},
+             #{item.resType}, #{item.insertTime}, #{item.insertPerson},
+             #{item.updateTime}, #{item.updatePerson}, '0')
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        discount = values(discount),
+        update_time = values(update_time),
+        update_person = values(update_person)
+    </insert>
+
+    <!-- 查询当前类别的折扣数据 -->
+    <select id="queryDiscounts" resultType="com.aspire.ums.bills.discount.payload.CmdbBillsDiscount">
+        select d.id, d.discount, d.res_type as resType
+        from cmdb_bills_discount d
+        where d.is_delete = 0
+    </select>
+
+    <!-- 查询折扣 -->
+    <select id="queryDiscount" resultType="HashMap">
+        select min(d.discount) as discount
+        from cmdb_bills_discount d
+        where d.is_delete ='0'
+        <if test="idList != null">
+            and d.id in
+            <foreach collection="idList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>

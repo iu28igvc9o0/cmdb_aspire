@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.serverProject.mapper.CmdbCabinetBillConfMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetBillConf">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="contract_no" property="contractNo" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcType" jdbcType="VARCHAR"/>
+        <result column="server_room_location" property="serverRoomLocation" jdbcType="VARCHAR"/>
+        <result column="server_cabinet_standard" property="serverCabinetStandard" jdbcType="VARCHAR"/>
+        <result column="contractor_price" property="contractorPrice" jdbcType="VARCHAR"/>
+        <result column="billing_start_date" property="billingStartDate" jdbcType="VARCHAR"/>
+        <result column="bill_end_time" property="billEndTime" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `contract_no`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_standard`,
+        `contractor_price`,
+        `billing_start_date`,
+        `bill_end_time`,
+        `remark`
+        FROM cmdb_cabinet_bill_conf
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetBillConf">
+        SELECT
+        `id`,
+        `is_delete`,
+        `contract_no`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_standard`,
+        `contractor_price`,
+        `billing_start_date`,
+        `bill_end_time`,
+        `remark`
+        FROM cmdb_cabinet_bill_conf
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="contractNo != null and contractNo != ''">
+            AND `contract_no` = #{contractNo}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND `idcType` = #{idcType}
+        </if>
+        <if test="serverRoomLocation != null and serverRoomLocation != ''">
+            AND `server_room_location` = #{serverRoomLocation}
+        </if>
+        <if test="serverCabinetStandard != null and serverCabinetStandard != ''">
+            AND `server_cabinet_standard` = #{serverCabinetStandard}
+        </if>
+        <if test="contractorPrice != null and contractorPrice != ''">
+            AND `contractor_price` = #{contractorPrice}
+        </if>
+        <if test="billingStartDate != null and billingStartDate != ''">
+            AND `billing_start_date` = #{billingStartDate}
+        </if>
+        <if test="billEndTime != null and billEndTime != ''">
+            AND `bill_end_time` = #{billEndTime}
+        </if>
+        <if test="remark != null and remark != ''">
+            AND `remark` = #{remark}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetBillConf" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `contract_no`,
+        `idcType`,
+        `server_room_location`,
+        `server_cabinet_standard`,
+        `contractor_price`,
+        `billing_start_date`,
+        `bill_end_time`,
+        `remark`
+        FROM cmdb_cabinet_bill_conf
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetBillConf">
+        INSERT INTO cmdb_cabinet_bill_conf
+        (
+            `id`,
+            `is_delete`,
+            `contract_no`,
+            `idcType`,
+            `server_room_location`,
+            `server_cabinet_standard`,
+            `contractor_price`,
+            `billing_start_date`,
+            `bill_end_time`,
+            `remark`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT},
+            #{contractNo, jdbcType=VARCHAR},
+            #{idcType, jdbcType=VARCHAR},
+            #{serverRoomLocation, jdbcType=VARCHAR},
+            #{serverCabinetStandard, jdbcType=VARCHAR},
+            #{contractorPrice, jdbcType=VARCHAR},
+            #{billingStartDate, jdbcType=VARCHAR},
+            #{billEndTime, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetBillConf">
+        UPDATE cmdb_cabinet_bill_conf SET
+        `is_delete` = #{isDelete},
+        `contract_no` = #{contractNo},
+        `idcType` = #{idcType},
+        `server_room_location` = #{serverRoomLocation},
+        `server_cabinet_standard` = #{serverCabinetStandard},
+        `contractor_price` = #{contractorPrice},
+        `billing_start_date` = #{billingStartDate},
+        `bill_end_time` = #{billEndTime},
+        `remark` = #{remark}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbCabinetBillConf">
+        DELETE FROM cmdb_cabinet_bill_conf
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.openstack.mapper.CmdbOpenstackAdminMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="event_id" property="eventId" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="org" property="org" jdbcType="VARCHAR" />
+        <result column="controller_ip" property="controllerIp" jdbcType="VARCHAR" />
+        <result column="order_ip_controller" property="orderIpController" jdbcType="VARCHAR" />
+        <result column="src_create_time" property="srcCreateTime" jdbcType="DATE" />
+        <result column="src_creator" property="srcCreator" jdbcType="VARCHAR" />
+        <result column="src_modify_time" property="srcModifyTime" jdbcType="DATE" />
+        <result column="src_modifier" property="srcModifier" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="version" property="version" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `event_id`,
+        `name`,
+        `org`,
+        `controller_ip`,
+        `order_ip_controller`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_admin
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin">
+        SELECT
+        `id`,
+        `instance_id`,
+        `event_id`,
+        `name`,
+        `org`,
+        `controller_ip`,
+        `order_ip_controller`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_admin
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="eventId != null and eventId != ''">
+        AND `event_id` = #{eventId}
+        </if>
+        <if test="name != null and name != ''">
+        AND `name` = #{name}
+        </if>
+        <if test="org != null and org != ''">
+        AND `org` = #{org}
+        </if>
+        <if test="controllerIp != null and controllerIp != ''">
+        AND `controller_ip` = #{controllerIp}
+        </if>
+        <if test="orderIpController != null and orderIpController != ''">
+        AND `order_ip_controller` = #{orderIpController}
+        </if>
+        <if test="srcCreateTime != null and srcCreateTime != ''">
+        AND `src_create_time` = #{srcCreateTime}
+        </if>
+        <if test="srcCreator != null and srcCreator != ''">
+        AND `src_creator` = #{srcCreator}
+        </if>
+        <if test="srcModifyTime != null and srcModifyTime != ''">
+        AND `src_modify_time` = #{srcModifyTime}
+        </if>
+        <if test="srcModifier != null and srcModifier != ''">
+        AND `src_modifier` = #{srcModifier}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+        <if test="version != null and version != ''">
+        AND `version` = #{version}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `event_id`,
+        `name`,
+        `org`,
+        `controller_ip`,
+        `order_ip_controller`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_admin
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="findByInstanceId" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `event_id`,
+        `name`,
+        `org`,
+        `controller_ip`,
+        `order_ip_controller`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_admin
+        WHERE 1=1
+        AND `instance_id` = #{instanceId}
+    </select>
+    
+    <select id="getByInstanceId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `event_id`,
+        `name`,
+        `org`,
+        `controller_ip`,
+        `order_ip_controller`,
+        `src_create_time`,
+        `src_creator`,
+        `src_modify_time`,
+        `src_modifier`,
+        `create_time`,
+        `update_time`,
+        `version`
+        FROM cmdb_openstack_admin
+        WHERE 1=1
+        AND `instance_id` = #{instanceId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin">
+        INSERT INTO cmdb_openstack_admin
+        (
+            `id`,
+            `instance_id`,
+            `event_id`,
+            `name`,
+            `org`,
+            `controller_ip`,
+            `order_ip_controller`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{eventId, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{org, jdbcType=VARCHAR},
+            #{controllerIp, jdbcType=VARCHAR},
+            #{orderIpController, jdbcType=VARCHAR},
+            #{srcCreateTime, jdbcType=DATE},
+            #{srcCreator, jdbcType=VARCHAR},
+            #{srcModifyTime, jdbcType=DATE},
+            #{srcModifier, jdbcType=VARCHAR},
+            #{version, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_openstack_admin
+        (
+            `id`,
+            `instance_id`,
+            `event_id`,
+            `name`,
+            `org`,
+            `controller_ip`,
+            `order_ip_controller`,
+            `src_create_time`,
+            `src_creator`,
+            `src_modify_time`,
+            `src_modifier`,
+            `version`
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+         (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.instanceId, jdbcType=VARCHAR},
+            #{item.eventId, jdbcType=VARCHAR},
+            #{item.name, jdbcType=VARCHAR},
+            #{item.org, jdbcType=VARCHAR},
+            #{item.controllerIp, jdbcType=VARCHAR},
+            #{item.orderIpController, jdbcType=VARCHAR},
+            #{item.srcCreateTime, jdbcType=DATE},
+            #{item.srcCreator, jdbcType=VARCHAR},
+            #{item.srcModifyTime, jdbcType=DATE},
+            #{item.srcModifier, jdbcType=VARCHAR},
+            #{item.version, jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin">
+        UPDATE cmdb_openstack_admin SET
+        `instance_id` = #{instanceId},
+        `event_id` = #{eventId},
+        `name` = #{name},
+        `org` = #{org},
+        `controller_ip` = #{controllerIp},
+        `order_ip_controller` = #{orderIpController},
+        `src_create_time` = #{srcCreateTime},
+        `src_creator` = #{srcCreator},
+        `src_modify_time` = #{srcModifyTime},
+        `src_modifier` = #{srcModifier},
+        `version` = #{version}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateByInstanceId" parameterType="java.util.HashMap">
+        UPDATE cmdb_openstack_admin
+        <set>
+            <if test="_parameter.containsKey('name') ">
+                `name` =  #{name},
+            </if>
+            <if test="_parameter.containsKey('_orderIP_controller') ">
+                order_ip_controller =  #{_orderIP_controller},
+            </if>
+            <if test="_parameter.containsKey('controller') ">
+                controller_ip =  #{controller},
+            </if>
+            <if test="_parameter.containsKey('org') ">
+                org =  #{org},
+            </if>
+            <if test="_parameter.containsKey('_version') ">
+                version =  #{_version},
+            </if>
+        </set>
+        WHERE instance_id=#{instanceId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin">
+        DELETE FROM cmdb_openstack_admin
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <delete id="deleteByInstanceId" parameterType="com.aspire.ums.cmdb.openstack.payload.entity.CmdbOpenstackAdmin">
+        DELETE FROM cmdb_openstack_admin
+        WHERE
+         `instance_id` = #{instanceId}
+    </delete>
+</mapper>

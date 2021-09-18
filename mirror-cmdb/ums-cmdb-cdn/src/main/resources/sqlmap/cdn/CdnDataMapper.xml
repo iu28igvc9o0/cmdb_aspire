@@ -1,0 +1,867 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.ums.cdn.dao.cdn.CdnDao">
+	
+	<select id="getLinkPercentReportData" resultType="com.aspire.ums.cdn.model.LinkPercentReportData">
+		SELECT
+			jieru.province_name province,
+			(ssh.province_ssh / jieru.province_jieru) sshLinkPercent,
+			(agent.province_agent / jieru.province_jieru) agentLinkPercent,
+		    (ssh.province_ssh - ssh.fh_ssh)/(jieru.province_jieru-jieru.fh_jieru) sshLinkPercentExcludeFH,
+		    (agent.province_agent-agent.fh_agent)/(jieru.province_jieru-jieru.fh_jieru) agentLinkPercentExcludeFH,
+			(ssh.hw_ssh / jieru.hw_jieru) sshLinkPercentHW,
+			(ssh.zx_ssh / jieru.zx_jieru) sshLinkPercentZX,
+		    (ssh.fh_ssh / jieru.fh_jieru) sshLinkPercentFH,
+		    (ssh.hy_ssh / jieru.hy_jieru) sshLinkPercentHY,
+		    (agent.hw_agent / jieru.hw_jieru) agentLinkPercentHW,
+			(agent.zx_agent / jieru.zx_jieru) agentLinkPercentZX,
+		    (agent.fh_agent / jieru.fh_jieru) agentLinkPercentFH,
+		    (agent.hy_agent / jieru.hy_jieru) agentLinkPercentHY,
+			jieru.hw_jieru hwJieru,
+			jieru.zx_jieru zxJieru,
+			jieru.fh_jieru fhJieru,
+			jieru.hy_jieru hyJieru,
+			oms.hw_oms hwOms,
+			oms.zx_oms zxOms,
+			oms.fh_oms fhOms,
+			oms.hy_oms hyOms,
+			ssh.hw_ssh hwSsh,
+			ssh.zx_ssh zxSsh,
+			ssh.fh_ssh fhSsh,
+			ssh.hy_ssh hySsh,
+			agent.hw_agent hwAgent,
+			agent.zx_agent zxAgent,
+			agent.fh_agent fhAgent,
+			agent.hy_agent hyAgent
+		FROM
+		(
+			SELECT
+				province_jieru.province_name,
+				IFNULL(province_jieru.jieru, 0) province_jieru,
+				IFNULL(hw_jieru.jieru, 0) hw_jieru,
+				IFNULL(zx_jieru.jieru, 0) zx_jieru,
+				IFNULL(fh_jieru.jieru, 0) fh_jieru,
+				IFNULL(hy_jieru.jieru, 0) hy_jieru
+			FROM
+				(
+					SELECT
+						p.NAME province_name,
+						count(ds.salt_status) jieru
+					FROM
+						v_jt_opsapp_deviceserver ds
+					INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+					INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+					INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+					INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+					INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+					WHERE ds.salt_status = 4
+					GROUP BY p.NAME
+				) province_jieru
+			LEFT JOIN (
+				SELECT
+					p.NAME province_name,
+					fl.NAME flat,
+					count(ds.salt_status) jieru
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				WHERE ds.salt_status = 4
+				  AND ds.flat_id = 4
+				GROUP BY p.NAME, fl.NAME
+			) fh_jieru ON province_jieru.province_name = fh_jieru.province_name
+			LEFT JOIN (
+				SELECT
+					p.NAME province_name,
+					fl.NAME flat,
+					count(ds.salt_status) jieru
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				WHERE ds.salt_status = 4 
+				  AND ds.flat_id = 3
+				GROUP BY p.NAME, fl.NAME
+			) zx_jieru ON province_jieru.province_name = zx_jieru.province_name
+			LEFT JOIN (
+				SELECT
+					p.NAME province_name,
+					fl.NAME flat,
+					count(ds.salt_status) jieru
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				WHERE ds.salt_status = 4
+				  AND ds.flat_id = 2
+				GROUP BY p.NAME, fl.NAME
+			) hw_jieru ON province_jieru.province_name = hw_jieru.province_name
+			LEFT JOIN (
+				SELECT
+					p.NAME province_name,
+					fl.NAME flat,
+					count(ds.salt_status) jieru
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				WHERE ds.salt_status = 4
+				  AND ds.flat_id = 1
+				GROUP BY p.NAME, fl.NAME
+			) hy_jieru ON province_jieru.province_name = hy_jieru.province_name
+		) jieru
+	LEFT JOIN (
+		SELECT
+			province_oms.province_name,
+			IFNULL(province_oms.oms, 0) province_oms,
+			IFNULL(hw_oms.oms, 0) hw_oms,
+			IFNULL(zx_oms.oms, 0) zx_oms,
+			IFNULL(fh_oms.oms, 0) fh_oms,
+			IFNULL(hy_oms.oms, 0) hy_oms
+		FROM
+			(
+				SELECT
+					p.NAME province_name,
+					count(ds.soft_status) oms
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				WHERE ds.salt_status = 4 
+				  AND ds.soft_status = 3
+				GROUP BY p.NAME
+			) province_oms
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) oms
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			WHERE ds.salt_status = 4 
+			  AND ds.soft_status = 3
+			  AND ds.flat_id = 4
+			GROUP BY p.NAME, fl.NAME
+		) fh_oms ON province_oms.province_name = fh_oms.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) oms
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			WHERE ds.salt_status = 4 
+			  AND ds.soft_status = 3
+			  AND ds.flat_id = 3
+			GROUP BY p.NAME, fl.NAME
+		) zx_oms ON province_oms.province_name = zx_oms.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) oms
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			WHERE ds.salt_status = 4 
+			  AND ds.soft_status = 3
+			  AND ds.flat_id = 2
+			GROUP BY p.NAME, fl.NAME
+		) hw_oms ON province_oms.province_name = hw_oms.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) oms
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			WHERE ds.salt_status = 4 
+	          AND ds.soft_status = 3
+			  AND ds.flat_id = 1
+			GROUP BY p.NAME, fl.NAME
+		) hy_oms ON province_oms.province_name = hy_oms.province_name
+	) oms ON jieru.province_name = oms.province_name
+	LEFT JOIN (
+		SELECT
+			province_ssh.province_name,
+			IFNULL(province_ssh.ssh, 0) province_ssh,
+			IFNULL(hw_ssh.ssh, 0) hw_ssh,
+			IFNULL(zx_ssh.ssh, 0) zx_ssh,
+			IFNULL(fh_ssh.ssh, 0) fh_ssh,
+			IFNULL(hy_ssh.ssh, 0) hy_ssh
+		FROM
+			(
+				SELECT
+					p.NAME province_name,
+					count(conn.ssh_status) ssh
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				INNER JOIN v_jt_opsapp_deviceconnective conn ON conn.device_server_id = ds.id AND conn.ssh_status = 0
+				WHERE ds.salt_status = 4
+				GROUP BY p.NAME
+			) province_ssh
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(conn.ssh_status) ssh
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_opsapp_deviceconnective conn ON conn.device_server_id = ds.id AND conn.ssh_status = 0
+			WHERE ds.salt_status = 4 
+			  AND ds.flat_id = 4
+			GROUP BY p.NAME, fl.NAME
+		) fh_ssh ON province_ssh.province_name = fh_ssh.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(conn.ssh_status) ssh
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_opsapp_deviceconnective conn ON conn.device_server_id = ds.id AND conn.ssh_status = 0
+			WHERE ds.salt_status = 4 
+			  AND ds.flat_id = 3
+			GROUP BY p.NAME, fl.NAME
+		) zx_ssh ON province_ssh.province_name = zx_ssh.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(conn.ssh_status) ssh
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_opsapp_deviceconnective conn ON conn.device_server_id = ds.id AND conn.ssh_status = 0
+			WHERE ds.salt_status = 4
+			  AND ds.flat_id = 2
+			GROUP BY p.NAME, fl.NAME
+		) hw_ssh ON province_ssh.province_name = hw_ssh.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(conn.ssh_status) ssh
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_opsapp_deviceconnective conn ON conn.device_server_id = ds.id AND conn.ssh_status = 0
+			WHERE ds.salt_status = 4
+			  AND ds.flat_id = 1
+			GROUP BY p.NAME, fl.NAME
+		) hy_ssh ON province_ssh.province_name = hy_ssh.province_name
+	) ssh ON jieru.province_name = ssh.province_name
+	LEFT JOIN (
+		SELECT
+			province_agent.province_name,
+			IFNULL(province_agent.agent, 0) province_agent,
+			IFNULL(hw_agent.agent, 0) hw_agent,
+			IFNULL(zx_agent.agent, 0) zx_agent,
+			IFNULL(fh_agent.agent, 0) fh_agent,
+			IFNULL(hy_agent.agent, 0) hy_agent
+		FROM
+			(
+				SELECT
+					p.NAME province_name,
+					count(ds.soft_status) agent
+				FROM
+					v_jt_opsapp_deviceserver ds
+				INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+				INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+				INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+				INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+				INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+				INNER JOIN v_jt_zabbix_host zb ON ds.id = zb.id AND zb.zb_status = 1
+				WHERE ds.salt_status = 4
+				GROUP BY p.NAME
+			) province_agent
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) agent
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_zabbix_host zb ON ds.id = zb.id AND zb.zb_status = 1
+			WHERE ds.salt_status = 4
+			  AND ds.flat_id = 4
+			GROUP BY p.NAME, fl.NAME
+		) fh_agent ON province_agent.province_name = fh_agent.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) agent
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_zabbix_host zb ON ds.id = zb.id AND zb.zb_status = 1
+			WHERE ds.salt_status = 4
+			  AND ds.flat_id = 3
+			GROUP BY p.NAME, fl.NAME
+		) zx_agent ON province_agent.province_name = zx_agent.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) agent
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_zabbix_host zb ON ds.id = zb.id AND zb.zb_status = 1
+			WHERE ds.salt_status = 4
+			  AND ds.flat_id = 2
+			GROUP BY p.NAME, fl.NAME
+		) hw_agent ON province_agent.province_name = hw_agent.province_name
+		LEFT JOIN (
+			SELECT
+				p.NAME province_name,
+				fl.NAME flat,
+				count(ds.soft_status) agent
+			FROM
+				v_jt_opsapp_deviceserver ds
+			INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+			INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+			INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+			INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+			INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+			INNER JOIN v_jt_zabbix_host zb ON ds.id = zb.id AND zb.zb_status = 1
+			WHERE ds.salt_status = 4
+			  AND ds.flat_id = 1
+			GROUP BY p.NAME, fl.NAME
+		) hy_agent ON province_agent.province_name = hy_agent.province_name
+	) agent ON jieru.province_name = agent.province_name
+	</select>
+	
+	<!-- 
+	<select id="getLinkPercentReportData" resultType="com.aspire.ums.cdn.model.LinkPercentReportData">
+		select result_.sjmc province,
+		result_.r_ssh sshLinkPercent, result_.r_agent agentLinkPercent,
+		(result_.c_ssh-result_.fh_ssh)/(result_.c_jieru-result_.fh_jieru) sshLinkPercentExcludeFH,
+		(result_.c_agent-result_.fh_agent)/(result_.c_jieru-result_.fh_jieru) agentLinkPercentExcludeFH,
+		result_.hw_oms hwOms, result_.hw_jieru hwJieru,result_.hw_ssh hwSsh,result_.hw_agent hwAgent,
+		result_.hw_ssh/result_.hw_jieru sshLinkPercentHW, hw_agent/result_.hw_jieru agentLinkPercentHW,
+		result_.zx_oms zxOms, result_.zx_jieru zxJieru, result_.zx_ssh zxSsh, result_.zx_agent zxAgent, 
+		result_.zx_ssh/result_.zx_jieru sshLinkPercentZX, zx_agent/result_.zx_jieru agentLinkPercentZX,
+		result_.fh_oms fhOms, result_.fh_jieru fhJieru, result_.fh_ssh fhSsh, result_.fh_agent fhAgent, 
+		result_.fh_ssh/result_.fh_jieru sshLinkPercentFH, fh_agent/result_.fh_jieru agentLinkPercentFH,
+		result_.hy_oms hyOms, result_.hy_jieru hyJieru, result_.hy_ssh hySsh, 
+		result_.hy_agent,result_.hy_ssh/result_.hy_jieru sshLinkPercentHY, hy_agent/result_.hy_jieru agentLinkPercentHY
+		from
+		(
+		select t1.sjmc,sum(oms) c_oms,sum(jieru) c_jieru,sum(ssh) c_ssh,sum(agent) c_agent,sum(ssh)/sum(jieru) r_ssh,sum(agent)/sum(jieru) r_agent,
+		(select sum(oms) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=2
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hw_oms,
+		(select sum(jieru) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=2
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hw_jieru,
+		(select sum(ssh) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=2
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hw_ssh,
+		(select sum(agent) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=2
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hw_agent,
+		(select sum(oms) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=3
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) zx_oms,
+		(select sum(jieru) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=3
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) zx_jieru,
+		(select sum(ssh) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=3
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) zx_ssh,
+		(select sum(agent) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=3
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) zx_agent,
+		(select sum(oms) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=4
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) fh_oms,
+		(select sum(jieru) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=4
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) fh_jieru,
+		(select sum(ssh) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=4
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) fh_ssh,
+		(select sum(agent) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=4
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) fh_agent,
+		(select sum(oms) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=1
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hy_oms,
+		(select sum(jieru) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=1
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hy_jieru,
+		(select sum(ssh) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=1
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hy_ssh,
+		(select sum(agent) from 
+		(SELECT
+		    p.NAME sjmc,
+		    fl.NAME pm,
+		    ( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) oms,
+		    ( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) jieru,
+		    ( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) ssh,
+		    ( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) agent
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id and fl.id=1
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		) st1
+		where
+		st1.sjmc = t1.sjmc
+		group by st1.sjmc,st1.pm) hy_agent
+		from
+		(
+		SELECT
+		    ds.hostname sbmc,
+		    p.NAME sjmc,
+		    c.NAME dsmc,
+		    d.NAME qxmc,
+		    mr.NAME jfmc,
+		    fl.NAME pm,
+		    sf.NAME jdlx,
+		    sl.NAME ywlx,
+		    ds.device_status sbzt,
+		    (( CASE WHEN ds.soft_status = 3 THEN 1 ELSE 0 END ) + 0) oms,
+		    (( CASE WHEN ds.salt_status = 4 THEN 1 ELSE 0 END ) + 0) jieru,
+		    (( CASE WHEN conn.ssh_status = 0 THEN 1 ELSE 0 END ) + 0) ssh,
+		    (( CASE WHEN zb.zb_status = 1 THEN 1 ELSE 0 END ) + 0) agent,
+		    ds.ssh_ip ip
+		FROM
+		    v_jt_opsapp_deviceserver ds
+		    INNER JOIN v_jt_opsapp_machineroom mr ON mr.id = ds.machine_room_id
+		    INNER JOIN v_jt_opsapp_flat fl ON fl.id = ds.flat_id
+		    INNER JOIN v_jt_opsapp_district d ON d.id = mr.district_id
+		    INNER JOIN v_jt_opsapp_city c ON c.id = d.city_id
+		    INNER JOIN v_jt_opsapp_province p ON p.id = c.province_id
+		    INNER JOIN v_jt_opsapp_serverfun sf ON sf.id = ds.server_fun_id
+		    INNER JOIN v_jt_opsapp_serverlogicfun sl ON sl.id = ds.server_logic_fun_id
+		    LEFT JOIN v_jt_opsapp_deviceconnective conn ON ds.id = conn.device_server_id
+		    LEFT JOIN v_jt_zabbix_host zb ON ds.id = zb.id
+		)  t1
+		where 1=1
+		group by t1.sjmc
+		) result_
+	</select>
+	-->
+	
+	<select id="fetchAllDeviceServerList" resultType="com.aspire.ums.cdn.model.CdnDeviceServerDTO">
+		select m.name machineRoomName, 
+			isp.name ispName,
+			flat.name flatName,
+			svrGroup.name serverGroupName,
+			svrLogicFun.name serverLogicFunName,
+			deviceType.name deviceTypeName,
+			serverType.name serverTypeName,
+			serverFun.name serverFunName,
+			deviceVendor.name deviceVendorName,
+			deviceModel.name deviceModelName,
+			deviceOwner.name deviceOwnerName,
+			operSystem.name operationSystemName,
+			s.hostname hostname,
+			s.real_hostname realHostname,
+			s.m_card_ip mCardIP,
+			s.salt_status saltStatusCode,
+			s.device_status deviceStatusCode,
+			s.soft_status softStatusCode,
+			s.remark remark,
+			-- s.ssh_user ssh_user,
+			-- s.ssh_password ssh_password,
+			-- s.salt_jid salt_jid,
+			s.ssh_ip sshIP,
+			s.ssh_port sshPort
+		 from v_jt_opsapp_deviceserver s
+			left join v_jt_opsapp_machineroom m on s.machine_room_id = m.id
+			left join opsapp_isp isp on isp.id = s.isp_id
+			left join opsapp_flat flat on flat.id = s.flat_id
+			left join opsapp_servergroup svrGroup on svrGroup.id = s.server_group_id
+			left join opsapp_serverlogicfun svrLogicFun on svrLogicFun.id = s.server_logic_fun_id
+			left join opsapp_devicetype deviceType on deviceType.id = s.device_type_id
+			left join opsapp_servertype serverType on serverType.id = s.server_type_id
+			left join opsapp_serverfun serverFun on serverFun.id = s.server_fun_id
+			left join opsapp_devicevender deviceVendor on deviceVendor.id = s.device_vender_id
+			left join opsapp_devicemodel deviceModel on deviceModel.id = s.device_model_id
+			left join opsapp_deviceowner deviceOwner on deviceOwner.id = s.device_owner_id
+			left join opsapp_operationsystem operSystem on operSystem.id = s.operation_system_id
+	</select>
+</mapper>

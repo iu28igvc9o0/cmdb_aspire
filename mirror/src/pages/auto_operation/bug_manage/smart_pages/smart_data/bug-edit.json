@@ -1,0 +1,1044 @@
+{
+    "formList": [
+        {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1599213073905",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "漏洞名称",
+                            "type": "input",
+                            "columnName": "name",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "漏洞名称不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "text": ""
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "分组名称",
+                            "type": "select",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconxialakuang",
+                            "icon": "",
+                            "required": false,
+                            "rules": [],
+                            "columnName": "groupId",
+                            "targetName": "label_select_1599213081683",
+                            "defaultValue": "",
+                            "defaultContent": "",
+                            "isModel": false,
+                            "operation": [],
+                            "option-label": "name",
+                            "option-value": "vulnerability_group_id",
+                            "option-alias": "alias",
+                            "option-disabled": "disabled",
+                            "searchProps": {
+                                "need": "0",
+                                "apiName": "",
+                                "isShowInput": false,
+                                "labelAlias": "",
+                                "remotePropName": "condition"
+                            },
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "multiple": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "filterable": false,
+                                "remote": false,
+                                "text": ""
+                            },
+                            "optionProps": {
+                                "optionType": "2",
+                                "sessionKey": "",
+                                "dicKey": "",
+                                "apiName": "/v1/ops-service/vulnerabilityGroup/queryVulnerabilityGroupList",
+                                "separator": ",",
+                                "apiType": "post+json",
+                                "apiParam": "{page_no: 1,page_size: 200}"
+                            },
+                            "options": [
+                                {
+                                    "label": "Option 1",
+                                    "value": "1",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "Option 2",
+                                    "value": "2",
+                                    "disabled": false
+                                }
+                            ],
+                            "allItemSwitch": false,
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "showOptions": [
+                                {
+                                    "label": "Option 1",
+                                    "value": "1",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "Option 2",
+                                    "value": "2",
+                                    "disabled": false
+                                }
+                            ],
+                            "labelWidth": 160,
+                            "loading": true
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "漏洞编号",
+                            "type": "input",
+                            "columnName": "id",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": false,
+                            "rules": [],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": false,
+                                "disabled": true,
+                                "readonly": false,
+                                "text": ""
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160,
+                            "authSwitch": false,
+                            "dynamic": {},
+                            "operations": [],
+                            "style": {
+                                "word-break": "break-all"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "CVE编码",
+                            "type": "input",
+                            "columnName": "cveNumber",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "CVE编码不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "CNCVE编码",
+                            "type": "input",
+                            "columnName": "cncveNumber",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "CNCVE编码不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "CNVD编码",
+                            "type": "input",
+                            "columnName": "cnvdNumber",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "CNVD编码不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "text": ""
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "漏洞发现厂商",
+                            "type": "select",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconxialakuang",
+                            "icon": "",
+                            "required": false,
+                            "rules": [],
+                            "columnName": "discoverProducer",
+                            "targetName": "label_select_1599445662250",
+                            "defaultValue": "",
+                            "defaultContent": "",
+                            "isModel": true,
+                            "operation": [],
+                            "option-label": "label",
+                            "option-value": "value",
+                            "option-alias": "alias",
+                            "option-disabled": "disabled",
+                            "searchProps": {
+                                "need": "0",
+                                "apiName": "",
+                                "isShowInput": false,
+                                "labelAlias": "",
+                                "remotePropName": "condition"
+                            },
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "multiple": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "filterable": false,
+                                "remote": false,
+                                "text": ""
+                            },
+                            "optionProps": {
+                                "optionType": "0",
+                                "sessionKey": "",
+                                "dicKey": "",
+                                "apiName": "",
+                                "separator": ","
+                            },
+                            "options": [
+                                {
+                                    "label": "绿盟",
+                                    "value": "lvmeng",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "启明星辰",
+                                    "value": "qiming",
+                                    "disabled": false
+                                }
+                            ],
+                            "allItemSwitch": false,
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "showOptions": [
+                                {
+                                    "label": "绿盟",
+                                    "value": "lvmeng",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "启明星辰",
+                                    "value": "qiming",
+                                    "disabled": false
+                                }
+                            ],
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "是否重启",
+                            "type": "select",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconxialakuang",
+                            "icon": "",
+                            "required": false,
+                            "rules": [],
+                            "columnName": "needReboot",
+                            "targetName": "label_select_1599445663882",
+                            "defaultValue": "",
+                            "defaultContent": "",
+                            "isModel": true,
+                            "operation": [],
+                            "option-label": "label",
+                            "option-value": "value",
+                            "option-alias": "alias",
+                            "option-disabled": "disabled",
+                            "searchProps": {
+                                "need": "0",
+                                "apiName": "",
+                                "isShowInput": false,
+                                "labelAlias": "",
+                                "remotePropName": "condition"
+                            },
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "multiple": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "filterable": false,
+                                "remote": false
+                            },
+                            "optionProps": {
+                                "optionType": "0",
+                                "sessionKey": "",
+                                "dicKey": "",
+                                "apiName": "",
+                                "separator": ","
+                            },
+                            "options": [
+                                {
+                                    "label": "是",
+                                    "value": "Y",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "否",
+                                    "value": "N",
+                                    "disabled": false
+                                }
+                            ],
+                            "allItemSwitch": false,
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "showOptions": [
+                                {
+                                    "label": "是",
+                                    "value": "Y",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "否",
+                                    "value": "N",
+                                    "disabled": false
+                                }
+                            ],
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "危险等级",
+                            "type": "select",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconxialakuang",
+                            "icon": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "危险等级不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "columnName": "riskLevel",
+                            "targetName": "",
+                            "defaultValue": "",
+                            "defaultContent": "",
+                            "isModel": false,
+                            "operation": [],
+                            "option-label": "label",
+                            "option-value": "value",
+                            "option-alias": "alias",
+                            "option-disabled": "",
+                            "searchProps": {
+                                "need": "0",
+                                "apiName": "",
+                                "isShowInput": false,
+                                "labelAlias": "",
+                                "remotePropName": "condition"
+                            },
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "multiple": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "filterable": false,
+                                "remote": false,
+                                "text": ""
+                            },
+                            "optionProps": {
+                                "optionType": "2",
+                                "sessionKey": "",
+                                "dicKey": "",
+                                "apiName": "/v1/ops-service/vulnerability/riskLevelList",
+                                "separator": ",",
+                                "apiType": "get"
+                            },
+                            "options": [],
+                            "allItemSwitch": false,
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "showOptions": [],
+                            "labelWidth": 160,
+                            "loading": true
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "端口",
+                            "type": "input",
+                            "columnName": "port",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "端口不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160,
+                            "style": {
+                                "word-break": "break-all"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "协议",
+                            "type": "select",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconxialakuang",
+                            "icon": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "协议不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "columnName": "protocol",
+                            "targetName": "label_select_1599445677870",
+                            "defaultValue": "",
+                            "defaultContent": "",
+                            "isModel": true,
+                            "operation": [],
+                            "option-label": "label",
+                            "option-value": "value",
+                            "option-alias": "alias",
+                            "option-disabled": "disabled",
+                            "searchProps": {
+                                "need": "0",
+                                "apiName": "",
+                                "isShowInput": false,
+                                "labelAlias": "",
+                                "remotePropName": "condition"
+                            },
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "multiple": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "filterable": false,
+                                "remote": false,
+                                "text": ""
+                            },
+                            "optionProps": {
+                                "optionType": "0",
+                                "sessionKey": "",
+                                "dicKey": "",
+                                "apiName": "",
+                                "separator": ",",
+                                "apiType": "get"
+                            },
+                            "options": [
+                                {
+                                    "label": "TCP",
+                                    "value": "TCP",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "UDP",
+                                    "value": "UDP",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "其他",
+                                    "value": "其他",
+                                    "disabled": false
+                                }
+                            ],
+                            "allItemSwitch": false,
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "showOptions": [
+                                {
+                                    "label": "TCP",
+                                    "value": "TCP",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "UDP",
+                                    "value": "UDP",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "其他",
+                                    "value": "其他",
+                                    "disabled": false
+                                }
+                            ],
+                            "labelWidth": 160,
+                            "loading": true
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "服务",
+                            "type": "input",
+                            "columnName": "service",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": true,
+                            "rules": [
+                                {
+                                    "required": true,
+                                    "message": "服务不能为空",
+                                    "trigger": "blur"
+                                }
+                            ],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160,
+                            "style": {
+                                "word-break": "break-all"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "软件依赖",
+                            "type": "input",
+                            "columnName": "softDependencies",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "class": "",
+                            "required": false,
+                            "rules": [],
+                            "label-width": "",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont icondanhangwenben",
+                            "icon": "",
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false
+                            },
+                            "operation": [],
+                            "button": false,
+                            "slot": "",
+                            "button-name": "",
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160,
+                            "style": {
+                                "word-break": "break-all"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "是否可修复",
+                            "type": "select",
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconxialakuang",
+                            "icon": "",
+                            "required": false,
+                            "rules": [],
+                            "columnName": "canFixed",
+                            "targetName": "label_select_1599445684986",
+                            "defaultValue": "",
+                            "defaultContent": "",
+                            "isModel": true,
+                            "operation": [],
+                            "option-label": "label",
+                            "option-value": "value",
+                            "option-alias": "alias",
+                            "option-disabled": "disabled",
+                            "searchProps": {
+                                "need": "0",
+                                "apiName": "",
+                                "isShowInput": false,
+                                "labelAlias": "",
+                                "remotePropName": "condition"
+                            },
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "multiple": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "filterable": false,
+                                "remote": false
+                            },
+                            "optionProps": {
+                                "optionType": "0",
+                                "sessionKey": "",
+                                "dicKey": "",
+                                "apiName": "",
+                                "separator": ","
+                            },
+                            "options": [
+                                {
+                                    "label": "是",
+                                    "value": "Y",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "否",
+                                    "value": "N",
+                                    "disabled": false
+                                }
+                            ],
+                            "allItemSwitch": false,
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "showOptions": [
+                                {
+                                    "label": "是",
+                                    "value": "Y",
+                                    "disabled": false
+                                },
+                                {
+                                    "label": "否",
+                                    "value": "N",
+                                    "disabled": false
+                                }
+                            ],
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "描述",
+                            "type": "textarea",
+                            "columnName": "describe",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "required": false,
+                            "rules": [],
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconduohangwenben",
+                            "icon": "",
+                            "class": "",
+                            "operation": [],
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "rows": "4",
+                                "text": ""
+                            },
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 12,
+                    "childList": [
+                        {
+                            "label": "解决方法",
+                            "type": "textarea",
+                            "columnName": "repairMethod",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "required": false,
+                            "rules": [],
+                            "isLabelWidth": false,
+                            "icon-dev": "iconfont iconduohangwenben",
+                            "icon": "",
+                            "class": "",
+                            "operation": [],
+                            "hidden": false,
+                            "props": {
+                                "placeholder": "",
+                                "maxlength": "",
+                                "show-word-limit": false,
+                                "clearable": true,
+                                "disabled": false,
+                                "readonly": false,
+                                "rows": "4"
+                            },
+                            "span": 24,
+                            "width": "100%",
+                            "isCompare": true,
+                            "isDisabledRequired": false,
+                            "isReadonlyRequired": false,
+                            "name": "basic",
+                            "labelWidth": 160
+                        }
+                    ]
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+        },
+        {
+            "label": "按钮组",
+            "type": "buttonGroup",
+            "isLabelWidth": false,
+            "columnName": "buttonGroup_1601170610376",
+            "icon-dev": "iconfont iconanniu",
+            "span": 24,
+            "hidden": false,
+            "position": "center",
+            "operation": [],
+            "toolList": [
+                {
+                    "columnName": "btn-edit-submit",
+                    "type": "primary",
+                    "icon": "",
+                    "label": "确定",
+                    "interactive": "button_group_submit_all_validate",
+                    "validateProp": [],
+                    "apiName": "/v1/ops-service/vulnerability/updateVulnerability",
+                    "class": "",
+                    "default": "show",
+                    "add": "hidden",
+                    "modify": "show"
+                },
+                {
+                    "columnName": "btn-add-submit",
+                    "label": "确定",
+                    "type": "primary",
+                    "interactive": "button_group_submit_all_validate",
+                    "validateProp": [],
+                    "apiName": "/v1/ops-service/vulnerability/saveVulnerability",
+                    "class": "",
+                    "icon": "",
+                    "default": "show",
+                    "add": "show",
+                    "modify": "hidden"
+                },
+                {
+                    "columnName": "btn-cancel",
+                    "label": "取消",
+                    "type": "",
+                    "interactive": "",
+                    "validateProp": [],
+                    "apiName": "",
+                    "class": "",
+                    "icon": "",
+                    "default": "show",
+                    "add": "",
+                    "modify": ""
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 100
+        }
+    ],
+    "formConfig": {
+        "labelWidth": 100,
+        "labelPosition": "left",
+        "starPostion": "left",
+        "class": "",
+        "defaultClass": "default",
+        "size": "small",
+        "statusList": [
+            "add",
+            "modify"
+        ],
+        "serverProps": {
+            "nodeEnv": "production",
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "compareStatusList": []
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "name": "",
+        "groupId": "",
+        "id": "",
+        "cveNumber": "",
+        "cncveNumber": "",
+        "cnvdNumber": "",
+        "discoverProducer": "",
+        "needReboot": "",
+        "riskLevel": "",
+        "port": "",
+        "protocol": "",
+        "service": "",
+        "softDependencies": "",
+        "canFixed": "",
+        "describe": "",
+        "repairMethod": ""
+    },
+    "pre_loading_request_list": []
+}

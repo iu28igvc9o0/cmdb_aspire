@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.inspection.server.dao.ReportItemDao">
+
+    <resultMap id="ReportItemResultMap" type="com.aspire.mirror.inspection.server.dao.po.ReportItem">
+        <result property="reportItemId" column="report_item_id" jdbcType="BIGINT"/>
+        <result property="reportId" column="report_id" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="serverType" column="server_type" jdbcType="VARCHAR"/>
+        <result property="key" column="key" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="clock" column="clock" jdbcType="INTEGER"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
+        <result property="preValue" column="pre_value" jdbcType="VARCHAR"/>
+        <result property="ns" column="ns" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="riId" column="ri_id" jdbcType="VARCHAR"/>
+        <result property="name" column="item_name" jdbcType="VARCHAR"/>
+        <association property="reportItemExt" javaType="com.aspire.mirror.inspection.api.dto.ReportItemExt">
+            <id column="report_item_ext_id" property="reportItemExtId"/>
+            <result column="device_class" property="deviceClass"/>
+            <result column="device_type" property="deviceType"/>
+            <result column="device_name" property="deviceName"/>
+            <result column="log" property="log"/>
+            <result column="agent_ip" property="agentIp"/>
+            <result column="exec_status" property="execStatus"/>
+            <result column="idc_type" property="idcType"/>
+            <result column="biz_system" property="bizSystem"/>
+            <result column="expression" property="expression"/>
+            <result column="item_group" property="itemGroup"/>
+            <result column="biz_group" property="bizGroup"/>
+            <result column="item_name" property="itemName"/>
+        </association>
+        <collection property="reportItemValueList" ofType="com.aspire.mirror.inspection.api.dto.ReportItemValue">
+            <id column="report_item_value_id" property="reportItemValueId" jdbcType="BIGINT"/>
+            <result column="result_name" property="resultName"/>
+            <result column="result_value" property="resultValue"/>
+            <result column="result_status" property="resultStatus"/>
+            <result column="result_desc" property="resultDesc"/>
+        </collection>
+    </resultMap>
+
+    <sql id="ReportItem_Base_Column">
+        inspection_report_item.report_id,
+        inspection_report_item.item_id,
+        inspection_report_item.server_type,
+        inspection_report_item.key,
+        inspection_report_item.object_type,
+        inspection_report_item.object_id,
+        inspection_report_item.clock,
+        inspection_report_item.value,
+        inspection_report_item.pre_value,
+        inspection_report_item.ns,
+        inspection_report_item.status,
+        inspection_report_item.ri_id
+    </sql>
+    <!--<sql id="ReportItemValue_Base_Column">-->
+      <!--report_item_id,-->
+      <!--result_name,-->
+      <!--result_value,-->
+      <!--result_status-->
+    <!--</sql>-->
+    <sql id="ReportItem_ALL_Columns">
+    	inspection_report_item.report_item_id,
+        inspection_report_item.report_id,
+        inspection_report_item.item_id,
+        inspection_report_item.server_type,
+        inspection_report_item.key,
+        inspection_report_item.object_type,
+        inspection_report_item.object_id,
+        inspection_report_item.clock,
+        inspection_report_item.value,
+        inspection_report_item.pre_value,
+        inspection_report_item.ns,
+        inspection_report_item.status,
+        inspection_report_item.ri_id,
+        inspection_report_item_ext.report_item_ext_id,
+        inspection_report_item_ext.exec_status,
+        inspection_report_item_ext.device_class,
+        inspection_report_item_ext.device_type,
+        inspection_report_item_ext.device_name,
+        inspection_report_item_ext.agent_ip,
+        inspection_report_item_ext.idc_type,
+        inspection_report_item_ext.biz_system,
+        inspection_report_item_ext.log,
+        inspection_report_item_ext.expression,
+        inspection_report_item_ext.item_group,
+        inspection_report_item_ext.item_name,
+        inspection_report_item_value.result_name,
+        inspection_report_item_value.result_value,
+        inspection_report_item_value.result_status,
+        inspection_report_item_value.result_desc,
+        inspection_report_item_value.report_item_value_id
+    </sql>
+    <sql id="ReportItem_Query_Page_Sharing">
+        <where>
+            <if test="params.reportId != null and params.reportId != ''">
+                and inspection_report_item.report_id = #{params.reportId}
+            </if>
+            <if test="params.itemId != null and params.itemId != ''">
+                and inspection_report_item.item_id = #{params.itemId}
+            </if>
+            <!--<if test="params.log != null and params.log != ''">-->
+                <!--and inspection_report_item.log like concat('%',#{params.log},'%')-->
+            <!--</if>-->
+            <if test="params.logs != null and params.logs.size > 0">
+--                 and object_id in (
+                <foreach collection="params.logs" item="item" index="index" separator=" ">
+                    and inspection_report_item_ext.log like concat('%',#{item, jdbcType=VARCHAR},'%')
+                </foreach>
+--                 )
+            </if>
+            <if test="params.objectId != null and params.objectId != ''">
+                and inspection_report_item.object_id like concat('%',#{params.objectId},'%')
+            </if>
+            <if test="params.status != null and params.status != ''">
+                and inspection_report_item.status = #{params.status}
+            </if>
+            <if test="params.itemGroup != null and params.itemGroup != ''">
+                and inspection_report_item_ext.item_group in
+                <foreach item="item" index="index" collection="params.itemGroup.split(',')"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="params.execStatus != null and params.execStatus != ''">
+                and inspection_report_item_ext.exec_status in
+                <foreach item="item" index="index" collection="params.execStatus.split(',')"  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+    <sql id="ReportItem_Query_List_Sharing">
+        <where>
+            <if test="reportItemId != null ">
+                and inspection_report_item.report_item_id = #{reportItemId}
+            </if>
+            <if test="reportId != null ">
+                and inspection_report_item.report_id = #{reportId}
+            </if>
+            <if test="serverType != null ">
+                and inspection_report_item.key = #{serverType}
+            </if>
+            <if test="key != null ">
+                and inspection_report_item.key = #{key}
+            </if>
+            <if test="itemId != null ">
+                and inspection_report_item.item_id = #{itemId}
+            </if>
+            <if test="objectType != null ">
+                and inspection_report_item.object_type = #{objectType}
+            </if>
+            <if test="objectId != null ">
+                and inspection_report_item.object_id = #{objectId}
+            </if>
+            <if test="clock != null ">
+                and inspection_report_item.clock = #{clock}
+            </if>
+            <if test="value != null ">
+                and inspection_report_item.value = #{value}
+            </if>
+            <if test="preValue != null ">
+                and inspection_report_item.pre_value = #{preValue}
+            </if>
+            <if test="ns != null ">
+                and inspection_report_item.ns = #{ns}
+            </if>
+            <if test="status != null ">
+                and inspection_report_item.status = #{status}
+            </if>
+            <if test="execStatus != null">
+                and inspection_report_item.exec_status = #{execStatus}
+            </if>
+            <if test="log != null ">
+                and inspection_report_item.log = #{log}
+            </if>
+            <if test="riId != null ">
+                and inspection_report_item.ri_id = #{riId}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="reportItemId"
+                 open="(" separator="," close=")">
+            #{reportItemId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" 
+    		useGeneratedKeys="true"  keyColumn="report_item_id" keyProperty="reportItemId">
+        INSERT INTO inspection_report_item (
+        <include refid="ReportItem_Base_Column" />
+        ) VALUES (
+                #{reportId,jdbcType=VARCHAR},
+                #{itemId,jdbcType=VARCHAR},
+                #{serverType,jdbcType=VARCHAR},
+                #{key,jdbcType=VARCHAR},
+                #{objectType,jdbcType=VARCHAR},
+                #{objectId,jdbcType=VARCHAR},
+                #{clock,jdbcType=INTEGER},
+                #{value,jdbcType=VARCHAR},
+                #{preValue,jdbcType=VARCHAR},
+                #{ns,jdbcType=INTEGER},
+                #{status,jdbcType=VARCHAR},
+                #{riId,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="reportItemId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+    <insert id="insertReportItemExt" parameterType="com.aspire.mirror.inspection.api.dto.ReportItemExt">
+        insert into inspection_report_item_ops_ext (
+          report_item_id,
+          device_class,
+          device_type,
+          device_name,
+          log,
+          agent_ip,
+          exec_status,
+          idc_type,
+          biz_system,
+          expression,
+          item_group,
+          item_name,
+          biz_group
+        ) values (
+                #{reportItemId,jdbcType=VARCHAR},
+                #{deviceClass,jdbcType=VARCHAR},
+                #{deviceType,jdbcType=VARCHAR},
+                #{deviceName,jdbcType=VARCHAR},
+                #{log,jdbcType=CLOB},
+                #{agentIp,jdbcType=VARCHAR},
+                #{execStatus,jdbcType=VARCHAR},
+                #{idcType,jdbcType=VARCHAR},
+                #{bizSystem,jdbcType=VARCHAR},
+                #{expression,jdbcType=VARCHAR},
+                #{itemGroup,jdbcType=VARCHAR},
+                #{itemName,jdbcType=VARCHAR},
+                #{bizGroup,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" >
+        INSERT INTO inspection_report_item (
+        <include refid="ReportItem_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{reportId,jdbcType=VARCHAR},
+                #{itemId,jdbcType=VARCHAR},
+                #{serverType,jdbcType=VARCHAR},
+                #{key,jdbcType=VARCHAR},
+                #{objectType,jdbcType=VARCHAR},
+                #{objectId,jdbcType=VARCHAR},
+                #{clock,jdbcType=INTEGER},
+                #{value,jdbcType=VARCHAR},
+                #{preValue,jdbcType=VARCHAR},
+                #{ns,jdbcType=INTEGER},
+                #{status,jdbcType=VARCHAR},
+                #{item.riId,jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <insert id="batchInsertReportItemValue" parameterType="com.aspire.mirror.inspection.api.dto.ReportItemValue">
+      insert into inspection_report_item_value (
+          report_item_id,
+          result_name,
+          result_value,
+          result_status,
+          result_desc
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+         (
+            #{item.reportItemId,jdbcType=VARCHAR},
+            #{item.resultName,jdbcType=VARCHAR},
+            #{item.resultValue,jdbcType=VARCHAR},
+            #{item.resultStatus,jdbcType=VARCHAR},
+            #{item.resultDesc,jdbcType=VARCHAR}
+         )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM inspection_report_item WHERE report_item_id = #{reportItemId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM inspection_report_item WHERE report_item_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" >
+        DELETE FROM inspection_report_item WHERE report_item_id = #{reportItemId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" >
+        UPDATE inspection_report_item inspection_report_item
+        <set >
+                <if test="reportId != null" >
+                inspection_report_item.report_id = #{reportId},
+                </if>
+                <if test="itemId != null" >
+                inspection_report_item.item_id = #{itemId},
+                </if>
+                <if test="key != null" >
+                inspection_report_item.key = #{key},
+                </if>
+                <if test="objectType != null" >
+                inspection_report_item.object_type = #{objectType},
+                </if>
+                <if test="objectId != null" >
+                inspection_report_item.object_id = #{objectId},
+                </if>
+                <if test="clock != null" >
+                inspection_report_item.clock = #{clock},
+                </if>
+                <if test="value != null" >
+                inspection_report_item.value = #{value},
+                </if>
+                <if test="preValue != null" >
+                inspection_report_item.pre_value = #{preValue},
+                </if>
+                <if test="ns != null" >
+                inspection_report_item.ns = #{ns},
+                </if>
+                <if test="status != null" >
+                inspection_report_item.status = #{status},
+                </if>
+                <if test="log != null" >
+                inspection_report_item.log = #{log},
+                </if>
+                <if test="riId != null" >
+                inspection_report_item.ri_id = #{riId},
+                </if>
+        </set>
+        WHERE report_item_id = #{reportItemId}
+    </update>
+
+    <update id="updateBatchByPrimaryKeySelective" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" >
+        <foreach collection="list" separator=";" item="item"  index="index" open="" close="">
+        UPDATE inspection_report_item inspection_report_item
+        <set >
+            <if test="itemId != null" >
+                inspection_report_item.item_id = #{itemId},
+            </if>
+            <if test="key != null" >
+                inspection_report_item.key = #{key},
+            </if>
+            <if test="objectType != null" >
+                inspection_report_item.object_type = #{objectType},
+            </if>
+            <if test="objectId != null" >
+                inspection_report_item.object_id = #{objectId},
+            </if>
+            <if test="clock != null" >
+                inspection_report_item.clock = #{clock},
+            </if>
+            <if test="value != null" >
+                inspection_report_item.value = #{value},
+            </if>
+            <if test="preValue != null" >
+                inspection_report_item.pre_value = #{preValue},
+            </if>
+            <if test="ns != null" >
+                inspection_report_item.ns = #{ns},
+            </if>
+            <if test="status != null" >
+                inspection_report_item.status = #{status},
+            </if>
+            <if test="log != null" >
+                inspection_report_item.log = #{log},
+            </if>
+            <if test="riId != null" >
+                inspection_report_item.ri_id = #{riId},
+            </if>
+        </set>
+        WHERE report_item_id = #{reportItemId}
+        </foreach>
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" >
+        UPDATE inspection_report_item inspection_report_item
+        SET
+        inspection_report_item.report_id = #{reportId},
+        inspection_report_item.item_id = #{itemId},
+        inspection_report_item.key = #{key},
+        inspection_report_item.object_type = #{objectType},
+        inspection_report_item.object_id = #{objectId},
+        inspection_report_item.clock = #{clock},
+        inspection_report_item.value = #{value},
+        inspection_report_item.pre_value = #{preValue},
+        inspection_report_item.ns = #{ns},
+        inspection_report_item.status = #{status},
+        inspection_report_item.log = #{log},
+        inspection_report_item.ri_id = #{riId}
+        WHERE report_item_id = #{reportItemId}
+    </update>
+	
+	<update id="updateStatusByUniqueKeys" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem" >
+		update inspection_report_item
+		   set status = #{status}
+		 where report_id = #{reportId}
+		   and item_id = #{itemId}
+		   and object_type = #{objectType}
+		   and object_id = #{objectId} 
+	</update>
+	<update id="updateExecStatusByUniqueKeys" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem">
+        update inspection_report_item_ops_ext set exec_status = #{execStatus}
+        where report_item_id in (
+         select report_item_id from inspection_report_item
+          where report_id = #{reportId}
+		   and item_id = #{itemId}
+		   and object_type = #{objectType}
+		   and object_id = #{objectId}
+        )
+    </update>
+    <select id="selectByPrimaryKey" resultMap="ReportItemResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="ReportItem_ALL_Columns" />
+        FROM inspection_report_item inspection_report_item
+        left join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+        left join inspection_report_item_value inspection_report_item_value on inspection_report_item.report_item_id = inspection_report_item_value.report_item_id
+        WHERE report_item_id = #{reportItemId}
+    </select>
+    
+    <select id="selectCountByReportId" resultType="java.lang.Integer" parameterType="java.lang.String">
+    	SELECT
+        COUNT(*)
+        FROM inspection_report_item inspection_report_item
+    	WHERE report_id = #{reportId}
+    </select>
+
+    <select id="selectByReportId" resultMap="ReportItemResultMap" parameterType="java.lang.String">
+    	SELECT
+        inspection_report_item.report_item_id,
+        inspection_report_item.report_id,
+        inspection_report_item.item_id,
+        inspection_report_item.server_type,
+        inspection_report_item.key,
+        inspection_report_item.object_type,
+        inspection_report_item.object_id,
+        inspection_report_item.clock,
+        inspection_report_item.value,
+        inspection_report_item.pre_value,
+        inspection_report_item.ns,
+        inspection_report_item.status,
+        inspection_report_item.ri_id,
+        inspection_report_item_ext.report_item_ext_id,
+        inspection_report_item_ext.exec_status,
+        inspection_report_item_ext.device_class,
+        inspection_report_item_ext.device_type,
+        inspection_report_item_ext.device_name,
+        inspection_report_item_ext.agent_ip,
+        inspection_report_item_ext.idc_type,
+        inspection_report_item_ext.biz_system,
+        inspection_report_item_ext.item_name,
+        inspection_report_item_ext.item_group,
+        inspection_report_item_ext.biz_group,
+        inspection_report_item_ext.expression,
+        inspection_report_item_value.result_name,
+        inspection_report_item_value.result_value,
+        inspection_report_item_value.result_status,
+        inspection_report_item_value.result_desc,
+        inspection_report_item_value.report_item_value_id
+        FROM inspection_report_item inspection_report_item
+        left join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+    	left join inspection_report_item_value inspection_report_item_value on inspection_report_item.report_item_id = inspection_report_item_value.report_item_id
+    	WHERE report_id = #{reportId}
+    	order by inspection_report_item_ext.biz_group, inspection_report_item.object_id, inspection_report_item.item_id
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="ReportItemResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="ReportItem_ALL_Columns" />
+        FROM inspection_report_item inspection_report_item
+        left join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+        left join inspection_report_item_value inspection_report_item_value on inspection_report_item.report_item_id = inspection_report_item_value.report_item_id
+        WHERE report_item_id = #{reportItemId}
+    </select>
+    <select id="select" resultMap="ReportItemResultMap" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem">
+        SELECT
+        <include refid="ReportItem_ALL_Columns" />
+        FROM inspection_report_item inspection_report_item
+        left join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+        left join inspection_report_item_value inspection_report_item_value on inspection_report_item.report_item_id = inspection_report_item_value.report_item_id
+        <include refid="ReportItem_Query_List_Sharing"/>
+    </select>
+    <select id="getItemNumByReportId" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(distinct item_id) from inspection_report_item where report_id = #{reprotId}
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.inspection.server.dao.po.ReportItem">
+        SELECT COUNT(*) FROM inspection_report_item inspection_report_item
+        <include refid="ReportItem_Query_List_Sharing" />
+    </select>
+    <select id="selectNoResultCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM inspection_report_item inspection_report_item
+        left join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+        WHERE inspection_report_item.report_id = #{reportId} AND inspection_report_item.object_type <![CDATA[<>]]> '3'  AND inspection_report_item_ext.exec_status <![CDATA[<>]]> '2' AND item_id IN (
+        SELECT item_id
+        FROM monitor_triggers
+        WHERE item_id in (select item_id from inspection_report_item where report_id = #{reportId}))
+    </select>
+    <select id="pageListCount" resultType="java.lang.Integer"  parameterType="com.aspire.mirror.common.entity.Page">
+        select count(*) from inspection_report_item inspection_report_item
+        INNER join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+        INNER join inspection_report_item_value inspection_report_item_value on inspection_report_item.report_item_id = inspection_report_item_value.report_item_id
+        <include refid="ReportItem_Query_Page_Sharing" />
+    </select>
+    <resultMap id="ReportItemPageMap" type="com.aspire.mirror.inspection.server.dao.po.ReportItem">
+        <result property="reportItemId" column="report_item_id" jdbcType="BIGINT"/>
+        <result property="reportId" column="report_id" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="serverType" column="server_type" jdbcType="VARCHAR"/>
+        <result property="key" column="key" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="clock" column="clock" jdbcType="INTEGER"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
+        <result property="preValue" column="pre_value" jdbcType="VARCHAR"/>
+        <result property="ns" column="ns" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="riId" column="ri_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="resultName" column="result_name" jdbcType="VARCHAR"/>
+        <result property="resultDesc" column="result_desc" jdbcType="VARCHAR"/>
+        <association property="reportItemExt" javaType="com.aspire.mirror.inspection.api.dto.ReportItemExt">
+            <id column="report_item_ext_id" property="reportItemExtId"/>
+            <result column="device_class" property="deviceClass"/>
+            <result column="device_type" property="deviceType"/>
+            <result column="device_name" property="deviceName"/>
+            <result column="log" property="log"/>
+            <result column="agent_ip" property="agentIp"/>
+            <result column="exec_status" property="execStatus"/>
+            <result column="idc_type" property="idcType"/>
+            <result column="biz_system" property="bizSystem"/>
+            <result column="expression" property="expression"/>
+            <result column="item_group" property="itemGroup"/>
+            <result column="item_name" property="itemName"/>
+        </association>
+    </resultMap>
+    <select id="pageList" resultMap="ReportItemPageMap"  parameterType="com.aspire.mirror.common.entity.Page">
+        select
+        inspection_report_item.report_item_id,
+        inspection_report_item.report_id,
+        inspection_report_item.item_id,
+        inspection_report_item.server_type,
+        inspection_report_item.key,
+        inspection_report_item.object_type,
+        inspection_report_item.object_id,
+        inspection_report_item.clock,
+--         inspection_report_item.value,
+        inspection_report_item.pre_value,
+        inspection_report_item.ns,
+--         inspection_report_item.status,
+        inspection_report_item.ri_id,
+        inspection_report_item_value.result_name,
+        inspection_report_item_value.result_value value,
+        inspection_report_item_value.result_status status,
+        inspection_report_item_value.result_desc result_desc,
+        inspection_report_item_ext.report_item_ext_id,
+        inspection_report_item_ext.exec_status,
+        inspection_report_item_ext.device_class,
+        inspection_report_item_ext.device_type,
+        inspection_report_item_ext.device_name,
+        inspection_report_item_ext.agent_ip,
+        inspection_report_item_ext.idc_type,
+        inspection_report_item_ext.biz_system,
+        inspection_report_item_ext.expression,
+        inspection_report_item_ext.item_group,
+        inspection_report_item_ext.item_name,
+        inspection_report_item_ext.log
+        from inspection_report_item inspection_report_item
+        INNER join inspection_report_item_ops_ext inspection_report_item_ext on inspection_report_item.report_item_id = inspection_report_item_ext.report_item_id
+        INNER join inspection_report_item_value inspection_report_item_value on inspection_report_item.report_item_id = inspection_report_item_value.report_item_id
+        <include refid="ReportItem_Query_Page_Sharing" />
+        order by inspection_report_item.object_id , inspection_report_item.item_id
+        limit #{begin},#{pageSize}
+    </select>
+    <select id="selectNoFinishItemCount" resultType="java.lang.Integer">
+        SELECT COUNT(taskItem.reportLabel)
+        FROM (
+        SELECT CONCAT_WS('_',ito.object_type, ito.object_id, mi.item_id) reportLabel
+        FROM inspection_task it, inspection_task_object ito, monitor_items mi
+        WHERE it.task_id = ito.task_id AND mi.template_id = ito.template_id AND it.task_id = #{taskId}) taskItem
+        WHERE reportLabel NOT IN (
+        SELECT CONCAT_WS('_',iri.object_type, ioe.agent_ip, iri.item_id)
+        FROM inspection_report_item iri
+        left join inspection_report_item_ops_ext ioe on iri.report_item_id = ioe.report_item_id
+        WHERE iri.report_id = #{reportId})
+    </select>
+    <select id="selectNumStatistic" resultType="com.aspire.mirror.inspection.server.dao.po.ReportResultStatistic">
+        select count(distinct iri.object_id) deviceNum, count(distinct iriv.report_item_id) itemNum, count(report_item_value_id) resultNum,
+        sum(case when iriv.result_status=0 then 1 else 0 end) AS normalNum,
+        sum(case when iriv.result_status=1 then 1 else 0 end) AS exceptionNum,
+        sum(case when iriv.result_status=2 then 1 else 0 end) AS noResultNum,
+        sum(case when iriv.result_status=3 then 1 else 0 end) AS artificialJudgmentNum
+        from inspection_report_item iri , inspection_report_item_value iriv  where iriv.report_item_id = iri.report_item_id and report_id = #{reportId}
+    </select>
+    <select id="selectCountByStatus" resultType="java.lang.Integer">
+        select count(*) from inspection_report_item where  report_id = #{reportId} AND status = #{status}
+    </select>
+    <update id="updateReportItemValueStatus" parameterType="com.aspire.mirror.inspection.api.dto.ReportItemValue">
+        update inspection_report_item_value set result_status=#{resultStatus}
+        where report_item_value_id = #{reportItemValueId}
+    </update>
+    <update id="updateReportItemExtByReportItemId" parameterType="com.aspire.mirror.inspection.api.dto.ReportItemExt">
+        update inspection_report_item_ops_ext
+        <set>
+            <if test="execStatus != null and execStatus != ''">
+                exec_status = #{execStatus},
+            </if>
+            <if test="expression != null and expression != ''">
+                expression = #{expression},
+            </if>
+        </set>
+        where report_item_id = #{reportItemId}
+    </update>
+</mapper>

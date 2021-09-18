@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     BizThemeDimSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-10-23 20:39:16
+ -->
+<mapper namespace="com.aspire.mirror.theme.server.dao.BizThemeDimDao">
+
+    <resultMap type="com.aspire.mirror.theme.server.dao.po.BizThemeDim" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="dimName" column="dim_name" jdbcType="VARCHAR"/>
+        <result property="dimType" column="dim_type" jdbcType="VARCHAR"/>
+        <result property="dimCode" column="dim_code" jdbcType="VARCHAR"/>
+        <result property="dimReg" column="dim_reg" jdbcType="VARCHAR"/>
+        <result property="dimOrder" column="dim_order" jdbcType="INTEGER"/>
+        <result property="themeId" column="theme_id" jdbcType="VARCHAR"/>
+        <result property="matchFlag" column="match_flag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="com.aspire.mirror.theme.server.dao.po.BizThemeDim" useGeneratedKeys="false">
+        INSERT INTO monitor_biz_theme_dim (
+        id, dim_name, dim_type, dim_code, dim_reg, dim_order, theme_id, match_flag
+        )
+        select SEQ_THEME_DIM.nextval,A.* from
+        (
+        <foreach collection="list" item="item" index="index" separator="union all">
+            select
+            #{item.dimName,jdbcType=VARCHAR},
+            #{item.dimType,jdbcType=VARCHAR},
+            #{item.dimCode,jdbcType=VARCHAR},
+            #{item.dimReg,jdbcType=VARCHAR},
+            #{item.dimOrder,jdbcType=INTEGER},
+            #{item.themeId,jdbcType=VARCHAR},
+            #{item.matchFlag,jdbcType=VARCHAR}
+            from dual
+        </foreach>
+        ) A
+    </insert>
+
+
+
+    <insert id="insert" parameterType="com.aspire.mirror.theme.server.dao.po.BizThemeDim" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO monitor_biz_theme_dim (
+		  id, dim_name, dim_type, dim_code, dim_reg, dim_order, theme_id, match_flag
+		) VALUES
+		(
+		    SEQ_THEME_DIM.nextval,
+			#{dimName,jdbcType=VARCHAR},
+			#{dimType,jdbcType=VARCHAR},
+			#{dimCode,jdbcType=VARCHAR},
+			#{dimReg,jdbcType=VARCHAR},
+			#{dimOrder,jdbcType=INTEGER},
+			#{themeId,jdbcType=VARCHAR},
+			#{matchFlag,jdbcType=VARCHAR}
+			)
+	</insert>
+
+
+    <select id="selectByPrimaryKeyArrays" resultMap="baseResultMap" parameterType="java.util.List">
+        SELECT
+        id, dim_name, dim_type, dim_code, dim_reg, dim_order, theme_id, match_flag
+        FROM monitor_biz_theme_dim
+        WHERE id in
+        <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </select>
+
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="id"  separator=","  close=")"  open="(">
+            #{id}
+        </foreach>
+    </sql>
+
+
+    <select id="select" resultMap="baseResultMap" parameterType="com.aspire.mirror.theme.server.dao.po.BizThemeDim">
+        select id, dim_name, dim_type, dim_code, dim_reg, dim_order, theme_id, match_flag from monitor_biz_theme_dim
+        where 1=1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="dimName != null">
+            and dim_name = #{dimName}
+        </if>
+        <if test="dimType != null">
+            and dim_type = #{dimType}
+        </if>
+        <if test="dimCode != null">
+            and dim_code = #{dimCode}
+        </if>
+        <if test="dimReg != null">
+            and dim_reg = #{dimReg}
+        </if>
+        <if test="dimOrder != null">
+            and dim_order = #{dimOrder}
+        </if>
+        <if test="themeId != null">
+            and theme_id = #{themeId}
+        </if>
+        <if test="matchFlag != null">
+            and match_flag = #{matchFlag}
+        </if>
+    </select>
+
+
+    <select id="selectByThemeId" resultMap="baseResultMap" parameterType="java.lang.String">
+           select id, dim_name, dim_type, dim_code, dim_reg, dim_order, theme_id, match_flag from monitor_biz_theme_dim where theme_id = #{themeId} order by dim_order asc
+    </select>
+
+
+    <select id="selectByPrimaryKey" resultMap="baseResultMap" parameterType="String">
+        select id, dim_name, dim_type, dim_code, dim_reg, dim_order, theme_id, match_flag from monitor_biz_theme_dim where id = #{id}
+    </select>
+
+
+    <delete id="deleteByThemeId" parameterType="String">
+      delete from monitor_biz_theme_dim where theme_id = #{themeId}
+    </delete>
+</mapper>

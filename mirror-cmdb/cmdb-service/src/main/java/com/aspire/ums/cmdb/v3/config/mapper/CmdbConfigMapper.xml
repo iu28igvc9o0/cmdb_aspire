@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.config.mapper.CmdbConfigMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.config.payload.CmdbConfig" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="config_code" property="configCode" jdbcType="VARCHAR" />
+        <result column="config_value" property="configValue" jdbcType="VARCHAR" />
+        <result column="config_value_type" property="configValueType" jdbcType="VARCHAR" />
+        <result column="config_remark" property="configRemark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `config_code`,
+        `config_value`,
+        `config_value_type`,
+        `config_remark`
+        FROM cmdb_config
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfig">
+        SELECT
+        `id`,
+        `config_code`,
+        `config_value`,
+        `config_value_type`,
+        `config_remark`
+        FROM cmdb_config
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="configCode != null and configCode != ''">
+        AND `config_code` like concat(#{configCode},'%')
+        </if>
+        <if test="configValue != null and configValue != ''">
+        AND `config_value` = #{configValue}
+        </if>
+        <if test="configValueType != null and configValueType != ''">
+        AND `config_value_type` = #{configValueType}
+        </if>
+        <if test="configRemark != null and configRemark != ''">
+        AND `config_remark` = #{configRemark}
+        </if>
+    </select>
+
+    <!-- list查询的数据数量   -->
+    <select id="listCountWithPage" resultType="int" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfigRequest">
+        SELECT count(*)
+        FROM cmdb_config
+        WHERE 1=1 <include refid="where_with_page"/>
+    </select>
+
+    <sql id="where_with_page">
+        <if test="configCode != null and configCode != ''">
+            AND `config_code` like concat('%',#{configCode},'%')
+        </if>
+    </sql>
+
+    <!-- list查询列表数据，分页   -->
+    <select id="listWithPage" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfigRequest">
+        SELECT
+        `id`,
+        `config_code`,
+        `config_value`,
+        `config_value_type`,
+        `config_remark`
+        FROM cmdb_config
+        WHERE 1=1 <include refid="where_with_page"/>
+        order by config_code
+        <if test="pageNo != null and pageSize != null">
+            limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfig" resultMap="resultMap">
+        SELECT
+        `id`,
+        `config_code`,
+        `config_value`,
+        `config_value_type`,
+        `config_remark`
+        FROM cmdb_config
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="configCode != null and configCode != ''">
+            AND `config_code` = #{configCode}
+        </if>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfig">
+        INSERT INTO cmdb_config
+        (
+            `id`,
+            `config_code`,
+            `config_value`,
+            `config_value_type`,
+            `config_remark`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{configCode, jdbcType=VARCHAR},
+            #{configValue, jdbcType=VARCHAR},
+            #{configValueType, jdbcType=VARCHAR},
+            #{configRemark, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfig">
+        UPDATE cmdb_config SET
+        `config_value` = #{configValue},
+        `config_value_type` = #{configValueType},
+        `config_remark` = #{configRemark}
+        WHERE `id` = #{id} and `config_code` = #{configCode}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.config.payload.CmdbConfig">
+        DELETE FROM cmdb_config
+        WHERE
+         `id` = #{id}
+         and  `config_code` = #{configCode}
+    </delete>
+</mapper>

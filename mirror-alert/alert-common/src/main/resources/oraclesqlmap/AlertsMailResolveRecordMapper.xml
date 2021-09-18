@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.mailAlert.AlertMailResolveRecordDao">
+    <resultMap id="baseResultMap" type="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailResolveRecord">
+        <result property="id" column="id" jdbcType="INTEGER"></result>
+        <result property="filterId" column="filter_id" jdbcType="VARCHAR"></result>
+        <result property="mailTitle" column="mail_title" jdbcType="VARCHAR"></result>
+        <result property="mailContent" column="mail_content" jdbcType="VARCHAR"></result>
+        <result property="mailSender" column="mail_sender" jdbcType="VARCHAR"></result>
+        <result property="mailReceiver" column="mail_receiver" jdbcType="VARCHAR"></result>
+        <result property="mailSendTime" column="mail_send_time" jdbcType="TIMESTAMP"></result>
+        <result property="resolveTime" column="resolve_time" jdbcType="TIMESTAMP"></result>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"></result>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"></result>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"></result>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"></result>
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <sql id="baseWhereClause">
+        <where>
+            1 = 1
+            <if test="params['filterId'] != null and params['filterId'] != ''">
+                AND filter_id = #{params.filterId}
+            </if>
+            <if test="params['gatherTimeStart'] != null and params['gatherTimeEnd'] != null">
+                AND resolve_time >= to_date(#{params.gatherTimeStart},'yyyy-mm-dd hh24:mi:ss')
+                AND resolve_time <![CDATA[<]]> to_date(#{params.gatherTimeStart},'yyyy-mm-dd hh24:mi:ss') + 1
+            </if>
+            <if test="params['sendTimeStart'] != null and params['sendTimeEnd'] != null">
+                AND mail_send_time >= to_date(#{params.sendTimeStart},'yyyy-mm-dd hh24:mi:ss')
+                AND mail_send_time <![CDATA[<]]> to_date(#{params.sendTimeStart},'yyyy-mm-dd hh24:mi:ss') + 1
+            </if>
+            <if test="params['mailTitle'] != null and params['mailTitle'] != ''">
+                AND mail_title LIKE concat(concat('%',#{params.mailTitle}),'%')
+            </if>
+            <if test="params['mailContent'] != null and params['mailContent'] != ''">
+                AND mail_content LIKE concat(concat('%',#{params.mailContent}),'%')
+            </if>
+            <if test="params['alertId'] != null and params['alertId'] != ''">
+                AND alert_id = #{params.alertId}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="countResolveRecords" parameterType="com.aspire.mirror.common.entity.Page" resultType="int">
+        SELECT COUNT(1) FROM alert_mail_resolve_record <include refid="baseWhereClause"></include>
+    </select>
+
+
+    <select id="resolveRecordsList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        select aa.* from
+        (select r.*,ROWNUM nm
+        FROM alert_mail_resolve_record r
+        <include refid="baseWhereClause"></include>
+        AND ROWNUM <![CDATA[<=]]> #{begin}+#{pageSize}
+        ) aa
+        where aa.nm &gt; #{begin}
+    </select>
+
+
+    <insert id="insertResolveRecords" parameterType="com.aspire.mirror.alert.server.dao.mailAlert.po.AlertMailResolveRecord">
+        INSERT INTO alert_mail_resolve_record
+        (
+        id,
+        filter_id,
+        mail_title,
+        mail_content,
+        mail_sender,
+        mail_receiver,
+        mail_send_time,
+        resolve_time,
+        device_ip,
+        moni_index,
+        moni_object,
+        alert_level,
+        alert_id
+        )
+        VALUES (
+          SEQ_ALERT_MAIL_RESOLVE_RECORD.nextval,
+          #{filterId,jdbcType=VARCHAR},
+          #{mailTitle,jdbcType=VARCHAR},
+          #{mailContent,jdbcType=VARCHAR},
+          #{mailSender,jdbcType=VARCHAR},
+          #{mailReceiver,jdbcType=VARCHAR},
+          #{mailSendTime,jdbcType=TIMESTAMP},
+          #{resolveTime,jdbcType=TIMESTAMP},
+          #{deviceIp,jdbcType=VARCHAR},
+          #{moniIndex,jdbcType=VARCHAR},
+          #{moniObject,jdbcType=VARCHAR},
+          #{alertLevel,jdbcType=VARCHAR},
+          #{alertId,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

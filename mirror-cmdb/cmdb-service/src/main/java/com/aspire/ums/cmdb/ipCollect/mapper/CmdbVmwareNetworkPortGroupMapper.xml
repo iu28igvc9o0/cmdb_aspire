@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.ipCollect.mapper.CmdbVmwareNetworkPortGroupMapper">
+
+    <resultMap type="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVmwareNetworkPortGroup" id="cmdbVmwareNetworkPortGroup">
+        <result property="id" column="id" jdbcType="VARCHAR" />
+        <result property="eventId" column="event_id" jdbcType="VARCHAR" />
+        <result property="instanceId" column="instance_id" jdbcType="VARCHAR" />
+        <result property="name" column="name" jdbcType="VARCHAR" />
+        <result property="resourcePool" column="resource_pool" jdbcType="VARCHAR" />
+        <result property="dataCenterName" column="data_center_name" jdbcType="VARCHAR" />
+        <result property="portGroupName" column="port_group_name" jdbcType="VARCHAR" />
+        <result property="srcCreateTime" column="src_create_time" jdbcType="TIMESTAMP" />
+        <result property="srcOptTime" column="src_opt_time" jdbcType="TIMESTAMP" />
+        <result property="srcPreOptTime" column="src_pre_opt_time" jdbcType="TIMESTAMP" />
+        <result property="srcCreator" column="src_creator" jdbcType="VARCHAR" />
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+        <result property="version" column="version" jdbcType="INTEGER" />
+        <result property="delFlag" column="del_flag" jdbcType="CHAR" />
+    </resultMap>
+
+    <sql id="selectBaseColumn">
+		id,
+		event_id,
+		instance_id,
+		`name`,
+		resource_pool,
+		data_center_name,
+		port_group_name,
+		src_create_time,
+		src_opt_time,
+		src_pre_opt_time,
+		src_creator,
+		create_time,
+		update_time,
+		version,
+		del_flag
+	</sql>
+
+    <sql id="insertBaseColumn">
+		id,
+		instance_id,
+		name,
+		resource_pool,
+		data_center_name,
+		port_group_name,
+		src_create_time,
+		src_opt_time,
+		src_pre_opt_time,
+		src_creator,
+		version,
+		event_id
+	</sql>
+
+    <!-- 根据主键查询 -->
+    <select id="findById" parameterType="string" resultMap="cmdbVmwareNetworkPortGroup">
+        SELECT
+        <include refid="selectBaseColumn" />
+        FROM
+        cmdb_vmware_network_port_group
+        WHERE
+        id = #{id}
+    </select>
+
+    <!-- 根据实例ID查询 -->
+    <select id="findByInstanceId" parameterType="string" resultMap="cmdbVmwareNetworkPortGroup">
+        SELECT
+        <include refid="selectBaseColumn" />
+        FROM
+        cmdb_vmware_network_port_group
+        WHERE
+        instance_id = #{instanceId}
+    </select>
+
+    <!-- 根据多个实例ID查询 -->
+    <select id="findByInstanceIdList" parameterType="java.util.List" resultMap="cmdbVmwareNetworkPortGroup">
+        SELECT
+        <include refid="selectBaseColumn" />
+        FROM
+        cmdb_vmware_network_port_group
+        <where>
+            instance_id in
+            <foreach collection="list" separator="," item="instanceId" open="(" close=")">
+                #{instanceId,jdbcType=VARCHAR}
+            </foreach>
+        </where>
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVmwareNetworkPortGroup">
+        <selectKey resultType="string" order="BEFORE" keyProperty="id">
+            SELECT REPLACE(UUID(),"-","")
+        </selectKey>
+        INSERT INTO cmdb_vmware_network_port_group (
+        <include refid="insertBaseColumn" />
+        )
+        VALUES (
+        #{id,jdbcType=VARCHAR},
+        #{instanceId,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        #{item.resourcePool,jdbcType=VARCHAR},
+        #{item.dataCenterName,jdbcType=VARCHAR},
+        #{item.portGroupName,jdbcType=VARCHAR},
+        #{srcCreateTime,jdbcType=TIMESTAMP},
+        #{srcOptTime,jdbcType=TIMESTAMP},
+        #{srcPreOptTime,jdbcType=TIMESTAMP},
+        #{srcCreator,jdbcType=VARCHAR},
+        #{version,jdbcType=INTEGER},
+        #{eventId,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 批量新增 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_vmware_network_port_group (
+        <include refid="insertBaseColumn" />
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},
+            #{item.instanceId,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.resourcePool,jdbcType=VARCHAR},
+            #{item.dataCenterName,jdbcType=VARCHAR},
+            #{item.portGroupName,jdbcType=VARCHAR},
+            #{item.srcCreateTime,jdbcType=TIMESTAMP},
+            #{item.srcOptTime,jdbcType=TIMESTAMP},
+            #{item.srcPreOptTime,jdbcType=TIMESTAMP},
+            #{item.srcCreator,jdbcType=VARCHAR},
+            #{item.version,jdbcType=INTEGER},
+            #{item.eventId,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.ipCollect.payload.entity.CmdbVmwareNetworkPortGroup">
+        UPDATE cmdb_vmware_network_port_group
+        <set>
+            <if test="instanceId != null ">
+                instance_id =  #{instanceId},
+            </if>
+            <if test="name != null ">
+                name =  #{name},
+            </if>
+            <if test="resourcePool != null ">
+                resource_pool =  #{resourcePool},
+            </if>
+            <if test="dataCenterName != null ">
+                data_center_name =  #{dataCenterName},
+            </if>
+            <if test="portGroupName != null ">
+                port_group_name =  #{portGroupName},
+            </if>
+            <if test="srcCreateTime != null ">
+                src_create_time =  #{srcCreateTime},
+            </if>
+            <if test="srcOptTime != null ">
+                src_opt_time =  #{srcOptTime},
+            </if>
+            <if test="srcPreOptTime != null ">
+                src_pre_opt_time =  #{srcPreOptTime},
+            </if>
+            <if test="srcCreator != null ">
+                src_creator =  #{srcCreator},
+            </if>
+            <if test="createTime != null ">
+                create_time =  #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time =  #{updateTime},
+            </if>
+            <if test="version != null ">
+                version =  #{version},
+            </if>
+            <if test="delFlag != null ">
+                del_flag =  #{delFlag},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateByInstanceId" parameterType="java.util.HashMap">
+        UPDATE cmdb_vmware_network_port_group
+        <set>
+            <if test="_parameter.containsKey('name') ">
+                `name` =  #{name},
+            </if>
+            <if test="_parameter.containsKey('resourcepool') ">
+                resource_pool =  #{resourcepool},
+            </if>
+            <if test="_parameter.containsKey('datacentername') ">
+                data_center_name =  #{datacentername},
+            </if>
+            <if test="_parameter.containsKey('portgroupname') ">
+                port_group_name =  #{portgroupname},
+            </if>
+            <if test="_parameter.containsKey('srcCreateTime') ">
+                src_create_time =  #{srcCreateTime},
+            </if>
+            <if test="_parameter.containsKey('srcOptTime') ">
+                src_opt_time =  #{srcOptTime},
+            </if>
+            <if test="_parameter.containsKey('srcPreOptTime') ">
+                src_pre_opt_time =  #{srcPreOptTime},
+            </if>
+            <if test="_parameter.containsKey('srcCreator') ">
+                src_creator =  #{srcCreator},
+            </if>
+            <if test="_parameter.containsKey('version') ">
+                version =  #{version},
+            </if>
+        </set>
+        WHERE instance_id=#{instanceId}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+   		DELETE FROM cmdb_vmware_network_port_group WHERE id=#{id}
+   </delete>
+
+    <delete id="deleteByInstanceId" parameterType="java.lang.String">
+   		DELETE FROM cmdb_vmware_network_port_group WHERE instance_id=#{instanceId}
+   </delete>
+
+    <select id="getAllInstanceId" resultType="java.lang.String">
+		SELECT distinct instance_id FROM cmdb_vmware_network_port_group
+	</select>
+
+    <delete id="deleteByInstanceIdList" parameterType="java.util.List">
+        DELETE FROM cmdb_vmware_network_port_group WHERE instance_id IN
+        <foreach collection="list" item="instanceId" index="index" open="(" close=")"  separator=",">
+            #{instanceId,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.webbas.epm.core.dao.EpmProcessDao">
+	<resultMap id="baseResultMap" type="com.aspire.webbas.epm.core.entity.EpmProcess">
+		<id column="process_id" property="processId" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+		<result column="root_id" property="rootId" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="deal_type" property="dealType" jdbcType="VARCHAR" />
+		<result column="pre_status" property="preStatus" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="last_update_time" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="owner_id" property="ownerId" jdbcType="VARCHAR" />
+		<result column="define_content" property="defineContent" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 列表 -->
+	<select id="list" parameterType="com.aspire.webbas.epm.core.entity.EpmProcess" resultMap="baseResultMap">
+		select * from epm_process where 1=1
+		<if test="processId != null" >
+			and process_id = #{processId}
+		</if>
+		<if test="name != null" >
+			and name = #{name}
+		</if>
+		<if test="parentId != null" >
+			and parent_id = #{parentId}
+		</if>
+		<if test="rootId != null" >
+			and root_id = #{rootId}
+		</if>
+		<if test="status != null" >
+			and status = #{status}
+		</if>
+		<if test="dealType != null" >
+			and deal_type = #{dealType}
+		</if>
+		<if test="preStatus != null" >
+			and pre_status = #{preStatus}
+		</if>
+		<if test="ownerId != null" >
+			and owner_id = #{ownerId}
+		</if>
+	</select>
+
+	<!-- 列表数 -->
+	<select id="count" parameterType="com.aspire.webbas.epm.core.entity.EpmProcess" resultType="java.lang.Integer">
+		select count(*) from epm_process where 1=1
+		<if test="processId != null" >
+			and process_id = #{processId}
+		</if>
+		<if test="name != null" >
+			and name = #{name}
+		</if>
+		<if test="parentId != null" >
+			and parent_id = #{parentId}
+		</if>
+		<if test="rootId != null" >
+			and root_id = #{rootId}
+		</if>
+		<if test="status != null" >
+			and status = #{status}
+		</if>
+		<if test="dealType != null" >
+			and deal_type = #{dealType}
+		</if>
+		<if test="preStatus != null" >
+			and pre_status = #{preStatus}
+		</if>
+		<if test="ownerId != null" >
+			and owner_id = #{ownerId}
+		</if>
+	</select>
+
+	<!-- 详情 -->
+	<select id="get" parameterType="java.lang.String" resultMap="baseResultMap">
+		select * from epm_process where process_id = #{processId}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="add" parameterType="com.aspire.webbas.epm.core.entity.EpmProcess">
+		insert into epm_process(process_id, name, root_id, status,
+		<if test="dealType != null" >
+			deal_type,
+		</if>
+		<if test="parentId != null" >
+			parent_id,
+		</if>
+		<if test="preStatus != null" >
+			pre_status,
+		</if>
+		<if test="defineContent != null" >
+			define_content,
+		</if>
+		create_time,
+		owner_id)
+		values(#{processId},
+		#{name},
+		#{rootId},
+		#{status},
+		<if test="dealType != null" >
+			#{dealType},
+		</if>
+		<if test="parentId != null" >
+			#{parentId},
+		</if>
+		<if test="preStatus != null" >
+			#{preStatus},
+		</if>
+		<if test="defineContent != null" >
+			#{defineContent},
+		</if>
+		#{createTime},
+		#{ownerId})
+	</insert>
+
+	<!-- 修改 -->
+	<update id="mod" parameterType="com.aspire.webbas.epm.core.entity.EpmProcess">
+		update epm_process
+		<set>
+			<if test="processId != null" >
+				process_id = #{processId},
+			</if>
+			<if test="name != null" >
+				name = #{name},
+			</if>
+			<if test="parentId != null" >
+				parent_id = #{parentId},
+			</if>
+			<if test="rootId != null" >
+				root_id = #{rootId},
+			</if>
+			<if test="status != null" >
+				status = #{status},
+			</if>
+			<if test="dealType != null" >
+				deal_type = #{dealType},
+			</if>
+			<if test="preStatus != null" >
+				pre_status = #{preStatus},
+			</if>
+			<if test="ownerId != null" >
+				owner_id = #{ownerId},
+			</if>
+			<if test="lastUpdateTime != null" >
+				last_update_time = #{lastUpdateTime},
+			</if>
+			<if test="defineContent != null" >
+				define_content = #{defineContent},
+			</if>
+		</set>
+		where process_id = #{processId}
+	</update>
+
+	<!-- 删除 -->
+	<insert id="del" parameterType="java.lang.String">
+		delete from epm_process where process_id = #{processId}
+	</insert>
+</mapper>

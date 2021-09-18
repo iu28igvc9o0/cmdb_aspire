@@ -1,0 +1,401 @@
+{
+    "list": [
+      {
+        "type": "form",
+        "label": "表单容器",
+        "columnName": "form_1605145797606",
+        "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+        "width": "100%",
+        "list": [
+          {
+            "type": "input",
+            "label": "列头柜名称：",
+            "columnName": "cabinetColumn",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": false,
+              "disabled": true,
+              "readonly": false,
+              "disabledStatus": [],
+              "readonlyStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "input_1605145803145"
+          },
+          {
+            "type": "input",
+            "label": "机柜名称：",
+            "columnName": "cabinetName",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": false,
+              "disabled": true,
+              "readonly": false,
+              "disabledStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "hiddenStatus": [],
+            "oldColumnName": "input_1605145840556"
+          },
+          {
+            "type": "input",
+            "label": "影响业务总数：",
+            "columnName": "bizSystemCount",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": true,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": false,
+              "disabled": true,
+              "readonly": false,
+              "disabledStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 110,
+            "oldColumnName": "input_1605145854764"
+          },
+          {
+            "type": "input",
+            "label": "",
+            "columnName": "businessConcat",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": true,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "姓名/手机号码",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": false,
+              "disabled": false,
+              "readonly": false
+            },
+            "operation": [],
+            "button": true,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 0,
+            "oldColumnName": "input_1605145898556"
+          },
+          {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1606267662589",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+              {
+                "type": "button",
+                "label": "查询",
+                "columnName": "button_1606267594575",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "type": "primary"
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "submit"
+              },
+              {
+                "type": "button",
+                "label": "导出",
+                "columnName": "export-system",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "disabled": false
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "",
+                "oldColumnName": "export"
+              }
+            ],
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          }
+        ],
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "table",
+        "label": "表格",
+        "columnName": "table_1605145789293",
+        "asideIcon": "iconfont icondashujukeshihuaico-",
+        "width": "100%",
+        "classify": "layout",
+        "show-index": false,
+        "indexFixed": true,
+        "show-single-selection": false,
+        "singleSelectionFixed": true,
+        "show-multiple-selection": false,
+        "multipleSelectionFixed": true,
+        "cacheMultipleSelection": false,
+        "multipleSelectionColumnName": [],
+        "show-operation": false,
+        "operationFixed": true,
+        "show-pagination": true,
+        "defaultSelectAll": false,
+        "defaultSort": {
+          "prop": "",
+          "order": "",
+          "ascending": "asc",
+          "descending": "desc"
+        },
+        "props": {
+          "border": true,
+          "stripe": true,
+          "highlight-current-row": false,
+          "show-header": true,
+          "default-sort": ""
+        },
+        "btnGroupDynamic": [],
+        "list": [
+          {
+            "timeStamp": 1605145972201,
+            "label": "表格可编辑参数",
+            "columnName": "$asp_isEdit",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": false,
+            "tooltip": true,
+            "$_isBuiltInParams": true
+          },
+          {
+            "label": "影响业务系统",
+            "columnName": "bizSystem",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "业务联系人姓名",
+            "columnName": "business_concat",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "业务联系人手机号码",
+            "columnName": "business_concat_phone",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "电源故障设备数",
+            "columnName": "deviceAlertCount",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "电源故障告警数量",
+            "columnName": "alertCount",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": true,
+            "tooltip": true
+          }
+        ],
+        "operation": [],
+        "toolList": [],
+        "operation-width": "100",
+        "pagination": {
+          "layout": "total, sizes, prev, pager, next, jumpe",
+          "pageSizes": [
+            10,
+            20,
+            30
+          ],
+          "currentPage": 1,
+          "pageSize": 10,
+          "total": 0,
+          "hide-on-single-page": false
+        },
+        "http": {
+          "initHttp": true,
+          "type": "post",
+          "methods": "/v1/alerts/CabinetColumn/queryBizSystemPageList"
+        },
+        "hidden": false
+      }
+    ],
+    "model": {
+      "businessConcat": "",
+      "cabinetColumn": "",
+      "cabinetName": "",
+      "bizSystemCount": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+      "exportName": "",
+      "project": "webbas",
+      "labelWidth": 100,
+      "labelPosition": "left",
+      "size": "mini",
+      "class": "",
+      "layoutType": "flex",
+      "statusList": []
+    }
+  }
+        
+  
+      
+  

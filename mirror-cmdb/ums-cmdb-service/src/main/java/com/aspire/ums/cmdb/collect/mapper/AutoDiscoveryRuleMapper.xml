@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.collect.mapper.AutoDiscoveryRuleMapper" >
+    <resultMap id="discoveryRuleEntity" type="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryRuleEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ruleName" property="ruleName" jdbcType="VARCHAR" />
+        <result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+        <result column="discoveryType" property="discoveryType" jdbcType="VARCHAR" />
+        <result column="discoveryParam" property="discoveryParam" jdbcType="VARCHAR"/>
+        <result column="startScanIp" property="startScanIp" jdbcType="VARCHAR" />
+        <result column="endScanIp" property="endScanIp" jdbcType="VARCHAR" />
+        <result column="scanIp" property="scanIp" jdbcType="VARCHAR" />
+        <result column="collectCycle" property="collectCycle" jdbcType="BIGINT" />
+        <result column="cycleUnit" property="cycleUnit" jdbcType="VARCHAR" />
+        <result column="room" property="room" jdbcType="VARCHAR" />
+        <result column="enable" property="enable" jdbcType="VARCHAR" />
+        <result column="createTime" property="createTime" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="selectColumn">
+        id,ruleName,moduleId,discoveryType,discoveryParam,startScanIp,endScanIp,room,
+        CONCAT_WS('-',startScanIp,endScanIp) scanIp,collectCycle,cycleUnit,enable,createTime
+    </sql>
+
+    <select id="getRulesByModuleId" resultMap="discoveryRuleEntity">
+        select
+        <include refid="selectColumn"></include>
+        from cmdb_auto_discovery_rule t where moduleId = #{moduleId}
+        <if test="param.ruleName != null and param.ruleName != ''">
+            and lower(ruleName) like lower('%${param.ruleName}%')
+        </if>
+        <if test="param.enable != null and param.enable != ''">
+            and `enable` = #{param.enable}
+        </if>
+        order by createTime desc
+    </select>
+
+    <select id="getRulesByRuleName" resultMap="discoveryRuleEntity">
+        select
+        <include refid="selectColumn"></include>
+        from cmdb_auto_discovery_rule t where moduleId = #{moduleId} and ruleName=#{ruleName}
+        order by createTime desc
+    </select>
+
+    <insert id="insertVO" parameterType="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryRuleEntity">
+        INSERT INTO `cmdb_auto_discovery_rule` (`id`, `ruleName`, `moduleId`,`room`, `discoveryType`, `discoveryParam`,
+        `startScanIp`, `endScanIp`, `collectCycle`, `cycleUnit`, `enable`, `createTime`)
+        VALUES (#{vo.id,jdbcType=VARCHAR}, #{vo.ruleName,jdbcType=VARCHAR}, #{vo.moduleId,jdbcType=VARCHAR}, #{vo.room,jdbcType=VARCHAR}, #{vo.discoveryType,jdbcType=VARCHAR},
+        #{vo.discoveryParam,jdbcType=VARCHAR}, #{vo.startScanIp,jdbcType=VARCHAR}, #{vo.endScanIp,jdbcType=VARCHAR}, #{vo.collectCycle,jdbcType=BIGINT},
+        #{vo.cycleUnit,jdbcType=VARCHAR},#{vo.enable,jdbcType=VARCHAR}, #{vo.createTime,jdbcType=TIMESTAMP});
+    </insert>
+
+    <update id="updateVO" parameterType="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryRuleEntity">
+        UPDATE `cmdb_auto_discovery_rule` SET `enable`=#{vo.enable} WHERE `id` = #{vo.id};
+    </update>
+
+    <delete id="deleteVO" parameterType="com.aspire.ums.cmdb.collect.entity.AutoDiscoveryRuleEntity">
+        DELETE FROM `cmdb_auto_discovery_rule` WHERE `id` = #{vo.id};
+    </delete>
+    <select id="listRules" resultMap="discoveryRuleEntity">
+        select <include refid="selectColumn"></include> from cmdb_auto_discovery_rule where enable='是'
+    </select>
+</mapper>

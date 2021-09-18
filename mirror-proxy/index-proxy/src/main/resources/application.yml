@@ -1,0 +1,219 @@
+server:
+  port: 30333
+
+#============== 基础数据同步相关配置  ===================
+basicDataSync: 
+  proxyIdentity: miguHZ_room 
+  url: http://localhost:8127
+  interval: 50   # 同步间隔, 单位秒
+  dynamicModelInterval: 1440 #分钟
+
+#============== indexProxy数据库配置  ===================
+indexProxyDb:
+  url: 'jdbc:mysql://10.12.70.40:3306/index_proxy?useUnicode=true&characterEncoding=UTF-8'
+  username: root
+  password: 'Nmzw$yjd2@19'
+  mapperLocations:
+    - classpath*:sqlmap/indexproxy/*Mapper.xml
+#    - classpath*:oraclesqlmap/indexproxy/*Mapper.xml
+
+# 中间件启用开关
+middleware.configuration.switch: 
+  kafka: true
+  redis: true
+
+#============== kafka ===================
+# 本地机房kafka
+local: 
+  kafka: 
+    bootstrap-servers: 10.12.70.40:9092
+    producer: 
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer: 
+      group-id: consumer_index_proxy
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 500
+      session.timeout.ms: 60000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer  
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区一个消费线程     
+    properties: 
+      session.timeout.ms: 60000
+#     max.poll.records: 10
+
+  roomId: 1  # 机房id    
+      
+#============== 中央机房 kafka ===================
+centerRoom: 
+  kafka: 
+    enable: true     # 启用开关
+    bootstrap-servers: 10.12.70.40:9092
+    producer: 
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer: 
+      group-id: consumer_index_proxy
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 3000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区一个消费线程
+
+###-----redisson配置
+redisson: 
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    password: 'Nmzw$yjd2@19'
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://10.12.70.40:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: null
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+    - "redis://127.0.0.1:7004"
+    - "redis://127.0.0.1:7001"
+    - "redis://127.0.0.1:7000"
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false  
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"
+          
+        
+inpsection.service.itemdata.callback: http://10.12.70.40:8128/v1/report_data/itemdata_callback
+monitor.service.itemdata.callback: http://10.12.70.40:28130/alert/v1/alerts/itemMonitorEvent/callback
+bizmonitor.service.itemdata.callback: http://10.12.70.40:28130/alert/v1/alerts/itemMonitorEvent/callback
+
+
+logging:
+  level:
+    org.springframework: info
+    com.aspire.mirror.indexproxy: info
+    com.aspire.mirror.indexproxy.selfmonitor.zabbix.dao.ZabbixCollectDao: debug
+  file: ./index-proxy.log
+
+### 调度中心部署跟地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
+xxl.job.admin.addresses: http://10.12.70.38:9999/xxl-job-admin
+### 执行器通讯TOKEN [选填]：非空时启用；
+xxl.job.accessToken: token123456
+### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+xxl.job.executor.appname: app-index-proxy
+### 执行器注册 [选填]：优先使用该配置作为注册地址，为空时使用内嵌服务 ”IP:PORT“ 作为注册地址。从而更灵活的支持容器类型执行器动态IP和动态映射端口问题。
+xxl.job.executor.address: 
+### 执行器IP [选填]：默认为空表示自动获取IP，多网卡时可手动设置指定IP，该IP不会绑定Host仅作为通讯实用；地址信息用于 "执行器注册" 和 "调度中心请求并触发任务"；
+xxl.job.executor.ip: 10.1.12.19
+#xxl.job.executor.ip: 10.1.122.71
+### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+xxl.job.executor.port: 9933
+### 执行器运行日志文件存储磁盘路径 [选填] ：需要对该路径拥有读写权限；为空则使用默认路径；
+xxl.job.executor.logpath: ./xxl-job/jobhandler
+### 执行器日志文件保存天数 [选填] ： 过期日志自动清理, 限制值大于等于3时生效; 否则, 如-1, 关闭自动清理功能；
+xxl.job.executor.logretentiondays: 30
+
+proxyIdentityConfig:
+  id: proxy_xxg_1
+  zabbixJdbcUrl: 'jdbc:mysql://10.12.70.40:3306/zabbix?useUnicode=true&characterEncoding=UTF-8'
+  zabbixJdbcUserName: root
+  zabbixJdbcPasswd: 'Nmzw$yjd2@19'
+  zabbixMapperLocations: 
+    - classpath*:sqlmap/zabbix/*Mapper.xml
+  zabbixUrl: http://10.12.9.238/api_jsonrpc.php
+  zabbixUrlName: Admin
+  zabbixUrlPasswd: zabbix
+  zabbixInitPoolSize: 21
+  zabbixMaxPoolSize: 21
+  zabbixCmdbConditoinType: 
+  zabbixConditoinValue:
+  pool: 信息港资源池
+  pod:
+  collectRelflect: 
+  redfishCmdbConditoinType:
+  redfishConditoinValue: 
+  collectPoolSize: 10   # 采集执行线程池大小
+  
+selfMoni: 
+  elasticsearch.rest: 
+    switch: true
+    uris: 
+      - http://10.12.70.40:9200
+#    username: admin 
+#    password: 
+    connectionTimeout: 30
+    readTimeout: 300
+  alertKafkaTopic: TOPIC_SYSTEM_ALERTS    
+  alert_level_map: 
+    2: 2
+    3: 3
+    4: 3
+    5: 3
+ 
+### jetcache config ###  
+jetcache:
+  statIntervalMinutes: 15
+  areaInCacheName: false
+  local:
+    default:
+      type: linkedhashmap
+      keyConvertor: fastjson
+      limit: 500000
+  remote:
+    default:
+      type: redis
+      keyConvertor: fastjson
+      valueEncoder: java
+      valueDecoder: java
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 100
+      host: 10.12.70.40
+      port: 6379
+      password: 'Nmzw$yjd2@19'
+      ssl: false
+  
+template_sync_url: http://localhost:8127/v1/template/zabbixTemplateSync
+host_sync_url: http://localhost:8127/v1/hosts/batchCreate
+item_sync_url: http://localhost:8127/v1/triggers/zabbixItemAndPrototypeRelationSync

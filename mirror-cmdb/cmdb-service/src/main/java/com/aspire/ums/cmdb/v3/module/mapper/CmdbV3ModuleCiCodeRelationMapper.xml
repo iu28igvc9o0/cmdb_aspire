@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCiCodeRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCiCodeRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="relation_id" property="relationId" jdbcType="VARCHAR" />
+        <result column="curr_code_id" property="currCodeId" jdbcType="VARCHAR" />
+        <result column="relation_code_id" property="relationCodeId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="resultMapDetail" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCiCodeRelationDetail" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="relation_id" property="relationId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="VARCHAR" />
+        <association property="currCode" column="curr_code_id" select="com.aspire.ums.cmdb.v2.code.mapper.CmdbCodeMapper.getSimpleCodeById"/>
+        <association property="relationCode" column="relation_code_id" select="com.aspire.ums.cmdb.v2.code.mapper.CmdbCodeMapper.getSimpleCodeById"/>
+    </resultMap>
+
+    <sql id="baseColumn">
+        id,relation_id,curr_code_id,relation_code_id,sort_index
+    </sql>
+
+
+    <!-- list查询 -->
+    <select id="listByRelationId" resultMap="resultMap">
+        SELECT
+          <include refid="baseColumn"/>
+        FROM cmdb_module_ci_code_relation
+        WHERE relation_id = #{relationId}
+    </select>
+    <select id="listDetailByRelationId" resultMap="resultMapDetail">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_ci_code_relation
+        WHERE relation_id = #{relationId}
+    </select>
+
+
+
+    <select id="save" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCiRelation">
+        insert into cmdb_module_ci_code_relation  (
+            id,relation_id,curr_code_id,relation_code_id,sort_index
+        ) values
+                 <foreach collection="list" item="item" separator=",">
+                     (
+                     #{item.id},
+                     #{item.relationId},
+                     #{item.currCodeId},
+                     #{item.relationCodeId},
+                     #{item.sortIndex}
+                     )
+                 </foreach>
+
+
+    </select>
+
+
+    <!-- 根据模型id删除记录 -->
+    <delete id="deleteByModuleId" parameterType="java.lang.String">
+        DELETE FROM cmdb_module_ci_code_relation
+        WHERE `relation_id` in
+              (select id from cmdb_module_ci_relation where module_id = #{moduleId})
+    </delete>
+
+    <!-- 根据关系删除记录 -->
+    <delete id="deleteByRelationId" parameterType="java.lang.String">
+        DELETE FROM cmdb_module_ci_code_relation
+        WHERE `relation_id` = #{relationId}
+    </delete>
+</mapper>

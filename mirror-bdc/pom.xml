@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<modules>
+    <module>../mirror-public</module>
+    <module>../mirror-common</module>
+    <module>../mirror-ldap</module>
+    <module>../mirror-rbac</module>
+    <module>../mirror-template</module>
+    <module>../mirror-inspection</module>
+    <module>../mirror-monitor</module>
+    <module>../mirror-alert</module>
+    <module>../mirror-theme</module>
+    <module>../mirror-cmdb</module>
+    <module>../mirror-proxy</module>
+    <module>../mirror-composite</module>
+</modules>
+
+    <groupId>com.aspire.mirror</groupId>
+    <artifactId>mirror-bdc</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>mirror-bdc</name>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <!--描述文件路径 -->
+                        <descriptor>release.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <!--执行器 mvn assembly:assembly -->
+                    <execution>
+                        <id>release</id>
+                        <!--名字任意 -->
+                        <phase>package</phase>
+                        <!-- 绑定到package生命周期阶段上 -->
+                        <goals>
+                            <goal>assembly</goal>
+                            <!-- 只运行一次 -->
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

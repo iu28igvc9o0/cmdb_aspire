@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.view.mapper.CmdbViewNodeShowMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.view.payload.CmdbViewNodeShow" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="node_Id" property="nodeId" jdbcType="VARCHAR" />
+        <result column="show_Prefix" property="showPrefix" jdbcType="VARCHAR" />
+        <result column="show_Sql" property="showSql" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `node_id`,
+        `show_prefix`,
+        `show_sql`
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        select <include refid="baseColumn"/>
+        from cmdb_view_node_show
+        where 1=1
+        <if test="nodeId != null and nodeId != ''">
+            and node_id = #{nodeId}
+        </if>
+    </select>
+
+
+    <insert id="save" parameterType="com.aspire.ums.cmdb.view.payload.CmdbViewNodeShow">
+    INSERT INTO cmdb_view_node_show
+    (  `id`,
+       `node_id`,
+       `show_prefix`,
+       `show_sql`)
+    VALUES (#{id, jdbcType=VARCHAR},
+            #{nodeName, jdbcType=VARCHAR},
+            #{viewId, jdbcType=VARCHAR},
+            #{parentNodeId, jdbcType=VARCHAR})
+</insert>
+    <insert id="saveByBatch" parameterType="com.aspire.ums.cmdb.view.payload.CmdbViewNodeShow">
+        INSERT INTO cmdb_view_node_show
+        (  `id`,
+           `node_id`,
+           `show_prefix`,
+           `show_sql`)
+        VALUES
+               <foreach collection="list" item="item" separator=",">
+                   (UUID(),
+                   #{item.nodeId, jdbcType=VARCHAR},
+                   #{item.showPrefix, jdbcType=VARCHAR},
+                   #{item.showSql, jdbcType=VARCHAR})
+               </foreach>
+
+    </insert>
+
+    <delete id="deleteByViewId">
+        delete FROM cmdb_view_node_show  where node_id in (
+          select id from cmdb_view_node where view_id = #{viewId}
+            )
+    </delete>
+
+    <delete id="deleteByNodeId">
+        delete FROM cmdb_view_node_show where node_id = #{viewId}
+    </delete>
+
+</mapper>

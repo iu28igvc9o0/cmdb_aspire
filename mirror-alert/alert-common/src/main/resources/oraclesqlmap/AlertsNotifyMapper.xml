@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.notify.AlertsNotifyDao">
+
+     <resultMap type="com.aspire.mirror.alert.server.dao.notify.po.AlertsNotify" id="alertsNotifyMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="alert_id" property="alertId" jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="report_type" property="reportType" jdbcType="VARCHAR"/>
+		<result column="user_email" property="userEmail" jdbcType="VARCHAR" />
+		<result column="destination" property="destination" jdbcType="VARCHAR" />
+		<result column="message" property="message" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	 </resultMap>
+	 
+	 <sql id="baseColumnList">
+		id,alert_id,user_id,user_name,report_type,user_email,destination,message,status,create_time 
+	</sql>
+
+
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.notify.po.AlertsNotify">
+        INSERT INTO alert_report_operate_record(id,alert_id, user_name, report_type, user_email, destination , message ,status)
+        VALUES (
+                SEQ_OPERATE_RECORD.nextval,
+                #{alertId,jdbcType=VARCHAR},
+                #{userName,jdbcType=VARCHAR},
+                #{reportType,jdbcType=VARCHAR},
+                #{userEmail,jdbcType=VARCHAR},
+                #{destination,jdbcType=TINYINT},
+                #{message,jdbcType=VARCHAR},
+                #{status,jdbcType=VARCHAR} 
+                )
+    </insert>
+    
+    
+     <!-- 分页数据个数 -->
+	 <select id="getAlertNotifyCount" resultType="Integer" parameterType="map">
+		select count(*) FROM  alert_report_operate_record   where alert_id = #{alertId}
+		 <if test="reportType != null and  reportType != '' ">
+    		and report_type = #{reportType}
+    	 </if>   
+	 </select>
+	
+	
+
+	<!-- 分页数据 -->
+	<select id="getAlertNotifyByPage" parameterType="map" resultMap="alertsNotifyMap" >
+	   select <include refid="baseColumnList" /> from
+		(select r.*,ROWNUM nm from alert_report_operate_record r
+		where r.alert_id = #{alertId}
+		<if test="reportType != null and  reportType != '' ">
+			and r.report_type = #{reportType}
+		</if>
+		AND ROWNUM <![CDATA[<=]]> #{pageNo}+#{pageSize}
+		) aa
+		where aa.nm &gt; #{pageNo}
+
+	</select>
+	
+	
+	 <!-- 分页成功数据个数 -->
+	 <select id="getSuccessAlertNotifyCount" resultType="Integer" parameterType="map">
+		 select count(*) FROM  alert_report_operate_record   where alert_id = #{alertId} and status = '1'
+		 <if test="reportType != null and  reportType != '' ">
+    	  and report_type = #{reportType}
+    	</if>
+		    
+	 </select>
+    
+    
+    <!-- 查询所有通知记录 -->
+     <select id="selectNotifyByPrimaryKey" parameterType="String" resultMap="alertsNotifyMap">
+		select
+		<include refid="baseColumnList" />
+		from alert_report_operate_record t where alert_id = #{alertId}
+	 </select>
+    
+    
+</mapper>
+
+   

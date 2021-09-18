@@ -1,0 +1,90 @@
+
+local:
+  alertIndex: CS #告警id前缀，主要用于区分多套zabbix时候id重复的情况
+  idctype: #资源池，多个或者没有可不填
+
+alertScan: 
+  run.fixedDelay:   20000             # 告警扫描运行间隔
+  actionIds: 3                        # 扫描的actionid, 多个使用英文逗号隔开
+  batchCount: 200                       # 每次扫描处理的最大告警条数
+  flush.fixedDelay: 2000              # 2秒    扫描游标写数据库间隔
+  centerRoom.kafka: 
+    topicName: TOPIC_SYSTEM_ALERTS
+    partionsCount: 9                  # kafka分区数
+
+zabbix:
+  init_config:                  #初始化配置，用于设置每天清除es数据时间
+    cron: 0 0 1 * * ?          #每天执行时间
+    is_init_report: false       #是否启动执行
+    topicName: TOPIC_ZABBIX_DELETE
+  item_config:                  #扫描zabbix监控项所需配置
+    fixedDelay: 10000            #扫描间隔时间
+    topicName: TOPIC_ZABBIX_ITEM
+    batchCount: 200
+  trigger_config:              #扫描zabbix触发器所需配置
+    fixedDelay: 10000
+    topicName: TOPIC_ZABBIX_TRIGGER
+    batchCount: 200
+  trends_config:                #扫描zabbix监控数据趋势所需配置
+    fixedDelay: 10000
+    topicName: TOPIC_SYSTEM_TRENDS
+
+monitor:
+  kpi:
+    topic: TOPIC_MONITOR_KPI    #监控数据治理的topic
+    batchCount: 2000            #单批次数量
+    open: true
+    doingHour: 2                #执行超时时间，默认2小时
+    ipfrom: interface         #ip关联表，默认是interface，可配置hosts
+    iplist: #('10.12.70.39', '10.12.70.40')  #ip列表，用于类似于自监控之类的极少数主机监控汇聚，为空则不执行
+  cmdb:
+    instance:
+      cron: 0 0 1 * * ?          #每天执行时间
+      field: idcType    # cmdb查询字段
+      fieldValues:      # 多个参数以逗号分开，全量数据则传空
+      batchCount: 200
+      open: true
+#============== 数据库配置  ===================
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/zabbix?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: Nmzw$yjd2@19
+#  url: jdbc:mysql://10.1.5.119:3306/zabbix-server?useUnicode=true&characterEncoding=UTF-8
+#  username: root
+#  password: spider+888
+  useSSL: false
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package: 
+     org.springboot.sample.entity
+
+alertDruid:
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=utf-8
+  username: root
+  password: Nmzw$yjd2@19
+  useSSL: false
+  mapperLocations:
+    - classpath*:alertsqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+    
+#=================== schedule configuration ======================
+spring: 
+  schedule: 
+    poolsize: 10 
+    
+#============== kafka =================== 
+  kafka: 
+    bootstrap-servers: 10.12.70.40:9092
+    producer: 
+      retries: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+logging:
+  level:
+    org.springframework: info
+    com.aspire.mirror.zabbixintegrate: info
+  file: ./zabbix-integrate.log

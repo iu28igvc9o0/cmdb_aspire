@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.FormMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.Form" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="moduleId" property="moduleid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="defaultValue" property="defaultvalue" jdbcType="VARCHAR" />
+    <result column="required" property="required" jdbcType="VARCHAR" />
+    <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+    <result column="hidden" property="hidden" jdbcType="VARCHAR" />
+    <result column="keyAttr" property="keyattr" jdbcType="VARCHAR" />
+    <result column="rate" property="rate" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="FormFieldsMap" type="com.aspire.ums.cmdb.module.entity.FormFields" >
+    <id column="ffid" property="id" jdbcType="VARCHAR" />
+    <result column="ffkey" property="key" jdbcType="VARCHAR" />
+    <result column="ffname" property="name" jdbcType="VARCHAR" />
+    <result column="ffsortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="ffformId" property="formid" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="FormOptionsMap" type="com.aspire.ums.cmdb.module.entity.FormOptions" >
+    <id column="foid" property="id" jdbcType="VARCHAR" />
+    <result column="foname" property="name" jdbcType="VARCHAR" />
+    <result column="fovalue" property="value" jdbcType="VARCHAR" />
+    <result column="fodefault" property="isdefault" jdbcType="VARCHAR" />
+    <result column="focolor" property="color" jdbcType="VARCHAR" />
+    <result column="foparentId" property="parentid" jdbcType="VARCHAR" />
+    <result column="foformId" property="formid" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="FormParamMap" type="com.aspire.ums.cmdb.module.entity.FormParam" >
+    <id column="fpid" property="id" jdbcType="VARCHAR" />
+    <result column="fpkey" property="key" jdbcType="VARCHAR" />
+    <result column="fpvalue" property="value" jdbcType="VARCHAR" />
+    <result column="fpformId" property="formid" jdbcType="VARCHAR" />
+    <result column="fpsortIndex" property="sortindex" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="formScriptMap" type="com.aspire.ums.cmdb.module.entity.FormScript" >
+    <id column="FSid" property="id" jdbcType="VARCHAR" />
+    <result column="FSformId" property="formid" jdbcType="VARCHAR" />
+    <result column="fstag" property="tag" jdbcType="VARCHAR" />
+    <result column="fslanguage" property="language" jdbcType="VARCHAR" />
+    <result column="fsscript" property="script" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="FormBeanMap" type="com.aspire.ums.cmdb.module.entity.FormBean" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="moduleId" property="moduleid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="defaultValue" property="defaultvalue" jdbcType="VARCHAR" />
+    <result column="required" property="required" jdbcType="VARCHAR" />
+    <result column="builtin" property="builtin" jdbcType="VARCHAR" />
+    <result column="hidden" property="hidden" jdbcType="VARCHAR" />
+    <result column="keyAttr" property="keyattr" jdbcType="VARCHAR" />
+    <result column="rate" property="rate" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="updateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />
+    <result column="relFormId" property="relformid" jdbcType="VARCHAR" />
+    <collection property="formScript" resultMap="formScriptMap"></collection>
+    <collection property="formFields" resultMap="FormFieldsMap"></collection>
+    <collection property="formOptions" resultMap="FormOptionsMap"></collection>
+    <collection property="formParams" resultMap="FormParamMap"></collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, moduleId, name, code, type, defaultValue, required, builtin, hidden, keyAttr, 
+    rate, unit, sortIndex, insertTime, updateTime, isDelete
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_form
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="getFormsByModuleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_form
+    where moduleId = #{moduleId,jdbcType=VARCHAR}
+    and hidden = 'false'
+    and isDelete = 0
+    order by sortIndex
+  </select>
+  <select id="selectScriptByFormId" parameterType="java.lang.String" resultType="java.util.HashMap">
+  select id,formId,tag,language,script from cmdb_form_script where formId=#{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_form
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByModuleId" parameterType="java.lang.String" >
+    delete from cmdb_form
+    where moduleId = #{moduleid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.Form" >
+    insert into cmdb_form (id, moduleId, name, 
+      code, type, defaultValue, 
+      required, builtin, hidden, 
+      keyAttr, rate, unit, 
+      sortIndex, insertTime, updateTime, 
+      isDelete)
+    values (#{id,jdbcType=VARCHAR}, #{moduleid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{defaultvalue,jdbcType=VARCHAR}, 
+      #{required,jdbcType=VARCHAR}, #{builtin,jdbcType=VARCHAR}, #{hidden,jdbcType=VARCHAR}, 
+      #{keyattr,jdbcType=VARCHAR}, #{rate,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, 
+      #{sortindex,jdbcType=INTEGER}, #{inserttime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{isdelete,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.Form" >
+    insert into cmdb_form
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        id,
+      </if>
+      <if test="moduleid != null and moduleid !=''" >
+        moduleId,
+      </if>
+      <if test="name != null and name !=''" >
+        name,
+      </if>
+      <if test="code != null and code !=''" >
+        code,
+      </if>
+      <if test="type != null and type !=''" >
+        type,
+      </if>
+      <if test="defaultvalue != null" >
+        defaultValue,
+      </if>
+      <if test="required != null and required !=''" >
+        required,
+      </if>
+      <if test="builtin != null and builtin !=''" >
+        builtin,
+      </if>
+      <if test="hidden != null and hidden !=''" >
+        hidden,
+      </if>
+      <if test="keyattr != null and keyattr !=''" >
+        keyAttr,
+      </if>
+      <if test="rate != null" >
+        rate,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="sortindex != null" >
+        sortIndex,
+      </if>
+        insertTime,
+        updateTime,
+      <if test="isdelete != null" >
+        isDelete,
+      </if>
+      <if test="relformid != null" >
+        relFormId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleid != null and moduleid !=''" >
+        #{moduleid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and name !=''" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null and code !=''" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null and type !=''" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultvalue != null" >
+        #{defaultvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null and required !=''" >
+        #{required,jdbcType=VARCHAR},
+      </if>
+      <if test="builtin != null and builtin !=''" >
+        #{builtin,jdbcType=VARCHAR},
+      </if>
+      <if test="hidden != null and hidden !=''" >
+        #{hidden,jdbcType=VARCHAR},
+      </if>
+      <if test="keyattr != null and keyattr !=''" >
+        #{keyattr,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null" >
+        #{rate,jdbcType=VARCHAR},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="sortindex != null" >
+        #{sortindex,jdbcType=INTEGER},
+      </if>
+        now(),
+      
+        now(),
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=INTEGER},
+      </if>
+      <if test="relformid != null" >
+        #{relformid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.Form" >
+    update cmdb_form
+    <set >
+      <if test="moduleid != null and moduleid !=''" >
+        moduleId = #{moduleid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null and name !=''" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null and code !=''" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null and type !=''" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultvalue != null" >
+        defaultValue = #{defaultvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="required != null and required !=''" >
+        required = #{required,jdbcType=VARCHAR},
+      </if>
+      <if test="builtin != null and builtin !=''">
+        builtin = #{builtin,jdbcType=VARCHAR},
+      </if>
+      <if test="hidden != null and hidden !=''" >
+        hidden = #{hidden,jdbcType=VARCHAR},
+      </if>
+      <if test="keyattr != null and keyattr !=''" >
+        keyAttr = #{keyattr,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null" >
+        rate = #{rate,jdbcType=VARCHAR},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="sortindex != null" >
+        sortIndex = #{sortindex,jdbcType=INTEGER},
+      </if>
+      
+        updateTime = now(),
+      
+      <if test="isdelete != null" >
+        isDelete = #{isdelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.Form" >
+    update cmdb_form
+    set moduleId = #{moduleid,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      defaultValue = #{defaultvalue,jdbcType=VARCHAR},
+      required = #{required,jdbcType=VARCHAR},
+      builtin = #{builtin,jdbcType=VARCHAR},
+      hidden = #{hidden,jdbcType=VARCHAR},
+      keyAttr = #{keyattr,jdbcType=VARCHAR},
+      rate = #{rate,jdbcType=VARCHAR},
+      unit = #{unit,jdbcType=VARCHAR},
+      sortIndex = #{sortindex,jdbcType=INTEGER},
+      insertTime = #{inserttime,jdbcType=TIMESTAMP},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      isDelete = #{isdelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectFormBeanByModuleId" parameterType="com.aspire.ums.cmdb.module.entity.Module" resultMap="FormBeanMap">
+  	SELECT
+	f.id,
+	moduleId,
+	f. NAME,
+	CODE,
+	type,
+	defaultValue,
+	required,
+	builtin,
+	hidden,
+	keyAttr,
+	rate,
+	unit,
+	f.sortIndex,
+	insertTime,
+	updateTime,
+	isDelete,
+	relFormId,
+	ff.id AS ffid,
+	ff.KEY AS ffkey,
+	ff.NAME AS ffname,
+	ff.formId as ffformId,
+	ff.sortIndex AS ffsortIndex,
+	fo.id AS foid,
+	fo.NAME AS foname,
+	fo.`value` as fovalue,
+	fo.`default` AS fodefault,
+	fo.formId as foformId,
+	fp.id AS fpid,
+	fp.`key` AS fpkey,
+	fp.`value` AS fpvalue,
+	fp.sortIndex AS fpsortIndex,
+	fp.formId as fpformId,
+	fs.id as fsid,
+	fs.formId as fsformId,
+	fs.tag as fstag,
+	fs.language as fslanguage,
+	fs.script as fsscript
+	FROM
+	(
+		SELECT
+			id,
+			moduleId,
+			NAME,
+			CODE,
+			type,
+			defaultValue,
+			required,
+			builtin,
+			hidden,
+			keyAttr,
+			rate,
+			unit,
+			sortIndex,
+			insertTime,
+			updateTime,
+			isDelete,
+			relFormId
+		FROM
+			cmdb_form
+		WHERE
+			moduleId = #{id} and isDelete=0
+	) f
+	LEFT JOIN (select id,`key`,`name`,sortIndex,formId from cmdb_form_fields ORDER BY sortIndex) as ff ON f.id = ff.formId
+	LEFT JOIN cmdb_form_options fo ON f.id = fo.formId
+	LEFT JOIN cmdb_form_param fp ON f.id = fp.formId
+	LEFT JOIN cmdb_form_script fs ON f.id = fs.formId
+	order by f.sortIndex,ff.sortIndex
+  </select>
+  <select id="selectFormIdByModule" parameterType="java.lang.String" resultType="java.lang.String">
+  select id from cmdb_form WHERE moduleId = #{id,jdbcType=VARCHAR} and isDelete=0
+  </select>
+  <select id="selectDicts" resultMap="FormBeanMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+      from cmdb_form form
+      where
+      form.hidden = 'false' and form.isDelete = 0
+          <if test="formId != null and formId != ''">
+             and form.id=#{formId, jdbcType=VARCHAR}
+          </if>
+      and form.moduleId in (select id from cmdb_module module where module.code = 'dict_config')
+      order by form.sortIndex
+  </select>
+  
+  <!--<select id="getBussiness" resultType="java.util.HashMap"-->
+		<!--parameterType="java.util.List">-->
+		<!--SELECT cba.ID AS id, cba.name AS NAME FROM-->
+		<!--cmdb_form_options cba-->
+		<!--WHERE -->
+		<!--id IN-->
+		<!--<foreach collection="id" index="index" item="businessCode"-->
+			<!--open="(" separator="," close=")">-->
+			<!--#{businessCode}-->
+		<!--</foreach>-->
+	<!--</select>-->
+  <!---->
+  <!--<select id="findBusCodeAndName" resultType="java.util.HashMap"-->
+		<!--parameterType="java.util.List">-->
+		<!--SELECT cba.ID AS id, cba.name AS NAME FROM-->
+		<!--cmdb_form_options cba-->
+		<!--WHERE -->
+		<!--id IN-->
+		<!--<foreach collection="id" index="index" item="businessCode"-->
+			<!--open="(" separator="," close=")">-->
+			<!--#{businessCode}-->
+		<!--</foreach>-->
+	<!--</select>-->
+	<!---->
+	<!--<select id="findBusCodeByName" resultType="java.util.HashMap"-->
+		<!--parameterType="java.lang.String">-->
+		<!--SELECT cba.ID AS id, cba.name AS NAME FROM-->
+		<!--cmdb_form_options cba-->
+		<!--WHERE  -->
+		 <!--name = #{name,jdbcType=VARCHAR}-->
+	<!--</select>-->
+</mapper>

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.MaintenSoftwareMapper">
+	    
+	<resultMap type="com.aspire.ums.cmdb.maintenance.entity.MaintenSoftware" id="maintenSoftwareMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+		<result column="project" property="project" jdbcType="VARCHAR" />
+		<result column="classify" property="classify" jdbcType="VARCHAR" />
+		<result column="software_name" property="softwareName" jdbcType="VARCHAR"/>
+		<result column="unit" property="unit" jdbcType="VARCHAR" />
+		<result column="number" property="number" jdbcType="VARCHAR" />
+		<result column="company" property="company" jdbcType="VARCHAR" /> 
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="telephone" property="telephone" jdbcType="VARCHAR" />
+		<result column="mainten_begin_date" property="maintenBeginDate" jdbcType="DATE" />
+		<result column="mainten_end_date" property="maintenEndDate" jdbcType="DATE" />
+		<result column="admin" property="admin" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" /> 
+	 </resultMap>
+	
+	 
+	 <sql id="baseColumnList">
+		id,project,classify,software_name,unit,number,company,user_name,telephone,mainten_begin_date,
+		mainten_end_date,admin,remark
+	 </sql>
+
+
+     <!-- 动态sql -->
+     <sql id="where_sql"> 
+    
+	    <if test="maintenEndDateBefore != null ">
+			 and  mainten_end_date &gt;= '${maintenEndDateBefore}'
+		</if>
+		<if test="maintenEndDateAfter != null ">
+			and  mainten_end_date &lt;= '${maintenEndDateAfter}'
+		</if>
+		<if test="maintenBeginDateBefore != null ">
+			and  mainten_begin_date &gt;= '${maintenBeginDateBefore}'
+		</if>
+		<if test="maintenBeginDateBefore != null ">
+			and  mainten_begin_date &lt;= '${maintenBeginDateAfter}'
+		</if>
+		 
+		<if test="project != null and  project != '' ">
+    		and project like  CONCAT('%',#{project},'%')
+    	</if>
+    	 
+    	<if test="softwareName != null and  softwareName != '' ">
+    		and software_name like  CONCAT('%',#{softwareName},'%')
+    	</if>
+    	<if test="company != null and  company != '' ">
+    		and company like  CONCAT('%',#{company},'%')
+    	</if>
+    	<if test="classify != null and  classify != '' ">
+    		and classify like  CONCAT('%',#{classify},'%')
+    	</if>
+    	 
+    	<if test="userName != null and  userName != '' ">
+    		and user_name like  CONCAT('%',#{userName},'%')
+    	</if>
+    	<if test="telephone != null and  telephone != '' ">
+    		and telephone like  CONCAT('%',#{telephone},'%')
+    	</if>
+    	<if test="admin != null and  admin != '' ">
+    		and admin like  CONCAT('%',#{admin},'%')
+    	</if>
+    	 
+    </sql>
+
+
+	 <insert id="insertMaintenSoftware" useGeneratedKeys="true" keyProperty="id"  parameterType="com.aspire.ums.cmdb.maintenance.entity.MaintenSoftware">
+	 
+	    insert into cmdb_maintenance_software(project,classify,software_name,unit,number,company,user_name,telephone,mainten_begin_date,
+		mainten_end_date,admin,remark ) 
+		values(
+		#{ project,jdbcType=VARCHAR} ,
+		#{ classify,jdbcType=VARCHAR} ,
+		#{ softwareName,jdbcType=VARCHAR},
+		#{ unit,jdbcType=VARCHAR} ,
+		#{ number,jdbcType=VARCHAR} ,
+		#{ company,jdbcType=VARCHAR},
+		#{ userName,jdbcType=VARCHAR} ,
+		#{ telephone,jdbcType=VARCHAR} ,
+		#{ maintenBeginDate ,jdbcType=DATE} ,
+		#{ maintenEndDate,jdbcType=DATE} ,
+		#{ admin,jdbcType=VARCHAR} ,
+		#{ remark,jdbcType=VARCHAR}
+		)
+	 </insert>
+	 
+
+    <insert id="saveMaintenSoftwareList" parameterType="java.util.List">
+		insert into  cmdb_maintenance_software ( project,classify,software_name,unit,number,company,user_name,telephone,mainten_begin_date,
+		mainten_end_date,admin,remark )
+		VALUES
+		<foreach collection="list" item="item" index="index"  separator=","  >
+		  ( #{ item.project,jdbcType=VARCHAR} ,
+		    #{ item.classify,jdbcType=VARCHAR} ,
+		    #{ item.softwareName,jdbcType=VARCHAR},
+		    #{ item.unit,jdbcType=VARCHAR} ,
+		    #{ item.number,jdbcType=VARCHAR} ,
+		    #{ item.company,jdbcType=VARCHAR},
+		    #{ item.userName,jdbcType=VARCHAR} ,
+		    #{ item.telephone,jdbcType=VARCHAR} ,
+		    #{ item.maintenBeginDate ,jdbcType=DATE} ,
+		    #{ item.maintenEndDate,jdbcType=DATE} ,
+		    #{ item.admin,jdbcType=VARCHAR} ,
+		    #{ item.remark,jdbcType=VARCHAR} )
+		</foreach>
+		 ON DUPLICATE KEY UPDATE 
+		 classify = VALUES( classify ),
+		 unit = VALUES( unit ),
+		 number = VALUES( number ),
+		 user_name = VALUES( user_name ) ,
+		 telephone = VALUES( telephone ) ,
+		 mainten_begin_date = VALUES( mainten_begin_date ),
+		 mainten_end_date = VALUES( mainten_end_date ),
+		 admin = VALUES( admin ),
+		 remark = VALUES( remark )
+	</insert> 
+
+	 
+	 <update id="updateMaintenSoftware" parameterType="com.aspire.ums.cmdb.maintenance.entity.MaintenSoftware">
+	 
+	    update cmdb_maintenance_software
+	     <set>
+		  
+		   <if test="project != null and  project != '' ">
+		   		project=#{project},
+		   </if>
+		   <if test="classify != null and  classify != '' ">
+		   		classify=#{classify},
+		   </if>
+		   <if test="softwareName != null and  softwareName != '' ">
+		   		software_name=#{softwareName},
+		   </if>
+		   <if test="unit != null and  unit != '' ">
+		   		unit=#{unit},
+		   </if>
+		   <if test="number != null and  number != '' ">
+		   		number=#{number},
+		   </if>
+		   <if test="company != null and  company != '' ">
+		   		company=#{company},
+		   </if>
+		   <if test="userName != null and  userName != '' ">
+		   		user_name=#{userName},
+		   </if>
+		   <if test="telephone != null and  telephone != '' ">
+		   		telephone=#{telephone},
+		   </if>
+		   <if test="maintenBeginDate != null ">
+		   		mainten_begin_date=#{maintenBeginDate},
+		   </if>
+		   <if test="maintenEndDate != null ">
+		   		mainten_end_date=#{maintenEndDate},
+		   </if>
+		    <if test="admin != null and  admin != '' ">
+		   		admin=#{admin},
+		   </if>
+		    <if test="remark != null and  remark != '' ">
+		   		remark=#{remark}
+		   </if> 
+		   
+		  </set>
+		  where id = #{id}
+	     
+	 </update>
+	 
+	 <update id="batchUpdateMaintenSoftware" parameterType="map">
+	 
+	    update cmdb_maintenance_software
+	     <set>
+		  
+		   <if test="project != null and  project != '' ">
+		   		project=#{project},
+		   </if>
+		   <if test="classify != null and  classify != '' ">
+		   		classify=#{classify},
+		   </if>
+		   <if test="softwareName != null and  softwareName != '' ">
+		   		software_name=#{softwareName},
+		   </if>
+		   <if test="unit != null and  unit != '' ">
+		   		unit=#{unit},
+		   </if>
+		   <if test="number != null and  number != '' ">
+		   		number=#{number},
+		   </if>
+		   <if test="company != null and  company != '' ">
+		   		company=#{company},
+		   </if>
+		   <if test="userName != null and  userName != '' ">
+		   		user_name=#{userName},
+		   </if>
+		   <if test="telephone != null and  telephone != '' ">
+		   		telephone=#{telephone},
+		   </if>
+		   <if test="maintenBeginDate != null ">
+		   		mainten_begin_date=#{maintenBeginDate},
+		   </if>
+		   <if test="maintenEndDate != null ">
+		   		mainten_end_date=#{maintenEndDate},
+		   </if>
+		    <if test="admin != null and  admin != '' ">
+		   		admin=#{admin},
+		   </if>
+		   <if test="remark != null and  remark != '' ">
+		   		remark=#{remark}
+		   </if> 
+		   
+		  </set>
+		  where id in
+		  <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+         </foreach>
+	     
+	 </update>
+	 
+	 
+	  
+	
+	 <select id="selectMaintenSoftwareById" parameterType="String" resultMap="maintenSoftwareMap">
+		select   <include refid="baseColumnList" /> 
+		from cmdb_maintenance_software    
+		where  id = #{id} 
+	 </select>
+	 
+	 
+	  <select id="selectMaintenSoftwareBySoftNmae" parameterType="map" resultMap="maintenSoftwareMap">
+		select   <include refid="baseColumnList" /> 
+		from cmdb_maintenance_software    
+		where  company = #{company} and project=#{project} and software_name=#{softwareName} 
+	  </select>
+	 
+	 
+	 
+	 <!-- 删除多条数据 -->
+	 <delete id="deleteMaintenSoftwareIds" parameterType="java.util.List">
+	     delete from cmdb_maintenance_software where id in 
+	     <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+         </foreach>
+     </delete>
+	 
+	
+	 
+	 <!-- 分页数据个数 -->
+	 <select id="getMaintenSoftwareCount" resultType="Integer" parameterType="map">
+		select count(*) FROM  cmdb_maintenance_software mainten  where 1=1
+	    <include refid="where_sql" /> 
+	       
+	 </select>
+	
+
+	<!-- 分页数据 -->
+	<select id="getMaintenSoftwareByPage" parameterType="map" resultMap="maintenSoftwareMap" >
+	 	select <include refid="baseColumnList" /> FROM  cmdb_maintenance_software mainten  where 1=1
+	    <include refid="where_sql" />  limit ${pageNo},${pageSize}
+	    
+	</select>
+	
+	
+	<!-- 导出数据 -->
+	<select id="getMaintenSoftwareList" parameterType="map" resultMap="maintenSoftwareMap" >
+	 	select <include refid="baseColumnList" /> FROM  cmdb_maintenance_software mainten  where 1=1
+	    <include refid="where_sql" />   
+	    
+	</select>
+	 
+
+	 
+</mapper>

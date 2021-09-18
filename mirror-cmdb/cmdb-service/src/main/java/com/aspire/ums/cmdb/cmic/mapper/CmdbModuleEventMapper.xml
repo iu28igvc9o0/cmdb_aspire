@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.cmic.mapper.CmdbModuleEventMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="event_class" property="eventClass" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="event_type" property="eventType" jdbcType="VARCHAR" />
+        <result column="handler_class_id" property="handlerClassId" jdbcType="VARCHAR" />
+        <result column="event_order" property="eventOrder" jdbcType="INTEGER" />
+        <result column="insert_time" property="insertTime" jdbcType="DATE" />
+        <result column="insert_person" property="insertPerson" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `module_id`,
+        `event_class`,
+        `code_id`,
+        `event_type`,
+        `handler_class_id`,
+        `event_order`,
+        `insert_time`,
+        `insert_person`,
+        `update_time`,
+        `update_person`,
+        `is_delete`
+        FROM cmdb_module_event  where is_delete = '0'
+        order by event_order
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent">
+        SELECT
+        `id`,
+        `module_id`,
+        `event_class`,
+        `code_id`,
+        `event_type`,
+        `handler_class_id`,
+        `event_order`,
+        `insert_time`,
+        `insert_person`,
+        `update_time`,
+        `update_person`,
+        `is_delete`
+        FROM cmdb_module_event
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+        AND `module_id` = #{moduleId}
+        </if>
+        <if test="eventClass != null and eventClass != ''">
+        AND `event_class` = #{eventClass}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="eventType != null and eventType != ''">
+        AND `event_type` = #{eventType}
+        </if>
+        <if test="handlerClassId != null and handlerClassId != ''">
+        AND `handler_class_id` = #{handlerClassId}
+        </if>
+        <if test="eventOrder != null and eventOrder != ''">
+        AND `event_order` = #{eventOrder}
+        </if>
+        <if test="insertTime != null and insertTime != ''">
+        AND `insert_time` = #{insertTime}
+        </if>
+        <if test="insertPerson != null and insertPerson != ''">
+        AND `insert_person` = #{insertPerson}
+        </if>
+        <if test="updateTime != null and updateTime != ''">
+        AND `update_time` = #{updateTime}
+        </if>
+        <if test="updatePerson != null and updatePerson != ''">
+        AND `update_person` = #{updatePerson}
+        </if>
+        AND `is_delete` = 0
+        order by event_order
+    </select>
+
+    <!-- list查询 -->
+    <select id="deleteByNotExistId" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent">
+       update cmdb_module_event set is_delete = '1'
+        where module_id = #{moduleId}
+       <if test="currEventIdList.size > 0">
+           and `id` not in (
+           <foreach collection="currEventIdList" item="item" separator=",">
+               #{item}
+           </foreach>
+           )
+       </if>
+
+    </select>
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent" resultMap="resultMap">
+        SELECT
+        `id`,
+        `module_id`,
+        `event_class`,
+        `code_id`,
+        `event_type`,
+        `handler_class_id`,
+        `event_order`,
+        `insert_time`,
+        `insert_person`,
+        `update_time`,
+        `update_person`,
+        `is_delete`
+        FROM cmdb_module_event
+        WHERE 1=1 and is_delete = 0
+        AND `id` = #{id}
+    </select>
+    <select id="listCodeEventByModuleId" resultMap="resultMap">
+        SELECT
+            `id`,
+            `module_id`,
+            `event_class`,
+            `code_id`,
+            `event_type`,
+            `handler_class_id`,
+            `event_order`,
+            `insert_time`,
+            `insert_person`,
+            `update_time`,
+            `update_person`,
+            `is_delete`
+        FROM cmdb_module_event
+        WHERE 1=1 and is_delete = 0
+          AND `module_id` = #{moduleId}
+          AND `event_class` = 'code'
+        order by event_order
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent">
+        INSERT INTO cmdb_module_event
+        (
+            `id`,
+            `module_id`,
+            `event_class`,
+            `code_id`,
+            `event_type`,
+            `handler_class_id`,
+            `event_order`,
+            `insert_time`,
+            `insert_person`,
+            `update_time`,
+            `update_person`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{eventClass, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{eventType, jdbcType=VARCHAR},
+            #{handlerClassId, jdbcType=VARCHAR},
+            #{eventOrder, jdbcType=INTEGER},
+            #{insertTime, jdbcType=DATE},
+            #{insertPerson, jdbcType=VARCHAR},
+            #{updateTime, jdbcType=DATE},
+            #{updatePerson, jdbcType=VARCHAR},
+            DEFAULT
+        )
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent">
+        INSERT INTO cmdb_module_event
+        (
+            `id`,
+            `module_id`,
+            `event_class`,
+            `code_id`,
+            `event_type`,
+            `handler_class_id`,
+            `event_order`,
+            `insert_time`,
+            `insert_person`,
+            `update_time`,
+            `update_person`,
+            `is_delete`
+        ) VALUES
+               <foreach collection="list" item="item" separator="," >
+
+                   (
+                   #{item.id, jdbcType=VARCHAR},
+                   #{item.moduleId, jdbcType=VARCHAR},
+                   #{item.eventClass, jdbcType=VARCHAR},
+                   #{item.codeId, jdbcType=VARCHAR},
+                   #{item.eventType, jdbcType=VARCHAR},
+                   #{item.handlerClassId, jdbcType=VARCHAR},
+                   #{item.eventOrder, jdbcType=INTEGER},
+                   #{item.insertTime, jdbcType=DATE},
+                   #{item.insertPerson, jdbcType=VARCHAR},
+                   #{item.updateTime, jdbcType=DATE},
+                   #{item.updatePerson, jdbcType=VARCHAR},
+                   DEFAULT
+                   )
+               </foreach>
+        ON DUPLICATE KEY UPDATE
+        module_id = values (module_id),
+        event_class = values (event_class),
+        code_id = values (code_id),
+        event_type = values (event_type),
+        handler_class_id = values (handler_class_id),
+        event_order = values (event_order),
+        update_time = values (update_time),
+        update_person = values (update_person)
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent">
+        UPDATE cmdb_module_event SET
+        `module_id` = #{moduleId},
+        `event_class` = #{eventClass},
+        `code_id` = #{codeId},
+        `event_type` = #{eventType},
+        `handler_class_id` = #{handlerClassId},
+        `event_order` = #{eventOrder},
+        `insert_time` = #{insertTime},
+        `insert_person` = #{insertPerson},
+        `update_time` = #{updateTime},
+        `update_person` = #{updatePerson},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEvent">
+        DELETE FROM cmdb_module_event
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

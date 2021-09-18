@@ -1,0 +1,67 @@
+server:
+  port: ${SERVER_PORT:18888}
+spring:
+  application:
+    name: config
+  profiles:
+    active: ${PROFILE:native}
+management:
+  security:
+    enabled: false
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+---
+spring:
+  profiles: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config/,/opt/config-server
+#    stream:
+#      kafka:
+#        binder:
+#          zk-nodes: ${ZK_NODES:localhost:2182}
+#          brokers: ${KAFKA_BROKERS:localhost:9093}
+---
+## 以下为k8s环境的配置
+spring:
+  profiles: k8s
+  cloud:
+    config:
+      server:
+        git:
+          username: ${GIT_USERNAME:chenyao}
+          password: ${GIT_PASSWORD:123456}
+          uri: ${GIT_URL:http://172.30.150.42:10080/chenyao/git-repo-test-bao2.git}
+          repos:
+            pkg1:
+              pattern: pkg1-*/*
+              username: ${PKG1_GIT_USERNAME}
+              password: ${PKG1_GIT_PASSWORD}
+              uri: ${PKG1_GIT_URL}
+            pkg2:
+              pattern: pkg2-*/*
+              username: ${PKG2_GIT_USERNAME}
+              password: ${PKG2_GIT_PASSWORD}
+              uri: ${PKG2_GIT_URL}
+            pkg3:
+              pattern: pkg3-*/*
+              username: ${PKG3_GIT_USERNAME}
+              password: ${PKG3_GIT_PASSWORD}
+              uri: ${PKG3_GIT_URL}
+            pkg4:
+              pattern: pkg4-*/*
+              username: ${PKG4_GIT_USERNAME}
+              password: ${PKG4_GIT_PASSWORD}
+              uri: ${PKG4_GIT_URL}
+#    stream:
+#      kafka:
+#        binder:
+#          zk-nodes: ${ZK_NODES:localhost:2182}
+#          brokers: ${KAFKA_BROKERS:localhost:9093}
+logging:
+  level: info
+  file: /opt/data/logs/config-server.log

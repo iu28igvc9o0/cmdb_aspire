@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.bpm.AlertsAutoOrderConfigDao">
+
+    <insert id="createAlertAutoOrderConfig" parameterType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderConfigVo">
+        INSERT INTO alert_auto_order_config
+        (uuid,config_name,config_time_type,start_time,end_time,user_name,config_description,is_open,alert_filter,order_type,
+         order_time_space,order_time_interval,creator,create_time,is_delete)
+        VALUES
+        (#{uuid},#{configName},#{configTimeType},#{startTime},#{endTime},#{userName},#{configDescription},#{isOpen},
+         #{alertFilter},#{orderType},#{orderTimeSpace},#{orderTimeInterval},#{creator},now(),'0')
+    </insert>
+
+    <update id="updateAlertAutoOrderConfig" parameterType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderConfigVo">
+        UPDATE alert_auto_order_config
+        SET uuid = #{uuid},
+        config_name = #{configName},
+        config_time_type = #{configTimeType},
+        start_time = #{startTime},
+        end_time = #{endTime},
+        user_name = #{userName},
+        config_description = #{configDescription},
+        is_open = #{isOpen},
+        alert_filter = #{alertFilter},
+        order_type = #{orderType},
+        order_time_space = #{orderTimeSpace},
+        order_time_interval = #{orderTimeInterval},
+        updater = #{updater},
+        update_time = now()
+        WHERE uuid = #{uuid}
+    </update>
+
+    <sql id="queryHeadSql">
+        SELECT
+        uuid,
+        config_name configName,
+        config_time_type configTimeType,
+        DATE_FORMAT(start_time,'%Y-%m-%d %H:%i:%s') startTime,
+        DATE_FORMAT(end_time,'%Y-%m-%d %H:%i:%s') endTime,
+        user_name userName,
+        config_description configDescription,
+        CASE is_open when '1' then '启用' when '2' then '停用' end isOpen,
+        alert_filter alertFilter,
+        order_type orderType,
+        order_time_space orderTimeSpace,
+        order_time_interval orderTimeInterval,
+        creator,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+        updater,
+        DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+        is_delete
+    </sql>
+    <sql id="queryParamSql">
+        <if test="configName != null and configName != ''">
+            AND config_name LIKE CONCAT (CONCAT('%',#{configName})
+        </if>
+        <if test="isOpen != null and isOpen != ''">
+            AND is_open = #{isOpen}
+        </if>
+        <if test="startTime != null and endTime != null">
+            AND start_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="orderType != null and orderType != ''">
+            AND FIND_IN_SET(order_type, #{orderType})
+        </if>
+        <if test="orderTimeInterval != null and orderTimeInterval != ''">
+            AND order_time_interval LIKE CONCAT (CONCAT('%',#{orderTimeInterval}),'%')
+        </if>
+    </sql>
+
+    <select id="getAlertAutoOrderConfigList" resultType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderConfigDetailVo">
+        <include refid="queryHeadSql" />
+        FROM alert_auto_order_config
+        WHERE is_delete = '0'
+        <include refid="queryParamSql" />
+        ORDER BY create_time DESC
+        <if test="pageNum != null and pageSize != null">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+    <select id="getAlertAutoOrderConfigCount" resultType="java.lang.Integer">
+        SELECT count(1) count
+        FROM alert_auto_order_config
+        WHERE is_delete = '0'
+        <include refid="queryParamSql" />
+    </select>
+
+    <select id="getAlertAutoOrderConfigDetail" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderConfigDetailVo">
+        <include refid="queryHeadSql" />
+        FROM alert_auto_order_config
+        WHERE uuid = #{uuid}
+    </select>
+
+    <update id="deleteAlertAutoOrderConfig" parameterType="java.util.List">
+        UPDATE alert_auto_order_config
+        SET is_delete = '1'
+        WHERE uuid IN
+        <foreach collection="list" item="uuid" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+    </update>
+
+    <update id="updateAlertAutoOrderConfigStatus" parameterType="java.lang.String">
+        UPDATE alert_auto_order_config
+        SET is_open = #{configStatus}
+        WHERE uuid IN
+        <foreach collection="uuidList" item="uuid" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+    </update>
+
+    <select id="getAlertAutoOrderLogList" parameterType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderLogReqVo"
+            resultType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderLogVo">
+        SELECT
+        aaoo.alert_id alertId, aaoo.config_id configId,
+        aaoo.device_id deviceId, aaoo.device_class deviceClass, aaoo.biz_sys bizSys,aaoo.moni_index moniIndex, aaoo.moni_object moniObject,
+        aaoo.cur_moni_value curMoniValue, DATE_FORMAT(aaoo.cur_moni_time,'%Y-%m-%d %H:%i:%s') curMoniTime,
+        aaoo.alert_level alertLevel, aaoo.item_id itemId, aaoo.remark remark,
+        aaoo.source source, aaoo.idc_type idcType, aaoo.source_room sourceRoom, aaoo.device_type deviceType, aaoo.device_mfrs deviceMfrs,
+        aaoo.host_name hostName, aaoo.device_model deviceModel,aaoo.object_type objectType, aaoo.object_id objectId, aaoo.region region,
+        aaoo.device_ip deviceIp, DATE_FORMAT(aaoo.alert_start_time,'%Y-%m-%d %H:%i:%s') alertStartTime,
+        aaoo.prefix prefix, DATE_FORMAT(aaoo.order_time,'%Y-%m-%d %H:%i:%s') orderTime, aaoc.config_name configName,
+        CASE aaoo.order_type when '1' then '告警工单' when '2' then '故障工单' when '3' then '维保工单'  when '4' then '调优工单' ELSE aaoo.order_type END orderType,
+        aaoo.order_id orderId
+        FROM alert_auto_order_log aaoo
+        INNER JOIN alert_auto_order_config aaoc ON aaoo.config_id = aaoc.uuid
+        <if test="orderRule != null and orderRule != ''">
+            AND aaoo.config_id = #{orderRule}
+        </if>
+        WHERE 1=1
+        <include refid="logQueryParams" />
+        ORDER BY order_time DESC
+        <if test="pageNum != null and pageSize != null">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+    <select id="getAlertAutoOrderLogCount" parameterType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderLogReqVo"
+            resultType="java.lang.Integer">
+        SELECT count(1) count
+        FROM alert_auto_order_log aaoo
+        <if test="orderRule != null and orderRule != ''">
+            INNER JOIN alert_auto_order_config aaoc ON aaoo.config_id = aaoc.uuid AND aaoo.config_id = #{orderRule}
+        </if>
+        WHERE 1=1
+        <include refid="logQueryParams" />
+    </select>
+    <sql id="logQueryParams">
+        <if test="deviceIp != null and deviceIp != ''">
+             AND aaoo.device_ip LIKE CONCAT (CONCAT('%',#{deviceIp}),'%')
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND FIND_IN_SET(aaoo.idc_type, #{idcType})
+        </if>
+        <if test="alertLevel != null and alertLevel != ''">
+            AND FIND_IN_SET(aaoo.alert_level, #{alertLevel})
+        </if>
+        <if test="orderStartTime != null and orderStartTime != '' and orderEndTime != null and orderEndTime != ''">
+            AND aaoo.order_time BETWEEN #{orderStartTime} AND date_add(#{orderEndTime}, interval 1 day)
+        </if>
+        <if test="alertDescription != null and alertDescription != ''">
+             AND aaoo.moni_index LIKE CONCAT (CONCAT('%',#{alertDescription}),'%')
+        </if>
+        <if test="orderType != null and orderType != ''">
+            AND FIND_IN_SET(aaoo.order_type, #{orderType})
+        </if>
+        <if test="bizSystem != null and bizSystem != ''">
+            AND FIND_IN_SET(aaoo.biz_sys, #{bizSystem})
+        </if>
+        <if test="alertSource != null and alertSource != ''">
+            AND FIND_IN_SET(aaoo.source, #{alertSource})
+        </if>
+    </sql>
+
+    <select id="exportAlertAutoOrderLogList" parameterType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderLogReqVo"
+            resultType="map">
+        SELECT
+        aaoo.alert_id alertId,
+        aaoo.config_id configId,
+        aaoo.device_id deviceId,
+        aaoo.device_class deviceClass,
+        aaoo.biz_sys bizSys,
+        aaoo.moni_index moniIndex,
+        aaoo.moni_object moniObject,
+        aaoo.cur_moni_value curMoniValue,
+        DATE_FORMAT(aaoo.cur_moni_time,'%Y-%m-%d %H:%i:%s') curMoniTime,
+        CASE aaoo.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else aaoo.alert_level end alertLevel,
+        aaoo.item_id itemId,
+        aaoo.remark remark,
+        aaoo.source source,
+        aaoo.idc_type idcType,
+        aaoo.source_room sourceRoom,
+        aaoo.device_type deviceType,
+        aaoo.device_mfrs deviceMfrs,
+        aaoo.host_name hostName,
+        aaoo.device_model deviceModel,
+        CASE aaoo.object_type when '1' then '设备' when '2' then '业务系统'  else aaoo.object_type end objectType,
+        aaoo.object_id objectId,
+        aaoo.region region,
+        aaoo.device_ip deviceIp,
+        DATE_FORMAT(aaoo.alert_start_time,'%Y-%m-%d %H:%i:%s') alertStartTime,
+        aaoo.prefix prefix,
+        DATE_FORMAT(aaoo.order_time,'%Y-%m-%d %H:%i:%s') orderTime,
+        aaoc.config_name configName,
+        CASE aaoo.order_type when '1' then '告警工单' when '2' then '故障工单' when '3' then '维保工单'  when '4' then '调优工单' ELSE aaoo.order_type END orderType,
+        aaoo.order_id orderId
+        FROM alert_auto_order_log aaoo
+        INNER JOIN alert_auto_order_config aaoc ON aaoo.config_id = aaoc.uuid
+        <if test="orderRule != null and orderRule != ''">
+            AND aaoo.config_id = #{orderRule}
+        </if>
+        WHERE 1=1
+        <include refid="logQueryParams" />
+        ORDER BY order_time DESC
+    </select>
+
+    <select id="getAlertDataByFilter" parameterType="map" resultType="map">
+        select
+        a.alert_id alertId,
+        a.device_id deviceId,
+        a.device_class deviceClass,
+        a.biz_sys bizSys,
+        a.moni_index moniIndex,
+        a.moni_object moniObject,
+        a.cur_moni_value curMoniValue,
+        DATE_FORMAT(a.cur_moni_time,'%Y-%m-%d %H:%i:%s') curMoniTime,
+        a.alert_level alertLevel,
+        a.item_id itemId,
+        a.remark remark,
+        a.source source,
+        a.idc_type idcType,
+        a.source_room sourceRoom,
+        a.device_type deviceType,
+        a.device_mfrs deviceMfrs,
+        a.host_name hostName,
+        a.device_model deviceModel,
+        a.object_type objectType,
+        a.object_id objectId,
+        a.region region,
+        a.device_ip deviceIp,
+        DATE_FORMAT(a.alert_start_time,'%Y-%m-%d %H:%i:%s') alertStartTime,
+        a.create_time createTime,
+        a.prefix prefix,
+        a.order_type orderType
+        from alert_alerts a
+        WHERE
+        a.order_status = '1'
+        <if test="startTime != null and endTime != null">
+            AND a.cur_moni_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="optionCondition != null">
+            AND ${optionCondition}
+        </if>
+    </select>
+
+    <insert id="insertAlertOrderConfigLog" parameterType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderLogVo">
+        INSERT INTO alert_auto_order_log
+        (alert_id ,
+        config_id ,
+        device_id ,
+        device_class ,
+        biz_sys ,
+        moni_index ,
+        moni_object ,
+        cur_moni_value ,
+        cur_moni_time,
+        alert_level,
+        item_id,
+        remark,
+        source,
+        idc_type,
+        source_room,
+        device_type,
+        device_mfrs,
+        host_name,
+        device_model,
+        object_type,
+        object_id,
+        region,
+        device_ip,
+        alert_start_time,
+        prefix ,
+        order_time,
+        order_type,
+        order_id,
+        status)
+        VALUES
+        (#{alertId} ,
+        #{configId} ,
+        #{deviceId} ,
+        #{deviceClass} ,
+        #{bizSys} ,
+        #{moniIndex} ,
+        #{moniObject} ,
+        #{curMoniValue} ,
+        #{curMoniTime},
+        #{alertLevel},
+        #{itemId},
+        #{remark},
+        #{source},
+        #{idcType},
+        #{sourceRoom},
+        #{deviceType},
+        #{deviceMfrs},
+        #{hostName},
+        #{deviceModel},
+        #{objectType},
+        #{objectId},
+        #{region},
+        #{deviceIp},
+        #{alertStartTime},
+        #{prefix},
+        now(),
+        #{orderType},
+        #{orderId},
+        #{status})
+    </insert>
+
+    <select id="getOrderLogCountByAlertIdAndOrderType" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT count(1) count FROM alert_auto_order_log
+        WHERE alert_id = #{alertId} AND order_type = #{orderType} AND status = '0'
+    </select>
+    <update id="updateOrderTime" parameterType="java.lang.String">
+        UPDATE alert_auto_order_log SET order_time = now()
+        WHERE alert_id = #{alertId} AND order_type = #{orderType} AND status = '0'
+   </update>
+
+    <select id="checkName" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.bpm.AlertAutoOrderConfigDetailVo">
+        <include refid="queryHeadSql"/>
+        FROM alert_auto_order_config
+        WHERE config_name = #{configName} AND is_delete = '0'
+    </select>
+
+</mapper>

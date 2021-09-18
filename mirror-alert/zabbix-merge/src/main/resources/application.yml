@@ -1,0 +1,110 @@
+server:
+  port: 28113
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=utf-8
+  username: root
+  password: Nmzw$yjd2@19
+  useSSL: false
+  mapperLocations:
+    - classpath*:cmdbsqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+    
+#=================== schedule configuration ======================
+spring: 
+  schedule: 
+    poolsize: 10 
+    
+#============== kafka =================== 
+  kafka: # kafka 配置
+      bootstrap-servers: 10.12.70.40:9092
+      producer: 
+        retries: 1
+        batch-size: 16384
+        buffer-memory: 33554432
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      consumer: 
+        group-id: consumer_zabbixMerge
+        auto-offset-reset: latest
+        enable-auto-commit: true
+        auto-commit-interval: 2000
+        session.timeout.ms: 20000
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer 
+        max-poll-records: 500
+      listener:
+        concurrency: 16    # 配置partions分区数, 保证每个分区至少1个消费线程     
+      properties: 
+        session.timeout.ms: 60000
+
+
+logging:
+  level:
+    org.springframework: info
+    com.aspire.mirror.zabbixintegrate: info
+  file: ./zabbix-merge.log
+
+CloudSysSyncTask:
+  flag: fnormal
+  toKafkaTopic:    #history-huchi
+  toKafkaUintTopic:     #history_uint-huchi
+  fromKafkaTopic: performancedata-deepwatch
+  defaultTopic: zabbix-luquan
+  kafkaTopicIdcTypeMap:
+    '鹿泉资源池':  zabbix-luquan
+    '石家庄资源池':  zabbix-shijiazhuang
+    '郑州资源池':  zabbix-zhengzhou   
+    '航空港资源池':  zabbix-hangkongang
+    '苏州资源池':  zabbix-suzhou
+    '宁波资源池':  zabbix-ningbo
+    '杭州湾资源池':  zabbix-hangzhouwan
+    '株洲资源池':  zabbix-zhuzhou
+    '湘潭资源池':  zabbix-xiangtan
+    '汕头资源池':  zabbix-shantou
+    '佛山资源池':  zabbix-foushan
+
+KpiToBomcKafka:
+  fromKafkaTopic: history
+  toKafkaTopic: performancedata-bomc
+  
+HwMonitorSync:
+  tag_type: 1
+  url: http://localhost:28113/
+  token_url: rest/plat/smapp/v1/oauth/token
+  monitor_type_url: rest/performance/v1/mgr-svc/obj-types
+  monitor_indicatorsrel_url: 'rest/performance/v1/mgr-svc/obj-types/%s/indicators'
+  monitor_indicators_url: 'rest/performance/v1/mgr-svc/indicators'
+  region_url: rest/cmdb/v1/instances/%s
+  device_url: rest/tenant-resource/v1/instances/%s
+  monitor_data_url: 'rest/performance/v1/data-svc/history-data/action/query'
+  regionPageSize: 100
+  devicePageSize: 500
+  oc_username: aa
+  oc_password: bb
+  interval: FIVE_MINUTE
+  intervalMinute: 10
+  delayMinute: 10
+  tokenHeaderName: X-Auth-Token
+  indicatorCount: 5
+  deviceCount: 100
+  idcType: 呼和浩特资源池
+  regionClassName: SYS_BusinessRegion
+  deviceClassName: CLOUD_VM
+  toKafkaTopic: history-huchi
+  toKafkaTopic_uint: history_uint-huchi
+  reMinute: 30
+  syncMinute: 720
+  device_source: hw
+HwMonitorTask:
+  scanMoniotrConfig: 0 10 0 * * ?
+  scanDeviceDatas: 0 30 0 * * ?
+  scanMonitorDatas: 0 */10 * * * ?
+  reScanMonitorDatas: 0 */2 * * * ?
+  flag: normal
+  moniotrConfigFlag: true
+  deviceFlag: true
+  monitorDataFlag: true
+  reMonitorDataFlag: false
+  
+  

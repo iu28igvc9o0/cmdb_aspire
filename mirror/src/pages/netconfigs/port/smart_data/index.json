@@ -1,0 +1,505 @@
+{
+    "list": [
+      {
+        "type": "form",
+        "label": "表单容器",
+        "columnName": "form_1614236896530",
+        "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+        "width": "100%",
+        "list": [
+          {
+            "type": "select",
+            "label": "自定义时间：",
+            "columnName": "select_1614236937164",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false,
+              "clearableStatus": []
+            },
+            "options": [
+              {
+                "label": "Option 1",
+                "value": "1"
+              },
+              {
+                "label": "Option 2",
+                "value": "2"
+              }
+            ],
+            "hidden": false,
+            "isAddOption": false,
+            "showOptions": [
+              {
+                "label": "Option 1",
+                "value": "1",
+                "disabled": false
+              },
+              {
+                "label": "Option 2",
+                "value": "2",
+                "disabled": false
+              }
+            ],
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1614236937164",
+            "filterOptionStatus": [],
+            "disabledOptionStatus": []
+          },
+          {
+            "label": "开始时间：",
+            "type": "timePicker",
+            "columnName": "timePicker_1614236964183",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont iconshijianxuanzeqi",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "format": "HH:mm:ss",
+              "value-format": "timestamp",
+              "is-range": false,
+              "range-separator": "-",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": true,
+              "picker-options": {},
+              "clearableStatus": []
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          },
+          {
+            "label": "结束时间：",
+            "type": "timePicker",
+            "columnName": "timePicker_1614236975659",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont iconshijianxuanzeqi",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "format": "HH:mm:ss",
+              "value-format": "timestamp",
+              "is-range": false,
+              "range-separator": "-",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": true,
+              "picker-options": {},
+              "clearableStatus": []
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          },
+          {
+            "type": "select",
+            "label": "资源池：",
+            "columnName": "idcType",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false,
+              "clearableStatus": []
+            },
+            "options": [],
+            "hidden": false,
+            "isAddOption": false,
+            "showOptions": [],
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1614236993079",
+            "filterOptionStatus": [],
+            "disabledOptionStatus": [],
+            "oldColumnName": "select_1614236993079"
+          },
+          {
+            "type": "select",
+            "label": "机房：",
+            "columnName": "roomId",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "confont iconxialakuang",
+            "classify": "form",
+            "needLabel": true,
+            "defaultSetLabel": false,
+            "customLabelWidth": false,
+            "option-label": "label",
+            "option-value": "value",
+            "option-alias": "alias",
+            "searchProps": {
+              "need": "0",
+              "apiName": "",
+              "isShowInput": false,
+              "labelAlias": "",
+              "remotePropName": "condition"
+            },
+            "optionProps": {
+              "optionType": "0",
+              "sessionKey": "",
+              "dicKey": "",
+              "apiName": "",
+              "apiType": "",
+              "apiParam": "",
+              "separator": ",",
+              "allLabel": "全选",
+              "allValue": "000",
+              "isUserAllValue": false
+            },
+            "class": "",
+            "props": {
+              "placeholder": "请选择",
+              "multiple": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "filterable": false,
+              "remote": false,
+              "collapse-tags": false,
+              "clearableStatus": []
+            },
+            "options": [],
+            "hidden": false,
+            "isAddOption": false,
+            "showOptions": [],
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "targetName": "label_select_1614237009424",
+            "oldColumnName": "select_1614237009424"
+          },
+          {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1614237032078",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+              {
+                "type": "button",
+                "label": "查询",
+                "columnName": "button_1614237034052",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "isEncrypt": false,
+                "isVerifyTableRow": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "type": "primary"
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "submit"
+              },
+              {
+                "type": "button",
+                "label": "重置",
+                "columnName": "button_1614237036262",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "isEncrypt": false,
+                "isVerifyTableRow": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {},
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "reset-submit"
+              }
+            ],
+            "position": "left",
+            "class": "",
+            "isDialogFooterBtns": false,
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          }
+        ],
+        "isBorder": false,
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "button-group",
+        "label": "按钮容器",
+        "columnName": "button-group_1614238319752",
+        "asideIcon": "iconfont iconanniuzu",
+        "width": "100%",
+        "list": [
+          {
+            "type": "button",
+            "label": "导出",
+            "columnName": "exprot-btn",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "isEncrypt": false,
+            "isVerifyTableRow": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {
+              "type": "primary"
+            },
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1614238322612"
+          },
+          {
+            "type": "button",
+            "label": "TON报表类型配置",
+            "columnName": "topN-configure",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "isEncrypt": false,
+            "isVerifyTableRow": false,
+            "asideIcon": "iconfont iconanniu",
+            "dialogConfig": {
+              "bindName": "",
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "topN-"
+          }
+        ],
+        "position": "left",
+        "class": "",
+        "isDialogFooterBtns": false,
+        "classify": "layout",
+        "hidden": false,
+        "hasParentForm": true
+      },
+      {
+        "type": "dynamicTable",
+        "label": "动态列表格",
+        "columnName": "dynamicTable_1614301136873",
+        "asideIcon": "iconfont icondashujukeshihuaico-",
+        "width": "100%",
+        "classify": "layout",
+        "show-index": true,
+        "indexFixed": true,
+        "show-single-selection": false,
+        "singleSelectionFixed": false,
+        "show-multiple-selection": false,
+        "multipleSelectionFixed": false,
+        "cacheMultipleSelection": false,
+        "multipleSelectionColumnName": [],
+        "show-operation": false,
+        "operationFixed": false,
+        "show-pagination": true,
+        "defaultSelectAll": false,
+        "defaultSort": {
+          "prop": "",
+          "order": ""
+        },
+        "props": {
+          "border": true,
+          "stripe": true,
+          "highlight-current-row": false,
+          "show-header": true,
+          "default-sort": ""
+        },
+        "btnGroupDynamic": [],
+        "dynamicColumnCfg": {
+          "columnName": "",
+          "columnCode": "",
+          "width": "auto"
+        },
+        "list": [],
+        "operation": [],
+        "toolList": [],
+        "operation-width": "100",
+        "pagination": {
+          "layout": "total, sizes, prev, pager, next, jumpe",
+          "pageSizes": [
+            10,
+            20,
+            30
+          ],
+          "currentPage": 1,
+          "pageSize": 10,
+          "total": 0,
+          "hide-on-single-page": false
+        },
+        "http": {
+          "initHttp": true,
+          "type": "post",
+          "methods": "/api/form/lists"
+        },
+        "httpHeader": {
+          "initHttp": true,
+          "type": "post",
+          "methods": "/api/form/lists"
+        },
+        "hidden": false
+      }
+    ],
+    "model": {
+      "select_1614236937164": "",
+      "timePicker_1614236964183": "",
+      "timePicker_1614236975659": "",
+      "idcType": "",
+      "roomId": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+      "exportName": "index.js",
+      "project": "webbas",
+      "labelWidth": 100,
+      "labelPosition": "left",
+      "size": "mini",
+      "class": "",
+      "layoutType": "flex",
+      "statusList": [],
+      "localProxy": "",
+      "nigxProxy": "",
+      "serverProps": {
+        "statusKey": "",
+        "statusValue": "",
+        "dataKey": "",
+        "requestDataKey": ""
+      }
+    }
+  }
+        
+  
+      

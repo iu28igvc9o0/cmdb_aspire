@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ResourceBuildMapper">
+	<resultMap id="ResBuildResultMap" type="com.aspire.ums.cmdb.resource.entity.ResBuild">
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="buildName" column="build_name" jdbcType="VARCHAR"/>
+		<result property="estimateId" column="estimate_id" jdbcType="INTEGER"/>
+		<result property="resourcePool" column="resource_pool" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="createId" column="create_id" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+		<result property="updateId" column="update_id" jdbcType="VARCHAR"/>
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+	<resultMap id="ResBuildMaDataResultMap" type="com.aspire.ums.cmdb.resource.entity.ResBuildMaData">
+		<result property="buildName" column="buildName" jdbcType="VARCHAR"/>
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="resourcePool" column="resourcePool" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+		<result property="serverType" column="serverType" jdbcType="VARCHAR"/>
+		<result property="serverName" column="serverName" jdbcType="VARCHAR"/>
+		<result property="configDetail" column="configDetail" jdbcType="VARCHAR"/>
+		<result property="unit" column="unit" jdbcType="VARCHAR"/>
+		<result property="count" column="count" jdbcType="INTEGER"/>
+		<result property="buildDetailId" column="build_detail_id" jdbcType="INTEGER"/>
+		<result property="imports" column="imports" jdbcType="INTEGER"/>
+	</resultMap>
+    <resultMap id="ResourceBuildNameResultMap" type="com.aspire.ums.cmdb.resource.entity.ResBuildNameResponse">
+        <result property="addBuildName" column="addbuildName" jdbcType="VARCHAR"/>
+        <result property="addResourcePool" column="addresourcePool" jdbcType="VARCHAR"/>
+        <result property="addServerType" column="addserverType" jdbcType="VARCHAR"/>
+        <result property="addServerName" column="addserverName" jdbcType="VARCHAR"/>
+        <result property="addCount" column="addcount" jdbcType="INTEGER"/>
+        <result property="addUnit" column="addunit" jdbcType="VARCHAR"/>
+        <result property="addConfigDetail" column="addconfigDetail" jdbcType="VARCHAR"/>
+    </resultMap>
+	<sql id="ResBuild_Base_Column">
+		RESOURCE_BUILD.id,
+		RESOURCE_BUILD.build_name,
+		RESOURCE_BUILD.estimate_id,
+		RESOURCE_BUILD.resource_pool,
+		RESOURCE_BUILD.status,
+		RESOURCE_BUILD.create_id,
+		RESOURCE_BUILD.create_time,
+		RESOURCE_BUILD.update_id,
+		RESOURCE_BUILD.update_time,
+		RESOURCE_BUILD.remark
+	</sql>
+	<sql id="ResBuild_Query_List_Sharing">
+		<where>
+			<if test="null != id">
+				and RESOURCE_BUILD.id = #{id}
+			</if>
+			<if test="null != buildName and '' != buildName">
+				and RESOURCE_BUILD.build_name = #{buildName}
+			</if>
+			<if test="null != estimate_id">
+				and RESOURCE_BUILD.estimate_id = #{estimateId}
+			</if>
+			<if test="null != resourcePool and '' != resourcePool">
+				and RESOURCE_BUILD.resource_pool = #{resourcePool}
+			</if>
+			<if test="null != status and '' != status">
+				and RESOURCE_BUILD.status = #{status}
+			</if>
+			<if test="null != createId">
+				and RESOURCE_BUILD.create_id = #{createId}
+			</if>
+			<if test="null != createTime">
+				and RESOURCE_BUILD.create_time = #{createTime}
+			</if>
+			<if test="null != updateId and '' != updateId">
+				and RESOURCE_BUILD.update_id = #{updateId}
+			</if>
+			<if test="null != updateTime">
+				and RESOURCE_BUILD.update_time = #{updateTime}
+			</if>
+			<if test="null != remark and '' != remark">
+				and RESOURCE_BUILD.remark = #{remark}
+			</if>
+		</where>
+	</sql>
+	<sql id="Foreach_PrimaryKeyArrays_Sql">
+		<foreach collection="array" index="index" item="id"
+				 open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</sql>
+	<select id="selectResBuildMaData" resultMap="ResBuildMaDataResultMap"  parameterType="com.aspire.ums.cmdb.resource.entity.ResBuildMaDataRequest">
+	   select rb.build_name buildName, rb.resource_pool resourcePool, rb.status status, rbd.server_type serverType, rbd.server_name serverName,
+	          rbd.config_detail configDetail, rbd.count, rbd.unit,rb.create_time,rb.id,rbd.imports,rbd.id build_detail_id
+	   from resource_build rb
+	   left join resource_build_detail rbd on rb.id = rbd.build_id
+	   where 1=1
+	   <if test="null != name and '' != name">
+	       and rb.build_name like '%${name}%'
+	   </if>
+	   <if test="null != rePool and '' != rePool">
+	       and rb.resource_pool like '%${rePool}%'
+	   </if>
+	   <if test="null != reStatus and '' != reStatus">
+	       and rb.status = ${reStatus}
+	   </if>
+	   <if test="null != seType and '' != seType">
+	       and rbd.server_type like '%${seType}%'
+	   </if>
+	   <if test="null != seName and '' != seName">
+	       and rbd.server_name like '%${seName}%'
+	   </if>
+	   ORDER BY rb.create_time desc
+		<if test="null != startIndex and null != endIndex">
+			limit #{startIndex},#{pageSize}
+		</if>
+	</select>
+
+	<select id="selectResBuildMaCount" resultType="java.lang.Integer"  parameterType="com.aspire.ums.cmdb.resource.entity.ResBuildMaDataRequest">
+-- 	   select rb.build_name buildName, rb.resource_pool resourcePool, (CASE WHEN rb.status=1 THEN '已建设' ELSE '未建设' END) status,
+-- 	          rbd.server_type serverType, rbd.server_name serverName, rbd.config_detail configDetail, rbd.count, rbd.unit,rb.create_time
+       select count(1)
+	   from resource_build rb
+	   left join resource_build_detail rbd on rb.id = rbd.build_id
+	   where 1=1
+	   <if test="null != name and '' != name">
+	       and rb.build_name like '%${name}%'
+	   </if>
+	   <if test="null != rePool and '' != rePool">
+	       and rb.resource_pool like '%${rePool}%'
+	   </if>
+	   <if test="null != reStatus and '' != reStatus">
+	       and rb.status = ${reStatus}
+	   </if>
+	   <if test="null != seType and '' != seType">
+	       and rbd.server_type like '%${seType}%'
+	   </if>
+	   <if test="null != seName and '' != seName">
+	       and rbd.server_name like '%${seName}%'
+	   </if>
+	   ORDER BY rb.create_time desc
+	</select>
+
+	<select id="selectResBuildMaCountList" resultType="map"  parameterType="map">
+		select rb.build_name buildName, rb.resource_pool resourcePool, (CASE WHEN rb.status=1 THEN '已建设' ELSE '未建设' END) status,
+		rbd.server_type serverType, rbd.server_name serverName, rbd.config_detail configDetail, rbd.count, rbd.unit,rb.create_time
+		from resource_build rb
+		left join resource_build_detail rbd on rb.id = rbd.build_id
+		where 1=1
+		<if test="null != name and '' != name">
+			and rb.build_name like '%${name}%'
+		</if>
+		<if test="null != rePool and '' != rePool">
+			and rb.resource_pool like '%${rePool}%'
+		</if>
+		<if test="null != reStatus and '' != reStatus">
+			and rb.status = ${reStatus}
+		</if>
+		<if test="null != seType and '' != seType">
+			and rbd.server_type like '%${seType}%'
+		</if>
+		<if test="null != seName and '' != seName">
+			and rbd.server_name like '%${seName}%'
+		</if>
+		ORDER BY rb.create_time desc
+	</select>
+
+	<select id="getResourceEstimate" resultType="map">
+	     SELECT re.id id, re.resource_pool resourcePool FROM resource_estimate re WHERE re.status != 0
+	</select>
+
+	<select id="getResourceBuildName" resultMap="ResourceBuildNameResultMap" parameterType="java.lang.Integer">
+	    SELECT rb.build_name addbuildName,rb.resource_pool addresourcePool, rbd.server_type addserverType,
+		rbd.server_name addserverName,rbd.count addcount, rbd.unit addunit,rbd.config_detail addconfigDetail
+		FROM resource_build rb
+		LEFT JOIN resource_build_detail rbd ON rbd.build_id = rb.id
+		WHERE rb.estimate_id=#{id}
+		ORDER BY rb.create_time desc
+	</select>
+
+	<insert id="addResourceBuild" parameterType="map">
+	     INSERT INTO resource_build(build_name,estimate_id,resource_pool,status,create_id,create_time)
+         VALUES (#{buildName},#{estimateId},#{resourcePool},#{status},#{createId},NOW())
+         <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() as id
+         </selectKey>
+	</insert>
+
+	<!--<insert id="addResourceBuildDetail" parameterType="map">-->
+	      <!--INSERT INTO resource_build_detail(build_id,server_type,server_name,unit,count,config_detail,imports)-->
+          <!--VALUES (#{buildId},#{serverType},#{serverName},#{unit},#{count},#{configDetail},#{imports})-->
+	<!--</insert>-->
+
+	<select id="getResourceBuildData" resultMap="ResBuildMaDataResultMap" parameterType="java.lang.Integer">
+	   select rb.build_name buildName, rb.resource_pool resourcePool, rb.status status, rbd.server_type serverType, rbd.server_name serverName,
+	          rbd.config_detail configDetail, rbd.count, rbd.unit,rb.create_time,rb.id
+	   from resource_build rb
+	   left join resource_build_detail rbd on rb.id = rbd.build_id
+	   where rb.id=#{buildId}
+	</select>
+
+	<update id="updateResourceBuild" parameterType="com.aspire.ums.cmdb.resource.entity.ResBuild">
+	       UPDATE resource_build rb SET
+	       rb.build_name=#{buildName},rb.update_id=#{updateId},rb.update_time=now()
+	       WHERE rb.id=#{id}
+	</update>
+
+	<!--<update id="updateResourceBuildDetail" parameterType="map">-->
+	       <!--UPDATE resource_build_detail rb SET-->
+	       <!--rb.server_type=#{serverType},rb.server_name=#{serverName},rb.count=#{count},rb.unit=#{unit},rb.config_detail=#{configDetail}-->
+	       <!--WHERE rb.build_id=#{buildId}-->
+	<!--</update>-->
+
+	<update id="updateResourceEstimate" parameterType="map">
+	      UPDATE resource_estimate rb SET rb.status=2,rb.update_time=now(),rb.update_id=#{updateId} WHERE rb.id=#{estimateId}
+	</update>
+
+	<update id="updateImportStatus" parameterType="map">
+	      UPDATE resource_build_detail rbd SET rbd.imports=#{importStatus} WHERE rbd.id = #{id}
+	</update>
+
+	<insert id="saveCmdbHostAssetsExcelData" parameterType="java.util.List">
+	INSERT INTO cmdb_device_assets
+	(`ID`, `DEVICE_IP`, `IDC`, `COME_FROM`, `IDC_LOCATION`,
+	 `DEVICE_CELL`, `DEVICE_LOG_NAME`, `DEVICE_STATUS`, `DEVICE_STANDARD`, `DEVICE_SN`,
+	 `ASSET_NUMBER`, `CONSOLE_IP`, `CONSOLE_VLAN`, `CONSOLE_MASK`, `CONSOLE_GW`,
+	 `CONSOLE_USER`, `CONSOLE_PASSWORD`, `BUSINESS_VLAN`, `LOCAL_DISK`, `MOUNT_DISK`,
+	 `NETWORK_AREA`, `MAINTENANCE_TIME`, `DEVICE_MAINTENANCE_ID`, `HOST_BACKUP`, `BUSINESS_LEVEL1`, `BUSINESS_LEVEL2`,
+	  `BUSSINESS_ID`, `BLOCK_SIZE`, `DEVICE_CLASS_ID`, `DEVICE_TYPE_ID`, `DEVICE_MODEL_ID`,
+	 `DEVICE_OS_TYPE_ID`, `MANAGED_BY_ANSIBLE`, `ONLINE_TIME`, `OTHER_IP`,
+	 `BOX_NUM`, `SLOT_NUM`, `BOX_MGD_IP`, `EXSI_IP`, `VM_NAME`,
+	 `VM_IP`, `B_CARD_SN`, `DIS_STORAGE`, `DIS_ST_DIR`, `MGD_BY_POOL`, `REMARK`, `DIS_ST_TYPE`, `RESOURCE_PLAN`,
+	 `BLONG_TO`,`TRANS_COST`,`UNIT_PRICE`,`PRORATE_DATE`,`SERVICE_LIFE`,`IS_ASSIGN`,`build_detail_id`)
+	VALUES
+	<foreach collection="list" item="item" index="index" separator="," >
+		(
+		#{item.ID},
+		#{item.device_ip}, <!--//主IP地址-->
+		#{item.idc}, <!--//所属位置-->
+		#{item.idc_label}, <!--//所属位置-->
+		#{item.idc_location}, <!--//机房位置#{item.-->
+		#{item.device_cell}, <!--//机柜号-->
+		#{item.device_log_name}, <!--//逻辑名-->
+		#{item.device_status}, <!--//状态-->
+		#{item.device_standard}, <!--//设备规格-->
+		#{item.device_sn}, <!--//序列号-->
+		#{item.asset_number}, <!--//资产编号-->
+		#{item.console_ip}, <!--//console IP-->
+		#{item.console_vlan}, <!--//console vlan-->
+		#{item.console_mask}, <!--//console 掩码-->
+		#{item.console_gw}, <!--//console 网关-->
+		#{item.console_user}, <!--//console 账号-->
+		#{item.console_password}, <!--//console 密码-->
+		#{item.business_vlan}, <!--//业务 vlan-->
+		#{item.local_disk}, <!--//本地磁盘大小-->
+		#{item.mount_disk}, <!--//初始外挂磁盘-->
+		#{item.network_area}, <!--//网络区域-->
+		<choose>
+                <when test="null != item.maintenance_time and '' != item.maintenance_time ">
+                    #{item.maintenance_time}, <!--//维保时间-->
+                </when>
+                <otherwise>
+                    null,
+                 </otherwise>
+         </choose>
+		#{item.device_maintenance_id}, <!--//维保信息ID-->
+		#{item.host_backup}, <!--//主备关系-->
+		#{item.business_level1}, <!--//一级业务-->
+		#{item.business_level2}, <!--//二级业务-->
+		#{item.businessId},<!--//业务ID-->
+		#{item.block_size}, <!--//块存储(GB)-->
+		#{item.device_class_id},
+		#{item.device_type_id},
+		#{item.device_model_id},
+		#{item.device_os_type_id},
+		#{item.managed_by_ansiblertable}, <!--//是否ansible管理-->
+		<choose>
+                <when test="null != item.online_time and '' != item.online_time ">
+                   #{item.online_time}, <!--//上线时间-->
+                </when>
+                <otherwise>
+                    null,
+                 </otherwise>
+         </choose>
+		<!-- #{item.for_check}, --> <!--//是否迎检-->
+		#{item.other_ip}, <!--//其它IP地址-->
+		#{item.box_num}, <!--//刀箱号-->
+		#{item.slot_num}, <!--//槽位号-->
+		#{item.box_mgd_ip}, <!--//刀箱管理IP-->
+		#{item.exsi_ip}, <!--//所在宿主机IP-->
+		#{item.vm_name}, <!--//承载虚拟机名称-->
+		#{item.vm_ip}, <!--//承载虚拟机IP-->
+		#{item.b_card_sn}, <!--//板卡序列号-->
+		#{item.dis_storage}, <!--//分布式存储（GB）-->
+		#{item.dis_st_dir}, <!--//分布式存储挂载目录-->
+		#{item.mgd_by_pool}, <!--//是否是资源池管理设备-->
+		#{item.remark}, <!--//备注#{item.-->
+		#{item.dis_st_type}, <!--//分布式存储类型-->
+		#{item.resource_plan}, <!--//资源计划性-->
+		#{item.blong_to}, <!--//项目归属-->
+
+		<!--转资成本,单价,按比例分摊日期,使用年限-->
+		#{item.trans_cost},
+		#{item.unit_price},
+		<choose>
+                <when test="null != item.prorate_date and '' != item.prorate_date ">
+                   #{item.prorate_date}, <!--//上线时间-->
+                </when>
+                <otherwise>
+                    null,
+                 </otherwise>
+         </choose>
+		#{item.service_life},
+		'0',
+		#{item.build_detail_id}
+		)
+	</foreach>
+</insert>
+
+<select id="getReBuildName" resultType="map">
+  SELECT DISTINCT bd.build_name text from resource_build bd
+</select>
+
+<select id="getResourceBuildReType" resultType="map">
+  SELECT cd.ID id,cd.LABEL text FROM config_dict cd WHERE TYPE = 'deviceClass'
+</select>
+
+<select id="getReBuildResourPool" resultType="map">
+  SELECT DISTINCT bd.resource_pool text from resource_build bd
+</select>
+
+<update id="updateCMDBDeviceAssets" parameterType="map">
+   UPDATE cmdb_device_assets cda SET cda.IS_ASSIGN='3' WHERE cda.DEVICE_IP in
+   <foreach collection="ips" item="ip" index="index" open="(" close=")" separator=",">
+           #{ip}
+   </foreach>
+</update>
+
+</mapper>

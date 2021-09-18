@@ -1,0 +1,166 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceProjectInstanceMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectInstance" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
+        <result column="device_sn" property="deviceSn" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="bindInstanceMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectBindInstance" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="VARCHAR" />
+        <result column="device_sn" property="deviceSn" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+        <result column="idcType" property="idcType" jdbcType="VARCHAR" />
+        <result column="department1" property="department1" jdbcType="VARCHAR" />
+        <result column="department2" property="department2" jdbcType="VARCHAR" />
+        <result column="bizSystem" property="bizSystem" jdbcType="VARCHAR" />
+        <result column="device_model" property="deviceModel" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_id`,
+        `device_sn`,
+        `instance_id`,
+        `is_delete`
+        FROM cmdb_maintenance_project_instance
+        where `is_delete` = '0'
+    </select>
+
+    <select id="getProjectInstanceListByProjectId" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_id`,
+        `device_sn`,
+        `instance_id`,
+        `is_delete`
+        FROM cmdb_maintenance_project_instance
+        where `is_delete` = '0' and `project_id` = #{projectId}
+    </select>
+
+    <select id="getProjectBindInstanceList" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectBindInstanceQuery" resultMap="bindInstanceMap">
+        SELECT
+            t.*, i.device_name,
+            i.ip,
+            i.idcType,
+            i.department1,
+            i.department2,
+            i.bizSystem,
+            i.device_model
+        FROM
+            cmdb_maintenance_project_instance t
+        LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+        WHERE t.is_delete = '0'
+        <if test="projectId != null and projectId != ''">
+            and t.project_id = #{projectId}
+        </if>
+        <if test="deviceSn != null and deviceSn != ''">
+            and t.device_sn like concat('%',#{deviceSn},'%')
+        </if>
+        <if test="ip != null and ip != ''">
+            and i.ip like concat('%',#{ip},'%')
+        </if>
+        order by t.device_sn
+        limit #{pageNo}, #{pageSize}
+    </select>
+
+    <select id="getProjectBindInstanceListCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectBindInstanceQuery">
+        SELECT count(1) FROM cmdb_maintenance_project_instance t
+        LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+        WHERE t.is_delete = '0'
+        <if test="projectId != null and projectId != ''">
+            and t.project_id = #{projectId}
+        </if>
+        <if test="deviceSn != null and deviceSn != ''">
+            and t.device_sn like concat('%',#{deviceSn},'%')
+        </if>
+        <if test="ip != null and ip != ''">
+            and i.ip like concat('%',#{ip},'%')
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectInstance">
+        SELECT
+        `id`,
+        `project_id`,
+        `device_sn`,
+        `instance_id`,
+        `is_delete`
+        FROM cmdb_maintenance_project_instance
+        WHERE `is_delete` = '0'
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="projectId != null and projectId != ''">
+        AND `project_id` = #{projectId}
+        </if>
+        <if test="deviceSn != null and deviceSn != ''">
+        AND `device_sn` = #{deviceSn}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectInstance" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_id`,
+        `device_sn`,
+        `instance_id`,
+        `is_delete`
+        FROM cmdb_maintenance_project_instance
+        WHERE `is_delete` = '0'
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="projectId != null and projectId != ''">
+            and `project_id` = #{projectId}
+        </if>
+        <if test="deviceSn != null and deviceSn != ''">
+            and `device_sn` = #{deviceSn}
+        </if>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectInstance">
+        INSERT INTO cmdb_maintenance_project_instance
+        (
+            `id`,
+            `project_id`,
+            `device_sn`,
+            `instance_id`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{projectId, jdbcType=VARCHAR},
+            #{deviceSn, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectInstance">
+        UPDATE cmdb_maintenance_project_instance SET
+        `project_id` = #{projectId},
+        `device_sn` = #{deviceSn},
+        `instance_id` = #{instanceId}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectInstance">
+        UPDATE cmdb_maintenance_project_instance SET
+        `is_delete` = '1'
+        WHERE
+        `id` = #{id} and `project_id` = #{projectId}
+    </delete>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AutoConfirmClearDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.vo.alert.AutoConfirmClearVo" id="AutoConfirmClearDTOMap">
+        <result property="uuid" column="uuid" jdbcType="VARCHAR" />
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR" />
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+        <result property="source" column="source" jdbcType="VARCHAR" />
+        <result property="itemId" column="item_id" jdbcType="VARCHAR" />
+        <result property="autoType" column="auto_type" jdbcType="INTEGER" />
+        <result property="content" column="content" jdbcType="VARCHAR" />
+        <result property="startTime" column="start_time" jdbcType="VARCHAR" />
+        <result property="endTime" column="end_time" jdbcType="VARCHAR" />
+        <result property="operator" column="operator" jdbcType="VARCHAR" />
+        <!--<collection property="alertList"-->
+                    <!--column= "{deviceIp=device_ip,idcType=idc_type,bizSys=biz_sys,alertLevel=alert_level,source=source,itemId=item_id}"-->
+                    <!--select="com.aspire.mirror.alert.server.dao.alert.AlertsDao.getAlerts" />-->
+    </resultMap>
+
+    <sql id="baseSql">
+        uuid,device_ip,idc_type,biz_sys,alert_level,source,item_id,auto_type,content,start_time,end_time,operator
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.vo.alert.AutoConfirmClearVo">
+        INSERT INTO auto_confirm_clear
+        (<include refid="baseSql"/>)
+        VALUES
+        (#{uuid},#{deviceIp},#{idcType},#{bizSys},#{alertLevel},#{source},#{itemId},#{autoType},#{content},#{startTime},#{endTime},#{operator})
+    </insert>
+
+    <select id="getAutoConfirmClearId" parameterType="java.lang.Object" resultMap="AutoConfirmClearDTOMap">
+        SELECT
+        <include refid="baseSql"/>
+        FROM auto_confirm_clear
+        WHERE
+        auto_type = #{autoType}
+        AND alert_level = #{alertLevel}
+        AND source = #{source}
+        <choose>
+            <when test="deviceIp != null and deviceIp != ''">
+                AND device_ip = #{deviceIp}
+            </when>
+            <otherwise>
+                AND device_ip IS null
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="idcType != null and idcType != ''">
+                AND idc_type = #{idcType}
+            </when>
+            <otherwise>
+                AND idc_type IS null
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="bizSys != null and bizSys != ''">
+                AND biz_sys = #{bizSys}
+            </when>
+            <otherwise>
+                AND biz_sys IS null
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="itemId != null and itemId != ''">
+                AND item_id = #{itemId}
+            </when>
+            <otherwise>
+                AND item_id IS null
+            </otherwise>
+        </choose>
+        <if test="curTime != '' and curTime != null">
+            AND (start_time &lt; #{curTime} AND end_time &gt; #{curTime})
+        </if>
+    </select>
+
+    <select id="getAutoConfirmClearDTOs" parameterType="java.lang.Object" resultMap="AutoConfirmClearDTOMap">
+        SELECT
+        <include refid="baseSql"/>
+        FROM auto_confirm_clear
+        WHERE auto_type = #{autoType}
+        AND (start_time &lt; #{curTime} AND end_time &gt; #{curTime})
+    </select>
+
+    <delete id="deleteRule" parameterType="java.lang.String">
+        DELETE FROM auto_confirm_clear
+        WHERE 1=1
+        AND end_time &lt; #{curTime}
+    </delete>
+
+</mapper>

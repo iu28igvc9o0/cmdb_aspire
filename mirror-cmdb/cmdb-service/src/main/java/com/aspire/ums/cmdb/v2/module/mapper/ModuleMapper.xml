@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.module.mapper.ModuleMapper" >
+
+    <resultMap id="simpleModule" type="com.aspire.ums.cmdb.module.payload.SimpleModule" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="enable_approve" property="enableApprove" jdbcType="INTEGER" />
+        <result column="is_vice" property="isVice" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="ModuleMap" type="com.aspire.ums.cmdb.module.payload.Module" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="enable_approve" property="enableApprove" jdbcType="INTEGER" />
+        <result column="is_vice" property="isVice" jdbcType="INTEGER" />
+        <result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
+        <result column="catalog_id" property="catalogId" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="INTEGER" />
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+        <result column="is_display" property="isDisplay" jdbcType="INTEGER"/>
+        <result column="partition_id" property="partitionId" jdbcType="INTEGER"/>
+        <association property="moduleCatalog" column="catalog_id" select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCatalogMapper.getById"/>
+    </resultMap>
+    <resultMap id="TreeResultMap" type="com.aspire.ums.cmdb.module.payload.Module" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="enable_approve" property="enableApprove" jdbcType="INTEGER" />
+        <result column="is_vice" property="isVice" jdbcType="INTEGER" />
+        <result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
+        <result column="catalog_id" property="catalogId" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="INTEGER" />
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+        <result column="is_display" property="isDisplay" jdbcType="INTEGER"/>
+        <result column="partition_id" property="partitionId" jdbcType="INTEGER"/>
+        <association property="moduleCatalog" column="catalog_id" select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCatalogMapper.getById"/>
+        <collection property="childModules" column="catalog_id" select="com.aspire.ums.cmdb.v2.module.mapper.ModuleMapper.getChildByCatalogId" />
+        <collection property="refModules" column="id" select="getRefModuleById"/>
+    </resultMap>
+
+
+    <resultMap id="ModuleDetailMap" type="com.aspire.ums.cmdb.module.payload.Module" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="enable_approve" property="enableApprove" jdbcType="INTEGER" />
+        <result column="is_vice" property="isVice" jdbcType="INTEGER" />
+        <result column="icon_url" property="iconUrl" jdbcType="VARCHAR" />
+        <result column="catalog_id" property="catalogId" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="INTEGER" />
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+        <result column="is_display" property="isDisplay" jdbcType="INTEGER"/>
+        <result column="partition_id" property="partitionId" jdbcType="INTEGER" />
+        <association property="moduleCatalog" column="catalog_id" select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCatalogMapper.getById"/>
+        <collection property="childModules" column="catalog_id" select="com.aspire.ums.cmdb.v2.module.mapper.ModuleMapper.getChildByCatalogId" />
+        <collection property="tags" column="id" select="com.aspire.ums.cmdb.v2.module.mapper.ModuleTagMapper.selectByModuleId"/>
+        <collection property="refModules" column="id" select="getRefModuleById"/>
+        <collection property="auths" column="id" select="com.aspire.ums.cmdb.v3.authorization.mapper.CmdbV3AuthorizationMapper.getByModuleId"/>
+        <!--<collection property="codeSettingList" column="{moduleId = id}" select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCodeSettingMapper.listByEntity"/>-->
+        <collection property="groupList" column="{moduleId = id}" select="com.aspire.ums.cmdb.v2.code.mapper.CmdbModuleCodeGroupMapper.listByEntity"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,partition_id, name, code,catalog_id, parent_id,enable_approve,is_vice, icon_url, sort_index, is_delete,is_display
+    </sql>
+
+    <select id="getRefModuleById" resultMap="ModuleMap">
+        select <include refid="Base_Column_List"/>
+        from cmdb_module
+        where id in (
+        select ref_module_id from cmdb_v3_module_ref_relation
+        where module_id = #{moduleId} and is_delete = '0'
+        )
+        and is_delete = 0
+        ORDER BY sort_index
+    </select>
+
+    <select id="getChildByCatalogId" resultMap="TreeResultMap">
+        select <include refid="Base_Column_List"/>
+        from cmdb_module
+        where catalog_id in
+        (
+        select id from cmdb_v3_module_catalog
+        where is_delete = '0'
+        and parent_catalog_id =#{catalogId}
+        )
+        and is_delete=0
+        ORDER BY sort_index
+    </select>
+
+    <select id="getModuleTree" resultMap="TreeResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_module
+        where is_delete = '0'
+        <if test="catalogId != null and catalogId != ''">
+            and catalog_id = #{catalogId}
+        </if>
+        <if test="catalogId == null or catalogId == ''">
+               and catalog_id in (
+                select id from cmdb_v3_module_catalog where parent_catalog_id = '0'
+                )
+        </if>
+        ORDER BY sort_index
+    </select>
+    <select id="getModuleList" resultMap="ModuleMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_module a
+        where is_delete = '0'
+    </select>
+    <select id="selectLimitSort" resultMap="TreeResultMap">
+
+        SELECT
+        a.id,a.partition_id, a.name, a.code,
+        a.catalog_id, a.parent_id,a.enable_approve,a.is_vice, a.icon_url, a.sort_index, a.is_delete,a.is_display
+        FROM cmdb_module a
+        LEFT JOIN `cmdb_v3_module_catalog` b
+        ON a.catalog_id = b.id
+        WHERE a.is_delete=0 and b.is_delete=0  and b.parent_catalog_id =#{parentCatalogId}
+        <if test="sortType == 'up'">
+            and a.sort_index <![CDATA[<]]> (SELECT sort_index FROM cmdb_module
+            WHERE id=#{moduleId}) ORDER BY sort_index DESC
+        </if>
+        <if test="sortType == 'down'">
+            and a.sort_index <![CDATA[>]]> (SELECT sort_index FROM cmdb_module
+            WHERE id=#{moduleId}) ORDER BY sort_index
+        </if>
+
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.module.payload.Module" >
+        insert into cmdb_module (id,partition_id, name, code,
+                                 catalog_id,parent_Id,enable_approve,is_vice, icon_url, sort_Index,
+                                 is_Delete)
+        values (#{id,jdbcType=VARCHAR},#{partitionId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},#{catalogId,jdbcType=VARCHAR},
+                #{parentId,jdbcType=VARCHAR},ifnull(#{enableApprove,jdbcType=INTEGER},1) ,ifnull(#{isVice,jdbcType=INTEGER},0)  , #{iconUrl,jdbcType=VARCHAR}, #{sortIndex,jdbcType=INTEGER},0)
+    </insert>
+
+    <select id="selectMaxIndex" resultType="java.lang.Integer">
+        select max(sort_index) from cmdb_module where is_delete = 0
+    </select>
+
+    <select id="getModuleDetail" resultMap="ModuleDetailMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_module
+        WHERE is_delete = 0 AND id = #{moduleId}
+        ORDER BY sort_index
+    </select>
+
+    <select id="getSimpleModuleDetail" resultMap="simpleModule">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_module
+        WHERE is_delete = 0 AND id = #{moduleId}
+        ORDER BY sort_index
+    </select>
+
+    <select id="getModuleByInstanceId" resultMap="ModuleMap">
+        select <include refid="Base_Column_List"/> from cmdb_module
+        where id = (select module_id from cmdb_instance where id = #{instanceId})
+        and is_delete=0
+    </select>
+    <select id="getModuleDetailByCatalogId" resultMap="ModuleDetailMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_module
+        WHERE is_delete = 0 AND catalog_id = #{catalogId}
+    </select>
+    <select id="getSimpleModuleByCatalogId" resultMap="simpleModule">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cmdb_module
+        WHERE is_delete = 0 AND catalog_id = #{catalogId}
+    </select>
+    <update id="update" parameterType="com.aspire.ums.cmdb.module.payload.Module">
+        UPDATE
+        cmdb_module
+        <trim prefix="set" suffixOverrides=",">
+            <if test="enableApprove != null">enable_approve = #{enableApprove},</if>
+            <if test="isVice != null">is_vice = #{isVice},</if>
+            <if test="iconUrl != null">icon_Url = #{iconUrl},</if>
+            <if test="isDelete != null">is_Delete = #{isDelete},</if>
+            <if test="sortIndex != null">sort_index = #{sortIndex}</if>
+        </trim>
+        WHERE id = #{id} and is_delete=0
+    </update>
+
+    <select id="getModuleSelective" parameterType="com.aspire.ums.cmdb.module.payload.Module" resultMap="TreeResultMap">
+        SELECT * from cmdb_module
+        where 1=1 and is_Delete=0
+        <if test="id != null">and id = #{id}</if>
+        <if test="name != null">and name = #{name}</if>
+        <if test="code != null">and code = #{code}</if>
+        <if test="enableApprove != null">and enable_approve = #{enableApprove}</if>
+        <if test="isVice != null">and is_vice = #{isVice}</if>
+        <if test="catalogId != null">and catalog_id = #{catalogId}</if>
+        <if test="parentId != null">and parent_id = #{parentId}</if>
+        <if test="sortIndex != null">and sort_Index = #{sortIndex}</if>
+        <if test="isDelete != null">and is_Delete = #{isDelete}</if>
+    </select>
+
+    <select id="getModuleByCodeId" parameterType="java.lang.String" resultMap="ModuleMap">
+        SELECT a.* FROM cmdb_module a
+                            LEFT JOIN `cmdb_v3_module_code_setting` b ON a.id = b.module_id
+        WHERE a.is_delete = 0 AND b.is_delete= 0 AND b.module_id = b.owner_module_id
+          AND b.`code_id`=#{codeId}
+
+    </select>
+
+    <select id="getRefModuleByModuleId" parameterType="java.lang.String" resultMap="simpleModule">
+        SELECT a.* FROM cmdb_module a where a.id in (
+            select b.module_id from `cmdb_v3_module_code_setting` b
+            where b.module_id != #{moduleId}
+            and b.owner_module_id = #{moduleId} and b.is_delete = '0'
+        ) and a.is_delete = '0'
+    </select>
+    <select id="getModuleByRefModuleId" parameterType="java.lang.String" resultMap="simpleModule">
+        SELECT a.* FROM cmdb_module a where a.id in (
+            select b.module_id from `cmdb_v3_module_code_setting` b
+            where b.module_id = #{moduleId}
+            and b.owner_module_id != #{moduleId} and b.is_delete = '0'
+        ) and a.is_delete = '0'
+    </select>
+
+    <select id="getCurRefModule" parameterType="java.lang.String" resultMap="ModuleMap">
+        SELECT a.* FROM cmdb_module a WHERE a.id IN (
+            SELECT b.`owner_module_id` FROM `cmdb_v3_module_code_setting` b
+            WHERE b.module_id = #{moduleId}
+              AND b.is_delete = '0'
+        ) AND a.is_delete = '0'
+    </select>
+
+    <delete id="delete" parameterType="java.lang.String">
+        update cmdb_module set is_delete = 1 where `id` = #{moduleId}
+    </delete>
+
+    <select id="getModuleCodeAndCatalogCodeByDeviceType" resultType="java.util.HashMap">
+        select m.id, m.`code` module_code, c.catalog_code from cmdb_module m
+        inner join cmdb_v3_module_catalog c on m.catalog_id = c.id
+		inner join t_cfg_dict tc on tc.id = #{deviceType} and tc.col_name='device_type'
+        where m.is_delete = '0' and c.is_delete = '0' and tc.is_delete = '0' and m.`name` = tc.dict_note
+    </select>
+
+    <select id="getParentInfo" resultType="java.util.HashMap">
+        SELECT
+            tem1.id parent_id,
+            tem1.`name` parent_name,
+            tem2.id module_id,
+            tem2.`name` module_name
+        FROM
+            (
+                SELECT
+                    ct.id,
+                    ct.`name`
+                FROM
+                    cmdb_module ct
+                WHERE
+                    ct.catalog_id = (
+                        SELECT
+                            c.parent_catalog_id
+                        FROM
+                            cmdb_module t
+                        INNER JOIN cmdb_v3_module_catalog c ON t.catalog_id = c.id
+                        WHERE
+                            t.id = #{moduleId}
+                    ) and ct.is_delete = '0'
+            ) tem1,
+            (
+                SELECT
+                    t.id,
+                    t. NAME
+                FROM
+                    cmdb_module t
+                WHERE
+                    t.id = #{moduleId} and t.is_delete = '0'
+            ) tem2
+    </select>
+
+    <select id="getIdcTypeIdByCNName" resultType="java.lang.String">
+        select m.id from cmdb_idc_manager m
+        inner join cmdb_dict d on m.id = d.id
+        where m.idc_name = #{cnName}
+    </select>
+
+    <select id="getPodIdByCNName" resultType="java.lang.String">
+        select m.id from cmdb_pod_manager m
+        inner join cmdb_dict d on m.id = d.id
+        where m.pod_name = #{cnName}
+    </select>
+
+    <select id="getProjectIdByCNName" resultType="java.lang.String">
+        select m.id from cmdb_project_manager m
+        inner join cmdb_dict d on m.id = d.id
+        where m.project_name = #{cnName}
+    </select>
+
+    <select id="getBizSystemIdByCNName" resultType="java.lang.String">
+        select m.id from cmdb_business_system m
+        inner join cmdb_business d on m.id = d.id
+        where m.bizSystem = #{cnName}
+    </select>
+
+    <select id="getModuleIdByDeviceType" resultType="java.util.HashMap">
+        select * from cmdb_module cm
+        where cm.name = (select tcd.dict_note from t_cfg_dict tcd where tcd.id = #{deviceType} and tcd.is_delete = '0')
+        and cm.is_delete  = '0'
+    </select>
+
+    <select id="getModuleIdByDeviceClass" resultType="java.util.HashMap">
+        select * from cmdb_module cm
+        where cm.name = (select tcd.dict_note from t_cfg_dict tcd where tcd.id = #{deviceClass} and tcd.is_delete = '0')
+        and cm.is_delete  = '0'
+    </select>
+
+    <select id="getChildModuleListByParentModuleId" resultType="java.util.HashMap">
+        SELECT
+        *
+        FROM
+        cmdb_module
+        WHERE catalog_id IN
+        (SELECT
+        id
+        FROM
+        cmdb_v3_module_catalog
+        WHERE parent_catalog_id IN
+        (SELECT
+        id
+        FROM
+        cmdb_v3_module_catalog
+        WHERE id IN
+        (SELECT
+        catalog_id
+        FROM
+        cmdb_module
+        WHERE id = #{parentModuleId})))
+    </select>
+
+    <select id="getOwnerModuleCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM (
+          SELECT DISTINCT owner_module_id FROM `cmdb_v3_module_code_setting`
+          WHERE module_id = #{moduleId} AND owner_module_id != #{moduleId} AND is_delete = '0'
+        ) t
+    </select>
+</mapper>

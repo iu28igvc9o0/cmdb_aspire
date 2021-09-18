@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.AgentDataDao">
+
+	<resultMap type="com.aspire.mirror.ops.domain.AgentProxyInfo" id="agentProxy">
+		<result property="id" column="id" jdbcType="BIGINT"/>
+		<result property="pool" column="pool" jdbcType="VARCHAR"/>
+    	<result property="proxyIdentity" column="proxy_identity" jdbcType="VARCHAR"/>
+    	<result property="description" column="description" jdbcType="VARCHAR"/>
+    	<result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+    <resultMap type="com.aspire.mirror.ops.domain.AgentHostInfo" id="agentHost">
+    	<result property="pool" column="pool" jdbcType="VARCHAR"/>
+    	<result property="proxyId" column="proxy_id" jdbcType="BIGINT"/>
+    	<result property="proxyIdentity" column="proxy_identity" jdbcType="VARCHAR"/>
+    	<result property="agentIp" column="agent_ip" jdbcType="VARCHAR"/>
+    	<result property="agentEnvId" column="agent_env_id" jdbcType="VARCHAR"/>
+    	<result property="hostOsType" column="host_os_type" jdbcType="VARCHAR"/>
+    	<result property="baseUser" column="base_user" jdbcType="VARCHAR"/>
+    	<result property="embedSshUser" column="embed_ssh_user" jdbcType="VARCHAR"/>
+    	<result property="embedSshPass" column="embed_ssh_pass" jdbcType="VARCHAR"/>
+    	<result property="embedSshPort" column="embed_ssh_port" jdbcType="INTEGER"/>
+    	<result property="status" column="status" />
+    	<result property="lastSyncTime" column="last_sync_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <resultMap type="com.aspire.mirror.ops.api.domain.SimpleAgentHostInfo" id="simpleAgentHost">
+    	<result property="pool" column="pool" jdbcType="VARCHAR"/>
+    	<result property="proxyId" column="proxy_id" jdbcType="BIGINT"/>
+    	<result property="proxyIdentity" column="proxy_identity" jdbcType="VARCHAR"/>
+    	<result property="agentIp" column="agent_ip" jdbcType="VARCHAR"/>
+    	<result property="hostOsType" column="host_os_type" jdbcType="VARCHAR"/>
+    	<result property="status" column="status"/>
+    </resultMap>
+	
+	<sql id="agentProxyfullSelectColumns">
+		id, pool, proxy_identity, description, update_time
+	</sql>
+	
+	<sql id="agentHostfullSelectColumns">
+		h.proxy_id, h.agent_ip, h.agent_env_id, h.host_os_type, h.base_user, 
+		h.embed_ssh_user, h.embed_ssh_pass, h.embed_ssh_port, h.status, h.last_sync_time
+	</sql>
+	
+	<select id="queryAgentProxyByPoolAndIdentity" parameterType="map" resultMap="agentProxy">
+		select <include refid="agentProxyfullSelectColumns" />
+		  from ops_spectre_proxy
+		 where proxy_identity = #{proxyIdentity}
+	</select>
+	
+	<select id="queryAgentProxyById" parameterType="java.lang.Long" resultMap="agentProxy">
+		select <include refid="agentProxyfullSelectColumns" />
+		  from ops_spectre_proxy
+		 where id = #{proxyId}
+	</select>
+
+	<insert id="insertProxyData" useGeneratedKeys="true" keyColumn="id" keyProperty="id" 
+    								   parameterType="com.aspire.mirror.ops.domain.AgentProxyInfo">
+    	insert into ops_spectre_proxy(
+    		pool, proxy_identity, description, update_time
+    	) values (
+    		#{pool}, #{proxyIdentity}, #{description}, #{updateTime}
+    	)
+    </insert>								   
+	
+    <select id="queryAgentDataByProxyIdAndIP" parameterType="map" resultMap="agentHost">
+        select <include refid="agentHostfullSelectColumns" />, p.pool, p.proxy_identity
+          from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id 
+           		and h.proxy_id = #{proxyId} and h.agent_ip = #{agentIp}
+    </select>
+    
+	<select id="queryAgentDataByPoolAndAgentIP" parameterType="map" resultMap="agentHost">
+		select <include refid="agentHostfullSelectColumns" />, p.pool, p.proxy_identity
+          from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id 
+               and p.pool = #{pool} and h.agent_ip = #{agentIp}
+	</select>
+    
+    <select id="queryAgentDataListByProxyIdConcatIP" parameterType="java.util.List" resultMap="agentHost">
+    	 select <include refid="agentHostfullSelectColumns" />, p.pool, p.proxy_identity
+          from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id 
+         where CONCAT(h.proxy_id, ':', h.agent_ip) in
+		  <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+			 #{item, jdbcType=VARCHAR}
+		  </foreach>
+    </select>
+    <select id="queryHostExtByProxyIdAndAgentIp" resultType="com.aspire.mirror.ops.api.domain.OpsSpectreHostExt">
+		select proxy_id proxyId,
+		agent_ip agentIp,
+		pool pool,
+		pool_name poolName,
+		department1 department1,
+		department2 department2,
+		biz_system bizSystem,
+		os_type osType,
+		os_type_name osTypeName,
+		os_status osStatus,
+		os_status_name osStatusName,
+		department1_name department1Name,
+		department2_name department2Name,
+		biz_system_name bizSystemName
+		from ops_spectre_host_ext
+		where proxy_id = #{proxyId} and agent_ip = #{agentIp}
+	</select>
+	
+	<select id="queryHostExtByPoolIdAndAgentIp" resultType="com.aspire.mirror.ops.api.domain.OpsSpectreHostExt">
+		select proxy_id proxyId,
+		agent_ip agentIp,
+		pool pool,
+		pool_name poolName,
+		department1 department1,
+		department2 department2,
+		biz_system bizSystem,
+		os_type osType,
+		os_type_name osTypeName,
+		os_status osStatus,
+		os_status_name osStatusName,
+		department1_name department1Name,
+		department2_name department2Name,
+		biz_system_name bizSystemName
+		from ops_spectre_host_ext
+		where pool = #{poolId} and agent_ip = #{agentIp}
+	</select>
+	
+	<select id="queryHostExtByPoolNameAndAgentIp" resultType="com.aspire.mirror.ops.api.domain.OpsSpectreHostExt">
+		select proxy_id proxyId,
+		agent_ip agentIp,
+		pool pool,
+		pool_name poolName,
+		department1 department1,
+		department2 department2,
+		biz_system bizSystem,
+		os_type osType,
+		os_type_name osTypeName,
+		os_status osStatus,
+		os_status_name osStatusName,
+		department1_name department1Name,
+		department2_name department2Name,
+		biz_system_name bizSystemName
+		from ops_spectre_host_ext
+		where pool_name = #{poolName} and agent_ip = #{agentIp}
+	</select>
+	
+	<insert id="insertAgentExtData" parameterType="com.aspire.mirror.ops.api.domain.OpsSpectreHostExt">
+		insert into ops_spectre_host_ext (
+		proxy_id,
+		agent_ip,
+		pool,
+		pool_name,
+		department1,
+		department2,
+		biz_system,
+		os_type,
+		os_type_name,
+		os_status,
+		os_status_name,
+		department1_name,
+		department2_name,
+		biz_system_name,
+		device_class,
+		device_type,
+		device_name,
+		device_class_name,
+		device_type_name,
+		room_id,
+		room_name,
+		biz_employee
+		) values (
+		#{proxyId},
+		#{agentIp},
+		#{pool},
+		#{poolName},
+		#{department1},
+		#{department2},
+		#{bizSystem},
+		#{osType},
+		#{osTypeName},
+		#{osStatus},
+		#{osStatusName},
+		#{department1Name},
+		#{department2Name},
+		#{bizSystemName},
+		#{deviceClass},
+		#{deviceType},
+		#{deviceName},
+		#{deviceClassName},
+		#{deviceTypeName},
+		#{roomId},
+		#{roomName},
+		#{bizEmployee}
+		)
+	</insert>
+
+    <insert id="insertAgentData" parameterType="com.aspire.mirror.ops.domain.AgentHostInfo">
+    	insert into ops_spectre_host(
+    		proxy_id, 
+    		agent_ip, 
+    		agent_env_id, 
+    		host_os_type, 
+    		base_user,
+    		embed_ssh_user, 
+    		embed_ssh_pass, 
+    		embed_ssh_port, 
+    		status,
+    		last_sync_time
+    	  ) values (
+    	  	#{proxyId},
+    	  	#{agentIp},
+    	  	#{agentEnvId},
+    	  	#{hostOsType},
+    	  	#{baseUser},
+    	  	#{embedSshUser},
+    	  	#{embedSshPass},
+    	  	#{embedSshPort},
+    	  	#{status},
+    	  	#{lastSyncTime}
+    	  )
+    </insert>
+    
+    <update id="updateAgentData" parameterType="com.aspire.mirror.ops.domain.AgentHostInfo">
+    	update ops_spectre_host
+    	   set agent_env_id = #{agentEnvId},
+	    	   host_os_type = #{hostOsType},
+	    	   base_user = #{baseUser},
+	    	   embed_ssh_user = #{embedSshUser},
+	    	   embed_ssh_pass = #{embedSshPass},
+	    	   embed_ssh_port = #{embedSshPort},
+	    	   <if test="status != null">
+			      status = #{status},
+		       </if>
+	    	   last_sync_time = #{lastSyncTime}
+         where proxy_id = #{proxyId}
+	       and agent_ip = #{agentIp}
+    </update>
+    
+    <delete id="deleteAgentDataByProxyIdAndIP" parameterType="map">
+    	delete from ops_spectre_host where proxy_id = #{proxyId} and agent_ip = #{agentIp}
+    </delete>
+	
+    <select id="queryAgentInfoByProxyIdConcatIP" parameterType="java.lang.String" resultMap="simpleAgentHost">
+         select h.proxy_id, p.pool, p.proxy_identity, h.agent_ip, h.host_os_type, h.status
+		  from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id 
+         where CONCAT(h.proxy_id, ':', h.agent_ip) = #{concactId}
+    </select>
+    <select id="queryAgentInfoByPoolAndAgentIP" parameterType="java.util.Map" resultMap="simpleAgentHost">
+         select h.proxy_id, p.pool, p.proxy_identity, h.agent_ip, h.host_os_type, h.status
+		  from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id 
+          where p.pool = #{pool} and h.agent_ip = #{agentIp}
+    </select>
+	
+	<select id="querySimpleAgentHostList" resultMap="simpleAgentHost" 
+				parameterType="com.aspire.mirror.ops.api.domain.SimpleAgentHostInfo$SimpleAgentHostQueryModel">
+		select h.proxy_id, p.pool, p.proxy_identity, h.agent_ip, h.host_os_type, h.status
+		  from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id 
+		 where 1 = 1 
+	      <if test="agentIp != null and agentIp != '' ">
+		      and h.agent_ip like CONCAT ('%', #{agentIp}, '%')
+	      </if>
+		<if test="agentIpList != null and agentIpList.size > 0 ">
+			and CONCAT(h.proxy_id, ':', h.agent_ip) in
+			<foreach item="item" collection="agentIpList" separator="," open="(" close=")" index="">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+		</if>
+	      <if test="hostOsType != null and hostOsType != '' ">
+		      and h.host_os_type like CONCAT ('%', #{hostOsType}, '%')
+	      </if>
+			<if test="status != null and status != '' ">
+				and h.status = #{status}
+			</if>
+			<if test="pool != null and pool != ''">
+				and p.pool like CONCAT ('%', #{pool}, '%')
+			</if>
+	      <if test="pageSize != null and pageSize > 0 ">
+	     	order by h.proxy_id, h.agent_ip
+	        limit #{startIdx}, #{pageSize}
+          </if>		
+	</select>
+	
+	<select id="querySimpleAgentHostTotalSize" resultType="java.lang.Integer" 
+				parameterType="com.aspire.mirror.ops.api.domain.SimpleAgentHostInfo$SimpleAgentHostQueryModel">
+		select count(h.agent_ip)
+		from ops_spectre_host h inner join ops_spectre_proxy p on h.proxy_id = p.id
+		where 1 = 1
+	      <if test="agentIp != null and agentIp != '' ">
+		      and h.agent_ip like CONCAT ('%', #{agentIp}, '%')
+	      </if>
+			<if test="agentIpList != null and agentIpList.size > 0 ">
+				and CONCAT(h.proxy_id, ':', h.agent_ip) in
+				<foreach item="item" collection="agentIpList" separator="," open="(" close=")" index="">
+					#{item, jdbcType=VARCHAR}
+				</foreach>
+			</if>
+	      <if test="hostOsType != null and hostOsType != '' ">
+		      and h.host_os_type like CONCAT ('%', #{hostOsType}, '%')
+	      </if>	
+	      <if test="status != null and status != '' ">
+		      and h.status = #{status}
+	      </if>
+		<if test="pool != null and pool != ''">
+			and p.pool like CONCAT ('%', #{pool}, '%')
+		</if>
+	</select>
+	<resultMap id="normalAgentHost" type="com.aspire.mirror.ops.api.domain.NormalAgentHostInfo">
+		<result property="proxyId" column="proxy_id" jdbcType="BIGINT"/>
+		<result property="agentIp" column="agent_ip" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="pool" column="pool" jdbcType="VARCHAR"/>
+		<result property="poolName" column="pool_name" jdbcType="VARCHAR"/>
+		<result property="department1" column="department1" jdbcType="VARCHAR"/>
+		<result property="department2" column="department2" jdbcType="VARCHAR"/>
+		<result property="department1Name" column="department1_name" jdbcType="VARCHAR"/>
+		<result property="department2Name" column="department2_name" jdbcType="VARCHAR"/>
+		<result property="bizSystem" column="biz_system" jdbcType="VARCHAR"/>
+		<result property="bizSystemName" column="biz_system_name" jdbcType="VARCHAR"/>
+		<result property="osType" column="os_type" jdbcType="VARCHAR"/>
+		<result property="osTypeName" column="os_type_name" jdbcType="VARCHAR"/>
+		<result property="osStatus" column="os_status" jdbcType="VARCHAR"/>
+		<result property="osStatusName" column="os_status_name" jdbcType="VARCHAR"/>
+		<result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+		<result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+		<result property="deviceName" column="device_name" jdbcType="VARCHAR"/>
+		<result property="deviceClassName" column="device_class_name" jdbcType="VARCHAR"/>
+		<result property="deviceTypeName" column="device_type_name" jdbcType="VARCHAR"/>
+		<result property="roomId" column="room_id" jdbcType="VARCHAR"/>
+		<result property="roomName" column="room_name" jdbcType="VARCHAR"/>
+		<result property="bizEmployee" column="biz_employee" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="queryAgentHost" resultMap="normalAgentHost" parameterType="com.aspire.mirror.ops.api.domain.AgentHostQueryModel">
+		select
+		h.proxy_id, h.agent_ip,  h.status,
+		e.pool, e.pool_name, e.department1, e.department2, e.department1_name, e.department2_name, e.biz_system, e.biz_system_name, e.os_type, e.os_type_name, e.os_status, e.os_status_name,
+		e.device_class, e.device_type, e.device_name, e.device_class_name, e.device_type_name, e.room_id, e.room_name, e.biz_employee
+		from ops_spectre_host h
+		left join ops_spectre_host_ext e on h.proxy_id = e.proxy_id and h.agent_ip = e.agent_ip
+		where 1=1
+		<include refid="opsNormalHost_query_where" />
+		<if test="pageSize != null and pageSize > 0 ">
+			order by h.proxy_id, h.agent_ip
+			limit #{startIdx}, #{pageSize}
+		</if>
+	</select>
+	<select id="queryAgentHostTotalSize" resultType="java.lang.Integer" parameterType="com.aspire.mirror.ops.api.domain.AgentHostQueryModel">
+		select
+		count(*)
+		from ops_spectre_host h
+		left join ops_spectre_host_ext e on h.proxy_id = e.proxy_id and h.agent_ip = e.agent_ip
+		where 1=1 <include refid="opsNormalHost_query_where" />
+	</select>
+	<select id="queryyNormalAgentHostByProxyIdConcatIPList" resultMap="normalAgentHost" parameterType="java.lang.Long">
+		select
+		h.proxy_id, h.agent_ip,  h.status,
+		e.pool, p.pool pool_name, e.department1, e.department2, e.department1_name, e.department2_name, e.biz_system, e.biz_system_name, e.os_type, e.os_type_name, e.os_status, e.os_status_name,
+		e.device_class, e.device_type, e.device_name, e.device_class_name, e.device_type_name, e.room_id, e.room_name, e.biz_employee
+		from ops_spectre_host h
+		left join ops_spectre_proxy p on p.id =h.proxy_id
+		left join ops_spectre_host_ext e on h.proxy_id = e.proxy_id and h.agent_ip = e.agent_ip
+		where 1=1
+		and CONCAT(h.proxy_id, ':', h.agent_ip) in
+		<foreach item="item" collection="targetHosts" separator="," open="(" close=")" index="">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	<sql id="opsNormalHost_query_where" >
+		<if test="agentIpList != null and agentIpList.size > 0">
+			and CONCAT(h.proxy_id, ':', h.agent_ip) in
+			<foreach item="item" collection="agentIpList" separator="," open="(" close=")" index="">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+		</if>
+		<if test="isPasswordDownload != null and isPasswordDownload == true">
+			and CONCAT(h.proxy_id, ':', h.agent_ip) in (select agent_ip from ops_param_value where 1=1
+			<if test="usernameLike != null and usernameLike != ''">
+				and device_user_name like CONCAT ('%', #{usernameLike}, '%')
+			</if>
+			<if test="username != null and username != ''">
+				and device_user_name = #{username}
+			</if>
+			group by agent_ip)
+		</if>
+		<if test="agentIp != null and agentIp != ''">
+			and h.agent_ip like CONCAT ('%', #{agentIp}, '%')
+		</if>
+		<if test="pool != null and pool != ''">
+			and e.pool = #{pool}
+		</if>
+		<if test="poolName != null and poolName != ''">
+			and e.pool_name = #{poolName}
+		</if>
+		<if test="department1 != null and department1 != ''">
+			and e.department1 = #{department1}
+		</if>
+		<if test="department1Name != null and department1Name != ''">
+			and e.department1_name = #{department1Name}
+		</if>
+		<if test="department2 != null and department2 != ''">
+			and e.department2 = #{department2}
+		</if>
+		<if test="department2Name != null and department2Name != ''">
+			and e.department2_name = #{department2Name}
+		</if>
+		<if test="bizSystem != null and bizSystem != ''">
+			and e.biz_system = #{bizSystem}
+		</if>
+		<if test="bizSystemName != null and bizSystemName != ''">
+			and e.biz_system_name = #{bizSystemName}
+		</if>
+		<if test="osType != null and osType != ''">
+			and e.os_type = #{osType}
+		</if>
+		<if test="osTypeName != null and osTypeName != ''">
+			and e.os_type_name = #{osTypeName}
+		</if>
+		<if test="osStatus != null and osStatus != ''">
+			and e.os_status = #{osStatus}
+		</if>
+		<if test="osStatusName != null and osStatusName != ''">
+			and e.os_status_name = #{osStatusName}
+		</if>
+	</sql>
+</mapper>

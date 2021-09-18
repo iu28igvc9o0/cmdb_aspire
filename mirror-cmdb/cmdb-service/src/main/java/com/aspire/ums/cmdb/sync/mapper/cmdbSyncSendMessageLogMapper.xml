@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.sync.mapper.CmdbSyncSendMessageLogMapper">
+	
+	<resultMap type="com.aspire.ums.cmdb.sync.entity.CmdbSyncSendMessageLog" id="cmdbSyncSendMessageLog">
+		<result property="id" column="id" jdbcType="BIGINT" />
+		<result property="topic" column="topic" jdbcType="VARCHAR" />
+		<result property="instanceId" column="instance_id" jdbcType="VARCHAR" />
+		<result property="moduleId" column="module_id" jdbcType="VARCHAR" />
+		<result property="objectKey" column="object_key" jdbcType="VARCHAR" />
+		<result property="eventType" column="event_type" jdbcType="VARCHAR" />
+		<result property="objectName" column="object_name" jdbcType="VARCHAR" />
+		<result property="objectId" column="object_id" jdbcType="VARCHAR" />
+		<result property="objectVersion" column="object_version" jdbcType="INTEGER" />
+		<result property="objectTimestamp" column="object_timestamp" jdbcType="TIMESTAMP" />
+		<result property="operator" column="operator" jdbcType="VARCHAR" />
+		<result property="optTime" column="opt_time" jdbcType="TIMESTAMP" />
+		<result property="optDesc" column="opt_desc" jdbcType="VARCHAR" />
+		<result property="msgId" column="msg_id" jdbcType="VARCHAR" />
+		<result property="msgStatus" column="msg_status" jdbcType="CHAR" />
+		<result property="msgSort" column="msg_sort" jdbcType="VARCHAR" />
+		<result property="msgBody" column="msg_body" jdbcType="VARCHAR" />
+		<result property="tryCount" column="try_count" jdbcType="INTEGER" />
+		<result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+		<result property="updateTime" column="update_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- 根据主键查询 -->
+	<select id="findById" parameterType="Long" resultMap="cmdbSyncSendMessageLog">
+		 SELECT
+	 	  	id,
+	 	  	topic,
+	 	  	instance_id,
+	 	  	object_key,
+	 	  	event_type,
+	 	  	object_name,
+	 	  	object_id,
+	 	  	object_version,
+	 	  	object_timestamp,
+	 	  	operator,
+	 	  	opt_time,
+	 	  	opt_desc,
+	 	  	msg_id,
+	 	  	msg_status,
+	 	  	msg_sort,
+	 	  	msg_body,
+	 	  	try_count,
+	 	  	create_time,
+	 	    update_time
+		  FROM 
+		    cmdb_sync_send_message_log
+		  WHERE 
+		    id = #{id}
+	</select>
+	
+	<!--分页查询-->
+	<select id="findPage" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncSendMessageLog" resultMap="cmdbSyncSendMessageLog">
+		 SELECT
+	 	  	id,
+	 	  	topic,
+	 	  	instance_id,
+			object_key,
+	 	  	event_type,
+	 	  	object_name,
+	 	  	object_id,
+	 	  	object_version,
+	 	  	object_timestamp,
+	 	  	operator,
+	 	  	opt_time,
+	 	  	opt_desc,
+	 	  	msg_id,
+	 	  	msg_status,
+	 	  	msg_sort,
+	 	  	msg_body,
+	 	  	try_count,
+	 	  	create_time,
+	 	    update_time
+		  FROM 
+		    cmdb_sync_send_message_log
+		<where>
+	          <if test="topic != null and topic != ''">
+		 	   AND topic=#{topic}
+		      </if>
+	          <if test="instanceId != null and instanceId != ''">
+		 	   AND instance_id=#{instanceId}
+		      </if>
+	          <if test="eventType != null and eventType != ''">
+		 	   AND event_type=#{eventType}
+		      </if>
+		</where>
+	</select>
+	
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncSendMessageLog" useGeneratedKeys="true" keyProperty="id">
+	 INSERT INTO cmdb_sync_send_message_log (
+	 	  	topic,
+	 	  	instance_id,
+	 	  	module_id,
+	 	  	event_type,
+	 	  	object_key,
+	 	  	object_name,
+	 	  	object_id,
+	 	  	object_version,
+	 	  	object_timestamp,
+	 	  	operator,
+	 	  	opt_time,
+	 	  	opt_desc,
+	 	  	msg_id,
+	 	  	msg_status,
+	 	  	msg_sort,
+	 	  	msg_body,
+	 	  	try_count
+	 ) 
+	 VALUES (
+	 	  	#{topic,jdbcType=VARCHAR},
+	 	  	#{instanceId,jdbcType=VARCHAR},
+	 	  	#{moduleId,jdbcType=VARCHAR},
+	 	  	#{eventType,jdbcType=VARCHAR},
+	 	  	#{objectKey,jdbcType=VARCHAR},
+	 	  	#{objectName,jdbcType=VARCHAR},
+	 	  	#{objectId,jdbcType=VARCHAR},
+	 	  	#{objectVersion,jdbcType=INTEGER},
+	 	  	#{objectTimestamp,jdbcType=TIMESTAMP},
+	 	  	#{operator,jdbcType=VARCHAR},
+	 	  	#{optTime,jdbcType=TIMESTAMP},
+	 	  	#{optDesc,jdbcType=VARCHAR},
+	 	  	#{msgId,jdbcType=VARCHAR},
+	 	  	#{msgStatus,jdbcType=CHAR},
+	 	  	#{msgSort,jdbcType=VARCHAR},
+	 	  	#{msgBody,jdbcType=VARCHAR},
+	 	  	#{tryCount,jdbcType=INTEGER}
+	 )
+   </insert>
+
+    <!-- 批量新增 -->
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cmdb_sync_send_message_log (
+				topic,
+				instance_id,
+				module_id,
+				event_type,
+				object_key,
+				object_name,
+				object_id,
+				object_version,
+				object_timestamp,
+				operator,
+				opt_time,
+				opt_desc,
+				msg_id,
+				msg_status,
+				msg_sort,
+				msg_body,
+				try_count
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+			(
+					#{item.topic,jdbcType=VARCHAR},
+					#{item.instanceId,jdbcType=VARCHAR},
+					#{item.moduleId,jdbcType=VARCHAR},
+					#{item.eventType,jdbcType=VARCHAR},
+					#{item.objectKey,jdbcType=VARCHAR},
+					#{item.objectName,jdbcType=VARCHAR},
+					#{item.objectId,jdbcType=VARCHAR},
+					#{item.objectVersion,jdbcType=INTEGER},
+					#{item.objectTimestamp,jdbcType=TIMESTAMP},
+					#{item.operator,jdbcType=VARCHAR},
+					#{item.optTime,jdbcType=TIMESTAMP},
+					#{item.optDesc,jdbcType=VARCHAR},
+					#{item.msgId,jdbcType=VARCHAR},
+					#{item.msgStatus,jdbcType=CHAR},
+					#{item.msgSort,jdbcType=VARCHAR},
+					#{item.msgBody,jdbcType=VARCHAR},
+					#{item.tryCount,jdbcType=INTEGER}
+        	)
+		</foreach>
+    </insert>
+   
+   <!-- 更新 -->
+   <update id="update" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncSendMessageLog">
+	 UPDATE cmdb_sync_send_message_log
+	 <set>
+	 	<if test="topic != null ">
+	 	 topic =  #{topic},
+	 	 </if>
+	 	<if test="instanceId != null ">
+	 	 instance_id =  #{instanceId},
+	 	 </if>
+	 	<if test="eventType != null ">
+	 	 event_type =  #{eventType},
+	 	 </if>
+	 	<if test="objectName != null ">
+	 	 object_name =  #{objectName},
+	 	 </if>
+	 	<if test="objectId != null ">
+	 	 object_id =  #{objectId},
+	 	 </if>
+	 	<if test="objectVersion != null ">
+	 	 object_version =  #{objectVersion},
+	 	 </if>
+	 	<if test="objectTimestamp != null ">
+	 	 object_timestamp =  #{objectTimestamp},
+	 	 </if>
+	 	<if test="operator != null ">
+	 	 operator =  #{operator},
+	 	 </if>
+	 	<if test="optTime != null ">
+	 	 opt_time =  #{optTime},
+	 	 </if>
+	 	<if test="optDesc != null ">
+	 	 opt_desc =  #{optDesc},
+	 	 </if>
+	 	<if test="msgId != null ">
+	 	 msg_id =  #{msgId},
+	 	 </if>
+	 	<if test="msgStatus != null ">
+	 	 msg_status =  #{msgStatus},
+	 	 </if>
+	 	<if test="msgSort != null ">
+	 	 msg_sort =  #{msgSort},
+	 	 </if>
+	 	<if test="msgBody != null ">
+	 	 msg_body =  #{msgBody},
+	 	 </if>
+	 	<if test="tryCount != null ">
+	 	 try_count =  #{tryCount},
+	 	 </if>
+	 	<if test="createTime != null ">
+	 	 create_time =  #{createTime},
+	 	 </if>
+	 	<if test="updateTime != null ">
+	 	 update_time =  #{updateTime},
+	 	 </if>
+	 </set>
+	 WHERE id=#{id}
+   </update>
+
+	<update id="updateStatusAndRetryCount" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncSendMessageLog">
+		update cmdb_sync_send_message_log
+		<set>
+			<if test="msgStatus!=null">
+				msg_status =  #{msgStatus},
+			</if>
+			<if test="tryCount!=null">
+				try_count =  #{tryCount},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+   
+   <!-- 删除 -->
+   <delete id="delete" parameterType="Long">
+   		DELETE FROM cmdb_sync_send_message_log WHERE id=#{id}
+   </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+        DELETE FROM cmdb_sync_send_message_log
+        WHERE id IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+    </delete>
+
+	<select id="findRetryMsgList" resultMap="cmdbSyncSendMessageLog">
+		select * from cmdb_sync_send_message_log
+		where msg_status in ('0','2')
+		and try_count<![CDATA[ < ]]> 3
+		order by id
+	</select>
+
+</mapper>

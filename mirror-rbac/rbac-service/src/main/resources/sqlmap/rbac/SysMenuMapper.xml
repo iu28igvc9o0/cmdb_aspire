@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.SysMenuMapper">
+    <resultMap id="BaseResultMap" type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysMenu">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="menu_type" jdbcType="VARCHAR" property="menuType"/>
+        <result column="base" jdbcType="VARCHAR" property="base"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="is_show" jdbcType="CHAR" property="isShow"/>
+        <result column="system_id" jdbcType="VARCHAR" property="systemId"/>
+        <result column="del_status" jdbcType="VARCHAR" property="delStatus"/>
+        <result column="creater" jdbcType="VARCHAR" property="creater"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="editer" jdbcType="VARCHAR" property="editer"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <collection property="children" column="id"
+        select="com.migu.tsg.microservice.atomicservice.rbac.dao.SysMenuMapper.selectByParentId"></collection>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    id, parent_id, name, icon, menu_type, base, path, component, url, sort, is_show,
+    system_id, del_status, creater, create_time, editer, update_time
+  </sql>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    update sys_menu set del_status='0'
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+
+    <insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysMenu">
+    insert into sys_menu (id, parent_id, name,
+    icon, menu_type, base,
+    path, component, url,
+    sort, is_show, system_id,
+    del_status, creater, create_time,
+    editer, update_time)
+    values (#{id,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    #{icon,jdbcType=VARCHAR}, #{menuType,jdbcType=VARCHAR}, #{base,jdbcType=VARCHAR},
+    #{path,jdbcType=VARCHAR}, #{component,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+    #{sort,jdbcType=INTEGER}, #{isShow,jdbcType=CHAR}, #{systemId,jdbcType=VARCHAR},
+    #{delStatus,jdbcType=VARCHAR}, #{creater,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+    #{editer,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+
+    <insert id="insertSelective" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysMenu">
+        insert into sys_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="icon != null">
+                icon,
+            </if>
+            <if test="menuType != null">
+                menu_type,
+            </if>
+            <if test="base != null">
+                base,
+            </if>
+            <if test="path != null">
+                path,
+            </if>
+            <if test="component != null">
+                component,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="isShow != null">
+                is_show,
+            </if>
+            <if test="systemId != null">
+                system_id,
+            </if>
+            <if test="delStatus != null">
+                del_status,
+            </if>
+            <if test="creater != null">
+                creater,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="editer != null">
+                editer,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="icon != null">
+                #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="menuType != null">
+                #{menuType,jdbcType=VARCHAR},
+            </if>
+            <if test="base != null">
+                #{base,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="component != null">
+                #{component,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=INTEGER},
+            </if>
+            <if test="isShow != null">
+                #{isShow,jdbcType=CHAR},
+            </if>
+            <if test="systemId != null">
+                #{systemId,jdbcType=VARCHAR},
+            </if>
+            <if test="delStatus != null">
+                #{delStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="editer != null">
+                #{editer,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysMenu">
+        update sys_menu
+        <set>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="icon != null">
+                icon = #{icon,jdbcType=VARCHAR},
+            </if>
+            <if test="menuType != null">
+                menu_type = #{menuType,jdbcType=VARCHAR},
+            </if>
+            <if test="base != null">
+                base = #{base,jdbcType=VARCHAR},
+            </if>
+            <if test="path != null">
+                path = #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="component != null">
+                component = #{component,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                sort = #{sort,jdbcType=INTEGER},
+            </if>
+            <if test="isShow != null">
+                is_show = #{isShow,jdbcType=CHAR},
+            </if>
+            <if test="systemId != null">
+                system_id = #{systemId,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null">
+                creater = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="editer != null">
+                editer = #{editer,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.rbac.dao.po.SysMenu">
+    update sys_menu
+    set parent_id = #{parentId,jdbcType=VARCHAR},
+    name = #{name,jdbcType=VARCHAR},
+    icon = #{icon,jdbcType=VARCHAR},
+    menu_type = #{menuType,jdbcType=VARCHAR},
+    base = #{base,jdbcType=VARCHAR},
+    path = #{path,jdbcType=VARCHAR},
+    component = #{component,jdbcType=VARCHAR},
+    url = #{url,jdbcType=VARCHAR},
+    sort = #{sort,jdbcType=INTEGER},
+    is_show = #{isShow,jdbcType=CHAR},
+    system_id = #{systemId,jdbcType=VARCHAR},
+    creater = #{creater,jdbcType=VARCHAR},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    editer = #{editer,jdbcType=VARCHAR},
+    update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+    <select id="selectById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_menu
+        where id = #{id,jdbcType=VARCHAR} and del_status = '1'
+    </select>
+    <select id="selectBySysId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_menu
+        where system_id = #{systemId,jdbcType=VARCHAR}  and del_status = '1' and parent_id = '-1' order by sort
+    </select>
+
+    <select id="selectBySysName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        sm.*
+        from sys_menu sm, sys_manage sman
+        where sm.system_id = sman.id and sman.manage_code = #{systemName,jdbcType=VARCHAR}
+        and sm.del_status = '1' and sm.parent_id = '-1'
+        order by sm.sort
+    </select>
+    <select id="selectByParentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_menu
+        where parent_id = #{id,jdbcType=VARCHAR} and del_status = '1' order by sort
+    </select>
+</mapper>

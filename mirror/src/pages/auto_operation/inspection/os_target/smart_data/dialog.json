@@ -1,0 +1,786 @@
+{
+    "formList": [{
+        "label": "栅格布局",
+        "type": "row",
+        "columnName": "row_1611815130668",
+        "icon-dev": "iconfont iconicon-editor-grid",
+        "operation": [],
+        "hidden": false,
+        "rowTypeFlex": false,
+        "formFields": [{
+                "span": 12,
+                "childList": [{
+                    "label": "资源池：",
+                    "type": "select",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconxialakuang",
+                    "icon": "",
+                    "required": false,
+                    "rules": [],
+                    "columnName": "pool_id",
+                    "targetName": "label_select_1611821469188",
+                    "defaultValue": "",
+                    "defaultContent": "",
+                    "isModel": true,
+                    "operation": [],
+                    "option-label": "key",
+                    "option-value": "id",
+                    "option-alias": "alias",
+                    "option-disabled": "disabled",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "text": ""
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ","
+                    },
+                    "options": [],
+                    "allItemSwitch": false,
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "showOptions": [],
+                    "labelWidth": 160,
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": []
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "检查指标分类：",
+                    "type": "input",
+                    "columnName": "check_classify",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": false,
+                    "rules": [],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "text": ""
+                    },
+                    "style": {
+                        "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "检查指标分组：",
+                    "type": "input",
+                    "columnName": "check_group",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": false,
+                    "rules": [],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "text": ""
+                    },
+                    "style": {
+                        "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "是否多行处理：",
+                    "type": "select",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconxialakuang",
+                    "icon": "",
+                    "required": false,
+                    "rules": [],
+                    "columnName": "multiline_flag",
+                    "targetName": "label_select_1611815196313",
+                    "defaultValue": "",
+                    "defaultContent": "",
+                    "isModel": true,
+                    "operation": [],
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "option-disabled": "disabled",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "text": ""
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ","
+                    },
+                    "options": [{
+                            "label": "是",
+                            "value": "Y"
+                        },
+                        {
+                            "label": "否",
+                            "value": "N"
+                        }
+                    ],
+                    "allItemSwitch": false,
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "showOptions": [{
+                            "label": "是",
+                            "value": "Y",
+                            "disabled": false
+                        },
+                        {
+                            "label": "否",
+                            "value": "N",
+                            "disabled": false
+                        }
+                    ],
+                    "labelWidth": 160,
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": []
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "巡检指标名称：",
+                    "type": "input",
+                    "columnName": "item_name",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [{
+                        "required": true,
+                        "message": "巡检指标名称：不能为空",
+                        "trigger": "blur"
+                    }],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "text": ""
+                    },
+                    "style": {
+                        "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "优先级：",
+                    "type": "select",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconxialakuang",
+                    "icon": "",
+                    "required": true,
+                    "rules": [{
+                        "required": true,
+                        "message": "优先级：不能为空",
+                        "trigger": "blur"
+                    }],
+                    "columnName": "priority",
+                    "targetName": "label_select_1611815298195",
+                    "defaultValue": "",
+                    "defaultContent": "",
+                    "isModel": true,
+                    "operation": [],
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "option-disabled": "disabled",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "text": ""
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ","
+                    },
+                    "options": [{
+                            "label": "高",
+                            "value": "3"
+                        },
+                        {
+                            "label": "中",
+                            "value": "2"
+                        },
+                        {
+                            "label": "低",
+                            "value": "1"
+                        }
+                    ],
+                    "allItemSwitch": false,
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "showOptions": [{
+                            "label": "高",
+                            "value": "3",
+                            "disabled": false
+                        },
+                        {
+                            "label": "中",
+                            "value": "2",
+                            "disabled": false
+                        },
+                        {
+                            "label": "低",
+                            "value": "1",
+                            "disabled": false
+                        }
+                    ],
+                    "labelWidth": 160,
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": []
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "选择脚本：",
+                    "type": "customArea",
+                    "columnName": "customArea_1612432993035",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconquyu",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "",
+                    "slotName": "select-script",
+                    "operation": [],
+                    "required": false,
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                        "disabled": false,
+                        "readonly": false
+                    },
+                    "isCompare": true,
+                    "name": "advance",
+                    "labelWidth": 160
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "指标项运算符：",
+                    "type": "input",
+                    "columnName": "logic_sign",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": false,
+                    "rules": [],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "text": ""
+                    },
+                    "style": {
+                        "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "阈值条件：",
+                    "type": "select",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconxialakuang",
+                    "icon": "",
+                    "required": false,
+                    "rules": [],
+                    "columnName": "expression",
+                    "targetName": "label_select_1611815399440",
+                    "defaultValue": "",
+                    "defaultContent": "",
+                    "isModel": true,
+                    "operation": [],
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "option-disabled": "disabled",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "multiple": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "text": ""
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ","
+                    },
+                    "options": [{
+                            "label": "<=",
+                            "value": "<="
+                        },
+                        {
+                            "label": ">=",
+                            "value": ">="
+                        },
+                        {
+                            "label": "!=",
+                            "value": "!="
+                        },
+                        {
+                            "label": "=",
+                            "value": "=="
+                        },
+                        {
+                            "label": "<",
+                            "value": "<"
+                        },
+                        {
+                            "label": ">",
+                            "value": ">"
+                        },
+                        {
+                            "label": "包含",
+                            "value": "::contains::"
+                        },
+                        {
+                            "label": "正则",
+                            "value": "::cron::"
+                        }
+                    ],
+                    "allItemSwitch": false,
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "showOptions": [{
+                            "label": "<=",
+                            "value": "<=",
+                            "disabled": false
+                        },
+                        {
+                            "label": ">=",
+                            "value": ">=",
+                            "disabled": false
+                        },
+                        {
+                            "label": "!=",
+                            "value": "!=",
+                            "disabled": false
+                        },
+                        {
+                            "label": "=",
+                            "value": "==",
+                            "disabled": false
+                        },
+                        {
+                            "label": "<",
+                            "value": "<",
+                            "disabled": false
+                        },
+                        {
+                            "label": ">",
+                            "value": ">",
+                            "disabled": false
+                        },
+                        {
+                            "label": "包含",
+                            "value": "::contains::",
+                            "disabled": false
+                        },
+                        {
+                            "label": "正则",
+                            "value": "::cron::",
+                            "disabled": false
+                        }
+                    ],
+                    "labelWidth": 160,
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": []
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "默认阈值：",
+                    "type": "input",
+                    "columnName": "default_threshold_val",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": false,
+                    "rules": [],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "text": ""
+                    },
+                    "style": {
+                        "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "是否开启",
+                    "type": "select",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconxialakuang",
+                    "icon": "",
+                    "required": true,
+                    "rules": [{
+                        "required": true,
+                        "message": "是否开启不能为空",
+                        "trigger": "blur"
+                    }],
+                    "columnName": "status",
+                    "targetName": "label_select_1614074219760",
+                    "defaultValue": "ON",
+                    "defaultContent": "开启",
+                    "isModel": true,
+                    "operation": [],
+                    "option-label": "label",
+                    "option-value": "value",
+                    "option-alias": "alias",
+                    "option-disabled": "disabled",
+                    "searchProps": {
+                        "need": "0",
+                        "apiName": "",
+                        "isShowInput": false,
+                        "labelAlias": "",
+                        "remotePropName": "condition"
+                    },
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "multiple": false,
+                        "clearable": false,
+                        "disabled": false,
+                        "readonly": false,
+                        "filterable": false,
+                        "remote": false,
+                        "text": "ON"
+                    },
+                    "optionProps": {
+                        "optionType": "0",
+                        "sessionKey": "",
+                        "dicKey": "",
+                        "apiName": "",
+                        "apiType": "",
+                        "apiParam": "",
+                        "separator": ","
+                    },
+                    "options": [{
+                            "label": "启用",
+                            "value": "ON"
+                        },
+                        {
+                            "label": "禁用",
+                            "value": "OFF"
+                        }
+                    ],
+                    "allItemSwitch": false,
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "showOptions": [{
+                            "label": "启用",
+                            "value": "ON",
+                            "disabled": false
+                        },
+                        {
+                            "label": "禁用",
+                            "value": "OFF",
+                            "disabled": false
+                        }
+                    ],
+                    "labelWidth": 160,
+                    "filterOptionStatus": [],
+                    "disabledOptionStatus": []
+                }]
+            },
+            {
+                "span": 12,
+                "childList": [{
+                    "label": "描述：",
+                    "type": "textarea",
+                    "columnName": "description",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "required": false,
+                    "rules": [],
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconduohangwenben",
+                    "icon": "",
+                    "class": "",
+                    "operation": [],
+                    "hidden": false,
+                    "props": {
+                        "placeholder": "",
+                        "maxlength": "",
+                        "show-word-limit": false,
+                        "clearable": true,
+                        "disabled": false,
+                        "readonly": false,
+                        "rows": 2,
+                        "text": ""
+                    },
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                }]
+            }
+        ],
+        "name": "layout",
+        "labelWidth": 160
+    }],
+    "formConfig": {
+        "labelWidth": 160,
+        "labelPosition": "left",
+        "starPostion": "left",
+        "class": "",
+        "exportName": "表单json",
+        "defaultClass": "default",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "bpmProps": {
+            "bpmOpenSwitchFlag": false,
+            "initPrefix": "/web/wf",
+            "actionPrefix": "/web/business",
+            "proxy": "",
+            "bpmFlowKey": "bpmFlowKey",
+            "instanceId": "",
+            "taskId": "",
+            "list": [{
+                "flowKey": "bpmFlowKey",
+                "flowKeyName": "",
+                "flowActionList": []
+            }]
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "pool_id": "",
+        "multiline_flag": "",
+        "priority": "",
+        "item_name": "",
+        "logic_sign": "",
+        "expression": "",
+        "default_threshold_val": "",
+        "description": "",
+        "check_classify": "",
+        "check_group": "",
+        "status": "ON",
+        "label_select_1614074219760": "开启"
+    }
+}

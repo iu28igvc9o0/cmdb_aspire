@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.ColumnFilterMapper" >
+    <resultMap id="ColumnFilterResultMap" type="com.aspire.ums.cmdb.maintain.entity.ColumnFilter" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="menuType" property="menuType" jdbcType="VARCHAR" />
+        <result column="moduleId" property="moduleId" jdbcType="VARCHAR" />
+        <result column="columnInfo" property="columnInfo" jdbcType="VARCHAR"/>
+        <result column="insertTime" property="insertTime" jdbcType="DATE" />
+        <result column="updateTime" property="updateTime" jdbcType="DATE" />
+    </resultMap>
+    
+    <sql id="ColumnFilter_Column_List" >
+        id, menuType, moduleId, columnInfo,  insertTime, updateTime 
+    </sql>
+
+
+    <select id="getOne" parameterType="com.aspire.ums.cmdb.maintain.entity.ColumnFilter" resultMap="ColumnFilterResultMap" >
+        SELECT 
+       <include refid="ColumnFilter_Column_List" />
+	   FROM cmdb_column_filter 
+	   WHERE 1 = 1 
+	   <if test="menuType != null and menuType!=''">
+	   and menuType = #{menuType} 
+	   </if>
+	   <if test="moduleId != null and moduleId!=''">
+	   AND moduleId = #{moduleId}
+	   </if>
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.ColumnFilter" >
+       INSERT INTO 
+       		cmdb_column_filter
+       		(id, menuType, moduleId, columnInfo,  insertTime, updateTime) 
+       	VALUES
+       		(#{id}, #{menuType}, #{moduleId}, #{columnInfo},  NOW(),  NOW())
+    </insert>
+    
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.ColumnFilter" >
+       UPDATE 
+       		cmdb_column_filter 
+       SET 
+       	<if test="columnInfo != null and columnInfo!=''">columnInfo = #{columnInfo},</if>
+      
+     	updateTime = NOW()
+       WHERE 
+       		id = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_column_filter 
+       WHERE 
+       		 id =#{id}
+    </delete>
+  
+
+</mapper>

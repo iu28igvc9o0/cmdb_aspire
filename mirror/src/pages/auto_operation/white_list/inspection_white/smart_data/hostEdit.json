@@ -1,0 +1,422 @@
+{
+    "formList": [{
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1614841225092",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [{
+                    "span": 12,
+                    "childList": [{
+                        "label": "资源池：",
+                        "type": "select",
+                        "isLabelWidth": false,
+                        "icon-dev": "iconfont iconxialakuang",
+                        "icon": "",
+                        "required": true,
+                        "rules": [{
+                            "required": true,
+                            "message": "资源池：不能为空",
+                            "trigger": "blur"
+                        }],
+                        "columnName": "pool_id",
+                        "targetName": "pool_name",
+                        "defaultValue": [],
+                        "defaultContent": "",
+                        "isModel": true,
+                        "operation": [],
+                        "option-label": "key",
+                        "option-value": "id",
+                        "option-alias": "alias",
+                        "option-disabled": "disabled",
+                        "searchProps": {
+                            "need": "0",
+                            "apiName": "",
+                            "isShowInput": false,
+                            "labelAlias": "",
+                            "remotePropName": "condition"
+                        },
+                        "hidden": false,
+                        "props": {
+                            "placeholder": "",
+                            "multiple": false,
+                            "clearable": true,
+                            "disabled": false,
+                            "readonly": false,
+                            "filterable": false,
+                            "remote": false,
+                            "text": []
+                        },
+                        "optionProps": {
+                            "optionType": "0",
+                            "sessionKey": "",
+                            "dicKey": "",
+                            "apiName": "",
+                            "apiType": "",
+                            "apiParam": "",
+                            "separator": ","
+                        },
+                        "options": [],
+                        "allItemSwitch": false,
+                        "span": 24,
+                        "width": "100%",
+                        "isCompare": true,
+                        "isDisabledRequired": false,
+                        "isReadonlyRequired": false,
+                        "name": "basic",
+                        "showOptions": [],
+                        "labelWidth": 160,
+                        "filterOptionStatus": [],
+                        "disabledOptionStatus": []
+                    }]
+                },
+                {
+                    "span": 12,
+                    "childList": [{
+                        "label": "状态：",
+                        "type": "select",
+                        "isLabelWidth": false,
+                        "icon-dev": "iconfont iconxialakuang",
+                        "icon": "",
+                        "required": true,
+                        "rules": [{
+                            "required": true,
+                            "message": "状态：不能为空",
+                            "trigger": "blur"
+                        }],
+                        "columnName": "status",
+                        "targetName": "select_1614841529245_copy",
+                        "defaultValue": "ON",
+                        "defaultContent": "启用",
+                        "isModel": true,
+                        "operation": [],
+                        "option-label": "label",
+                        "option-value": "value",
+                        "option-alias": "alias",
+                        "option-disabled": "disabled",
+                        "searchProps": {
+                            "need": "0",
+                            "apiName": "",
+                            "isShowInput": false,
+                            "labelAlias": "",
+                            "remotePropName": "condition"
+                        },
+                        "hidden": false,
+                        "props": {
+                            "placeholder": "",
+                            "multiple": false,
+                            "clearable": true,
+                            "disabled": false,
+                            "readonly": false,
+                            "filterable": false,
+                            "remote": false,
+                            "text": "ON"
+                        },
+                        "optionProps": {
+                            "optionType": "0",
+                            "sessionKey": "",
+                            "dicKey": "",
+                            "apiName": "",
+                            "apiType": "",
+                            "apiParam": "",
+                            "separator": ","
+                        },
+                        "options": [{
+                                "label": "启用",
+                                "value": "ON"
+                            },
+                            {
+                                "label": "禁用",
+                                "value": "OFF"
+                            }
+                        ],
+                        "allItemSwitch": false,
+                        "span": 24,
+                        "width": "100%",
+                        "isCompare": true,
+                        "isDisabledRequired": false,
+                        "isReadonlyRequired": false,
+                        "name": "basic",
+                        "showOptions": [{
+                                "label": "启用",
+                                "value": "ON",
+                                "disabled": false
+                            },
+                            {
+                                "label": "禁用",
+                                "value": "OFF",
+                                "disabled": false
+                            }
+                        ],
+                        "labelWidth": 160,
+                        "filterOptionStatus": [],
+                        "disabledOptionStatus": []
+                    }]
+                },
+                {
+                    "span": 12,
+                    "childList": [{
+                        "label": "脚本名称：",
+                        "type": "customArea",
+                        "columnName": "customArea_1615947417514",
+                        "isModel": true,
+                        "icon-dev": "iconfont iconquyu",
+                        "isLabelWidth": false,
+                        "span": 24,
+                        "width": "",
+                        "slotName": "script-slot",
+                        "operation": [],
+                        "required": false,
+                        "rules": [],
+                        "hidden": false,
+                        "props": {
+                            "disabled": false,
+                            "readonly": false
+                        },
+                        "isCompare": true,
+                        "name": "advance",
+                        "labelWidth": 160
+                    }]
+                },
+                {
+                    "span": 12,
+                    "childList": [{
+                        "label": "巡检名称：",
+                        "type": "customArea",
+                        "columnName": "customArea_1615947313035",
+                        "isModel": true,
+                        "icon-dev": "iconfont iconquyu",
+                        "isLabelWidth": false,
+                        "span": 24,
+                        "width": "",
+                        "slotName": "inspection-slot",
+                        "operation": [],
+                        "required": false,
+                        "rules": [],
+                        "hidden": false,
+                        "props": {
+                            "disabled": false,
+                            "readonly": false
+                        },
+                        "isCompare": true,
+                        "name": "advance",
+                        "labelWidth": 160
+                    }]
+                },
+                {
+                    "span": 12,
+                    "childList": [{
+                        "label": "详细描述：",
+                        "type": "textarea",
+                        "columnName": "remark",
+                        "defaultValue": "",
+                        "isModel": true,
+                        "required": false,
+                        "rules": [],
+                        "isLabelWidth": false,
+                        "icon-dev": "iconfont iconduohangwenben",
+                        "icon": "",
+                        "class": "",
+                        "operation": [],
+                        "hidden": false,
+                        "props": {
+                            "placeholder": "",
+                            "maxlength": "",
+                            "show-word-limit": false,
+                            "clearable": true,
+                            "disabled": false,
+                            "readonly": false,
+                            "rows": 2,
+                            "text": ""
+                        },
+                        "span": 24,
+                        "width": "100%",
+                        "isCompare": true,
+                        "isDisabledRequired": false,
+                        "isReadonlyRequired": false,
+                        "name": "basic",
+                        "labelWidth": 160
+                    }]
+                },
+                {
+                    "span": 12,
+                    "childList": [{
+                        "label": "上传附件：",
+                        "type": "customArea",
+                        "columnName": "customArea_1615967454660",
+                        "isModel": true,
+                        "icon-dev": "iconfont iconquyu",
+                        "isLabelWidth": false,
+                        "span": 24,
+                        "width": "",
+                        "slotName": "upload-slot",
+                        "operation": [],
+                        "required": false,
+                        "rules": [],
+                        "hidden": false,
+                        "props": {
+                            "disabled": false,
+                            "readonly": false
+                        },
+                        "isCompare": true,
+                        "name": "advance",
+                        "labelWidth": 160
+                    }]
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+        },
+        {
+            "label": "",
+            "type": "buttonGroup",
+            "isLabelWidth": false,
+            "columnName": "buttonGroup_1614842300174",
+            "icon-dev": "iconfont iconanniu",
+            "span": 24,
+            "hidden": false,
+            "bpmSwitchFlag": false,
+            "bpmNodesButtonActiveList": [],
+            "align": null,
+            "position": "right",
+            "operation": [],
+            "toolList": [{
+                    "is-table-column": false,
+                    "columnName": "import-btn",
+                    "label": "导入",
+                    "type": "primary",
+                    "class": "",
+                    "icon": "",
+                    "default": "show",
+                    "authSwitch": false,
+                    "authId": "",
+                    "confirmationSwitch": false,
+                    "confirmationMessage": "",
+                    "interactive": "",
+                    "validateProp": "",
+                    "apiMethod": "",
+                    "apiName": "",
+                    "apiCloseDialogWithResposne": false,
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "titleClass": "dialog-title-default",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "confirmStatus": [],
+                    "apiCloseDialog": false
+                },
+                {
+                    "is-table-column": false,
+                    "columnName": "save-btn",
+                    "label": "保存",
+                    "type": "primary",
+                    "class": "",
+                    "icon": "",
+                    "default": "show",
+                    "authSwitch": false,
+                    "authId": "",
+                    "confirmationSwitch": false,
+                    "confirmationMessage": "",
+                    "interactive": "",
+                    "validateProp": "",
+                    "apiMethod": "",
+                    "apiName": "",
+                    "apiCloseDialogWithResposne": false,
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "titleClass": "dialog-title-default",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "confirmStatus": [],
+                    "apiCloseDialog": false
+                },
+                {
+                    "is-table-column": false,
+                    "columnName": "cacel-btn",
+                    "label": "取消",
+                    "type": "",
+                    "class": "",
+                    "icon": "",
+                    "default": "show",
+                    "authSwitch": false,
+                    "authId": "",
+                    "confirmationSwitch": false,
+                    "confirmationMessage": "",
+                    "interactive": "",
+                    "validateProp": "",
+                    "apiMethod": "",
+                    "apiName": "",
+                    "apiCloseDialogWithResposne": false,
+                    "dialogConfig": {
+                        "bindName": "",
+                        "title": "",
+                        "subTitle": "",
+                        "titleClass": "dialog-title-default",
+                        "width": "",
+                        "height": "",
+                        "toolList": []
+                    },
+                    "confirmStatus": [],
+                    "apiCloseDialog": false
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160,
+            "isDialogFooterBtns": true,
+            "isFormButton": false
+        }
+    ],
+    "formConfig": {
+        "labelWidth": 160,
+        "labelPosition": "left",
+        "starPostion": "left",
+        "class": "",
+        "exportName": "hostEdit",
+        "defaultClass": "default",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "bpmProps": {
+            "bpmOpenSwitchFlag": false,
+            "initPrefix": "/web/wf",
+            "actionPrefix": "/web/business",
+            "proxy": "",
+            "bpmFlowKey": "bpmFlowKey",
+            "instanceId": "",
+            "taskId": "",
+            "list": [{
+                "flowKey": "bpmFlowKey",
+                "flowKeyName": "",
+                "flowActionList": []
+            }]
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "select_1614841230492": [],
+        "pool_id": "",
+        "remark": "",
+        "select_1614841529245_copy": "启用",
+        "status": "ON"
+    }
+}

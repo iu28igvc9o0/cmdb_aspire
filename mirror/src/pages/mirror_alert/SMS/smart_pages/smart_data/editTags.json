@@ -1,0 +1,89 @@
+{
+    "formList": [
+        {
+            "label": "",
+            "type": "customArea",
+            "columnName": "smsTags",
+            "isModel": true,
+            "icon-dev": "iconfont iconquyu",
+            "isLabelWidth": true,
+            "span": 24,
+            "width": "",
+            "slotName": "smsTags",
+            "operation": [],
+            "required": false,
+            "rules": [],
+            "hidden": false,
+            "props": {
+                "disabled": false,
+                "readonly": false
+            },
+            "isCompare": true,
+            "name": "advance",
+            "labelWidth": 0
+        },
+        {
+            "label": "按钮组",
+            "type": "buttonGroup",
+            "isLabelWidth": false,
+            "columnName": "buttonGroup_1603247512005",
+            "icon-dev": "iconfont iconanniu",
+            "span": 24,
+            "hidden": false,
+            "position": "center",
+            "operation": [],
+            "toolList": [
+                {
+                    "columnName": "btn-save-tags",
+                    "type": "primary",
+                    "icon": "",
+                    "label": "保存",
+                    "interactive": "",
+                    "validateProp": [],
+                    "apiName": "",
+                    "class": "btn-save-tags",
+                    "default": "show",
+                    "apiMethod": "post+json"
+                },
+                {
+                    "columnName": "btn-cancel-tags",
+                    "type": "",
+                    "icon": "",
+                    "label": "取消",
+                    "interactive": "",
+                    "validateProp": [],
+                    "apiName": "",
+                    "class": "btn-cancel-tags",
+                    "default": "show",
+                    "apiMethod": "post+json"
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+        }
+    ],
+    "formConfig": {
+        "labelWidth": 160,
+        "labelPosition": "right",
+        "starPostion": "left",
+        "class": "",
+        "exportName": "表单json",
+        "defaultClass": "webbas",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "nodeEnv": "production",
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {}
+}

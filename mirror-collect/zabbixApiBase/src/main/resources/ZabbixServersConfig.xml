@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ZabbixApiServerInfos>
+	<ApiServerInfo id="test_zbx" region="" url="http://10.12.7.58/zabbix/api_jsonrpc.php" userName="Admin" password="zabbix" /> 
+</ZabbixApiServerInfos>

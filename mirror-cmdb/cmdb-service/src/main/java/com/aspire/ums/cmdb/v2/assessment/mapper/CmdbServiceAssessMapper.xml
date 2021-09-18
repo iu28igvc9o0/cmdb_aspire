@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.v2.assessment.mapper.CmdbServiceAssessMapper">
+
+    <resultMap id="serviceAcccess" type="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+        <result column="produce" property="produce" jdbcType="VARCHAR" />
+        <result column="quarter" property="quarter" jdbcType="VARCHAR" />
+        <result column="event_count" property="eventCount" jdbcType="VARCHAR" />
+        <result column="total_event_count" property="totalEventCount" jdbcType="VARCHAR" />
+        <result column="event_rate" property="eventRate" jdbcType="VARCHAR" />
+        <result column="event_device_rate" property="eventDeviceRate" jdbcType="VARCHAR" />
+        <result column="event_target_value" property="eventTargetValue" jdbcType="VARCHAR" />
+        <result column="event_score" property="eventScore" jdbcType="VARCHAR" />
+        <result column="problem_count" property="problemCount" jdbcType="VARCHAR" />
+        <result column="problem_score" property="problemScore" jdbcType="VARCHAR" />
+        <result column="equipment_problem_count" property="equipmentProblemCount" jdbcType="VARCHAR" />
+        <result column="total_equipment_problem_count" property="totalEquipmentProblemCount" jdbcType="VARCHAR" />
+        <result column="equipment_problem_rate" property="equipmentProblemRate" jdbcType="VARCHAR" />
+        <result column="equipment_problem_device_rate" property="equipmentProblemDeviceRate" jdbcType="VARCHAR" />
+        <result column="equipment_problem_target_value" property="equipmentProblemTargetValue" jdbcType="VARCHAR" />
+        <result column="equipment_problem_score" property="equipmentProblemScore" jdbcType="VARCHAR" />
+        <result column="event_problem_handle_long" property="eventProblemHandleLong" jdbcType="VARCHAR" />
+        <result column="problem_handle_target_value" property="problemHandleTargetValue" jdbcType="VARCHAR" />
+        <result column="problem_handle_score" property="problemHandleScore" jdbcType="VARCHAR" />
+        <result column="biz_repair_long" property="bizRepairLong" jdbcType="VARCHAR" />
+        <result column="biz_repair_target_value" property="bizRepairTargetValue" jdbcType="VARCHAR" />
+        <result column="biz_repair_score" property="bizRepairScore" jdbcType="VARCHAR" />
+        <result column="service_score" property="serviceScore" jdbcType="VARCHAR" />
+        <result column="satisfaction_score" property="satisfactionScore" jdbcType="VARCHAR" />
+        <result column="score" property="score" jdbcType="VARCHAR" />
+        <result column="total_device_count" property="totalDeviceCount" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+    </resultMap>
+
+    <delete id="delete">
+        delete from cmdb_device_score where quarter=#{quarter}
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+    </delete>
+
+    <select id="queryScoreList" resultMap="serviceAcccess">
+        select * from cmdb_device_score
+        where 1=1 and device_type = #{device_type} and quarter = #{quarter}
+    </select>
+
+    <!-- 保存最终得分及领导满意分 -->
+    <update id="saveScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+            update cmdb_device_score set
+            `satisfaction_score` = #{satisfactionScore},
+            `score` = #{score}
+            WHERE `device_type` = #{deviceType} and `produce` = #{produce} and `quarter` = #{quarter}
+    </update>
+
+    <!-- 统计维修事件信息 -->
+    <select id="statisticsRepairEvent" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultMap="serviceAcccess">
+        select t1.event_count, t2.event_problem_handle_long, t3.total_event_count from (
+          (select sum(problem_handle_count) event_count from cmdb_device_repair_event t where t.`quarter` = #{quarter} and t.produce = #{produce} and t.device_type = #{deviceType} and t.status = '1') t1,
+          (select SUM((UNIX_TIMESTAMP(problem_end_time) - UNIX_TIMESTAMP(problem_start_time))/3600) event_problem_handle_long from cmdb_device_repair_event t where t.`quarter` = #{quarter} and t.device_type = #{deviceType} and t.produce = #{produce} and t.status = '1') t2,
+          (select sum(problem_handle_count) total_event_count from cmdb_device_repair_event t where t.`quarter` = #{quarter} and t.device_type = #{deviceType} and t.status = '1') t3
+        )
+    </select>
+
+    <!-- 保存维修事件评分信息 -->
+    <update id="saveRepairEventScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        UPDATE cmdb_device_score SET
+        `event_count` = #{eventCount},
+        `total_event_count` = #{totalEventCount},
+        `event_rate` = #{eventRate},
+        `event_device_rate` = #{eventDeviceRate},
+        `event_target_value` = #{eventTargetValue},
+        `event_score` = #{eventScore},
+        `event_problem_handle_long` = #{eventProblemHandleLong},
+        `problem_handle_target_value` = #{problemHandleTargetValue}
+        WHERE `device_type` = #{deviceType} and `produce` = #{produce} and `quarter` = #{quarter}
+    </update>
+    <!-- 统计故障事件信息 -->
+    <select id="statisticsProblemEvent" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultMap="serviceAcccess">
+        select t1.problem_count, t1.problem_score, t2.biz_repair_long from
+        (SELECT sum(problem_handle_count) problem_count,
+           sum((CASE t.problem_level WHEN '严重' THEN -2 WHEN '重大' THEN -1.5 WHEN '一般' THEN	-1 ELSE 0 END)) problem_score
+        FROM cmdb_device_problem_event t WHERE t.QUARTER = #{quarter} AND t.device_type = #{deviceType} and t.produce = #{produce} and t.status = '1') t1,
+        (select SUM((UNIX_TIMESTAMP(t.biz_regain_time) - UNIX_TIMESTAMP(t.problem_start_time))/3600) biz_repair_long from cmdb_device_problem_event t WHERE t.QUARTER = #{quarter} and t.produce = #{produce} and t.status = '1' and t.device_type = #{deviceType}) t2
+    </select>
+    <!-- 保存故障事件评分信息 -->
+    <update id="saveProblemEventScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        UPDATE cmdb_device_score SET
+        `problem_count` = #{problemCount},
+        `problem_score` = #{problemScore},
+        `biz_repair_long` = #{bizRepairLong},
+        `biz_repair_target_value` = #{bizRepairTargetValue}
+        WHERE `device_type` = #{deviceType} and `produce` = #{produce} and `quarter` = #{quarter}
+    </update>
+    <!-- 统计设备问题信息 -->
+    <select id="statisticsEquipmentProblem" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultMap="serviceAcccess">
+        select t1.equipment_problem_count, t2.total_equipment_problem_count from (
+            (select count(1) equipment_problem_count from cmdb_equipment_problem t where t.`quarter` = #{quarter} and t.device_type = #{deviceType} and t.device_mfrs = #{produce} and t.assess_status = '1') t1,
+            (select count(1) total_equipment_problem_count from cmdb_equipment_problem t where t.`quarter` = #{quarter} and t.device_type = #{deviceType} and t.assess_status = '1') t2
+        )
+    </select>
+    <!-- 保存设备问题评分信息 -->
+    <update id="saveEquipmentProblemScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        UPDATE cmdb_device_score SET
+        `equipment_problem_count` = #{equipmentProblemCount},
+        `total_equipment_problem_count` = #{totalEquipmentProblemCount},
+        `equipment_problem_rate` = #{equipmentProblemRate},
+        `equipment_problem_device_rate` = #{equipmentProblemDeviceRate},
+        `equipment_problem_target_value` = #{equipmentProblemTargetValue},
+        `equipment_problem_score` = #{equipmentProblemScore}
+        WHERE `device_type` = #{deviceType} and `produce` = #{produce} and `quarter` = #{quarter}
+    </update>
+    <!-- 获取故障处理平均时长 最小指标值 -->
+    <select id="statisticsMinProblemHandleTargetValue" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultType="java.lang.String">
+        SELECT
+            MIN(t.problem_handle_target_value + 0) min_problem_handle_target_value
+        FROM
+            cmdb_device_score t
+        WHERE
+            t.device_type = #{deviceType}
+        AND t.`quarter` = #{quarter}
+    </select>
+    <!-- 保存故障处理平均时长得分 -->
+    <update id="saveProblemHandleScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        UPDATE cmdb_device_score SET
+        `problem_handle_score` = #{problemHandleScore},
+        `biz_repair_score` = #{bizRepairScore},
+        `service_score` = #{serviceScore}
+        WHERE `device_type` = #{deviceType} and `produce` = #{produce} and `quarter` = #{quarter}
+    </update>
+    <!-- 故障恢复平均时长 最小指标值 -->
+    <select id="statisticsMinRepairTargetValue" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultType="java.lang.String">
+        SELECT
+            MIN(t.biz_repair_target_value + 0) min_biz_repair_target_value
+        FROM
+            cmdb_device_score t
+        WHERE
+            t.device_type = #{deviceType}
+        AND t.`quarter` = #{quarter}
+    </select>
+    <!-- 服务评估得分 -->
+    <select id="statisticsDeviceEvaluate" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultType="java.lang.String">
+        select avg(tmpp.sumScore) from (
+            SELECT tmp.province, sum(pat.score) sumScore FROM cmdb_device_produce_assessment pat
+                            INNER JOIN (
+                                    SELECT t.id, t.province, t.produce FROM cmdb_it_device_count t
+                                    WHERE t.device_type_id = (
+                                                    SELECT cdt.id FROM cmdb_device_type cdt
+                                                    INNER JOIN cmdb_device_type pcdt ON cdt.parent = pcdt.id
+                                                    WHERE pcdt. NAME = #{deviceType} AND cdt. NAME = '台数'
+                                            )
+                                    AND t.produce = #{produce} AND t.`quarter` = #{quarter} and t.`status` = '1'
+                            ) tmp ON pat.device_count_id = tmp.id
+            group by province
+        ) tmpp
+    </select>
+    <!-- 保存服务评估得分 -->
+    <update id="saveDeviceEvaluateScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        UPDATE cmdb_device_score SET
+        `service_score` = #{serviceScore}
+        WHERE `device_type` = #{deviceType} and `produce` = #{produce} and `quarter` = #{quarter}
+    </update>
+
+    <select id="queryTotalDeviceCount" resultMap="serviceAcccess">
+        select pcdt.`name` device_type, cdc.produce, cdc.quarter, sum(cdc.count) total_device_count from cmdb_it_device_count cdc
+        inner join (select * from cmdb_device_type t where t.`name` = '台数') cdt on cdc.device_type_id = cdt.id
+        inner join cmdb_device_type pcdt on pcdt.id = cdt.parent
+        where 1=1 and cdc.quarter = #{quarter} and cdc.`status` = '1'
+        <if test="deviceType != null and deviceType != ''">
+            and pcdt.`name` = #{deviceType}
+        </if>
+        group by pcdt.`name`, cdc.produce, cdc.quarter
+        order by pcdt.id
+    </select>
+
+    <select id="getServiceAccessScore" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess" resultMap="serviceAcccess">
+        select * from cmdb_device_score t where t.`quarter` = #{quarter}
+        <if test="deviceType != null and deviceType != ''">
+            and t.device_type = #{deviceType}
+        </if>
+    </select>
+
+    <insert id="saveTotalDeviceCount" parameterType="com.aspire.ums.cmdb.assessment.payload.CmdbServiceAssess">
+        insert into cmdb_device_score (device_type, produce, total_device_count, create_time, quarter)
+        values (#{deviceType, jdbcType=VARCHAR},#{produce, jdbcType=VARCHAR},#{totalDeviceCount, jdbcType=VARCHAR},now(),#{quarter, jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateTotalDeviceCount">
+            update cmdb_device_score
+            set total_device_count = #{total_device_count}
+            where province=#{province}
+              and produce=#{produce}
+              and device_type=#{device_type}
+                and quarter= #{quarter}
+    </update>
+
+    <!-- 获取分支机构审核状态 -->
+    <select id="getScoreDeviceTypeStatus" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT  device_type,SUM(CASE WHEN score IS NULL THEN 1 ELSE 0 END ) unScored
+        FROM cmdb_device_score
+        WHERE `quarter`=#{quarter} GROUP BY device_type
+    </select>
+</mapper>

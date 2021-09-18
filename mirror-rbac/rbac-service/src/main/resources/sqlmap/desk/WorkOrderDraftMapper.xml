@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.desk.dao.WorkOrderDraftDao" >
+  <resultMap id="BaseResultMap" type="com.migu.tsg.microservice.atomicservice.desk.dao.po.WorkOrderDraft" >
+    <id column="ID_" property="id" jdbcType="INTEGER" />
+    <result column="CREATE_TIME_" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="USER_ID_" property="userId" jdbcType="VARCHAR" />
+    <result column="CLASSIFY_ID_" property="classifyId" jdbcType="INTEGER" />
+    <result column="FORM_DEF_ID_" property="formDefId" jdbcType="VARCHAR" />
+    <result column="FORM_NAME_" property="formName" jdbcType="VARCHAR" />
+    <result column="FULL_URL_" property="fullUrl" jdbcType="VARCHAR" />
+    <result column="SORT_" property="sort" jdbcType="INTEGER" />
+    <result column="FORM_KEY" property="formKey" jdbcType="VARCHAR" />
+    <result column="ICON_URL_" property="iconUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID_, CREATE_TIME_, USER_ID_, CLASSIFY_ID_, FORM_DEF_ID_, FORM_NAME_, FULL_URL_, SORT_, 
+    FORM_KEY,ICON_URL_
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from work_order_draft
+    where ID_ = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from work_order_draft
+    where ID_ = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.migu.tsg.microservice.atomicservice.desk.dao.po.WorkOrderDraft" >
+    insert into work_order_draft (ID_, CREATE_TIME_, USER_ID_, 
+      CLASSIFY_ID_, FORM_DEF_ID_, FORM_NAME_, 
+      FULL_URL_, SORT_, FORM_KEY
+      )
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=VARCHAR}, 
+      #{classifyId,jdbcType=INTEGER}, #{formDefId,jdbcType=VARCHAR}, #{formName,jdbcType=VARCHAR}, 
+      #{fullUrl,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{formKey,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.migu.tsg.microservice.atomicservice.desk.dao.po.WorkOrderDraft" >
+    insert into work_order_draft
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID_,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME_,
+      </if>
+      <if test="userId != null" >
+        USER_ID_,
+      </if>
+      <if test="classifyId != null" >
+        CLASSIFY_ID_,
+      </if>
+      <if test="formDefId != null" >
+        FORM_DEF_ID_,
+      </if>
+      <if test="formName != null" >
+        FORM_NAME_,
+      </if>
+      <if test="fullUrl != null" >
+        FULL_URL_,
+      </if>
+      <if test="sort != null" >
+        SORT_,
+      </if>
+      <if test="formKey != null" >
+        FORM_KEY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="classifyId != null" >
+        #{classifyId,jdbcType=INTEGER},
+      </if>
+      <if test="formDefId != null" >
+        #{formDefId,jdbcType=VARCHAR},
+      </if>
+      <if test="formName != null" >
+        #{formName,jdbcType=VARCHAR},
+      </if>
+      <if test="fullUrl != null" >
+        #{fullUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="formKey != null" >
+        #{formKey,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.migu.tsg.microservice.atomicservice.desk.dao.po.WorkOrderDraft" >
+    update work_order_draft
+    <set >
+      <if test="createTime != null" >
+        CREATE_TIME_ = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        USER_ID_ = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="classifyId != null" >
+        CLASSIFY_ID_ = #{classifyId,jdbcType=INTEGER},
+      </if>
+      <if test="formDefId != null" >
+        FORM_DEF_ID_ = #{formDefId,jdbcType=VARCHAR},
+      </if>
+      <if test="formName != null" >
+        FORM_NAME_ = #{formName,jdbcType=VARCHAR},
+      </if>
+      <if test="fullUrl != null" >
+        FULL_URL_ = #{fullUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        SORT_ = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="formKey != null" >
+        FORM_KEY = #{formKey,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID_ = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.migu.tsg.microservice.atomicservice.desk.dao.po.WorkOrderDraft" >
+    update work_order_draft
+    set CREATE_TIME_ = #{createTime,jdbcType=TIMESTAMP},
+      USER_ID_ = #{userId,jdbcType=VARCHAR},
+      CLASSIFY_ID_ = #{classifyId,jdbcType=INTEGER},
+      FORM_DEF_ID_ = #{formDefId,jdbcType=VARCHAR},
+      FORM_NAME_ = #{formName,jdbcType=VARCHAR},
+      FULL_URL_ = #{fullUrl,jdbcType=VARCHAR},
+      SORT_ = #{sort,jdbcType=INTEGER},
+      FORM_KEY = #{formKey,jdbcType=VARCHAR}
+    where ID_ = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <select id="getUserDraftList" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from work_order_draft
+    where USER_ID_ = #{account,jdbcType=VARCHAR}
+    order by SORT_
+  </select>
+  
+   <select id="getDraftListByClassfyId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from work_order_draft
+    where CLASSIFY_ID_ = #{classifyId,jdbcType=INTEGER}
+    and USER_ID_ is null order by SORT_
+  </select>
+  
+   <update id="syncBpmDefIdByKey" >
+    update work_order_draft
+    set   FORM_DEF_ID_ = #{formDefId,jdbcType=VARCHAR}
+    where  FORM_KEY = #{formKey,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

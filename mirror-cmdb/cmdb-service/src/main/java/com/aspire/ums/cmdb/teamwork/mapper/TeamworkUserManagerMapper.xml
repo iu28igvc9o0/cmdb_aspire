@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.teamwork.mapper.TeamworkUserManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.teamwork.entity.TeamworkUserManagerDTO" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="tw_teamwork_id" property="twTeamworkId" jdbcType="VARCHAR" />
+        <result column="tw_user_name" property="twUserName" jdbcType="VARCHAR" />
+        <result column="tw_user_account" property="twUserAccount" jdbcType="VARCHAR" />
+        <result column="tw_user_role" property="twUserRole" jdbcType="VARCHAR" />
+        <result column="tw_allow_close" property="twAllowClose" jdbcType="INTEGER" />
+        <result column="tw_allow_manager_user" property="twAllowManagerUser" jdbcType="INTEGER" />
+        <result column="tw_allow_manager_label" property="twAllowManagerLabel" jdbcType="INTEGER" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+ <sql id="where_sql"> 
+        <if test="params.twUserName != null and params.twUserName != ''">
+        AND m.tw_user_name like concat('%',#{params.twUserName},'%')
+        </if>
+        
+        <if test="params.twUserAccount != null and params.twUserAccount != ''">
+        AND m.tw_user_account = #{params.twUserAccount}
+        </if>
+        
+         <if test="params.twTeamworkId != null and params.twTeamworkId != ''">
+        AND m.tw_teamwork_id = #{params.twTeamworkId}
+        </if>
+
+       <if test="params.twTitle != null and params.twTitle != ''">
+        AND t.tw_title concat('%',#{params.twTitle},'%')
+        </if>
+    </sql>
+    
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_user_name`,
+        `tw_user_account`,
+        `tw_user_role`,
+        `tw_allow_close`,
+        `tw_allow_manager_user`,
+        `tw_allow_manager_label`,
+        `is_delete`
+        FROM teamwork_user_manager
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkUserManagerDTO">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_user_name`,
+        `tw_user_account`,
+        `tw_user_role`,
+        `tw_allow_close`,
+        `tw_allow_manager_user`,
+        `tw_allow_manager_label`,
+        `is_delete`
+        FROM teamwork_user_manager m
+        WHERE 1=1
+         <if test="params != null">
+	      <include refid="where_sql" /> 
+	      </if>
+      and is_delete = 0
+        <if test="begin != null and pageSize != null ">
+	      limit #{begin},#{pageSize}
+	      </if>
+       
+    </select>
+ <select id="listByEntityCount" resultType="Integer" parameterType="com.aspire.mirror.common.entity.Page">
+		select count(*) FROM  teamwork_user_manager  m
+		left join teamwork t on m.tw_teamwork_id = t.id
+	     where 1=1
+	      <if test="params != null">
+	      <include refid="where_sql" /> 
+	      </if>
+	      and m.is_delete=0
+	      and t.is_delete=0
+	 </select>
+	 
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkUserManagerDTO" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_user_name`,
+        `tw_user_account`,
+        `tw_user_role`,
+        `tw_allow_close`,
+        `tw_allow_manager_user`,
+        `tw_allow_manager_label`,
+        `is_delete`
+        FROM teamwork_user_manager
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkUserManagerDTO">
+        INSERT INTO teamwork_user_manager
+        (
+            `id`,
+            `tw_teamwork_id`,
+            `tw_user_name`,
+            `tw_user_account`,
+            `tw_user_role`,
+            `tw_allow_close`,
+            `tw_allow_manager_user`,
+            `tw_allow_manager_label`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{twTeamworkId, jdbcType=VARCHAR},
+            #{twUserName, jdbcType=VARCHAR},
+            #{twUserAccount, jdbcType=VARCHAR},
+            #{twUserRole, jdbcType=VARCHAR},
+            #{twAllowClose, jdbcType=INTEGER},
+            #{twAllowManagerUser, jdbcType=INTEGER},
+            #{twAllowManagerLabel, jdbcType=INTEGER},
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+    
+    <insert id="insertBatch" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkUserManagerDTO">
+        INSERT INTO teamwork_user_manager
+        (
+            `id`,
+            `tw_teamwork_id`,
+            `tw_user_name`,
+            `tw_user_account`,
+            `tw_user_role`,
+            `tw_allow_close`,
+            `tw_allow_manager_user`,
+            `tw_allow_manager_label`,
+            `is_delete`
+        ) 
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+          (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.twTeamworkId, jdbcType=VARCHAR},
+            #{item.twUserName, jdbcType=VARCHAR},
+            #{item.twUserAccount, jdbcType=VARCHAR},
+            #{item.twUserRole, jdbcType=VARCHAR},
+            #{item.twAllowClose, jdbcType=INTEGER},
+            #{item.twAllowManagerUser, jdbcType=INTEGER},
+            #{item.twAllowManagerLabel, jdbcType=INTEGER},
+            #{item.isDelete, jdbcType=TINYINT}
+        )
+        </foreach>
+       
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkUserManagerDTO">
+        UPDATE teamwork_user_manager SET
+        `tw_teamwork_id` = #{twTeamworkId},
+        `tw_user_name` = #{twUserName},
+        `tw_user_account` = #{twUserAccount},
+        `tw_user_role` = #{twUserRole},
+        `tw_allow_close` = #{twAllowClose},
+        `tw_allow_manager_user` = #{twAllowManagerUser},
+        `tw_allow_manager_label` = #{twAllowManagerLabel},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="String">
+        update  teamwork_user_manager
+        set is_delete = 1
+        where 
+         `id` = #{id}
+    </delete>
+    
+     <delete id="deleteByids" parameterType="String">
+        update  teamwork_user_manager
+        set is_delete = 1
+        where 
+         tw_teamwork_id = #{twTeamworkId}
+          <if test="ids != null">
+         and 
+         id not in
+         <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+		  #{id}
+		</foreach>
+		</if>
+    </delete>
+    
+</mapper>

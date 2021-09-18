@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.composite.dao.ConfigDictMapper">
+
+    <sql id="baseColumnList">
+        id dict_id,dict_code,dict_note,col_name,up_dict,description,create_date,update_date
+    </sql>
+
+
+    <resultMap id="configDict" type="com.migu.tsg.microservice.atomicservice.composite.dao.po.ConfigDict">
+        <result column="dict_id" property="id"/>
+        <result column="dict_code" property="name"/>
+        <result column="dict_note" property="value"/>
+        <result column="col_name" property="type"/>
+        <result column="up_dict" property="pid"/>
+        <result column="pname" property="pname"/>
+        <result column="description" property="description"/>
+    </resultMap>
+    <sql id="baseDict">
+        select t.* from t_cfg_dict t
+                            inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+    </sql>
+    <select id="selectDictsByType" parameterType="java.lang.String" resultMap="configDict">
+        select
+        <include refid="baseColumnList"/>
+        from (<include refid="baseDict"/>) t where col_name=#{colName}
+        <if test="pid != null and pid != ''">
+            and exists (select * from 	(<include refid="baseDict"/>) t1 where t1.id = t.up_dict and t1.col_name=#{pType} and
+            t1.id=#{pid})
+        </if>
+    </select>
+    <select id="getDictType" resultType="java.util.Map">
+        select distinct col_name from t_cfg_dict where t.is_delete='0'
+    </select>
+</mapper>

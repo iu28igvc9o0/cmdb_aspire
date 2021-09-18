@@ -1,0 +1,350 @@
+{
+    "formList": [
+        {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "sendSms-wrap",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": true,
+            "formFields": [
+                {
+                    "span": 18,
+                    "childList": [
+                        {
+                            "label": "按钮组",
+                            "type": "buttonGroup",
+                            "isLabelWidth": false,
+                            "columnName": "btnGroup-sendRecords",
+                            "icon-dev": "iconfont iconanniu",
+                            "span": 24,
+                            "hidden": false,
+                            "position": "left",
+                            "operation": [],
+                            "toolList": [
+                                {
+                                    "columnName": "btn-send-record",
+                                    "type": "text",
+                                    "icon": "",
+                                    "label": "短信发送记录",
+                                    "interactive": "",
+                                    "validateProp": [],
+                                    "apiName": "",
+                                    "class": "btn-send-record",
+                                    "default": "show",
+                                    "apiMethod": "post+json"
+                                }
+                            ],
+                            "name": "layout",
+                            "labelWidth": 70,
+                            "dynamic": {}
+                        },
+                        {
+                            "label": "标签页",
+                            "type": "tabs",
+                            "isLabelWidth": false,
+                            "columnName": "tabsSend",
+                            "icon-dev": "iconfont icontabs1",
+                            "span": 24,
+                            "hidden": false,
+                            "operation": [],
+                            "formFields": [
+                                {
+                                    "label": "发短信",
+                                    "name": "tab_1",
+                                    "formFields": [
+                                        {
+                                            "label": "接收手机",
+                                            "type": "customArea",
+                                            "columnName": "sendPhones",
+                                            "isModel": true,
+                                            "icon-dev": "iconfont iconquyu",
+                                            "isLabelWidth": false,
+                                            "span": 24,
+                                            "width": "",
+                                            "slotName": "sendPhones",
+                                            "operation": [],
+                                            "required": false,
+                                            "rules": [],
+                                            "hidden": false,
+                                            "props": {
+                                                "disabled": false,
+                                                "readonly": false
+                                            },
+                                            "isCompare": true,
+                                            "name": "advance",
+                                            "labelWidth": 70
+                                        },
+                                        {
+                                            "label": "",
+                                            "type": "textarea",
+                                            "columnName": "sendTemplates",
+                                            "defaultValue": "",
+                                            "isModel": true,
+                                            "required": false,
+                                            "rules": [],
+                                            "isLabelWidth": true,
+                                            "icon-dev": "iconfont iconduohangwenben",
+                                            "icon": "",
+                                            "class": "",
+                                            "operation": [
+                                                {
+                                                    "status": "",
+                                                    "attr": "",
+                                                    "formatter": ""
+                                                }
+                                            ],
+                                            "hidden": false,
+                                            "props": {
+                                                "placeholder": "短信内容，可以通过短信模板里面的内容快速录入",
+                                                "maxlength": "2000",
+                                                "show-word-limit": true,
+                                                "clearable": true,
+                                                "disabled": false,
+                                                "readonly": false,
+                                                "rows": "16",
+                                                "text": ""
+                                            },
+                                            "span": 24,
+                                            "width": "100%",
+                                            "isCompare": true,
+                                            "isDisabledRequired": false,
+                                            "isReadonlyRequired": false,
+                                            "name": "basic",
+                                            "labelWidth": 0,
+                                            "weak-tips": "444444",
+                                            "operations": [
+                                                {
+                                                    "status": [],
+                                                    "attr": "",
+                                                    "formatter": ""
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "",
+                                            "type": "input",
+                                            "columnName": "sendTemplatesTips",
+                                            "defaultValue": "还可输入350字，本次将以0条计费",
+                                            "isModel": true,
+                                            "class": "",
+                                            "required": false,
+                                            "rules": [],
+                                            "label-width": "",
+                                            "isLabelWidth": true,
+                                            "icon-dev": "iconfont icondanhangwenben",
+                                            "icon": "",
+                                            "hidden": false,
+                                            "props": {
+                                                "placeholder": "",
+                                                "maxlength": "",
+                                                "show-word-limit": false,
+                                                "clearable": false,
+                                                "disabled": false,
+                                                "readonly": true,
+                                                "text": ""
+                                            },
+                                            "style": {
+                                                "word-break": "break-all"
+                                            },
+                                            "operation": [],
+                                            "button": false,
+                                            "slot": "",
+                                            "button-name": "",
+                                            "span": 24,
+                                            "width": "100%",
+                                            "isCompare": true,
+                                            "isDisabledRequired": false,
+                                            "isReadonlyRequired": false,
+                                            "name": "basic",
+                                            "labelWidth": 0
+                                        },
+                                        {
+                                            "label": "按钮组",
+                                            "type": "buttonGroup",
+                                            "isLabelWidth": false,
+                                            "columnName": "btnGroup-saveTemplates",
+                                            "icon-dev": "iconfont iconanniu",
+                                            "span": 24,
+                                            "hidden": false,
+                                            "position": "left",
+                                            "operation": [],
+                                            "toolList": [
+                                                {
+                                                    "columnName": "btn-save-templates",
+                                                    "type": "text",
+                                                    "icon": "",
+                                                    "label": "内容保存到模板",
+                                                    "interactive": "",
+                                                    "validateProp": [],
+                                                    "apiName": "",
+                                                    "class": "btn-save-templates",
+                                                    "default": "show",
+                                                    "apiMethod": "post+json"
+                                                }
+                                            ],
+                                            "name": "layout",
+                                            "labelWidth": 160
+                                        },
+                                        {
+                                            "label": "按钮组",
+                                            "type": "buttonGroup",
+                                            "isLabelWidth": false,
+                                            "columnName": "btnGroup-sendSms",
+                                            "icon-dev": "iconfont iconanniu",
+                                            "span": 24,
+                                            "hidden": false,
+                                            "position": "center",
+                                            "operation": [],
+                                            "toolList": [
+                                                {
+                                                    "columnName": "btn-send-sms",
+                                                    "type": "primary",
+                                                    "icon": "",
+                                                    "label": "发送",
+                                                    "interactive": "",
+                                                    "validateProp": [],
+                                                    "apiName": "",
+                                                    "class": "btn-send-sms",
+                                                    "default": "show",
+                                                    "apiMethod": "post+json",
+                                                    "authSwitch": false
+                                                }
+                                            ],
+                                            "name": "layout",
+                                            "labelWidth": 160
+                                        }
+                                    ]
+                                }
+                            ],
+                            "props": {
+                                "type": "",
+                                "tab-position": "top"
+                            },
+                            "name": "layout",
+                            "labelWidth": 160
+                        }
+                    ]
+                },
+                {
+                    "span": 6,
+                    "childList": [
+                        {
+                            "label": "标签页",
+                            "type": "tabs",
+                            "isLabelWidth": false,
+                            "columnName": "tabsTemplates",
+                            "icon-dev": "iconfont icontabs1",
+                            "span": 24,
+                            "hidden": false,
+                            "operation": [],
+                            "formFields": [
+                                {
+                                    "label": "通讯录",
+                                    "name": "tab_1",
+                                    "formFields": [
+                                        {
+                                            "label": "",
+                                            "type": "customArea",
+                                            "columnName": "smsAddressBook",
+                                            "isModel": true,
+                                            "icon-dev": "iconfont iconquyu",
+                                            "isLabelWidth": true,
+                                            "span": 24,
+                                            "width": "",
+                                            "slotName": "smsAddressBook",
+                                            "operation": [],
+                                            "required": false,
+                                            "rules": [],
+                                            "hidden": false,
+                                            "props": {
+                                                "disabled": false,
+                                                "readonly": false
+                                            },
+                                            "isCompare": true,
+                                            "name": "advance",
+                                            "labelWidth": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "label": "短信模板",
+                                    "name": "tab_1603097064260",
+                                    "formFields": [
+                                        {
+                                            "label": "",
+                                            "type": "customArea",
+                                            "columnName": "smsTemplates",
+                                            "isModel": true,
+                                            "icon-dev": "iconfont iconquyu",
+                                            "isLabelWidth": true,
+                                            "span": 24,
+                                            "width": "",
+                                            "slotName": "smsTemplates",
+                                            "operation": [],
+                                            "required": false,
+                                            "rules": [],
+                                            "hidden": false,
+                                            "props": {
+                                                "disabled": false,
+                                                "readonly": false
+                                            },
+                                            "isCompare": true,
+                                            "name": "advance",
+                                            "labelWidth": 0
+                                        }
+                                    ]
+                                }
+                            ],
+                            "props": {
+                                "type": "",
+                                "tab-position": "top"
+                            },
+                            "name": "layout",
+                            "labelWidth": 160,
+                            "operations": [
+                                {
+                                    "status": [],
+                                    "show": ""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+        }
+    ],
+    "formConfig": {
+        "labelWidth": 70,
+        "labelPosition": "left",
+        "starPostion": "left",
+        "class": "link-send-record",
+        "exportName": "表单json",
+        "defaultClass": "default",
+        "size": "small",
+        "statusList": [],
+        "serverProps": {
+            "nodeEnv": "production",
+            "localProxy": "",
+            "nigxProxy": "",
+            "statusKey": "status",
+            "statusValue": "200",
+            "dataKey": "data",
+            "requestDataKey": ""
+        },
+        "compareStatusList": [],
+        "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+        "textarea_1603078632928": "",
+        "text_1603078652017": "",
+        "sendTemplates": "",
+        "sendTemplatesTips": "还可输入350字，本次将以0条计费",
+        "rate_1603357753281": 0
+    }
+}

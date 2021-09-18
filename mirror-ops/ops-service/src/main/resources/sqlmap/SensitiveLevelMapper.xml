@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.SensitiveLevelDao">
+    <resultMap type="com.aspire.mirror.ops.api.domain.SensitiveLevel" id="sensitiveLevel">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="levelDesc" column="level_desc" jdbcType="VARCHAR"/>
+        <result property="execRoleListText" column="exec_role_list" jdbcType="VARCHAR"/>
+        <result property="auditRoleListText" column="audit_role_list" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="querySensitiveLevelListTotalSize" parameterType="com.aspire.mirror.ops.api.domain.SensitiveLevelQueryModel" resultType="java.lang.Integer">
+        select count(*) from ops_sensitive_level where 1=1
+        <include refid="opsSensitive_level_query_where"></include>
+
+    </select>
+    <select id="querySensitiveLevelList" parameterType="com.aspire.mirror.ops.api.domain.SensitiveLevelQueryModel" resultMap="sensitiveLevel">
+        select id, name, level_desc, exec_role_list, audit_role_list, creater, create_time, updater, update_time
+        from ops_sensitive_level where 1=1
+        <include refid="opsSensitive_level_query_where"></include>
+        <if test="pageSize != null and pageSize > 0">
+            order by order_num desc
+            limit #{startIdx},#{pageSize}
+        </if>
+    </select>
+    <sql id="opsSensitive_level_query_where">
+        <if test="nameLike != null and nameLike != ''">
+            and name CONCAT('%', #{nameLike}, '%')
+        </if>
+        <if test="createTimeStart != null">
+            and create_time &gt;= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null">
+            and create_time &lt;= #{createTimeEnd}
+        </if>
+        <if test="updateTimeStart != null">
+            and update_time &gt;= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            and update_time &lt;= #{updateTimeEnd}
+        </if>
+    </sql>
+    <update id="updateSensitiveLevelById" parameterType="com.aspire.mirror.ops.api.domain.SensitiveLevel">
+        update ops_sensitive_level set id = #{id}
+        <if test="name != null and name != ''">
+            , name = #{name}
+        </if>
+        <if test="levelDesc != null and levelDesc != ''">
+            , level_desc = #{levelDesc}
+        </if>
+        <if test="updater != null and updater != ''">
+            , updater = #{updater}
+        </if>
+        <if test="updateTime != null">
+            , update_time = #{updateTime}
+        </if>
+        <if test="execRoleListText!= null and execRoleListText != ''">
+            , exec_role_list = #{execRoleListText}
+        </if>
+        <if test="auditRoleListText!= null and auditRoleListText != ''">
+            , audit_role_list = #{auditRoleListText}
+        </if>
+        where id = #{id}
+    </update>
+</mapper>

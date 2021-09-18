@@ -1,0 +1,1316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.cabinetAlert.AlertCabinetColumnDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfig" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="idcType" column="idcType" jdbcType="VARCHAR"/>
+        <result property="roomId" column="roomId" jdbcType="VARCHAR"/>
+        <result property="editor" column="editor" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="configType" column="config_type" jdbcType="INTEGER"/>
+        <result property="timeRange" column="time_range" jdbcType="INTEGER"/>
+        <result property="alertPercentage" column="alert_percentage" jdbcType="INTEGER"/>
+    </resultMap>
+    
+      <resultMap type="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData" id="dataMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="idcType" column="idcType" jdbcType="VARCHAR"/>
+        <result property="roomId" column="roomId" jdbcType="VARCHAR"/>
+        <result property="cabinetColumnName" column="cabinet_column_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="cabinetCount" column="cabinet_count" jdbcType="INTEGER"/>
+        <result property="deviceCount" column="device_count" jdbcType="INTEGER"/>
+        <result property="alertStatus" column="alert_status" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="timeRange" column="time_range" jdbcType="INTEGER"/>
+        <result property="alertPercentage" column="alert_percentage" jdbcType="INTEGER"/>
+        <result property="editor" column="editor" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+
+    <sql id="baseColumnList">
+    	id,idcType,roomId,config_type,time_range,alert_percentage
+			,create_time,update_time,editor
+	</sql>
+	
+	 <sql id="configDataColumnList">
+    	id,idcType,roomId,cabinet_column_name,cabinet_count,device_count
+			,time_range,alert_percentage,status,alert_status
+			,create_time,update_time
+	</sql>
+
+    <!-- 新增 -->
+    <insert id="batchInsertConfig" parameterType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfig" useGeneratedKeys="true" keyProperty="id" >
+		insert into
+			alert_cabinetColumn_config(idcType,roomId,config_type,time_range,alert_percentage
+			,create_time,update_time,editor)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.roomId,jdbcType=VARCHAR} ,
+			#{item.configType,jdbcType=INTEGER} ,
+			#{item.timeRange,jdbcType=INTEGER} ,
+			#{item.alertPercentage,jdbcType=INTEGER} ,
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.updateTime,jdbcType=TIMESTAMP},
+			#{item.editor,jdbcType=VARCHAR} 
+		)
+		</foreach>
+	</insert>
+	
+	 <insert id="batchInsertCabinetColumnData"
+			 parameterType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData" useGeneratedKeys="true" keyProperty="id" >
+		insert into
+			alert_cabinetColumn_configData
+			(idcType,roomId,cabinet_column_name,cabinet_count,device_count
+			,time_range,alert_percentage,status,alert_status
+			,create_time,update_time,bizSys_count)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.roomId,jdbcType=VARCHAR} ,
+			#{item.cabinetColumnName,jdbcType=VARCHAR} ,
+			#{item.cabinetCount,jdbcType=INTEGER} ,
+			#{item.deviceCount,jdbcType=INTEGER} ,
+			#{item.timeRange,jdbcType=INTEGER} ,
+			#{item.alertPercentage,jdbcType=INTEGER} ,
+			#{item.status,jdbcType=INTEGER} ,
+			#{item.alertStatus,jdbcType=INTEGER} ,
+			#{item.createTime,jdbcType=TIMESTAMP},
+			#{item.updateTime,jdbcType=TIMESTAMP},
+			#{item.bizSysCount,jdbcType=TIMESTAMP}
+		)
+		</foreach>
+	</insert>
+	
+	 <!-- 修改 -->
+	<update id="updateConfig" parameterType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfig">
+		update alert_cabinetColumn_config 
+		<set>
+		 <if test="editor != null">
+                editor = #{editor},
+            </if>
+             <if test="alertPercentage != null">
+              alert_percentage = #{alertPercentage},
+            </if>
+             <if test="timeRange != null">
+             time_range = #{timeRange},
+            </if>
+             <if test="updateTime != null">
+           update_time = #{updateTime}
+            </if>
+            </set>
+		where 
+		1=1
+		<if test="configType != null and configType !=''">
+              and  config_type = #{configType}
+            </if>
+		 <if test="idcType != null and idcType !=''">
+              and  idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+              and  roomId = #{roomId}
+            </if>
+            
+	</update>
+	
+	<update id="updateConfigDataAll" >
+		UPDATE alert_cabinetcolumn_configdata a,(
+		SELECT idcType,roomId,LEFT(idc_cabinet,1) cabinetColumnName
+		,COUNT(DISTINCT bizSystem)bizSysCount,COUNT(DISTINCT idc_cabinet)cabinetCount ,COUNT(DISTINCT instance_id) deviceCount
+		FROM cmdb_instance
+						WHERE
+					IFNULL(idc_cabinet,
+					'')!= ''
+					GROUP BY idcType,roomId,cabinetColumnName
+		) c 
+		SET a.bizSys_count =c.bizSysCount , a.device_count =c.deviceCount ,a.cabinet_count =c.cabinetCount
+		WHERE a.idcType = c.idcType AND a.cabinet_column_name =c.cabinetColumnName AND a.roomId =c.roomId
+		and (a.bizSys_count !=c.bizSysCount or a.device_count !=c.deviceCount or a.cabinet_count !=c.cabinetCount)
+	</update>
+	
+	 <!-- 修改 -->
+	<update id="updateConfigDataById" parameterType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+		update alert_cabinetColumn_configData 
+		 <set>
+		 <if test="alertPercentage != null">
+                alert_percentage = #{alertPercentage},
+            </if>
+		 <if test="timeRange != null">
+                time_range = #{timeRange},
+            </if>
+             <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="cabinetCount != null">
+                cabinet_count = #{cabinetCount},
+            </if>
+            <if test="deviceCount != null">
+                device_count = #{deviceCount},
+            </if>
+             <if test="bizSysCount != null">
+                bizSys_count = #{bizSysCount},
+            </if>
+            <if test="alertStatus != null">
+                alert_status = #{alertStatus},
+            </if>
+             <if test="editor != null and editor !=''">
+                editor = #{editor},
+            </if>
+            update_time = #{updateTime}
+            </set>
+		
+		where id in
+                 (
+                <foreach collection="ids" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+	</update>
+	
+	<update id="updateConfigDataByConfig" parameterType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+		update alert_cabinetColumn_configData 
+		 <set>
+		 <if test="alertPercentage != null">
+                alert_percentage = #{alertPercentage},
+            </if>
+		 <if test="timeRange != null">
+                time_range = #{timeRange},
+            </if>
+             <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="alertStatus != null">
+                alert_status = #{alertStatus},
+            </if>
+            update_time = #{updateTime}
+            </set>
+		
+		where 1=1
+		 <if test="idcType != null and idcType !=''">
+              and  idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+              and  roomId = #{roomId}
+            </if>
+	</update>
+	
+	<select id="selectConfigByPrimaryKey" parameterType="Integer" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_cabinetColumn_config  where id = #{id}
+    </select>
+    
+    <select id="getConfigList"  resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_cabinetColumn_config  
+    </select>
+    
+    
+    
+    <select id="getConfig" parameterType="map" resultMap="baseResultMap">
+        select <include refid="baseColumnList"/>
+        from alert_cabinetColumn_config
+        where 1=1
+       <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and roomId = #{roomId}
+            </if>
+            <if test="config_type != null">
+               and config_type = #{configType}
+            </if>
+        limit 1
+    </select>
+    
+    <select id="getConfigDataList" parameterType="map" resultMap="dataMap">
+        select <include refid="configDataColumnList"/>
+        from alert_cabinetColumn_configData
+        where 1=1
+       <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and roomId = #{roomId}
+            </if>
+            <if test="cabinetColumnName != null and cabinetColumnName !=''">
+               and cabinet_column_name = #{cabinetColumnName}
+            </if>
+    </select>
+    
+   <select id="selectCabinetList" parameterType="map" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+        SELECT idcType,roomId, LEFT(idc_cabinet,1)cabinetColumnName,count(distinct idc_cabinet)  cabinetCount
+        ,count(distinct bizSystem)  bizSysCount,count(distinct instance_id)deviceCount
+        FROM cmdb_instance 
+		 WHERE IFNULL(idc_cabinet,'')!=''
+		  <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and roomId = #{roomId}
+            </if>
+		GROUP BY idcType,roomId,cabinetColumnName;
+    </select>
+    
+    
+     <select id="selectNotInitialCabinetList" parameterType="map" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+        select c.* from
+ 		(SELECT idcType,roomId, LEFT(idc_cabinet,1)cabinetColumnName 
+ 		,count(distinct idc_cabinet)  cabinetCount
+        ,count(distinct bizSystem)  bizSysCount,count(distinct instance_id)deviceCount
+ 		 FROM cmdb_instance 
+		 WHERE IFNULL(idc_cabinet,'')!=''   
+		   <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and roomId = #{roomId}
+            </if>
+		 GROUP BY idcType,roomId,cabinetColumnName)c 
+		 where not exists
+		 (select 1 from alert_cabinetcolumn_configdata a 
+		  
+		 where   a.idcType=c.idcType and a.roomId=c.roomId
+		  and a.cabinet_column_name= c.cabinetColumnName)
+    </select>
+    
+    <delete id="delConfigData" parameterType="map" >
+       
+	delete from alert_cabinetcolumn_configdata where id in( select  id from
+	(
+         select id,idcType,roomId,cabinet_column_name cabinetColumnName from alert_cabinetcolumn_configdata 
+         where 1=1
+          <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and roomId = #{roomId}
+            </if>
+		 
+		)c where not exists
+ 		(SELECT 1  FROM 
+ 		
+ 		(
+ 		select idcType,roomId,left(idc_cabinet,1) cabinetColumnName  from cmdb_instance
+				where
+			IFNULL(idc_cabinet,
+			'')!= ''
+			group by idcType,roomId,cabinetColumnName
+ 		)a
+ 		
+ 		
+		 WHERE 
+                a.idcType=c.idcType and a.roomId=c.roomId
+		  and a.cabinetColumnName= c.cabinetColumnName
+		))
+		
+    </delete>
+    <select id="queryCCAlertPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		 <include refid="configDataPageWhere" />)aa
+    </select>
+   <select id="queryCCAlertPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+ SELECT hh.id,hh.idcType ,hh.roomId ,hh.cabinetColumnName,hh.cabinetCount
+ ,hh.cabinetAlertCount,hh.deviceAlertCount,hh.bizSystemCount
+		,hh.deviceCount,hh.bizSysCount,hh.status 
+		,hh.alertPercentage,hh.timeRange
+		,hh.createTime,hh.updateTime,
+      CASE 
+WHEN cabinetColumnAlertCount>0 THEN 2
+WHEN cabinetAlertCount>0 THEN 3
+WHEN deviceAlertCount>0 THEN 4
+ELSE 1 END alertStatus
+       from (
+       select aa.*,ifnull(tt.cabinetAlertCount,0)cabinetAlertCount,ifnull(dd.deviceAlertCount,0)deviceAlertCount
+       ,dd.bizSystemCount,ifnull(tt.uu.cabinetColumnAlertCount,0)cabinetColumnAlertCount
+        from 
+        (
+        <include refid="configDataPageWhere" />
+        )aa  left join (
+	         <include refid="deviceAlertCountQuery" />
+		)dd on aa.idcType = dd.idcType and aa.roomId = dd.roomId and aa.cabinetColumnName = dd.cabinetColumnName
+		left join(
+			 <include refid="CabinetAlertCountQuery" />
+		)tt on aa.idcType = tt.idcType and aa.roomId = tt.roomId and aa.cabinetColumnName = tt.cabinetColumnName
+		left join (
+			<include refid="cabinetColumnAlertCountQuery" />
+		)uu on aa.idcType = uu.idcType and aa.roomId = uu.roomId and aa.cabinetColumnName = uu.cabinetColumnName
+		)hh
+		order by idcType,roomId,cabinetColumnName
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+     <select id="queryCCAlertHPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		 SELECT  d.id
+			FROM 
+			(<include refid="cabinetColumnAlertCountQuery" />)  a
+			INNER JOIN (
+		
+        <include refid="configDataPageWhere" />
+     
+			) d ON
+			 a.idcType = d.idcType AND a.roomId = d.roomId AND a.cabinetColumnName = d.cabinetColumnName
+			)aa
+    </select>
+     <select id="queryCCAlertHPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+       select aa.*,tt.cabinetAlertCount,dd.deviceAlertCount,dd.bizSystemCount
+        from 
+        (
+          SELECT  d.id,d.idcType ,d.roomId ,d.cabinetColumnName,d.cabinetCount
+		,d.deviceCount,d.bizSysCount,2 alertStatus,d.status 
+		,d.alertPercentage,d.timeRange
+		,d.createTime,d.updateTime
+			FROM 
+			(<include refid="cabinetColumnAlertCountQuery" />)  a
+			INNER JOIN (
+		
+        <include refid="configDataPageWhere" />
+     
+			) d ON
+			 a.idcType = d.idcType AND a.roomId = d.roomId AND a.cabinetColumnName = d.cabinetColumnName
+		
+			GROUP BY idcType,roomId,cabinetColumnName
+        
+        )aa  left join (
+	        <include refid="deviceAlertCountQuery" />
+			
+		)dd on aa.idcType = dd.idcType and aa.roomId = dd.roomId and aa.cabinetColumnName = dd.cabinetColumnName
+		left join(
+			<include refid="CabinetAlertCountQuery" />
+		)tt on aa.idcType = tt.idcType and aa.roomId = tt.roomId and aa.cabinetColumnName = tt.cabinetColumnName
+		order by idcType,roomId,cabinetColumnName
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+     <select id="queryCCAlertMPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		SELECT  d.id
+			FROM 
+			(
+			select mm.*,nn.cabinetColumnAlertCount from (
+			<include refid="CabinetAlertCountQuery" />)mm
+			left join 
+			(
+				<include refid="cabinetColumnAlertCountQuery" />
+			)nn
+			on 
+			mm.idcType = nn.idcType and mm.roomId = nn.roomId and mm.cabinetColumnName = nn.cabinetColumnName
+			WHERE cabinetColumnAlertCount=0 OR IFNULL(cabinetColumnAlertCount,'')=''
+			GROUP BY idcType,roomId,cabinetColumnName
+			)  tt
+			INNER JOIN (
+		
+        <include refid="configDataPageWhere" />
+     
+			) d ON
+			 tt.idcType = d.idcType AND tt.roomId = d.roomId AND tt.cabinetColumnName = d.cabinetColumnName)aa
+    </select>
+     <select id="queryCCAlertMPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+       select aa.*,aa.cabinetAlertCount,dd.deviceAlertCount,dd.bizSystemCount
+        from 
+        (
+          SELECT     d.id,d.idcType ,d.roomId ,d.cabinetColumnName,d.cabinetCount
+			,d.deviceCount,d.bizSysCount,3 alertStatus,d.status 
+	,d.alertPercentage,d.timeRange
+		,d.createTime,d.updateTime,tt.cabinetAlertCount
+			FROM 
+			(
+			select mm.*,nn.cabinetColumnAlertCount from (
+			<include refid="CabinetAlertCountQuery" />)mm
+			left join 
+			(
+				<include refid="cabinetColumnAlertCountQuery" />
+			)nn
+			on 
+			mm.idcType = nn.idcType and mm.roomId = nn.roomId and mm.cabinetColumnName = nn.cabinetColumnName
+			WHERE cabinetColumnAlertCount=0 OR IFNULL(cabinetColumnAlertCount,'')=''
+			GROUP BY idcType,roomId,cabinetColumnName
+			)  tt
+		INNER JOIN (
+		
+        <include refid="configDataPageWhere" />
+     
+			) d ON
+			 tt.idcType = d.idcType AND tt.roomId = d.roomId AND tt.cabinetColumnName = d.cabinetColumnName
+        )aa  left join (
+	        <include refid="deviceAlertCountQuery" />
+			
+		)dd on aa.idcType = dd.idcType and aa.roomId = dd.roomId and aa.cabinetColumnName = dd.cabinetColumnName
+		order by idcType,roomId,cabinetColumnName
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+     <select id="queryCCAlertDPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		  SELECT  d.id
+			FROM 
+			(
+			select mm.*,nn.cabinetAlertCount from (
+			<include refid="deviceAlertCountQuery" />)mm
+			left join 
+			(
+				<include refid="CabinetAlertCountQuery" />
+			)nn
+			on 
+			mm.idcType = nn.idcType and mm.roomId = nn.roomId and mm.cabinetColumnName = nn.cabinetColumnName
+			WHERE cabinetAlertCount=0 OR IFNULL(cabinetAlertCount,'')=''
+			GROUP BY idcType,roomId,cabinetColumnName
+			)  tt
+			INNER JOIN (
+		
+        <include refid="configDataPageWhere" />
+     
+			) d ON
+			 tt.idcType = d.idcType AND tt.roomId = d.roomId AND tt.cabinetColumnName = d.cabinetColumnName)aa
+    </select>
+     <select id="queryCCAlertDPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+       select aa.*
+        from 
+        (
+          SELECT d.id,d.idcType ,d.roomId ,d.cabinetColumnName,d.cabinetCount
+		,d.deviceCount,d.bizSysCount,4 alertStatus,d.status 
+		,d.alertPercentage,d.timeRange
+		,d.createTime,d.updateTime,tt.cabinetAlertCount,tt.deviceAlertCount,tt.bizSystemCount
+			FROM 
+			(
+			select mm.*,nn.cabinetAlertCount from (
+			<include refid="deviceAlertCountQuery" />)mm
+			left join 
+			(
+				<include refid="CabinetAlertCountQuery" />
+			)nn
+			on 
+			mm.idcType = nn.idcType and mm.roomId = nn.roomId and mm.cabinetColumnName = nn.cabinetColumnName
+			WHERE cabinetAlertCount=0 OR IFNULL(cabinetAlertCount,'')=''
+			GROUP BY idcType,roomId,cabinetColumnName
+			)  tt
+			INNER JOIN (
+		
+        <include refid="configDataPageWhere" />
+     
+			) d ON
+			 tt.idcType = d.idcType AND tt.roomId = d.roomId AND tt.cabinetColumnName = d.cabinetColumnName
+        )aa 
+		order by idcType,roomId,cabinetColumnName
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryCCAlertNPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		 SELECT  d.id
+		FROM ( <include refid="configDataPageWhere" />) d 
+			WHERE NOT EXISTS
+		(
+			select * from (
+			<include refid="deviceAlertCountQuery" />)tt
+			where d.idcType=tt.idcType AND d.roomId = tt.roomId
+					AND tt.cabinetColumnName=d.cabinetColumnName
+		))aa
+    </select>
+     <select id="queryCCAlertNPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+     
+          SELECT   d.id,d.idcType ,d.roomId ,d.cabinetColumnName,d.cabinetCount
+		,d.deviceCount,d.bizSysCount,1 alertStatus,d.status 
+		,d.alertPercentage,d.timeRange
+		,d.createTime,d.updateTime
+		FROM ( <include refid="configDataPageWhere" />) d 
+			WHERE NOT EXISTS
+		(
+			select * from (
+			<include refid="deviceAlertCountQuery" />)tt
+			where d.idcType=tt.idcType AND d.roomId = tt.roomId
+					AND tt.cabinetColumnName=d.cabinetColumnName
+		)
+			
+		order by idcType,roomId,cabinetColumnName
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryCCAlertFPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from
+       	 ( <include refid="configDataPageWhere" />) tt 
+		
+    </select>
+     <select id="queryCCAlertFPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="com.aspire.mirror.alert.server.dao.cabinetAlert.po.AlertCabinetColumnConfigData">
+     
+
+			<include refid="configDataPageWhere" />
+		order by idcType,roomId,cabinetColumnName
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+      <sql id="cabinetColumnAlertCountQuery">
+     select idc_type idcType,source_room roomId, idc_cabinet cabinetColumnName 
+			,count(*) cabinetColumnAlertCount
+	          
+			from alert_alerts  where 1=1
+			<include refid="cabinetColumnAlertWhere2" />
+				group by idcType,roomId,cabinetColumnName
+      </sql>
+    <sql id="deviceAlertCountQuery">
+     select idc_type idcType,source_room roomId, LEFT(idc_cabinet,1)cabinetColumnName 
+			,count(distinct(device_id)) deviceAlertCount
+			,count(distinct ifnull(biz_sys,'1')) bizSystemCount
+	         from (
+			select idc_type ,source_room,  idc_cabinet,device_id,biz_sys
+			
+			from alert_alerts  where 1=1
+			<include refid="cabinetAlertWhere" />
+			
+			
+			union  all 
+			
+			select idc_type ,source_room,  idc_cabinet,device_id,biz_sys
+			from alert_derive_alerts  
+			where 1=1
+			<include refid="cabinetAlertWhere" />
+			and alert_type = 1
+			
+			union all 		
+			select idc_type ,source_room,  idc_cabinet,device_id,biz_sys
+			from alert_isolate_alerts   
+			where 1=1
+			<include refid="cabinetAlertWhere" />
+			
+			union all 		
+			select idc_type ,source_room,  idc_cabinet,device_id,biz_sys
+			from alert_primary_secondary_alerts   
+			where 1=1
+			<include refid="cabinetAlertWhere" />
+			and alert_type = 1
+      	) bb  
+			group by idcType,roomId,cabinetColumnName
+      </sql>
+      <sql id="CabinetAlertCountQuery">
+      select idc_type idcType,source_room roomId, left(idc_cabinet,1) cabinetColumnName
+			,count(distinct(idc_cabinet)) cabinetAlertCount
+	         from (
+			select idc_type ,source_room,idc_cabinet
+			
+			from alert_alerts  where 1=1
+			<include refid="cabinetAlertWhere2" />
+			
+			
+			union  all 
+			
+			select idc_type ,source_room,idc_cabinet
+			from alert_derive_alerts  
+			where 1=1
+			<include refid="cabinetAlertWhere2" />
+			and alert_type = 1
+			union all 		
+			select idc_type ,source_room, idc_cabinet
+			from alert_isolate_alerts   
+			where 1=1
+			<include refid="cabinetAlertWhere2" />
+			
+			union  all 
+			
+			select idc_type ,source_room,idc_cabinet
+			from alert_primary_secondary_alerts  
+			where 
+			1=1
+			<include refid="cabinetAlertWhere2" />
+			and alert_type = 1
+      	) bb  
+			group by idcType,roomId,cabinetColumnName
+      </sql>
+    
+  
+  
+   <select id="queryCabinetAlertPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="map">
+       select aa.idc_cabinet,moni_index,alert_start_time,cur_moni_time,order_id,aaa.bizSystemCount,
+              aaa.deviceAlertCount,cc.deviceCount
+        from (
+        <include refid="CabinetAlertPageWhere" />
+        )aa left join 
+		(
+			select idc_cabinet,count(distinct ifnull(biz_sys,'1')) bizSystemCount,count(distinct device_id) deviceAlertCount
+			from (
+			select idc_cabinet  , biz_sys,device_id
+			from alert_alerts 
+			where 
+			1=1
+			<include refid="cabinetAlertWhere"/>
+			
+			union  all 
+			
+			select idc_cabinet , biz_sys,device_id
+			from alert_derive_alerts  
+			where 1=1
+			
+			<include refid="cabinetAlertWhere"/>
+			and alert_type = 1
+			
+			union all 
+			select idc_cabinet , biz_sys,device_id
+			from alert_isolate_alerts  
+			where 1=1
+			<include refid="cabinetAlertWhere"/>
+			
+			union  all 
+			
+			select idc_cabinet , biz_sys,device_id
+			from alert_primary_secondary_alerts  
+			where 1=1
+			<include refid="cabinetAlertWhere"/>
+			and alert_type = 1
+			)dd
+			group by idc_cabinet
+		)aaa on aa.idc_cabinet = aaa.idc_cabinet
+        left join (
+	   SELECT
+	   count( DISTINCT ( instance_id )) deviceCount,
+	   idc_cabinet,
+	   roomId
+	   FROM
+	   cmdb_instance
+	   where 1=1
+	   <include refid="cabinetAlertColumnWhere"/>
+	   GROUP BY idc_cabinet
+	   )cc on cc.roomId= aa.source_room and cc.idc_cabinet=aa.idc_cabinet
+		order by bizSystemCount desc
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryCabinetAlertPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		 <include refid="CabinetAlertPageWhere" />
+		 )dd
+    </select>
+    <sql id="CabinetAlertPageWhere">
+    select idc_cabinet ,moni_index ,alert_start_time ,cur_moni_time ,order_id,source_room
+		from alert_alerts 
+		where 1=1
+		 <include refid="cabinetAlertWhere2"/>
+           
+		union  all 
+		
+		select idc_cabinet ,moni_index ,alert_start_time ,cur_moni_time ,null order_id,source_room
+		from alert_derive_alerts  
+		where 1=1
+		 <include refid="cabinetAlertWhere2"/>
+            and alert_type = 1
+            
+		union all 
+		select idc_cabinet ,moni_index ,alert_start_time ,cur_moni_time ,order_id,source_room
+		from alert_isolate_alerts  
+		where 1=1
+		 <include refid="cabinetAlertWhere2"/>
+    	union  all 
+		
+		select idc_cabinet ,moni_index ,alert_start_time ,cur_moni_time ,null order_id,source_room
+		from alert_primary_secondary_alerts  
+		where 1=1
+		 <include refid="cabinetAlertWhere2"/>
+            and alert_type = 1
+    </sql>
+   <sql id="configDataPageWhere">
+ <!-- select  id,idcType ,roomId ,cabinet_column_name cabinetColumnName,cabinet_count  cabinetCount
+		,device_count deviceCount,bizSys_count bizSysCount,alert_status alertStatus,status 
+		,alert_percentage alertPercentage,time_range timeRange
+		,create_time createTime,update_time updateTime
+		from alert_cabinetcolumn_configdata  
+		where 1=1
+		<include refid="cabinetConfigWhere" />-->
+		
+		 select bbb.* from
+		 (
+     select  id,idcType ,roomId ,cabinet_column_name cabinetColumnName,cabinet_count  cabinetCount
+		,device_count deviceCount,bizSys_count bizSysCount,alert_status alertStatus,status ,editor
+		,alert_percentage alertPercentage,time_range timeRange
+		,create_time createTime,update_time updateTime
+		from alert_cabinetcolumn_configdata  
+		where 1=1
+		<include refid="cabinetConfigWhere" />
+		)bbb inner join
+   (
+   select idcType ,roomId ,left(idc_cabinet,1)  cabinetColumnName from cmdb_instance 
+		where 1=1
+		 <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idcType = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and roomId = #{params.roomId}
+            </if> 
+              <if test="params['idcCabinet'] != null and params['idcCabinet'] !=''">
+               and (  idc_cabinet like concat('%',#{params.idcCabinet},'%') 
+               			or left (idc_cabinet,1)=#{params.idcCabinet})
+            </if> 
+            and ifnull(idc_cabinet,'')!='' 
+		group by  idcType ,roomId ,cabinetColumnName)aaa 
+		
+		 on bbb.idcType = aaa.idcType and bbb.roomId=aaa.roomId and bbb.cabinetColumnName=aaa.cabinetColumnName
+	
+    </sql>
+    
+    <sql id="cabinetConfigWhere">
+  
+            <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idcType = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and roomId = #{params.roomId}
+            </if>
+             <if test="params['status'] != null">
+               and status = #{params.status}
+            </if>
+    </sql>
+  		
+  		
+  		<sql id="cabinetColumnAlertWhere2">
+
+            <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idc_type = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and source_room = #{params.roomId}
+            </if>
+           
+             <if test="params['cabinetColumn'] != null and params['cabinetColumn']  !=''">
+                and left (idc_cabinet,1)=#{params.cabinetColumn}
+            </if>
+            <if test="params['cabinetName'] != null and params['cabinetName']  !=''">
+               and idc_cabinet like concat('%',#{params.cabinetName},'%')
+            </if>
+           
+             <if test="params['source'] != null and params['source']  !=''">
+               and source =#{params.source}
+            </if>
+            <if test="params['keyCommentColumn'] != null and params['keyCommentColumn']  !=''">
+               and key_comment =#{params.keyCommentColumn}
+            </if>
+            
+    </sql>
+    <sql id="cabinetAlertWhere2">
+
+            <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idc_type = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and source_room = #{params.roomId}
+            </if>
+           
+             <if test="params['cabinetColumn'] != null and params['cabinetColumn']  !=''">
+                and left (idc_cabinet,1)=#{params.cabinetColumn}
+            </if>
+            <if test="params['cabinetName'] != null and params['cabinetName']  !=''">
+               and idc_cabinet like concat('%',#{params.cabinetName},'%')
+            </if>
+           
+             <if test="params['source'] != null and params['source']  !=''">
+               and source =#{params.source}
+            </if>
+             <choose>
+                <when  test="params['cabinetType'] != null and params['cabinetType']  ==4">
+                    and (key_comment =#{params.keyComment} or key_comment =#{params.cabinetColumnTitle})
+                </when>
+               
+                <otherwise>
+                      and key_comment =#{params.keyComment}
+                </otherwise>
+            </choose>
+         
+            
+    </sql>
+     <sql id="cabinetAlertWhere">
+
+            <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idc_type = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and source_room = #{params.roomId}
+            </if>
+           
+             <if test="params['cabinetColumn'] != null and params['cabinetColumn']  !=''">
+                and left (idc_cabinet,1)=#{params.cabinetColumn}
+            </if>
+            <if test="params['cabinetName'] != null and params['cabinetName']  !=''">
+               and idc_cabinet like concat('%',#{params.cabinetName},'%')
+            </if>
+             <choose>
+                <when  test="params['cabinetType'] != null and params['cabinetType']  ==1">
+                   and  ((
+                <foreach collection="params.deviceItem" item="item" index="index" separator="or">
+                (device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+            </foreach>
+            ) or key_comment=#{params.cabinetTitle} or  key_comment=#{params.cabinetColumnTitle} )
+                </when>
+               
+                <otherwise>
+                      and  (
+                <foreach collection="params.deviceItem" item="item" index="index" separator="or">
+                (device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+            </foreach>
+            )
+                </otherwise>
+            </choose>
+            <!-- <if test="params.deviceItem != null and params.deviceItem.size >0">
+               and  (
+                <foreach collection="params.deviceItem" item="item" index="index" separator="or">
+                (device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+            </foreach>
+            )
+            </if> -->
+          
+             <if test="params['deviceHost'] != null and params['deviceHost']  !=''">
+               and (device_ip like concat('%',#{params.deviceHost},'%') or host_name like concat('%',#{params.deviceHost},'%'))
+            </if>
+    </sql>
+	<sql id="cabinetAlertColumnWhere">
+		<if test="params['roomId'] != null and params['roomId'] !=''">
+			and roomId = #{params.roomId}
+		</if>
+	</sql>
+    
+     <select id="queryDeviceAlertPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="map">
+       select *
+        from (
+        <include refid="devicePageWhere" />
+        )aa
+		
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryDeviceAlertPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from (
+		 <include refid="devicePageWhere" />
+		 )aa
+    </select>
+    
+     <select id="queryBizSystemPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="map">
+       select biz_sys bizSystem,count(*)alertCount,count(distinct device_id)deviceAlertCount  
+        from (
+        <include refid="bizSystemPageWhere" />
+        )aa
+		group by biz_sys
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryBizSystemPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       
+       select count(*) from (
+       select distinct biz_sys from (
+		 <include refid="bizSystemPageWhere" />
+		 )aa)aaa
+		
+    </select>
+    
+    <select id="queryBizSystemHisPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="map">
+       select biz_sys bizSystem,count(*)alertCount,count(distinct device_id)deviceAlertCount  
+        from (
+        <include refid="bizSystemHisPageWhere" />
+        )aa
+		group by biz_sys
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryBizSystemHisPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+      select count(*) from(
+       select distinct biz_sys from (
+		 <include refid="bizSystemHisPageWhere" />
+		 )aa)aaa
+		
+    </select>
+    
+    <select id="queryBizSystemNormalPageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="map">
+      select  bizSystem_name bizSystem,count(*) num
+		from cmdb_instance 
+		where  1=1
+		  <include refid="bizSystemNormalPageWhere" />
+		  group by bizSystem_name
+		<if test="pageSize !=null">
+                limit #{begin},#{pageSize}
+        </if>
+		
+    </select>
+    
+    <select id="queryBizSystemNormalPageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+       select count(*) from(
+       select distinct( bizSystem_name) from 
+       cmdb_instance
+       where  1=1
+		 <include refid="bizSystemNormalPageWhere" />
+		 )aa
+    </select>
+     <sql id="bizSystemNormalPageWhere">
+     <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idcType = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and roomId = #{params.roomId}
+            </if>
+		  <if test="params['cabinetColumn'] != null and params['cabinetColumn']  !=''">
+                and left (idc_cabinet,1)=#{params.cabinetColumn}
+            </if>
+            <if test="params['cabinetName'] != null and params['cabinetName']  !=''">
+               and idc_cabinet =#{params.cabinetName}
+            </if>
+             <if test="params['bizSystemList'] != null and params.bizSystemList.size >0">
+               and bizSystem_name in (
+                <foreach collection="params.bizSystemList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+     </sql>
+     
+      <sql id="cabinetAlertWhere3">
+     <if test="params['idcType'] != null and params['idcType'] !=''">
+               and idc_type = #{params.idcType}
+            </if>
+            <if test="params['roomId'] != null and params['roomId'] !=''">
+               and source_room = #{params.roomId}
+            </if>
+		  <if test="params['cabinetColumn'] != null and params['cabinetColumn']  !=''">
+                and left (idc_cabinet,1)=#{params.cabinetColumn}
+            </if>
+            <if test="params['cabinetName'] != null and params['cabinetName']  !=''">
+               and idc_cabinet =#{params.cabinetName}
+            </if>
+            <if test="params.deviceItem != null and params.deviceItem.size >0">
+               and  (
+                <foreach collection="params.deviceItem" item="item" index="index" separator="or">
+                (device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+            </foreach>
+            )
+            </if>
+             <if test="params['bizSystemList'] != null and params.bizSystemList.size >0">
+               and biz_sys in (
+                <foreach collection="params.bizSystemList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+     </sql>
+    
+    <sql id="bizSystemHisPageWhere">
+          select biz_sys,device_id
+			from alert_alerts_his 
+			where 1=1
+		<include refid="cabinetAlertWhere3" />
+	
+			union all 
+			select biz_sys,device_id
+			from alert_derive_alerts_his 
+			where 1=1
+		<include refid="cabinetAlertWhere3" />
+			union all
+			select biz_sys,device_id
+			from alert_isolate_alerts_his 
+		where 1=1
+		<include refid="cabinetAlertWhere3" />
+		union all 
+			select biz_sys,device_id
+			from alert_primary_secondary_alerts 
+			where 1=1
+		<include refid="cabinetAlertWhere3" />
+		and alert_type=2
+    </sql>
+    <sql id="bizSystemPageWhere">
+          select biz_sys,device_id
+			from alert_alerts 
+			where 1=1
+		<include refid="cabinetAlertWhere3" />
+	
+			union all 
+			select biz_sys,device_id
+			from alert_derive_alerts 
+			where 1=1
+		<include refid="cabinetAlertWhere3" />
+		and alert_type=1
+			union all
+			select biz_sys,device_id
+			from alert_isolate_alerts 
+		where 1=1
+		<include refid="cabinetAlertWhere3" />
+		union all 
+			select biz_sys,device_id
+			from alert_primary_secondary_alerts 
+			where 1=1
+		<include refid="cabinetAlertWhere3" />
+		and alert_type=1
+    </sql>
+    <sql id="devicePageWhere">
+          select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time 
+		from alert_alerts 
+		where 1=1
+		 <include refid="cabinetAlertWhere" />
+	
+		 and ifnull(idc_cabinet,'')!=''
+		union all 
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time 
+		from alert_derive_alerts 
+		where 1=1
+		<include refid="cabinetAlertWhere" />
+		and alert_type=1
+		and ifnull(idc_cabinet,'')!=''
+		union all
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time 
+		from alert_isolate_alerts 
+		where 1=1
+		<include refid="cabinetAlertWhere" />
+		and ifnull(idc_cabinet,'')!=''
+		
+		union all 
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time 
+		from alert_primary_secondary_alerts 
+		where 1=1
+		<include refid="cabinetAlertWhere" />
+		and alert_type=1
+		and ifnull(idc_cabinet,'')!=''
+    </sql>
+    
+    
+    <select id="queryPowerDeviceCount" parameterType="map" resultType="java.lang.Integer">
+        select count(distinct(device_id))
+	         from (
+			select device_id
+			
+			from alert_alerts  
+			where 
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			and 
+			cur_moni_time >=  #{startTime} and cur_moni_time <![CDATA[ <= ]]> #{endTime}
+			
+			union  all 
+			
+			select device_id
+			from alert_derive_alerts  
+			where 
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			and cur_moni_time >=  #{startTime} and cur_moni_time <![CDATA[ <= ]]> #{endTime}
+			and alert_type = 1
+			
+			union all 		
+			select device_id
+			from alert_isolate_alerts   
+			where
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			and cur_moni_time >=  #{startTime} and cur_moni_time <![CDATA[ <= ]]> #{endTime}
+			union all 		
+			select device_id
+			from alert_primary_secondary_alerts   
+			where 
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			and cur_moni_time >=  #{startTime} and cur_moni_time <![CDATA[ <= ]]> #{endTime}
+			and alert_type = 1
+			) bb  
+		
+    </select>
+    
+    <select id="queryCabinetCount" parameterType="map" resultType="java.lang.Integer">
+        select count(distinct(idc_cabinet))
+	         from (
+			select idc_cabinet
+			
+			from alert_alerts  
+			where 
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			
+			
+			union  all 
+			
+			select idc_cabinet
+			from alert_derive_alerts  
+			where 
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			and alert_type = 1
+			
+			union all 		
+			select idc_cabinet
+			from alert_isolate_alerts   
+			where
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			
+			union all 		
+			select idc_cabinet
+			from alert_primary_secondary_alerts   
+			where 
+			1=1
+			<include refid="cabinetAlertWhere4" />
+			and alert_type = 1
+			) bb  
+		
+    </select>
+    
+    <sql id="cabinetAlertWhere4">
+     <if test="idcType != null and idcType !=''">
+               and idc_type = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and source_room = #{roomId}
+            </if>
+		  <if test="cabinetColumn != null and cabinetColumn  !=''">
+                and left (idc_cabinet,1)=#{cabinetColumn}
+            </if>
+            <if test="cabinetName != null and cabinetName  !=''">
+               and idc_cabinet =#{cabinetName}
+            </if>
+             <if test="source != null and source  !=''">
+               and source =#{source}
+            </if>
+             <if test="keyComment != null and keyComment  !=''">
+               and key_comment =#{keyComment}
+            </if>
+            <if test="deviceItem != null and deviceItem.size >0">
+               and  (
+                <foreach collection="deviceItem" item="item" index="index" separator="or">
+                (device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+            </foreach>
+            )
+            </if>
+             <if test="bizSystemList != null and bizSystemList.size >0">
+               and biz_sys in (
+                <foreach collection="bizSystemList" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+     </sql>
+     
+     <select id="queryCabinetPowerDeviceCount" parameterType="map" resultType="java.lang.Integer">
+      select count(distinct instance_id) from cmdb_instance 
+		 <where> 
+   			 <if test="idcType != null and idcType !=''">
+                idcType = #{idcType}
+            </if>
+            <if test="roomId != null and roomId !=''">
+               and roomId = #{roomId}
+            </if>
+            <if test="cabinetName != null and cabinetName  !=''">
+               and idc_cabinet =#{cabinetName}
+            </if>
+  </where>
+ 		and is_ipmi_monitor = '是'
+		and device_class='服务器'
+    </select>
+    <select id="queryDeviceAlertColumnPageListCount" resultType="java.lang.Integer">
+		select count(*) from (
+		<include refid="deviceColumnPageWhere" />
+		)aa
+	</select>
+	<sql id="deviceColumnPageWhere">
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time
+		from alert_alerts
+		where 1=1
+		<include refid="cabinetColumnAlertWhere" />
+		union all
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time
+		from alert_derive_alerts
+		where 1=1
+		<include refid="cabinetColumnAlertWhere" />
+		and alert_type=1
+		union all
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time
+		from alert_isolate_alerts
+		where 1=1
+		<include refid="cabinetColumnAlertWhere" />
+
+		union all
+		select device_id ,host_name ,biz_sys ,device_class,device_type ,moni_index ,alert_start_time ,cur_moni_time
+		from alert_primary_secondary_alerts
+		where 1=1
+		<include refid="cabinetColumnAlertWhere" />
+		and alert_type=1
+	</sql>
+	<sql id="cabinetColumnAlertWhere">
+		<if test="params['idcType'] != null and params['idcType'] !=''">
+			and idc_type = #{params.idcType}
+		</if>
+		<if test="params['roomId'] != null and params['roomId'] !=''">
+			and source_room = #{params.roomId}
+		</if>
+
+		<if test="params['cabinetName'] != null and params['cabinetName']  !=''">
+			and idc_cabinet=#{params.cabinetName}
+		</if>
+		<choose>
+			<when  test="params['cabinetType'] != null and params['cabinetType']  ==1">
+				and  ((
+				<foreach collection="params.deviceItem" item="item" index="index" separator="or">
+					(device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+				</foreach>
+				) or key_comment=#{params.cabinetTitle} or  key_comment=#{params.cabinetColumnTitle} )
+			</when>
+
+			<otherwise>
+				and  (
+				<foreach collection="params.deviceItem" item="item" index="index" separator="or">
+					(device_class=#{item.deviceClass} and key_comment=#{item.keyComment} and source=#{item.source})
+				</foreach>
+				)
+			</otherwise>
+		</choose>
+		<if test="params['deviceHost'] != null and params['deviceHost']  !=''">
+			and (device_ip like concat('%',#{params.deviceHost},'%') or host_name like concat('%',#{params.deviceHost},'%'))
+		</if>
+	</sql>
+	<select id="queryDeviceAlertColumnPageList" resultType="java.util.Map">
+		select *
+		from (
+		<include refid="deviceColumnPageWhere" />
+		)aa
+		<if test="pageSize !=null">
+			limit #{begin},#{pageSize}
+		</if>
+	</select>
+
+</mapper>

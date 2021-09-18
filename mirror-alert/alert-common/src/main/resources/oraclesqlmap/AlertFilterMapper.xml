@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.filter.AlertFilterDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.filter.po.AlertFilter" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="editer" column="editer" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
+        <result property="updated_at" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="created_at" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="sceneNum" column="scene_num" jdbcType="INTEGER"/>
+    </resultMap>
+    
+     <resultMap type="com.aspire.mirror.alert.server.dao.filter.po.AlertFilter" id="queryResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="editer" column="editer" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
+        <result property="updated_at" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="created_at" column="created_at" jdbcType="TIMESTAMP"/>
+        <association property="sceneNum" column="filter_id" select="getSceneCountByid"/>
+    </resultMap>
+
+    <sql id="baseWhereClause">
+            <if test="params['name'] != null and  params['name'] != ''">
+               and name like "%"#{params.name}"%"
+            </if>
+            <if test="params['timeStart'] != null ">
+                and updated_at &gt;= #{params.timeStart}
+            </if>
+            <if test="params['timeEnd'] != null ">
+                and updated_at &lt;= #{params.timeEnd}
+            </if>
+    </sql>
+
+    <sql id="baseColumnList">
+    	id,name,creater,editer,created_at,updated_at,note
+	</sql>
+	
+	<select id="getSceneCountByid"  resultType="java.lang.Integer">
+        select count(*) from alert_filter_scene s where s.filter_id = #{Id}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.filter.po.AlertFilter" useGeneratedKeys="true" keyProperty="id" >
+		insert into
+			alert_filter(id,name,creater,editer,note,created_at)
+		values(
+		    SEQ_ALERT_FILTER.nextval,
+			#{name,jdbcType=VARCHAR} ,
+			#{creater,jdbcType=VARCHAR} ,
+			#{editer,jdbcType=VARCHAR} ,
+			#{note,jdbcType=VARCHAR} ,
+ 			#{created_at,jdbcType=TIMESTAMP
+			}
+		)
+	</insert>
+
+
+    <!-- 列表 -->
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="queryResultMap">
+        select
+        <include refid="baseColumnList" /> ,id as filter_id
+        from
+        (
+        select a.*, ROWNUM nm
+        FROM alert_filter a
+        where
+        1=1
+        <if test="params != null">
+            <include refid="baseWhereClause" />
+        </if>
+        AND ROWNUM <![CDATA[<=]]> #{begin}+#{pageSize}
+        )  F
+        WHERE F.nm &gt; #{begin}
+    </select>
+
+
+
+
+    <select id="pageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select count(*) from alert_filter
+        where
+        1=1
+        <if test="params != null">
+            <include refid="baseWhereClause" />
+        </if>
+    </select>
+
+
+    <select id="getByName" parameterType="String" resultMap="baseResultMap">
+        select  <include refid="baseColumnList" />
+         from alert_filter
+        where name = #{name}
+    </select>
+
+
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="Integer" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_filter  where id = #{id}
+    </select>
+    
+   
+   <!-- 修改 -->
+	<update id="update" parameterType="com.aspire.mirror.alert.server.dao.filter.po.AlertFilter">
+		update alert_filter set 
+		editer = #{editer,jdbcType=VARCHAR},
+		name = #{name,jdbcType=VARCHAR},
+		note = #{note,jdbcType=VARCHAR}
+		where id = #{id}
+	</update>
+   
+    <delete id="deleteByPrimaryKey" parameterType="Integer">
+		DELETE FROM alert_filter WHERE id = #{id}
+	</delete>
+	
+	 <select id="selectAll"  resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_filter order by updated_at desc
+    </select>
+</mapper>

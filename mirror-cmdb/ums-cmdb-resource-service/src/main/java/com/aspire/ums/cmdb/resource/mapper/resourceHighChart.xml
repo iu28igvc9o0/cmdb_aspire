@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.aspire.ums.cmdb.resource.mapper.ResourceHighChartMapper">
+
+	<select id="getResourcePool" resultType="map">
+		SELECT cd.ID id,cd.LABEL
+		text FROM config_dict cd WHERE TYPE ='idcType' and DELETE_FLAG = 0
+	</select>
+
+	<select id="getServerOverview" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		SELECT COUNT(*) FROM cmdb_device_assets a WHERE build_detail_id IN(
+		SELECT id FROM resource_build_detail WHERE build_id IN(
+		SELECT id FROM
+		resource_build WHERE estimate_id =( SELECT re.id FROM
+		(SELECT id FROM
+		resource_estimate where resource_pool = #{resourcepool} ORDER
+		BY
+		create_time DESC LIMIT 0,1) AS re
+		)))
+		<if test="type =='currpersy'">
+			AND (IS_ASSIGN = 3 OR IS_ASSIGN=0)
+		</if>
+		<if test="type =='currperyfp'">
+			AND (IS_ASSIGN = 1 OR IS_ASSIGN=2)
+		</if>
+		<if test="type =='currpercount'">
+			AND IS_ASSIGN != 4
+		</if>
+		<if test="sclass =='server'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='服务器');
+		</if>
+		<if test="sclass =='storage'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='存储设备');
+		</if>
+
+	</select>
+
+	<select id="getServerCount" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select COUNT(*) from cmdb_device_assets a
+		<if test="type =='percount'">
+			where IS_ASSIGN != 4
+		</if>
+		<if test="type =='yfpcount'">
+			where (IS_ASSIGN = 2
+			OR IS_ASSIGN = 1)
+		</if>
+		<if test="type =='sycount'">
+			where (IS_ASSIGN = 0
+			OR IS_ASSIGN = 3)
+		</if>
+		<if test="type =='nodiscount'">
+			where IS_ASSIGN = 4
+		</if>
+		<if test="sclass =='pm'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='物理机');
+		</if>
+		<if test="sclass =='server'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='服务器');
+		</if>
+		<if test="sclass =='storage'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='存储设备');
+		</if>
+		<if test="sclass =='vm'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='虚拟机');
+		</if>
+		<if test="sclass =='network'">
+			AND exists
+			(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+			b.type='deviceClass' and b.value='网络设备');
+		</if>
+	</select>
+
+	<select id="getFutureplanServerCount" resultType="java.lang.String">
+		select
+		SUM(IFNULL(pm_low_app_server,0))+
+		SUM(IFNULL(pm_analytical_server,0))+
+		SUM(IFNULL(pm_distributed_server,0))+
+		SUM(IFNULL(pm_cache_server,0))+
+		SUM(IFNULL(pm_high_app_server,0)) as
+		count FROM resource_estimate where status='0'
+	</select>
+
+	<select id="getFutureplanStorageCount" resultType="java.lang.String">
+		select
+		SUM(IFNULL(storage_distributd_file_capacity,0))+
+		SUM(IFNULL(storage_distributd_block_performance,0))+
+		SUM(IFNULL(storage_object_capacity,0))+
+		SUM(IFNULL(storage_fc_san_capacity,0))+
+		SUM(IFNULL(storage_ip_san_capacity,0))+
+		SUM(IFNULL(storage_fc_san_naked,0))+
+		SUM(IFNULL(storage_ip_san_naked,0))+
+		SUM(IFNULL(storage_back_up,0)) as count FROM resource_estimate where
+		status='0'
+	</select>
+
+	<select id="getServerEstimateCount" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT COUNT(*) AS assign,SERVER_TYPE_1
+		FROM cmdb_device_assets a WHERE build_detail_id IN(
+		SELECT id FROM
+		resource_build_detail WHERE build_id IN(
+		SELECT id FROM
+		resource_build
+		WHERE estimate_id =( SELECT re.id FROM
+		(SELECT id FROM
+		resource_estimate WHERE resource_pool = #{resourcepool} ORDER
+		BY
+		create_time DESC LIMIT 0,1) AS re
+		)))
+		AND exists
+		(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+		b.type='deviceClass' and b.value= #{sclass})
+		AND (IS_ASSIGN = 2 OR
+		IS_ASSIGN = 1)
+		GROUP BY SERVER_TYPE_1
+	</select>
+
+	<select id="getServerEstimateAssignCount" resultType="java.util.Map"
+		parameterType="java.lang.String">
+		SELECT COUNT(*) AS unassign,SERVER_TYPE_1
+		FROM cmdb_device_assets a WHERE build_detail_id IN(
+		SELECT id FROM
+		resource_build_detail WHERE build_id IN(
+		SELECT id FROM
+		resource_build
+		WHERE estimate_id =( SELECT re.id FROM
+		(SELECT id FROM
+		resource_estimate WHERE resource_pool = #{resourcepool} ORDER
+		BY
+		create_time DESC LIMIT 0,1) AS re
+		)))
+		AND exists
+		(select 1 from config_dict b where a.DEVICE_CLASS_ID=b.id and
+		b.type='deviceClass' and b.value= #{sclass})
+		AND IS_ASSIGN != 2 AND
+		IS_ASSIGN != 1
+		GROUP BY SERVER_TYPE_1
+	</select>
+
+	<select id="getBuildOverview" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select COUNT(COUNT) from resource_build_detail a
+		<if test="type =='pm'">
+			where server_type = '物理机'
+		</if>
+		<if test="type =='vm'">
+			where server_type = '虚拟机'
+		</if>
+		<if test="type =='storage'">
+			where server_type = '存储设备'
+		</if>
+		<if test="type =='network'">
+			where server_type = '网络设备'
+		</if>
+	</select>
+
+	<select id="getCollectOverview" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		SELECT
+		<if test="type =='vm'">
+			COUNT(vm_model1)+
+			COUNT(vm_model2)+
+			COUNT(vm_model3) +
+			COUNT(vm_model4)+
+			COUNT(vm_model5)+
+			COUNT(vm_model6) +
+			COUNT(vm_model7)+
+			COUNT(vm_model8)
+		</if>
+		<if test="type =='pm'">
+			COUNT(pm_low_app_server) +
+			COUNT(pm_analytical_server)+
+			COUNT(pm_distributed_server)+
+			COUNT(pm_cache_server) +
+			COUNT(pm_high_app_server)
+		</if>
+		<if test="type =='storage'">
+			COUNT(storage_distributd_file_capacity) +
+			COUNT(storage_distributd_block_performance)+
+			COUNT(storage_object_capacity)+
+			COUNT(storage_fc_san_capacity) +
+			COUNT(storage_ip_san_capacity)+
+			COUNT(storage_fc_san_naked)+
+			COUNT(storage_ip_san_naked) +
+			COUNT(storage_back_up)
+		</if>
+		<if test="type =='network'">
+			COUNT(bandwidth_gbps_cmnet) +
+			COUNT(bandwidth_gbps_ip)
+		</if>
+		FROM `resource_demand_collect`
+	</select>
+
+</mapper>

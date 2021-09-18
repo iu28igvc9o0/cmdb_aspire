@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<themes>
+    <!--
+        主题列表
+        item: 指标项 -name: 指标项名称  -type: 指标类型 全国|各省
+        handler: 处理类
+        mirrorColumn: 产品化中主题的列名
+        rtzColumn: handler类中返回的列名
+
+        ****************************************************************************************************************
+              特别注意：
+              每个theme节点下的item的顺序, 需要与定义主题模板中的列顺序一致.
+              否则会导致数据传递错乱, 计算结果错误.
+
+        ****************************************************************************************************************
+    -->
+    <theme themeCode="AITYYPT01a5c4114a-9d47-48b6-8819-946e5b3cf51a" sysCode="AITYYPT" owner="双送" type="日">
+        <common>
+            <item name="ID">
+                <mirrorColumn>id</mirrorColumn>
+            </item>
+            <item name="日期">
+                <mirrorColumn>calc_date</mirrorColumn>
+            </item>
+            <item name="省份编码">
+                <mirrorColumn>province_code</mirrorColumn>
+            </item>
+            <item name="省份名称">
+                <mirrorColumn>province_name</mirrorColumn>
+            </item>
+        </common>
+        <item name="软探针累计量（日）（万）" type="各省|全国">
+            <handler>com.aspire.mirror.indication.realnational.day.RtzTotalUserHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getTotalUserStb</method>
+            <mirrorColumn>totaluser</mirrorColumn>
+        </item>
+        <item name="软探针活跃量（日）（万）" type="各省|全国">
+            <handler>com.aspire.mirror.indication.realnational.day.RtzActiveUserHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getTotalUserStb</method>
+            <mirrorColumn>activeuser</mirrorColumn>
+        </item>
+        <item name="软探针活跃率（%）" type="各省|全国">
+            <handler>com.aspire.mirror.indication.realnational.day.RtzActiveRateHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getTotalUserStb</method>
+            <mirrorColumn>activerate</mirrorColumn>
+        </item>
+        <item name="软探针覆盖率（%）" type="各省|全国">
+            <handler>com.aspire.mirror.indication.realnational.day.RtzCoverRateHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getTotalUserStb</method>
+            <mirrorColumn>coverRate</mirrorColumn>
+        </item>
+    </theme>
+    <theme themeCode="AITYYPT012512b97b-a988-427b-84d2-59ef60a27fa2" sysCode="AITYYPT" owner="双送" type="小时">
+        <common>
+            <item name="ID">
+                <mirrorColumn>id</mirrorColumn>
+            </item>
+            <item name="日期">
+                <mirrorColumn>calc_date</mirrorColumn>
+            </item>
+            <item name="省份编码">
+                <mirrorColumn>province_code</mirrorColumn>
+            </item>
+            <item name="省份名称">
+                <mirrorColumn>province_name</mirrorColumn>
+            </item>
+        </common>
+        <item name="收视用户数（今日）（个）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.hour.RtzTodayViewingUserHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getViewingUser</method>
+            <mirrorColumn>today_programuser</mirrorColumn>
+        </item>
+        <!--<item name="收视用户数（昨日）（个）" type="全国">-->
+            <!--<handler>com.aspire.mirror.indication.realnational.hour.RtzYesterdayViewingUserHandler</handler>-->
+            <!--<wsdl>/services/userinfoserver?wsdl</wsdl>-->
+            <!--<method>getViewingUser</method>-->
+            <!--<mirrorColumn>prev_programuser</mirrorColumn>-->
+        <!--</item>-->
+    </theme>
+    <theme themeCode="AITYYPT018f01a1bc-6e4c-43e3-a585-63c772395a9b" sysCode="AITYYPT" owner="双送" type="实时">
+        <common>
+            <item name="ID">
+                <mirrorColumn>id</mirrorColumn>
+            </item>
+            <item name="日期">
+                <mirrorColumn>calc_date</mirrorColumn>
+            </item>
+            <item name="省份编码">
+                <mirrorColumn>province_code</mirrorColumn>
+            </item>
+            <item name="省份名称">
+                <mirrorColumn>province_name</mirrorColumn>
+            </item>
+        </common>
+        <item name="收视用户数（今日）（个）" type="全国|各省">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzTodayViewingUserHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getViewingUser</method>
+            <timeType>dateList</timeType>
+            <mirrorColumn>today_programuser</mirrorColumn>
+        </item>
+        <item name="EPG成功率（%）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzEpgSuccessHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getStbAllIndex</method>
+            <mirrorColumn>epg_success_rate</mirrorColumn>
+        </item>
+        <item name="无卡顿/花屏时长占比（%）" type="全国|各省">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzScreenBlurredHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getProgramKartunTimeRate</method>
+            <mirrorColumn>no_screen_blurred_rate</mirrorColumn>
+        </item>
+        <item name="播放成功率（%）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzPlaySuccessHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getStbAllIndex</method>
+            <mirrorColumn>play_success_rate</mirrorColumn>
+        </item>
+        <item name="点播用户占比（%）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzVodProgramUserHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getStbAllIndex</method>
+            <mirrorColumn>vod_program_user_rate</mirrorColumn>
+        </item>
+        <item name="直播用户占比（%）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzLiveProgramUserHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getStbAllIndex</method>
+            <mirrorColumn>live_program_user_rate</mirrorColumn>
+        </item>
+        <item name="有线用户数（万）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzWireLineUserHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getStbAllIndex</method>
+            <mirrorColumn>wire_line_user</mirrorColumn>
+        </item>
+        <item name="无线用户数（万）" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.actual.RtzNoLineUserHandler</handler>
+            <wsdl>/services/programinfoserver?wsdl</wsdl>
+            <method>getStbAllIndex</method>
+            <mirrorColumn>no_wire_line_user</mirrorColumn>
+        </item>
+    </theme>
+    <theme themeCode="GGCSQ014d6db645-cb22-4a78-bbe2-93c1ee603501" sysCode="AITYYPT" owner="双送" type="分钟">
+        <common>
+            <item name="ID">
+                <mirrorColumn>id</mirrorColumn>
+            </item>
+            <item name="日期">
+                <mirrorColumn>calc_date</mirrorColumn>
+            </item>
+            <item name="省份编码">
+                <mirrorColumn>province_code</mirrorColumn>
+            </item>
+            <item name="省份名称">
+                <mirrorColumn>province_name</mirrorColumn>
+            </item>
+        </common>
+        <item name="时间段" type="全国|各省">
+            <handler>com.aspire.mirror.indication.realnational.minute.PeriodHandler</handler>
+            <wsdl/>
+            <method/>
+            <mirrorColumn>period</mirrorColumn>
+        </item>
+        <item name="时间点" type="全国|各省">
+            <handler>com.aspire.mirror.indication.realnational.minute.PeriodTimeHandler</handler>
+            <wsdl/>
+            <method/>
+            <mirrorColumn>period_time</mirrorColumn>
+        </item>
+        <item name="全国卡顿告警" type="全国">
+            <handler>com.aspire.mirror.indication.realnational.minute.ScreenBlurredAlarmHandler</handler>
+            <wsdl>/services/userinfoserver?wsdl</wsdl>
+            <method>getAlarmInfoSplitNew</method>
+            <mirrorColumn>alarm_count</mirrorColumn>
+        </item>
+    </theme>
+</themes>

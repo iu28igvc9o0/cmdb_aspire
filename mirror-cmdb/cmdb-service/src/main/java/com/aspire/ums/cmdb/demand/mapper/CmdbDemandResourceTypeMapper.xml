@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.demand.mapper.CmdbDemandResourceTypeMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceType" >
+        <result column="resource_type_id" property="resourceTypeId" jdbcType="VARCHAR" />
+        <result column="resource_code" property="resourceCode" jdbcType="VARCHAR" />
+        <result column="resource_owner" property="resourceOwner" jdbcType="VARCHAR" />
+        <result column="resource_owner_order" property="resourceOwnerOrder" jdbcType="INTEGER" />
+        <result column="resource_type" property="resourceType" jdbcType="VARCHAR" />
+        <result column="parent_type_id" property="parentTypeId" jdbcType="VARCHAR" />
+        <result column="resource_order" property="resourceOrder" jdbcType="INTEGER" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `resource_type_id`,
+        `resource_code`,
+        `resource_owner`,
+        `resource_owner_order`,
+        `resource_type`,
+        `parent_type_id`,
+        `resource_order`
+        FROM cmdb_demand_resource_type
+        order by (resource_type_id+0), resource_order
+    </select>
+
+    <select id="getTypeList" resultMap="resultMap">
+        SELECT
+        `resource_type_id`,
+        `resource_code`,
+        `resource_owner`,
+        `resource_owner_order`,
+        `resource_type`,
+        `parent_type_id`,
+        `resource_order`
+        FROM cmdb_demand_resource_type
+        where 1=1
+        <if test="parentTypeId == null || parentTypeId == ''">
+            and `parent_type_id` is null or `parent_type_id` = ''
+        </if>
+        <if test="parentTypeId != null || parentTypeId != ''">
+            and `parent_type_id` = #{parentTypeId}
+        </if>
+        order by (resource_type_id+0), resource_order
+    </select>
+
+    <select id="getTypeAndValueList" resultType="java.util.Map">
+        SELECT
+        dt.resource_type_id,
+        dt.resource_type resource_type_name
+        FROM cmdb_demand_resource_type dt
+        WHERE 1=1
+        AND dt.parent_type_id = #{parentTypeId}
+        order by resource_order
+    </select>
+
+    <select id="getResourceOwnerList" resultMap="resultMap">
+        SELECT
+            `resource_type_id`,
+            `resource_code`,
+            `resource_owner`,
+            `resource_owner_order`,
+            `resource_type`,
+            `parent_type_id`,
+            `resource_order`
+        FROM
+            cmdb_demand_resource_type dt
+        WHERE dt.parent_type_id IS NULL OR dt.parent_type_id = ''
+        ORDER BY resource_owner_order
+    </select>
+
+    <select id="getTypeListByOwner" resultMap="resultMap">
+        SELECT
+        `resource_type_id`,
+        `resource_code`,
+        `resource_owner`,
+        `resource_owner_order`,
+        `resource_type`,
+        `parent_type_id`,
+        `resource_order`
+        FROM cmdb_demand_resource_type
+        where `resource_owner` = #{owner}
+        order by resource_order
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceType" resultMap="resultMap">
+        SELECT
+        `resource_type_id`,
+        `resource_code`,
+        `resource_owner`,
+        `resource_owner_order`,
+        `resource_type`,
+        `parent_type_id`,
+        `resource_order`
+        FROM cmdb_demand_resource_type
+        WHERE 1=1
+        AND `resource_type_id` = #{resourceTypeId}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceType">
+        INSERT INTO cmdb_demand_resource_type
+        (
+            `resource_type_id`,
+            `resource_code`,
+            `resource_owner`,
+            `resource_owner_order`,
+            `resource_type`,
+            `parent_type_id`,
+            `resource_order`
+        ) VALUES (
+            #{resourceTypeId, jdbcType=VARCHAR},
+            #{resourceCode, jdbcType=VARCHAR},
+            #{resourceOwner, jdbcType=VARCHAR},
+            #{resourceOwnerOrder, jdbcType=VARCHAR},
+            #{resourceType, jdbcType=VARCHAR},
+            #{parentTypeId, jdbcType=VARCHAR},
+            #{resourceOrder, jdbcType=INTEGER}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceType">
+        UPDATE cmdb_demand_resource_type SET
+        `resource_code` = #{resourceCode},
+        `resource_type` = #{resourceType},
+        `resource_owner` = #{resourceOwner},
+        `resource_owner_order` = #{resourceOwnerOrder},
+        `parent_type_id` = #{parentTypeId},
+        `resource_order` = #{resourceOrder}
+        WHERE
+        `resource_type_id` = #{resourceTypeId}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandResourceType">
+        DELETE FROM cmdb_demand_resource_type
+        WHERE
+         `resource_type_id` = #{resourceTypeId}
+    </delete>
+
+    <select id="getIdByCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select resource_type_id from cmdb_demand_resource_type where resource_code = #{code}
+    </select>
+
+</mapper>

@@ -1,0 +1,294 @@
+server:
+  port: 14022
+
+logging:
+  config: classpath:log4j2.yml
+  level:
+    org.springframework.web.servlet.DispatcherServlet: debug
+  file: cmdb-agent.log ##日志文件,绝对路径或相对路径
+
+spring:
+  zipkin:
+    enabled: false
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+  eureka:
+    instance:
+      leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+      prefer-ip-address: true
+    client:
+      registryFetchIntervalSeconds: 5
+      instanceInfoReplicationIntervalSeconds: 5
+      initialInstanceInfoReplicationIntervalSeconds: 5
+      serviceUrl:
+        defaultZone: http://localhost:8761/eureka/
+  datasource:
+    #    driverClassName: com.mysql.jdbc.Driver
+    #    url: jdbc:mysql://10.1.203.99:3306/mirror?useUnicode=true&characterEncoding=utf-8&useAffectedRows=true
+    #    username: root
+    #    password: roo,q1Il.t
+    #    test-on-borrow: false
+    #    test-while-idle: true
+    #    time-between-eviction-runs-millis: 3600000
+    type: com.alibaba.druid.pool.DruidDataSource
+  kafka:
+    bootstrap-servers: localhost:9092 #10.12.70.40:9092
+    producer:
+      acks: all
+      retries: 2  #发送失败时重试多少次，0=禁用重试（默认值）
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    #    consumer:
+    #      group-id: sync-consumer-group
+    #      auto-offset-reset: earliest
+    #      enable-auto-commit: true
+    #      auto-commit-interval: 60000
+    #      session.timeout.ms: 60000
+    #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    #      auto.commit.interval.ms: 300000
+    #    properties:
+    #      auto.commit.interval.ms: 10000
+    #      request.timeout.ms: 110000
+    #      session.timeout.ms: 100000
+    #      max.poll.records: 5
+    #      max.poll.interval.ms: 120000
+    #      heartbeat.interval.ms: 60000
+    consumer:
+      group-id: test-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      auto-commit-interval: 3000
+      fetchMinSize: 1
+      fetchMaxWait: 10
+      #这个参数控制一个poll()调用返回的记录数，即consumer每次批量拉多少条数据。
+      maxPollRecords: 10 #默认值：500
+      max.poll.records: 10
+      max.poll.interval.ms: 60000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    properties:
+      linger.ms: 50
+      max.in.flight.requests.per.connection: 5
+      max.poll.interval.ms: 120000
+      heartbeat.interval.ms: 60000
+      request.timeout.ms: 110000
+      session.timeout.ms: 100000
+    #      auto.commit.interval.ms: 1000
+    #      request.timeout.ms: 1000000
+    #      heartbeat.interval.ms: 20000
+    #      session.timeout.ms: 30000
+    #      max.poll.records: 5
+    #      max.poll.interval.ms: 300000
+    listener:
+      #创建多少个consumer，值必须小于等于Kafk Topic的分区数。
+      ack-mode: MANUAL_IMMEDIATE
+      concurrency: 1  #推荐设置为topic的分区数
+    consumer-extra:
+      batch-listener: true # 是否批量处理
+      enable-auto-commit: false
+
+  # RabbitMQ 配置项
+  rabbitmq:
+    host: 10.153.1.61
+    #    host: 10.1.203.99
+    virtual-host: /cmic
+    port: 5672
+    #    port: 5673
+    username: admin
+    password: admin
+    listener:
+      simple:
+        concurrency: 5
+        max-concurrency: 10
+        prefetch: 5
+        acknowledge-mode: manual
+
+#连接池的配置信息
+druid:
+  url: jdbc:mysql://10.1.203.99:3306/cmdb?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&allowMultiQueries=true
+  driverClassName: com.mysql.jdbc.Driver
+  username: root
+  password: roo,q1Il.t
+  useSSL: false
+  initialSize: 5 #初始大小
+  minIdle: 5 #最小
+  maxActive: 20 #最大
+  maxWait: 60000 #配置获取连接等待超时的时间
+  timeBetweenEvictionRunsMillis: 60000 #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+  minEvictableIdleTimeMillis: 300000 #连接在池中最小生存的时间，单位是毫秒
+  validationQuery: SELECT 1 #心跳检测的SQL
+  validationQueryTimeout: 300000 #心跳检测超时时间, 单位毫秒
+  testWhileIdle: true #在检查闲置连接时同时检查连接可用性
+  testOnBorrow: false #在借出连接时检查连接可用性
+  testOnReturn: false #在客户端归还连接时检查连接可用性
+  filters: stat,wall #配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+  # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+  connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+
+kafka:
+  partitionNum: 3 #分区数
+  topic:
+    cmdb_instance_topic_pro: Ci_Pro
+    cmdb_instance_topic_zbx: Ci_Zbx
+    cmdb_instance_monitor: monitor_host
+    suyan_vm_sync: SUYAN_VM_SYNC
+  osa_topic:
+    osa_config_dict: osa_config_dict
+    osa_cmdb_device_asset: osa_cmdb_device_asset
+    osa_cmdb_device_asset_other_ip: osa_cmdb_device_asset_other_ip
+    osa_cmdb_device_storage: osa_cmdb_device_storage
+    osa_cmdb_device_maintence: osa_cmdb_device_maintence
+    osa_cmdb_business: osa_cmdb_business
+    osa_cmdb_business_line_contact: osa_cmdb_business_line_contact
+    osa_cmdb_finance_business: osa_cmdb_finance_business
+    osa_cmdb_netpolicy_manage: osa_cmdb_netpolicy_manage
+    osa_cmdb_maintenance_mode: osa_cmdb_maintenance_mode
+    osa_cmdb_inner_ip_segment: osa_cmdb_inner_ip_segment
+
+# 业务线同步配置
+businessLine.mq.exchange.name: business_info_sync
+businessLine.mq.routing.key.name: business_info_sync.routing.key
+businessLine.mq.queue.name: mirror_business_info_sync.queue
+
+# 组织同步配置
+organization.mq.exchange.name: org_info_sync
+organization.mq.routing.key.name: mirror.cmdb.organization.routing.key
+organization.mq.queue.name: mirror.cmdb.organization.queue
+
+# 人员账号同步配置
+account.mq.exchange.name: account_info_sync
+account.mq.routing.key.name: mirror.cmdb.account.routing.key
+account.mq.queue.name: mirror.cmdb.account.queue
+
+# 部门-人员账号同步配置
+orgAccount.mq.exchange.name: orgUser_info_sync
+orgAccount.mq.routing.key.name: mirror.cmdb.orgAccount.routing.key
+orgAccount.mq.queue.name: mirror.cmdb.orgAccount.queue
+
+spring.mail.default-encoding: UTF-8
+spring.mail.host: "smtp.163.com"
+#发送者的邮箱账号
+spring.mail.username: "15021314201@163.com"
+#发送者的邮箱密码
+spring.mail.password: "544357978"
+#端口
+spring.mail.port: 25
+#协议
+spring.mail.protocol: "smtp"
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: true
+spring.mail.properties.mail.smtp.starttls.required: true
+
+cmdb:
+  cache: false
+  enable:
+    modifyApproval: true
+    syncOsaFlag: true
+  access:
+    inner: 5245ed1b-6345-11e
+  schema:
+    name: mirror
+    importData: true
+  feign:
+    ldap: http://10.1.203.100:28102
+    rbac: http://10.1.203.100:28101
+    #    rbac: http://localhost:28101
+    cmdb: http://localhost:2222
+    #    redis: http://localhost:26379
+    redis: http://10.1.203.100:26379
+    es: http://10.1.203.100:28103
+    client:
+      config:
+        default:
+          connectTimeout: 120000
+          readTimeout: 120000
+
+businessMonitor.scan.ip.file: /root/cmdb-agent/agent01/ip_list.txt
+businessMonitor.alert.ip.dir: /root/cmdb-agent/agent01/
+businessMonitor.idcType: 信息港资源池
+businessMonitor.monitor_object: Ping指标
+businessMonitor.monitor_level: 4
+businessMonitor.form: ''
+businessMonitor.needSend: 'false'
+
+# 调用苏研的接口
+sync:
+  url:
+    suyan:
+      vmUrl: http://10.144.91.176:32600/cuchulainn/openapi/asset/VirtualServer
+      pmUrl: http://10.144.91.176:32600/cuchulainn/openapi/asset/PhysicalServer
+      token: 'Basic YXNwaXJlOjEyMzQ1Ng=='
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 800000
+
+ribbon:
+  ConnectTimeout: 120000
+  ReadTimeout: 120000
+
+ftp:
+  host: 10.12.70.40
+  port: 21
+  username: ftpadmin
+  password: 11qq!!QQ
+  path: /file_download/
+  bufferSize: 8096
+
+iconSize: 300000
+
+#自动化IP采集
+vmware:
+  config:
+    access_key: 773d6a9c4bcf11e573cdcff0
+    secret_key: 76795445526b4f53667a78505563505a584172434e547865446a614375416562
+    url: http://172.16.108.104:80
+
+#mybatis配置
+mybatis:
+  type-aliases-package: com.aspire.ums.cmdb.**.entity
+  configLocation: classpath:mybatis-config.xml
+  mapper-locations: classpath*:com/aspire/**/mapper/*.xml
+  refresh: true
+
+# 同步科管用户
+kgSync:
+  user:
+    syncFlag: false
+    group: osn-users
+    url: http://10.1.5.179/rest/uim/person/group/
+
+spring.cloud.stream.kafka.binder.brokers: localhost:9092
+spring.cloud.stream.kafka.binder.zk-nodes: localhost:2181
+system.change.tobpm.flowkey: CMDBrwczlc
+system.change.tobpm.datakey: CMDBrwczdx
+system.change.tobpm.url: http://10.1.203.87:8086/runtime/instance/v1/start
+bpm.token.user.url: http://10.1.203.87:8088/api/v1/userToken/user/getUserToken
+bpm.onlineBiz.url: http://10.1.203.87:8082/form/formServiceController/v1/getOnlineBizByName
+
+xxl:
+  job:
+    admin:
+      addresses: http://10.1.203.100:8090/xxl-job-admin
+    accessToken:
+    executor:
+      appname: cmdb-agent-executor
+      address:
+      ip:
+      port: 19999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: 30
+
+ipclash.sendOrder.cmdb2bpm_general_account: 10000128887873
+ipclash.sendOrder.url: http://10.1.203.99:9998/interface/autoDispatchOrderController/v1/autoStartTaskOrder
+bpmJwtTokenUrl: http://10.1.203.99:8998/api/userToken/v1/user/getUserToken

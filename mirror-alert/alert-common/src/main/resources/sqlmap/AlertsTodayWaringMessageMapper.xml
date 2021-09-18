@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.third.AlertsTodayWaringMessageDao">
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.Alerts" id="baseResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="operateStatus" column="operate_status" jdbcType="INTEGER"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time" jdbcType="TIMESTAMP"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR"/>
+        <result property="messageSend" column="message_send" jdbcType="VARCHAR"/>
+        <result property="messageOpen" column="message_open" jdbcType="VARCHAR"/>
+        <result property="mailSend" column="mail_send" jdbcType="VARCHAR"/>
+        <result property="mailOpen" column="mail_open" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="hostName" column="host_name" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsHis" id="baseHisResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="alertEndTime" column="alert_end_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="clearTime" column="clear_time" jdbcType="TIMESTAMP"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time" jdbcType="TIMESTAMP"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="clearUser" column="clear_user" jdbcType="VARCHAR"></result>
+        <result property="clearTime" column="clear_time" jdbcType="TIMESTAMP"></result>
+        <result property="clearContent" column="clear_content" jdbcType="VARCHAR"></result>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="hostName" column="host_name" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsExport" id="baseAlertsExportMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"/>
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="deviceId" column="device_id" jdbcType="VARCHAR"/>
+        <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR"/>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+        <result property="curMoniValue" column="cur_moni_value" jdbcType="VARCHAR"/>
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="VARCHAR"/>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="alertEndTime" column="alert_end_time" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR"/>
+        <result property="sourceRoom" column="source_room" jdbcType="VARCHAR"/>
+        <result property="clearTime" column="clear_time" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="region" column="region" jdbcType="VARCHAR"/>
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="VARCHAR"/>
+        <result property="alertStartTime" column="alert_start_time" jdbcType="VARCHAR"/>
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER"></result>
+        <result property="clearUser" column="clear_user" jdbcType="VARCHAR"></result>
+        <result property="clearTime" column="clear_time" jdbcType="VARCHAR"></result>
+        <result property="clearContent" column="clear_content" jdbcType="VARCHAR"></result>
+        <result property="messageSend" column="message_send" jdbcType="VARCHAR"/>
+        <result property="messageOpen" column="message_open" jdbcType="VARCHAR"/>
+        <result property="mailSend" column="mail_send" jdbcType="VARCHAR"/>
+        <result property="mailOpen" column="mail_open" jdbcType="VARCHAR"/>
+        <result property="prefix" column="prefix" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR"/>
+        <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+        <result property="hostName" column="host_name" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--去除历史告警中级别为低中高严重的级别-->
+    <select id="getHisSummaryByIdctyp" resultType="map">
+        SELECT a.clear_user,a.alert_end_time,a.clear_content,a.idc_type,a.source_room,a.alert_level alert_level,
+        SUM(a.count) codeCount,
+        SUM(if(a.alertLevel='2', a.count, 0)) lCount,
+        SUM(if(a.alertLevel='3', a.count, 0)) mCount,
+        SUM(if(a.alertLevel='4', a.count, 0)) hCount,
+        SUM(if(a.alertLevel='5', a.count, 0)) sCount
+        FROM
+        (SELECT t.alert_level AS alertLevel,t.clear_user,t.alert_end_time,t.clear_content,t.alert_level,
+        t.cur_moni_time,t.idc_type,t.source_room, COUNT(*)  AS count from alert_alerts_his t
+        WHERE 1=1
+        <if test="param.idc_type !=null and param.idc_type != ''">
+            AND t.idc_type=#{param.idc_type}
+        </if>
+        <if test="param.source_room !=null and param.source_room != ''">
+            AND t.source_room=#{param.source_room}
+        </if>
+        <if test="param.startTime !=null and param.endTime !=null">
+            AND t.alert_end_time BETWEEN #{param.startTime} AND #{param.endTime}
+        </if>
+        GROUP BY alertLevel,t.clear_user)a
+        GROUP BY a.clear_user
+
+    </select>
+
+
+</mapper>

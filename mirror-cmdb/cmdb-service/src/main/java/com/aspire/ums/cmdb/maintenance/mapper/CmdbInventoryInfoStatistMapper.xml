@@ -1,0 +1,171 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbInventoryInfoStatistMapper" >
+
+    <select id="firstLayer" resultType="java.util.HashMap">
+    SELECT
+        IFNULL(t1.totalCount - t1.successCount,0) AS inventory,
+        IFNULL(t1.successCount,0) successCount,
+        IFNULL(t2.failCount,0) failCount,
+        t1.idcType
+    FROM
+        (
+            SELECT IFNULL(totalCount,0) totalCount,IFNULL(successCount,0) successCount,tmp.idcType
+            FROM (SELECT DISTINCT idcType from cmdb_instance) tmp
+            LEFT JOIN (
+                    SELECT count(DISTINCT a.device_sn) successCount,c.idcType
+                    from cmdb_maintenance_project_instance a
+                    LEFT JOIN cmdb_maintenance_project b on a.project_id = b.id
+                    LEFT JOIN cmdb_instance c on a.instance_id = c.id
+                    where a.is_delete = '0' and a.instance_id is not NULL
+                    and (c.device_class != '存储设备' and c.device_type != '云主机')
+                    GROUP BY c.idcType
+                ) d on tmp.idcType = d.idcType
+            LEFT JOIN (
+                SELECT count(DISTINCT id) totalCount,idcType
+                FROM cmdb_instance
+                WHERE is_delete = '0'
+                AND ( device_class != '存储设备' AND device_type != '云主机' )
+                GROUP BY idcType
+            ) e ON tmp.idcType = e.idcType
+        ) t1
+    LEFT JOIN (
+        SELECT count(DISTINCT a.device_sn) failCount,b.device_area idcType
+        FROM cmdb_maintenance_project_instance a
+        LEFT JOIN cmdb_maintenance_project b ON a.project_id = b.id
+        WHERE a.is_delete = '0' AND instance_id IS NULL
+        GROUP BY b.device_area
+    ) t2 ON t1.idcType = t2.idcType
+    WHERE t1.idcType is not null
+    ORDER BY successCount desc,failCount desc,inventory desc
+    </select>
+
+    <select id="secondLayer" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbInventoryInfoStatistRequest" resultType="java.util.HashMap">
+    SELECT
+        IFNULL(t.inventory,0) inventory,
+        IFNULL(t.successCount,0) successCount,
+        IFNULL(t.failCount,0) failCount,
+        t.project_name projectName
+    FROM(
+        SELECT
+            (SELECT count(DISTINCT id) total
+            from cmdb_instance
+            where is_delete = '0' and (device_class != '存储设备' and device_type != '云主机')
+            and idcType = #{resourcePool}) - (
+            (
+                    SELECT COUNT(DISTINCT a.device_sn) successCount
+                    FROM cmdb_maintenance_project_instance a
+                    LEFT JOIN cmdb_instance b ON b.id = a.instance_id
+                    WHERE a.is_delete = '0' AND a.instance_id IS NOT NULL and idcType = #{resourcePool}
+                    AND ( b.device_class != '存储设备' AND b.device_type != '云主机')
+                )
+            ) inventory,
+            t2.failCount,
+            t3.successCount,
+            t1.project_name
+        FROM cmdb_maintenance_project t1
+        LEFT JOIN(
+            SELECT a.project_name,count(DISTINCT b.device_sn) failCount
+            from cmdb_maintenance_project a
+            LEFT JOIN cmdb_maintenance_project_instance b on a.id = b.project_id
+            where a.is_delete = '0' and instance_id is null
+            GROUP BY a.id
+        ) t2 on t1.project_name = t2.project_name
+        LEFT JOIN(
+            select count(DISTINCT a.device_sn) successCount,b.project_name
+            from cmdb_maintenance_project_instance a
+            LEFT JOIN cmdb_maintenance_project b on a.project_id = b.id
+            LEFT JOIN cmdb_instance c on a.instance_id = c.id
+            where a.is_delete = '0' and a.instance_id is not NULL
+            and (c.device_class != '存储设备' and c.device_type != '云主机')
+            and c.idcType = #{resourcePool}
+            GROUP BY a.project_id
+        ) t3 on t1.project_name = t3.project_name
+        where t1.is_delete = '0' and t1.device_area like CONCAT('%',#{resourcePool},'%')
+    ) t
+    </select>
+
+    <select id="instanceThirdLayer" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbInventoryInfoStatistRequest" resultType="java.util.HashMap">
+    SELECT
+      id, module_id, module_partition_id, device_name, device_class, device_type,
+      device_class_3, device_mfrs, device_status, device_os_type, os_detail_version,
+      ip, ip_mask, ip_gateway, is_assigned, idcType, project_name, pod_name, roomId,
+      idc_cabinet, department1, department2, bizSystem, is_ansible, is_pool,
+      dept_operation, ops, is_delete, insert_person, insert_time, update_person,
+      update_time, device_model, device_sn, device_description, HOST_NAME,
+      mainten_factory, is_ipmi_monitor, is_stack, mac_address, node_type
+    from cmdb_instance
+    where is_delete = '0' and (device_class != '存储设备' and device_type != '云主机')
+            and idcType = #{resourcePool}
+    and id NOT IN
+    (
+        SELECT DISTINCT a.instance_id
+        FROM cmdb_maintenance_project_instance a
+        LEFT JOIN cmdb_instance b ON b.id = a.instance_id
+        WHERE a.is_delete = '0' AND a.instance_id IS NOT NULL and idcType = #{resourcePool}
+        AND ( b.device_class != '存储设备' AND b.device_type != '云主机')
+    )
+    <if test="pageNo != null and pageSize != null">
+        limit #{pageNo},#{pageSize}
+    </if>
+    </select>
+
+    <select id="getInstanceThirdLayerCount" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbInventoryInfoStatistRequest" resultType="Integer">
+        SELECT
+        (
+            SELECT count(DISTINCT id) total
+            FROM cmdb_instance
+            WHERE is_delete = '0'
+            AND ( device_class != '存储设备' AND device_type != '云主机' )
+            AND idcType = #{resourcePool}
+        ) - (
+            SELECT COUNT(DISTINCT a.instance_id) successCount
+            FROM cmdb_maintenance_project_instance a
+            LEFT JOIN cmdb_instance b ON b.id = a.instance_id
+            WHERE a.is_delete = '0'
+            AND a.instance_id IS NOT NULL
+            AND idcType = #{resourcePool}
+            AND ( b.device_class != '存储设备' AND b.device_type != '云主机' )
+        ) inventory
+    </select>
+
+    <select id="maintenThirdLayer" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbInventoryInfoStatistRequest" resultType="java.util.HashMap">
+        SELECT
+            distinct t.device_sn,
+            i.device_name,
+            i.ip,
+            i.idcType,
+            i.department1,
+            i.department2,
+            i.bizSystem,
+            i.device_model
+        FROM
+        cmdb_maintenance_project_instance t
+        LEFT JOIN cmdb_instance i ON (t.instance_id = i.id AND i.is_delete = '0')
+        LEFT JOIN cmdb_maintenance_project c ON (t.project_id = c.id and c.is_delete = '0')
+        WHERE t.is_delete = '0' and t.instance_id is null
+        and c.project_name = #{projectName}
+        order by t.device_sn
+        <if test="pageNo != null and pageSize != null">
+            limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getMaintenThirdLayerCount" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbInventoryInfoStatistRequest" resultType="Integer">
+        SELECT
+            count(distinct t.device_sn)
+        FROM
+        cmdb_maintenance_project_instance t
+        LEFT JOIN cmdb_maintenance_project c ON (t.project_id = c.id and c.is_delete = '0')
+        where t.is_delete = '0' and t.instance_id is null
+        and c.project_name = #{projectName}
+    </select>
+
+    <select id="getFailCountByDeviceArea" resultType="java.util.HashMap">
+        SELECT b.device_area idcType,count(1) count
+        FROM cmdb_maintenance_project_instance a
+        LEFT JOIN cmdb_maintenance_project b ON a.project_id = b.id
+        WHERE a.is_delete = '0' AND instance_id IS NULL
+        and (length(b.device_area) - length(REPLACE(b.device_area,',',''))+1) > 1
+        GROUP BY b.device_area
+    </select>
+</mapper>

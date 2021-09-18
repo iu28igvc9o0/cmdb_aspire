@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.aspire.mirror.alert.server.dao.alertStandard.AlertStandardDao">
+	<!-- 定义返回结果集 -->
+	<resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.alertStandard.po.AlertStandard">
+		<result column="id" property="id" jdbcType="BIGINT"/>
+		<result column="device_class" property="deviceClass" jdbcType="VARCHAR"/>
+		<result column="device_type" property="deviceType" jdbcType="VARCHAR"/>
+		<result column="monitor_key" property="monitorKey" jdbcType="VARCHAR"/>
+		<result column="standard_name" property="standardName" jdbcType="VARCHAR"/>
+		<result column="alert_desc" property="alertDesc" jdbcType="VARCHAR"/>
+		<result column="status" property="status" jdbcType="VARCHAR"/>
+		<result column="alert_level" property="alertLevel" jdbcType="VARCHAR"/>
+		<result column="insert_person" property="insertPerson" jdbcType="VARCHAR"/>
+		<result column="insert_time" property="insertTime" jdbcType="DATE"/>
+		<result column="is_delete" property="isDelete" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<insert id="batchInsert" parameterType="com.aspire.mirror.alert.server.dao.alertStandard.po.AlertStandard" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into alert_standard(device_class, device_type, monitor_key, standard_name, alert_desc, status,
+		 						   alert_level, insert_person, insert_time, is_delete)
+		values
+			<foreach collection="list" separator=","  item="item">
+				(
+					#{item.deviceClass,jdbcType=VARCHAR},
+					#{item.deviceType,jdbcType=VARCHAR},
+					#{item.monitorKey,jdbcType=VARCHAR},
+					#{item.standardName,jdbcType=VARCHAR},
+					#{item.alertDesc,jdbcType=VARCHAR},
+					#{item.status,jdbcType=VARCHAR},
+					#{item.alertLevel,jdbcType=VARCHAR},
+					#{item.insertPerson,jdbcType=VARCHAR},
+					NOW(),
+					'0'
+				)
+			</foreach>
+	</insert>
+
+	<insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.alertStandard.po.AlertStandard" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into alert_standard(device_class, device_type, monitor_key, standard_name, alert_desc, status,
+									alert_level, insert_person, insert_time, is_delete)
+		values(
+			#{deviceClass,jdbcType=VARCHAR},
+			#{deviceType,jdbcType=VARCHAR},
+			#{monitorKey,jdbcType=VARCHAR},
+			#{standardName,jdbcType=VARCHAR},
+			#{alertDesc,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{alertLevel,jdbcType=VARCHAR},
+			#{insertPerson,jdbcType=VARCHAR},
+			NOW(),
+			'0'
+		)
+	</insert>
+
+	<update id="update" parameterType="com.aspire.mirror.alert.server.dao.alertStandard.po.AlertStandard">
+		update alert_standard
+		set
+			device_class = #{deviceClass},
+			device_type = #{deviceType},
+			monitor_key = #{monitorKey},
+			standard_name = #{standardName},
+			alert_desc = #{alertDesc},
+			status = #{status},
+			alert_level = #{alertLevel}
+		where id = #{id}
+	</update>
+
+	<update id="updateStatus">
+		update alert_standard
+		set
+			status = !status
+		where id in
+		<foreach collection="ids" item="id" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<delete id="deleteByIds">
+		update alert_standard
+		set
+			is_delete = '1'
+		where id in
+		<foreach collection="ids" item="id" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="getAlertStandardCount" resultType="int">
+		select count(*)
+		from alert_standard
+		where is_delete = '0' <include refid="where_sql"/>
+	</select>
+
+	<select id="getAlertStandardByPage" resultMap="resultMap">
+		select *
+		from alert_standard
+		where is_delete = '0' <include refid="where_sql"/>
+		<if test="pageNo != null">
+			limit #{pageNo},#{pageSize}
+		</if>
+	</select>
+
+	<select id="exportAll" resultType="HashMap">
+		select device_class, device_type, monitor_key, standard_name, alert_desc, status, alert_level
+		from alert_standard
+		where is_delete = '0' <include refid="where_sql"/>
+	</select>
+
+	<select id="getAlertStandardById" resultMap="resultMap">
+		select *
+		from alert_standard
+		where id = #{id}
+	</select>
+
+	<select id="getAlertStandardWithEnable" resultMap="resultMap">
+		SELECT *
+		FROM alert_standard
+		where status = '1' and is_delete = '0'
+	</select>
+
+	<update id="updateAlertHistory" parameterType="com.aspire.mirror.alert.server.dao.alertStandard.po.AlertStandard">
+		UPDATE
+			alert_alerts_his
+		SET
+			key_comment = #{as.standardName}
+		WHERE
+			device_class = #{as.deviceClass}
+			and device_type = #{as.deviceType}
+			and alert_level = #{as.alertLevel}
+			and item_key = #{as.monitorKey}
+			and alert_start_time BETWEEN #{startTime} and #{endTime}
+	</update>
+
+	<sql id="where_sql">
+		<if test="deviceClass != null and deviceClass != ''">
+			and device_class = #{deviceClass}
+		</if>
+		<if test="deviceType != null and deviceType != ''">
+			and device_type = #{deviceType}
+		</if>
+		<if test="monitorKey != null and monitorKey != ''">
+			and monitor_key like concat('%',#{monitorKey},'%')
+		</if>
+	</sql>
+</mapper>

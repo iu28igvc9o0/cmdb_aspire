@@ -1,0 +1,174 @@
+server:
+  port: 28129
+
+version: v1
+deviceListUrl: http://10.181.12.148:3306/cmdb/repertryInstance/getInstanceBaseInfoList
+moduleTreeUrl: http://10.181.12.148:3306/cmdb/circle/getModuleTree
+formUrl: http://10.181.12.148:3306/cmdb/form/getForms
+instancesUrl: http://10.181.12.148:3306/cmdb/repertryInstance/getInstanceByIds
+
+cmdbUrl: http://10.181.12.148:3306/cmdb/repertryInstance/getDynamicInstanceColumn
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+# sftp服务器配置
+ops:
+  sftp-file-server:
+    ip-address: 10.1.203.99
+    port: 21
+    login-user: ftpadmin
+    login-pass: QQjaEMu7
+    root-directory: /home/sudoroot/temp/demo/sftpRoot
+
+mirror:
+  feign:
+    theme:
+      value: THEME-SERVICE
+    template:
+      value: TEMPLATE-SERVICE
+    common:
+      value: COMMON-SERVICE
+    alert:
+      value: ALERT-SERVICE
+    alert-app:
+      value: ALERT-APP
+
+druid:
+  url: jdbc:mysql://10.1.203.99:3306/cmdb?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: roo,q1Il.t
+  useSSL: false
+
+mybatis:
+  mapperLocations:
+  - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+    org.springboot.sample.entity
+
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+
+sample:
+  zipkin:
+    enabled: true
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 120000
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 300000
+
+
+spring.http.multipart.maxFileSize: -1
+spring.http.multipart.maxRequestSize: -1
+
+
+spring.mail.default-encoding: UTF-8
+spring.mail.host: 10.1.203.99
+#发送者的邮箱账号
+spring.mail.username: wang@osa.com
+#发送者的邮箱密码
+spring.mail.password: wang
+#端口
+spring.mail.port: 25
+#协议
+spring.mail.protocol: smtp
+spring.mail.properties.mail.smtp.auth: false
+spring.mail.properties.mail.smtp.starttls.enable: false
+spring.mail.properties.mail.smtp.starttls.required: false
+spring.http.multipart.max-file-size: -1
+spring.http.multipart.max-request-size: -1
+
+cmdb:
+  import:
+    template:
+      maintenance:
+        project: '项目名称[必填],合同编号,合同供应商,维保类型,服务形式[必填],开始时间[必填],结束时间[必填],服务供应商[必填],设备区域[必填],维保对象类型[必填],采购类型[必填],金额(万),设备类型'
+        repairevent: '事件名称,级别,发生地市,厂家,设备类型,设备型号,典配类型,维保归属,故障部件类型,故障开始时间,故障消除时间,故障处理时长,故障处理次数,备件部件更换次数'
+        problemevent: '故障名称,故障等级,发生地市,厂家,设备类型,设备型号,典配类型,维保归属,故障部件类型,故障开始时间,业务恢复时间,故障消除时间,业务恢复时长,故障处理时长,故障处理次数,备件部件更换次数,故障报告及相关证明材料'
+        equipmentproblem: '问题名称,级别,发生地市,厂家,设备类型,设备型号,典配类型,发生时间,状态,解决时间,问题/需求,问题提出人及电话,问题报告word版'
+        maintensoftware: '项目[必填],分类[必填],软件名称[必填],单位[必填],数量[必填],维保管理员[必填],备注'
+        maintenanceProjectBindDevice: '设备序列号[必填]'
+        instancePortRelation: '本地端口[必填],对端资源池[必填],对端设备IP[必填],对端设备端口[必填],连接属性[必填],描述'
+        resourceassign: '资源池名称[必填],类型[必填],一级租户[必填],二级租户[必填],业务系统[必填],租户资源需求[必填],已建设量[必填],已分配量[必填],预分配量[必填],未建设量[必填]'
+
+
+theme_access_url: http://10.12.8.193:8129/v1/theme/createThemeData
+
+systemType: normal
+
+sms:
+  url: http://10.12.70.39:7789/?wsdl
+  target: aspire
+  password: aspire
+
+ftp:
+  host: 10.1.203.99
+  port: 21
+  username: ftpadmin
+  password: QQjaEMu7
+  path: /file_download/
+  produceIconPath: /images/
+  bufferSize: 8096
+
+
+bpm.alert.Url: http://10.12.70.38:8081/bpmx/service/ProcessService?wsdl
+bpm.alert.flowkey: epc_alarm_order
+bpm.alert.acount: admin
+bpm.alert.method: start
+bpm.alert.namepace: http://impl.webservice.platform.hotent.com/
+bpm.alert.model: <data>{\"main\":{\"fields\":{\"deviceType\":\"@{device_class}\",\"sourceIP\":\"@{device_ip}\",\"pool\":\"@{idc_type}\",\"alarmId\":\"@{alert_id}\",\"objectName\":\"@{moni_object}\",\"detail\":\"@{moni_index}\",\"starttime\":\"@{alert_start_time}\",\"lev\":\"@{alert_level}\",\"objectId\":\"@{event_id}\"}},\"sub\":[],\"opinion\":[]}</data>
+
+order.config:
+  orderBase: http://10.12.8.194:8086 #bpmurl
+  trendsUrl: /runtime/bpmInstStatistics/v1/instTrend #工单趋势
+  allTypeUrl: http://10.12.8.194:8087/flow/def/v1/listJson #查询所有工单类型
+  distributionUrl: /runtime/bpmInstStatistics/v1/instDistribution #工单分布
+  orderNumUrl: /runtime/bpmInstStatistics/v1/getAccountByParam #获取日增、周关、待办工单数
+  orderStatisticsUrl: /runtime/bpmInstStatistics/v1/instStatistics #工单统计
+  instListByDeviceUrl: /runtime/instance/v1/findInstListByDeviceId #根据设备id查工单
+  allFlowDefListUrl: /runtime/orderGenQuery/getAllFlowDefList #查询所有工单类型
+  instOverviewUrl: /runtime/bpmInstStatistics/v1/instOverview #工单总览
+  homepageProInstAnalysisUrl: /runtime/bpmInstStatistics/v1/umsProInstAnalysis #工单分析
+  instRuntimeAnalysisUrl: /runtime/bpmInstStatistics/v1/instRuntimeAnalysis #工单分类处理时长分析
+  getInstListByDefKeyUrl: /runtime/bpmInstStatistics/v1/getInstListByDefKey #根据工单类型key获取工单实例列表
+  getInstListByDefKeyAndStatusUrl: /runtime/bpmInstStatistics/v1/getInstListByDefKeyAndStatus #根据工单类型key和运行状态获取工单实例列表
+  bpmInsData: /runtime/ums/flowHome/v1/getBpmInsData #UMS流程首页获取用户实例数据-代办，已办，我发起
+  officialDocumentList: /runtime/ums/flowHome/v1/getOfficialDocumentList #UMS流程首页获取用户代办公告列表
+  instEfficiencyShow: /runtime/ums/flowHome/v1/getInstEfficiencyShow #UMS流程首页获取效能展示数据
+  instEfficiencyReport: /runtime/ums/flowHome/v1/getInstEfficiencyReport #UMS流程首页获取效能报表数据--点击总数，运行中，关闭，超时
+  workTop: /runtime/ums/flowHome/v1/getWorkTop #UMS流程首页获取工单Top数据
+  workAssessmentReport: /runtime/ums/flowHome/v1/getWorkAssessmentReport #UMS流程首页获取工单考核数据
+  departmentInstCloseInfo: /runtime/ums/flowHome/v1/getDepartmentInstCloseInfo #UMS流程首页获取服务业务部部门闭单率
+  instSearch: /runtime/ums/flowHome/v1/instSearch #UMS流程首页工单搜索
+  alarmStatistics: /runtime/ums/flowHome/v1/alarmStatistics   #UMS流程首页告警统计分析
+
+bpm:
+  token:
+    url: http://10.12.8.194:8088/auth
+    password: yy/Vh60lXQJSOcm+CikQow==
+    username: QjguF75dA4hchFVKf7k5cg==
+ums:
+  webService:
+    url: http://10.12.70.37:8088/service/ThirdBizSysService?wsdl
+syncToBpm: false

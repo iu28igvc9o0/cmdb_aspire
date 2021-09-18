@@ -1,0 +1,226 @@
+{
+    "list": [
+        {
+            "type": "table",
+            "label": "表格",
+            "columnName": "bpm_my_orders",
+            "asideIcon": "iconfont icondashujukeshihuaico-",
+            "width": "100%",
+            "classify": "layout",
+            "show-index": true,
+            "indexFixed": false,
+            "show-single-selection": false,
+            "singleSelectionFixed": true,
+            "show-multiple-selection": true,
+            "multipleSelectionFixed": false,
+            "cacheMultipleSelection": false,
+            "multipleSelectionColumnName": [
+                "id"
+            ],
+            "show-operation": false,
+            "operationFixed": true,
+            "show-pagination": true,
+            "defaultSelectAll": false,
+            "defaultSort": {
+                "prop": "",
+                "order": "",
+                "ascending": "asc",
+                "descending": "desc"
+            },
+            "props": {
+                "border": true,
+                "stripe": true,
+                "highlight-current-row": false,
+                "show-header": true,
+                "default-sort": ""
+            },
+            "btnGroupDynamic": [],
+            "list": [
+                {
+                    "label": "工单号",
+                    "columnName": "id",
+                    "type": "link",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "流程名称",
+                    "columnName": "procDefName",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "100",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "流程标题",
+                    "columnName": "subject",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "150",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "发起时间",
+                    "columnName": "createTime",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "140",
+                    "min-width": "",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true
+                },
+                {
+                    "label": "审批意见",
+                    "columnName": "preNodeOpinion",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "150",
+                    "canEdit": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前处理人",
+                    "columnName": "solveUser",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "100",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": true
+                },
+                {
+                    "label": "当前环节",
+                    "columnName": "taskName",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "100",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": true,
+                    "tooltip": false
+                },
+                {
+                    "timeStamp": 1605254358456,
+                    "label": "表格可编辑参数",
+                    "columnName": "$asp_isEdit",
+                    "type": "text",
+                    "sort": false,
+                    "fixed": false,
+                    "width": "",
+                    "min-width": "200",
+                    "canEdit": false,
+                    "mergeRows": false,
+                    "editProps": {
+                        "type": ""
+                    },
+                    "needConvertData": false,
+                    "convertProps": {},
+                    "list": [],
+                    "show": false,
+                    "tooltip": true,
+                    "$_isBuiltInParams": true
+                }
+            ],
+            "operation": [],
+            "toolList": [],
+            "operation-width": "200",
+            "pagination": {
+                "layout": "total, sizes, prev, pager, next, jumpe",
+                "pageSizes": [
+                    "10",
+                    " 20",
+                    " 50",
+                    " 100",
+                    " 200"
+                ],
+                "currentPage": 1,
+                "pageSize": 50,
+                "total": 0,
+                "hide-on-single-page": false
+            },
+            "http": {
+                "initHttp": true,
+                "type": "post",
+                "methods": "/v1/bpm/runTime/instance/getOrderListNew"
+            },
+            "hidden": false,
+            "fixed-pagination": false,
+            "show-operation-status": []
+        }
+    ],
+    "model": {},
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+        "project": "webbas",
+        "labelWidth": 80,
+        "labelPosition": "right",
+        "size": "mini",
+        "class": "",
+        "layoutType": "flex",
+        "statusList": [],
+        "exportName": "bpm_reminder_orders"
+    }
+}

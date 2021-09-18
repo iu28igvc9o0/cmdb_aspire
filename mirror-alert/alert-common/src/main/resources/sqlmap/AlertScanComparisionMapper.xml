@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.scanComparision.AlertScanComparisionDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionDetailVo"
+               id="AlertScanComparisionDetailDTO">
+        <result property="id" column="id" jdbcType="VARCHAR" />
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+        <result property="startScanTime" column="start_scan_time" jdbcType="TIMESTAMP" />
+        <result property="curScanTime" column="cur_scan_time" jdbcType="TIMESTAMP" />
+        <result property="synStatus" column="syn_status" jdbcType="VARCHAR" />
+        <result property="curSynTime" column="cur_syn_time" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="baseSql">
+        SELECT
+        id,
+        idc_type idcType,
+        device_ip deviceIp,
+        DATE_FORMAT(start_scan_time,'%Y-%m-%d %H:%i:%s') AS startScanTime,
+        DATE_FORMAT(cur_scan_time,'%Y-%m-%d %H:%i:%s') AS curScanTime,
+        (CASE syn_status WHEN '1' THEN '同步' WHEN '2' THEN '未同步' WHEN '3' THEN '同步失败' END ) synStatus,
+        DATE_FORMAT(cur_syn_time,'%Y-%m-%d %H:%i:%s') AS curSynTime,
+        cur_moni_time AS curMoniTime
+        FROM alert_scan_comparision
+    </sql>
+    <sql id="whereSql">
+        WHERE 1=1
+        <if test="deviceIp != null and deviceIp != ''">
+            AND device_ip LIKE CONCAT(CONCAT('%',#{deviceIp}),'%')
+        </if>
+        <if test="idcType != null and idcType != ''">
+            AND idc_type = #{idcType}
+        </if>
+        <if test="startTime != null and endTime != null">
+            AND cur_syn_time BETWEEN #{startTime} AND #{endTime}
+        </if>
+        <if test="synStatus != null and synStatus != ''">
+            AND syn_status = #{synStatus}
+        </if>
+        <if test="curMoniStartTime != null and curMoniEndTime != null">
+            AND cur_moni_time BETWEEN #{curMoniStartTime} AND #{curMoniEndTime}
+        </if>
+        <if test="type != null and type != null">
+            AND type = #{type}
+        </if>
+    </sql>
+
+    <select id="getScanComparisionCount" parameterType="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionReqVo"
+            resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM alert_scan_comparision
+        <include refid="whereSql"></include>
+    </select>
+    <select id="getScanComparisionList"  parameterType="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionReqVo"
+            resultType="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionDetailVo">
+        <include refid="baseSql"></include>
+        <include refid="whereSql"></include>
+        ORDER BY cur_scan_time DESC
+        limit #{index}, #{pageSize}
+    </select>
+    <select id="exportScanComparision" parameterType="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionReqVo"
+            resultType="java.util.Map">
+        <include refid="baseSql"></include>
+        <include refid="whereSql"></include>
+        ORDER BY cur_scan_time DESC
+    </select>
+
+    <delete id="deleteScanComparisionById" parameterType="java.util.List">
+        DELETE FROM alert_scan_comparision
+        WHERE id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateSynStatus" parameterType="map">
+        <foreach collection="list" item="item" separator=",">
+            UPDATE alert_scan_comparision
+            SET cur_syn_time = NOW(),syn_status =
+            <choose>
+                <when test="item['success']">'1'</when>
+                <otherwise>'3'</otherwise>
+            </choose>
+            WHERE 1=1
+            <choose>
+                <when test="item['ip'] !=null">
+                    AND device_ip = #{item.ip}
+                </when>
+                <otherwise>
+                    AND device_ip IS NULL
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="item['pool'] !=null">
+                    AND idc_type = #{item.pool}
+                </when>
+                <otherwise>
+                    AND idc_type IS NULL
+                </otherwise>
+            </choose>
+        </foreach>
+    </update>
+
+    <select id="getAlerts" resultType="map">
+        SELECT
+        device_ip deviceIp,
+        idc_type idcType,
+        DATE_FORMAT(cur_moni_time,'%Y-%m-%d %H:%i:%s') curMoniTime
+        FROM alert_alerts
+        WHERE device_id IS NULL AND object_type = '1' AND idc_type IS NOT NULL
+        GROUP BY device_ip,idc_type
+        ORDER BY device_ip,idc_type,cur_moni_time DESC
+    </select>
+
+    <select id="getAlertScanComparisionDetailByIpAndPool" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionDetailVo">
+        <include refid="baseSql"></include>
+        WHERE 1=1 AND type = 0
+        <choose>
+            <when test="deviceIp !=null and deviceIp != ''">
+                AND device_ip = #{deviceIp}
+            </when>
+            <otherwise>
+                AND device_ip IS NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="idcType !=null and idcType != ''">
+                AND idc_type = #{idcType}
+            </when>
+            <otherwise>
+                AND idc_type IS NULL
+            </otherwise>
+        </choose>
+    </select>
+    
+   
+
+    <insert id="insertScanComparision" parameterType="com.aspire.mirror.alert.server.vo.scanComparision.AlertScanComparisionDetailVo">
+        INSERT INTO alert_scan_comparision (
+        id,
+        idc_type,
+        device_ip,
+        start_scan_time,
+        syn_status,
+        cur_moni_time
+        )
+        VALUES
+        <foreach collection ="list" item="item" index="index" separator =",">
+            (
+            #{item.id},
+            #{item.idcType},
+            #{item.deviceIp},
+            NOW(),
+            #{item.synStatus},
+            #{item.curMoniTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="java.util.List">
+        UPDATE alert_scan_comparision SET cur_scan_time = NOW(),cur_moni_time = #{curMoniTime}
+        WHERE id = #{id}
+    </update>
+    
+      
+
+</mapper>

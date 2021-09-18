@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.monthReport.mapper.CmdbNetworkReportMapper">
+    <!--<resultMap id="baseMap" type="com.aspire.ums.cmdb.monthReport.payload.CmdbNetworkReport">-->
+        <!--<result column="idcType" property="idcType" jdbcType="VARCHAR" />-->
+        <!--<result column="month" property="countTime" jdbcType="VARCHAR" />-->
+        <!--<result column="m_network_count" property="mNetWorkCount" jdbcType="VARCHAR" />-->
+        <!--<result column="unm_network_count" property="unmNetworkCount" jdbcType="VARCHAR" />-->
+    <!--</resultMap>-->
+
+    <sql id="baseColumn">
+        idcType,
+        month,
+        m_network_count,
+        unm_network_count
+    </sql>
+
+
+    <insert id="save" parameterType="java.util.List">
+        insert into cmdb_month_report_network
+        (<include refid="baseColumn"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+             #{item.idcType,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'),
+            #{item.m_network_count,jdbcType=VARCHAR},
+            #{item.unm_network_count,jdbcType=VARCHAR}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = VALUES (id),
+        m_network_count = VALUES(m_network_count),
+        unm_network_count = VALUES(unm_network_count)
+    </insert>
+
+
+    <!-- 网络设备总量 -->
+    <select id="count" resultType="java.util.Map">
+        SELECT idcType,
+               SUM(CASE WHEN device_status !='未交维' THEN 1 else 0 END) AS `m_network_count`,
+               SUM(CASE WHEN device_status ='未交维' THEN 1 else 0 END) AS `unm_network_count`
+
+        FROM cmdb_instance
+        WHERE device_class= '网络设备' and is_delete='0' and IFNULL(idcType, '') != ''
+        GROUP BY idcType
+        ORDER BY idcType IS  NULL,COUNT(1) DESC
+
+
+    </select>
+</mapper>

@@ -1,0 +1,156 @@
+server:
+  port: 8999
+#============== indexProxy数据库配置  ===================
+indexProxyDb:
+  url: jdbc:mysql://10.12.70.40:3306/index_proxy?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useSSL: false
+  mapperLocations:
+    - classpath*:sqlmap/indexproxy/*Mapper.xml
+
+#=================== schedule configuration ======================
+spring:
+  schedule:
+    poolsize: 10
+
+#============== kafka ===================
+# 本地机房kafka
+local:
+  kafka:
+    bootstrap-servers: 10.12.70.40:9092
+    producer:
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties:
+      session.timeout.ms: 60000
+#     max.poll.records: 10
+
+  roomId: 1  # 机房id
+
+###-----redisson配置
+redisson:
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    password: foo
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://10.12.70.40:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: null
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+    - "redis://127.0.0.1:7004"
+    - "redis://127.0.0.1:7001"
+    - "redis://127.0.0.1:7000"
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"
+#============== 指标适配相关实现配置 ===================
+indexAdapter:
+  inspectionDb:                             # 从巡检数据库中适配   监控项
+    switch: true                            # 是否启用该适配
+    identity: inspection_db_miguHZ_1        # 全局唯一身份, 命名规则：  业务(inspection) + 适配来源(db) + 机房(centerRoom), 如果3者相同，加上编号(0)区分
+                                            # 注意：identity必须唯一, 且不容许轻易修改, 因为从来源适配指标数据时，identity会作为指标记录的游标
+    fixDelay: 1000                          # 任务调度间隔时长, 单位为毫秒
+    dbConfig:
+      url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password: 1234@qwer
+      useSSL: false
+      mapperLocations:
+        - classpath*:sqlmap/inspectiondb/*Mapper.xml
+
+  monitorDb:                                # 从监控zabbix数据库中适配    监控项
+    switch: false                           # 是否启用该适配
+    identity: monitor_db_miguHZ_0           # 全局唯一身份, 命名规则：  业务(monitor) + 适配来源(db) + 机房(miguHZ), 如果3者相同，加上编号(0)区分
+                                            # 注意：identity必须唯一, 且不容许轻易修改, 因为从来源适配指标数据时，identity会作为指标记录的游标
+    dbConfig:
+      url: jdbc:mysql://10.12.3.111:3306/zabbix?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password: root
+      useSSL: false
+      mapperLocations:
+        - classpath*:sqlmap/zabbixdb/*Mapper.xml
+
+  migubizmonitorDb:                         # 针对migu的业务告警数据库中适配    监控项
+    switch: false                            # 是否启用该适配
+    identity: migu_biz_monitor_db_39         # 全局唯一身份, 命名规则：  业务(biz_monitor) + 适配来源(db) + 机房(miguHZ), 如果3者相同，加上编号(0)区分
+                                            # 注意：identity必须唯一, 且不容许轻易修改, 因为从来源适配指标数据时，identity会作为指标记录的游标
+    cron: 0 */1 * * * ?                     # 任务调度cron表达式
+    elasticsearch:
+      host: 10.12.3.171
+      port: 9300
+      node.type: client
+      cluster.name: ums_elasticsearch_171_172
+
+    dbConfig:
+      url: jdbc:oracle:thin:@172.30.130.137:1521:umsauto
+      username: umsauto
+      password: ums1234
+      useSSL: false
+      mapperLocations:
+        - classpath*:sqlmap/bizmonitordb/*Mapper.xml
+
+  mirrorbizmonitorDb:                         # 针对migu的业务告警数据库中适配    监控项
+    switch: true                            # 是否启用该适配
+    identity: mirror_biz_monitor_db_39_0         # 全局唯一身份, 命名规则：  业务(biz_monitor) + 适配来源(db) + 机房(miguHZ), 如果3者相同，加上编号(0)区分
+                                            # 注意：identity必须唯一, 且不容许轻易修改, 因为从来源适配指标数据时，identity会作为指标记录的游标
+    cron: 0 */1 * * * ?                     # 任务调度cron表达式
+    elasticsearch:
+      host: 10.12.70.40
+      port: 9300
+      node.type: client
+      cluster.name: elasticsearch
+      index:
+        name: mirror-theme
+        fields.limit: 1000
+    dbConfig:
+      url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password: 1234@qwer
+      useSSL: false
+      mapperLocations:
+        - classpath*:sqlmap/mirrorbizmonitordb/*Mapper.xml
+logging:
+  level:
+    org.springframework: info
+    com.aspire.mirror.indexadapt: info
+    com.alibaba.druid: debug
+  file: ./index-adapt.log

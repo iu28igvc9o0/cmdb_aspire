@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.template.server.dao.FunctionsDao">
+
+    <resultMap id="FunctionsResultMap" type="com.aspire.mirror.template.server.dao.po.Functions">
+        <result property="functionId" column="function_id" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="triggerId" column="trigger_id" jdbcType="VARCHAR"/>
+        <result property="function" column="function" jdbcType="VARCHAR"/>
+        <result property="parameter" column="parameter" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Functions_Base_Column">
+        monitor_functions.function_id,
+        monitor_functions.item_id,
+        monitor_functions.trigger_id,
+        monitor_functions.function,
+        monitor_functions.parameter
+    </sql>
+
+    <sql id="Functions_Query_List_Sharing">
+        <where>
+            <if test="functionId != null ">
+                and monitor_functions.function_id = #{functionId}
+            </if>
+            <if test="itemId != null ">
+                and monitor_functions.item_id = #{itemId}
+            </if>
+            <if test="triggerId != null ">
+                and monitor_functions.trigger_id = #{triggerId}
+            </if>
+            <if test="function != null ">
+                and monitor_functions.function = #{function}
+            </if>
+            <if test="parameter != null ">
+                and monitor_functions.parameter = #{parameter}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="functionId"
+                 open="(" separator="," close=")">
+            #{functionId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.template.server.dao.po.Functions" >
+        INSERT INTO monitor_functions (
+        <include refid="Functions_Base_Column" />
+        ) VALUES (
+                #{functionId,jdbcType=VARCHAR},
+                #{itemId,jdbcType=VARCHAR},
+                #{triggerId,jdbcType=VARCHAR},
+                #{function,jdbcType=VARCHAR},
+                #{parameter,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="functionId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.template.server.dao.po.Functions" >
+        INSERT INTO monitor_functions (
+        <include refid="Functions_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{item.functionId,jdbcType=VARCHAR},
+                #{item.itemId,jdbcType=VARCHAR},
+                #{item.triggerId,jdbcType=VARCHAR},
+                #{item.function,jdbcType=VARCHAR},
+                #{item.parameter,jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM monitor_functions WHERE function_id = #{functionId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM monitor_functions WHERE function_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.template.server.dao.po.Functions" >
+        DELETE FROM monitor_functions WHERE function_id = #{functionId}
+    </delete>
+    <delete id="deleteByItemIdArrays" parameterType="java.util.List">
+        DELETE FROM monitor_functions WHERE item_id in
+        <foreach collection="array" index="index" item="itemId"  open="(" separator="," close=")">
+        #{itemId}
+        </foreach>
+    </delete>
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.template.server.dao.po.Functions" >
+        UPDATE monitor_functions monitor_functions
+        <set >
+                <if test="functionId != null" >
+                monitor_functions.function_id = #{functionId},
+                </if>
+                <if test="itemId != null" >
+                monitor_functions.item_id = #{itemId},
+                </if>
+                <if test="triggerId != null" >
+                monitor_functions.trigger_id = #{triggerId},
+                </if>
+                <if test="function != null" >
+                monitor_functions.function = #{function},
+                </if>
+                <if test="parameter != null" >
+                monitor_functions.parameter = #{parameter},
+                </if>
+        </set>
+        WHERE function_id = #{functionId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.template.server.dao.po.Functions" >
+        UPDATE monitor_functions monitor_functions
+        SET
+        monitor_functions.function_id = #{functionId},
+        monitor_functions.item_id = #{itemId},
+        monitor_functions.trigger_id = #{triggerId},
+        monitor_functions.function = #{function},
+        monitor_functions.parameter = #{parameter}
+        WHERE function_id = #{functionId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="FunctionsResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Functions_Base_Column" />
+        FROM monitor_functions monitor_functions
+        WHERE function_id = #{functionId}
+    </select>
+
+    <select id="selectByPrimaryKeyArrays" resultMap="FunctionsResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Functions_Base_Column" />
+        FROM monitor_functions monitor_functions
+        WHERE function_id = #{functionId}
+    </select>
+    <select id="select" resultMap="FunctionsResultMap" parameterType="com.aspire.mirror.template.server.dao.po.Functions">
+        SELECT
+        <include refid="Functions_Base_Column" />
+        FROM monitor_functions monitor_functions
+        WHERE  <include refid="Functions_Query_List_Sharing"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.template.server.dao.po.Functions">
+        SELECT COUNT(*) FROM monitor_functions monitor_functions
+        <include refid="Functions_Query_List_Sharing" />
+    </select>
+
+</mapper>

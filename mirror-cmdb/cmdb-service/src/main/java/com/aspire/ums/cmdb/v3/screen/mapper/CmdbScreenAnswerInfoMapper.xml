@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.screen.mapper.CmdbScreenAnswerInfoMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenAnswerInfo" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="problem_id" property="problemId" jdbcType="VARCHAR" />
+        <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="department1" property="department1" jdbcType="VARCHAR" />
+        <result column="department2" property="department2" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="answer_content" property="answerContent" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="is_admin" property="isAdmin" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 依据问题ID,查询回答列表，用于一对多的查询关联 -->
+    <select id="listByProblemId" resultMap="resultMap">
+        SELECT
+        `id`,
+        `problem_id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `answer_content`,
+        `create_time`,
+        `is_admin`,
+        `is_delete`
+        FROM cmdb_screen_answer_info
+        WHERE problem_id = #{problemId}
+        ORDER BY create_time
+    </select>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `problem_id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `answer_content`,
+        `create_time`,
+        `is_admin`,
+        `is_delete`
+        FROM cmdb_screen_answer_info
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenAnswerInfo">
+        SELECT
+        `id`,
+        `problem_id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `answer_content`,
+        `create_time`,
+        `is_admin`,
+        `is_delete`
+        FROM cmdb_screen_answer_info
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="problemId != null and problemId != ''">
+        AND `problem_id` = #{problemId}
+        </if>
+        <if test="loginName != null and loginName != ''">
+        AND `login_name` = #{loginName}
+        </if>
+        <if test="userName != null and userName != ''">
+        AND `user_name` = #{userName}
+        </if>
+        <if test="department1 != null and department1 != ''">
+        AND `department1` = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''">
+        AND `department2` = #{department2}
+        </if>
+        <if test="mobile != null and mobile != ''">
+        AND `mobile` = #{mobile}
+        </if>
+        <if test="email != null and email != ''">
+        AND `email` = #{email}
+        </if>
+        <if test="answerContent != null and answerContent != ''">
+        AND `answer_content` = #{answerContent}
+        </if>
+        <if test="createTime != null and createTime != ''">
+        AND `create_time` = #{createTime}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenAnswerInfo" resultMap="resultMap">
+        SELECT
+        `id`,
+        `problem_id`,
+        `login_name`,
+        `user_name`,
+        `department1`,
+        `department2`,
+        `mobile`,
+        `email`,
+        `answer_content`,
+        `create_time`,
+        `is_admin`,
+        `is_delete`
+        FROM cmdb_screen_answer_info
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenAnswerInfo">
+        INSERT INTO cmdb_screen_answer_info
+        (
+            `id`,
+            `problem_id`,
+            `login_name`,
+            `user_name`,
+            `department1`,
+            `department2`,
+            `mobile`,
+            `email`,
+            `answer_content`,
+            `create_time`,
+            `is_admin`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{problemId, jdbcType=VARCHAR},
+            #{loginName, jdbcType=VARCHAR},
+            #{userName, jdbcType=VARCHAR},
+            #{department1, jdbcType=VARCHAR},
+            #{department2, jdbcType=VARCHAR},
+            #{mobile, jdbcType=VARCHAR},
+            #{email, jdbcType=VARCHAR},
+            #{answerContent, jdbcType=VARCHAR},
+            NOW(),
+            #{isAdmin, jdbcType=VARCHAR},
+            '0'
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenAnswerInfo">
+        UPDATE cmdb_screen_answer_info SET
+        `problem_id` = #{problemId},
+        `login_name` = #{loginName},
+        `user_name` = #{userName},
+        `department1` = #{department1},
+        `department2` = #{department2},
+        `mobile` = #{mobile},
+        `email` = #{email},
+        `answer_content` = #{answerContent},
+        `create_time` = #{createTime},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.screen.payload.CmdbScreenAnswerInfo">
+        DELETE FROM cmdb_screen_answer_info
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

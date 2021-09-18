@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>release</id>
+
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<formats>
+		<!-- <format>dir</format> -->
+		<format>zip</format>
+	</formats>
+
+	<!---->
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>true</useProjectArtifact>
+			<outputDirectory>lib</outputDirectory>
+			<scope>runtime</scope>
+		</dependencySet>
+	</dependencySets>
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}/release</directory>
+			<outputDirectory>mirror/release</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/bin/</directory>
+			<outputDirectory>mirror/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-public/config-server/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/config-server</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-public/eureka-server/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/eureka-server</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-common/elasticsearch-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/elasticsearch-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-common/common-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/common-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-ldap/ldap-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/ldap-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-rbac/rbac-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/rbac-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-template/template-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/template-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-inspection/inspection-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/inspection-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-alert/alert-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/alert-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-alert/alert-schedule-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/alert-schedule-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-alert/alert-app/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/alert-app</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-alert/alert-schedule-app/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/alert-schedule-app</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-alert/zabbix-integrate/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/zabbix-integrate</outputDirectory>
+		</fileSet>
+		<!--<fileSet>
+			<directory>${project.basedir}/mirror-theme/theme-service/target</directory>
+			&lt;!&ndash; 过滤 &ndash;&gt;
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/theme-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-proxy/index-adapt/target</directory>
+			&lt;!&ndash; 过滤 &ndash;&gt;
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/index-adapt</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-proxy/index-proxy/target</directory>
+			&lt;!&ndash; 过滤 &ndash;&gt;
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/index-proxy</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-collect/collect-service/target</directory>
+			&lt;!&ndash; 过滤 &ndash;&gt;
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/collect-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-jobtracker/jobtracker-server/target</directory>
+			&lt;!&ndash; 过滤 &ndash;&gt;
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/jobtracker</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-tasktracker/tasktracker-server/target</directory>
+			&lt;!&ndash; 过滤 &ndash;&gt;
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/tasktracker</outputDirectory>
+		</fileSet>-->
+		<fileSet>
+			<directory>${project.basedir}/mirror-bills/bills-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/bills-service</outputDirectory>
+		</fileSet>	
+		<fileSet>
+			<directory>${project.basedir}/mirror-cmdb/cmdb-agent/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/cmdb-agent</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-cmdb/cmdb-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/cmdb-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-cmdb/ums-cmdb-auto-sync/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/ums-cmdb-sync</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-composite/composite-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/composite-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-monitor/log-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/log-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-ops/ops-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/ops-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-collect/collect-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/collect-service</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/mirror-scada/scada-service/target</directory>
+			<!-- 过滤 -->
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<outputDirectory>mirror/scada-service</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>

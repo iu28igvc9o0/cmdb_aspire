@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCodeSettingMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="owner_module_id" property="ownerModuleId" jdbcType="VARCHAR" />
+        <result column="group_id" property="groupId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="display" property="display" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `module_id`,
+        `owner_module_id`,
+        `group_id`,
+        `code_id`,
+        `sort_index`,
+        `display`,
+        `is_delete`
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_v3_module_code_setting
+        where is_delete=0
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_v3_module_code_setting
+        WHERE 1=1 and is_delete = 0
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+        AND `module_id` = #{moduleId}
+        </if>
+        <if test="ownerModuleId != null and ownerModuleId != ''">
+            AND `owner_module_id` = #{ownerModuleId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="display != null and display != ''">
+        AND `display` = #{display}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_v3_module_code_setting
+        WHERE 1=1 and is_delete=0
+          <if test="id != null and id != null">
+              AND `id` = #{id}
+          </if>
+        <if test="moduleId != null and moduleId != null">
+            AND `module_id` = #{moduleId}
+        </if>
+        <if test="codeId != null and codeId != null">
+            AND `code_id` = #{codeId}
+        </if>
+
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting">
+        INSERT INTO cmdb_v3_module_code_setting
+        (
+            `id`,
+            `module_id`,
+            `owner_module_id`,
+            `group_id`,
+            `code_id`,
+            `sort_index`,
+            `display`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{ownerModuleId, jdbcType=VARCHAR},
+            #{groupId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            #{display, jdbcType=TINYINT},
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="java.util.List">
+        INSERT INTO cmdb_v3_module_code_setting
+        (
+            `id`,
+            `module_id`,
+            `owner_module_id`,
+            `group_id`,
+            `code_id`,
+            `sort_index`,
+            `display`,
+            `is_delete`
+        )
+        VALUES
+         <foreach collection="list" item="item" separator=",">
+             (
+             #{item.id, jdbcType=VARCHAR},
+             #{item.moduleId, jdbcType=VARCHAR},
+             #{item.ownerModuleId, jdbcType=VARCHAR},
+             #{item.groupId, jdbcType=VARCHAR},
+             #{item.codeId, jdbcType=VARCHAR},
+             #{item.sortIndex, jdbcType=TINYINT},
+             #{item.display, jdbcType=TINYINT},
+             #{item.isDelete, jdbcType=TINYINT}
+             )
+         </foreach>
+
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting">
+        UPDATE cmdb_v3_module_code_setting SET
+        `display` = #{display}
+        WHERE
+        `id` = #{id}
+         and `module_id` = #{moduleId},
+          and `owner_module_id` = #{ownerModuleId}
+         and `code_id` = #{codeId}
+          and is_delete=0
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCodeSetting">
+        UPDATE cmdb_v3_module_code_setting SET `is_delete` = '1'
+        WHERE `id` = #{id} and is_delete=0
+    </delete>
+
+    <delete id="deleteByModuleAndCodeId">
+        UPDATE cmdb_v3_module_code_setting SET `is_delete` = '1'
+        WHERE `code_id` = #{codeId} and `module_id` = #{moduleId} and is_delete=0
+    </delete>
+
+    <!-- 根据moduleId删除记录 -->
+    <update id="deleteByModuleId" parameterType="java.lang.String">
+        UPDATE cmdb_v3_module_code_setting SET
+            `is_delete` = 1
+        WHERE
+           `module_id` = #{moduleId}
+    </update>
+</mapper>

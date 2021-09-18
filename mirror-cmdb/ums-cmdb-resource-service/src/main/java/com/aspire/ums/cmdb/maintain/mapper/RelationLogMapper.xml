@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.RelationLogMapper" >
+   
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.RelationLog" >
+       INSERT INTO 
+       		cmdb_relation_log
+       		(id, `name`, instanceId, relationName, targetName, `action`, `owner`, ownerName, circleId,  insertTime ) 
+       	VALUES
+       		(#{id}, #{name}, #{instanceId}, #{relationName}, #{targetName}, #{action},  #{owner},  #{ownerName}, #{circleId}, NOW())
+    </insert>
+  
+</mapper>

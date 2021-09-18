@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.fileCheck.dao.IFileIndicationDAO">
+
+	<resultMap type="com.aspire.fileCheck.entity.FileIndicationEntity" id="fileIndicationMap">
+         <id property="fileIndicationId" column="file_indication_id" jdbcType="TINYINT"/>
+         <result property="fileIndicationCode" column="file_indication_code" jdbcType="VARCHAR"/>
+         <result property="fileIndicationName" column="file_indication_name" jdbcType="VARCHAR"/>
+         <result property="fileIndicationDir" column="file_indication_dir" jdbcType="VARCHAR"/>
+		<result property="fileIndicationType" column="file_indication_type" jdbcType="VARCHAR"/>
+	</resultMap>
+
+
+	<select id="getFileIndication" resultMap="fileIndicationMap">
+		select * from file_indication where 1=1
+		<if test="catalog != null and catalog != ''">
+			and file_indication_type = #{catalog}
+		</if>
+	</select>
+
+	<select id="getFileIndicationByIndicationId" resultMap="fileIndicationMap">
+		select * from file_indication where file_indication_id = #{indicationId}
+	</select>
+	
+	<select id="getFileIndicationByType" resultMap="fileIndicationMap">
+		select * from file_indication where file_indication_type = #{type}
+	</select>
+</mapper>

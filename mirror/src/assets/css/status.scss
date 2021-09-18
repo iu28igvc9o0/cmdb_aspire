@@ -1,0 +1,21 @@
+/*状态类样式（如审核、告警、监控）*/
+
+//审核状态类图标
+.check-status-icon {
+    color: white;
+    border-radius: 10px;
+    padding: 2px 10px;
+    background: #909399;
+
+    &.gray {
+        background: #909399;
+    }
+
+    &.red {
+        background: #f56c6c;
+    }
+
+    &.green {
+        background: #75BF4F;
+    }
+}

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.SensitiveRuleDao">
+    <select id="selectBySensitiveConfigId" resultType="com.aspire.mirror.ops.api.domain.SensitiveRule"  parameterType="java.lang.Long">
+      select
+      sensitive_rule_id sensitiveRuleId,
+      sensitive_config_id sensitiveConfigId,
+      status status,
+      rule_name ruleName,
+      rule_range ruleRange
+      from ops_sensitive_rule where sensitive_config_id=#{sensitive_config_id}
+    </select>
+    <select id="selectPassedBySensitiveConfigId" resultType="com.aspire.mirror.ops.api.domain.SensitiveRule"  parameterType="java.lang.Long">
+      select
+      sensitive_rule_id sensitiveRuleId,
+      sensitive_config_id sensitiveConfigId,
+      status status,
+      rule_name ruleName,
+      rule_range ruleRange
+      from ops_sensitive_rule where sensitive_config_id=#{sensitive_config_id} and status = '1'
+    </select>
+    <insert id="insertBatchSensitiveRule" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRule">
+      insert into ops_sensitive_rule (sensitive_config_id, rule_name, rule_range, status) values
+      <foreach collection="list" item="item"  index="index" separator=",">
+          (
+          #{item.sensitiveConfigId,jdbcType=BIGINT},
+          #{item.ruleName,jdbcType=VARCHAR},
+          #{item.ruleRange,jdbcType=VARCHAR},
+          #{item.status,jdbcType=INTEGER}
+          )
+      </foreach>
+    </insert>
+    <insert id="insertSensitiveRule"  parameterType="com.aspire.mirror.ops.api.domain.SensitiveRule"  useGeneratedKeys="true" keyColumn="sensitive_rule_id" keyProperty="sensitiveRuleId">
+         insert into ops_sensitive_rule (sensitive_config_id, rule_name, rule_range, status) values (
+              #{sensitiveConfigId,jdbcType=BIGINT},
+              #{ruleName,jdbcType=VARCHAR},
+              #{ruleRange,jdbcType=VARCHAR},
+              #{status,jdbcType=INTEGER}
+         )
+    </insert>
+    <delete id="deleteSensitiveRuleByConfigId" parameterType="java.lang.Long">
+        delete from ops_sensitive_rule where sensitive_config_id=#{sensitive_config_id}
+    </delete>
+    <update id="updateStatusByRuleId"  parameterType="com.aspire.mirror.ops.api.domain.SensitiveRule">
+       update ops_sensitive_rule set status = #{status} where sensitive_rule_id = #{sensitiveRuleId}
+    </update>
+    <update id="updateSensitiveRuleByRuleId" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRule">
+        update ops_sensitive_rule set sensitive_rule_id = #{sensitiveRuleId}
+        <if test="ruleName != null">
+            , rule_name = #{ruleName}
+        </if>
+        <if test="ruleRange != null">
+            , rule_range = #{ruleRange}
+        </if>
+        <if test="status != null">
+            , status = #{status}
+        </if>
+        where sensitive_rule_id = #{sensitiveRuleId}
+    </update>
+    <select id="querySensitiveRuleListTotalSize" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleQueryModel" resultType="java.lang.Integer">
+        select count(sr.sensitive_rule_id) from ops_sensitive_rule sr
+        left join ops_sensitive_config sc on sr.sensitive_config_id = sc.sensitive_config_id
+        where 1=1
+        <if test="ruleName != null and ruleName != ''">
+            and sr.rule_name = #{ruleName}
+        </if>
+        <if test="command != null and command != ''">
+            and sc.command = #{command}
+        </if>
+        <if test="ruleRange != null">
+            and sr.rule_range = #{ruleRange}
+        </if>
+        <if test="status != null">
+            and sr.status = #{status}
+        </if>
+        <if test="sensitiveRuleId != null">
+            and sr.sensitive_rule_id = #{sensitiveRuleId}
+        </if>
+    </select>
+    <select id="querySensitiveRuleList" parameterType="com.aspire.mirror.ops.api.domain.SensitiveRuleQueryModel" resultType="com.aspire.mirror.ops.api.domain.SensitiveRule">
+        select
+        sr.sensitive_rule_id sensitiveRuleId,
+        sr.sensitive_config_id sensitiveConfigId,
+        sr.status status,
+        sr.rule_name ruleName,
+        sr.rule_range ruleRange,
+        sc.command command
+        from ops_sensitive_rule sr
+        left join ops_sensitive_config sc on sr.sensitive_config_id = sc.sensitive_config_id
+        where 1=1
+        <if test="ruleName != null and ruleName != ''">
+            and sr.rule_name = #{ruleName}
+        </if>
+        <if test="command != null and command != ''">
+            and sc.command = #{command}
+        </if>
+        <if test="ruleRange != null">
+            and sr.rule_range = #{ruleRange}
+        </if>
+        <if test="status != null">
+            and sr.status = #{status}
+        </if>
+        <if test="sensitiveRuleId != null">
+            and sr.sensitive_rule_id = #{sensitiveRuleId}
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by sr.sensitive_rule_id desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+    <delete id="deleteSensitiveRuleByRuleIdArray">
+        delete from ops_sensitive_rule where sensitive_rule_id in (
+        <foreach collection="list" item="item"  index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+</mapper>

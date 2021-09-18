@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.authorization.mapper.CmdbV3AuthorizationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.authorization.payload.CmdbV3Authorization" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="auth_owner" property="authOwner" jdbcType="VARCHAR" />
+        <result column="auth_code" property="authCode" jdbcType="VARCHAR" />
+        <result column="auth_name" property="authName" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="VARCHAR" />
+        <result column="auth_action" property="authAction" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `auth_owner`,
+        `auth_code`,
+        `auth_name`,
+        `sort_index`,
+        `auth_action`
+        FROM cmdb_v3_authorization
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.authorization.payload.CmdbV3Authorization">
+        SELECT
+        `id`,
+        `auth_owner`,
+        `auth_code`,
+        `auth_name`,
+        `sort_index`,
+        `auth_action`
+        FROM cmdb_v3_authorization
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="authOwner != null and authOwner != ''">
+        AND `auth_owner` = #{authOwner}
+        </if>
+        <if test="authCode != null and authCode != ''">
+        AND `auth_code` = #{authCode}
+        </if>
+        <if test="authName != null and authName != ''">
+        AND `auth_name` = #{authName}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+            AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="authAction != null and authAction != ''">
+        AND `auth_action` = #{authAction}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.authorization.payload.CmdbV3Authorization" resultMap="resultMap">
+        SELECT
+        `id`,
+        `auth_owner`,
+        `auth_code`,
+        `auth_name`,
+        `sort_index`,
+        `auth_action`
+        FROM cmdb_v3_authorization
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="getByModuleId" resultMap="resultMap">
+        SELECT
+            `id`,
+            `auth_owner`,
+            `auth_code`,
+            `auth_name`,
+            `sort_index`,
+            `auth_action`
+        FROM cmdb_v3_authorization
+        where id in (
+            select auth_id from cmdb_v3_module_authorization
+            where module_id =#{id}
+        )
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.authorization.payload.CmdbV3Authorization">
+        INSERT INTO cmdb_v3_authorization
+        (
+            `id`,
+            `auth_owner`,
+            `auth_code`,
+            `auth_name`,
+            `sort_index`,
+            `auth_action`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{authOwner, jdbcType=VARCHAR},
+            #{authCode, jdbcType=VARCHAR},
+            #{authName, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=VARCHAR},
+            #{authAction, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.authorization.payload.CmdbV3Authorization">
+        UPDATE cmdb_v3_authorization SET
+        `auth_owner` = #{authOwner},
+        `auth_code` = #{authCode},
+        `auth_name` = #{authName},
+        `sort_index` = #{sortIndex},
+        `auth_action` = #{authAction}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.authorization.payload.CmdbV3Authorization">
+        DELETE FROM cmdb_v3_authorization
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

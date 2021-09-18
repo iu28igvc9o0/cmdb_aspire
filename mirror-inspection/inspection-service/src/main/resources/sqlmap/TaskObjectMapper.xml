@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.inspection.server.dao.TaskObjectDao">
+    <delete id="deleteByTaskId" parameterType="java.lang.String">
+         DELETE FROM inspection_task_object WHERE task_id = #{taskId}
+    </delete>
+    <sql id="TaskObject_Base_Column">
+        inspection_task_object.task_object_id,
+        inspection_task_object.task_id,
+        inspection_task_object.template_id,
+        inspection_task_object.object_id,
+        inspection_task_object.object_type
+    </sql>
+    <resultMap id="TaskObjectResultMap" type="com.aspire.mirror.inspection.server.dao.po.TaskObject">
+        <result property="taskObjectId" column="task_object_id" jdbcType="VARCHAR"/>
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="templateId" column="template_id" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+    </resultMap>
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.inspection.server.dao.po.TaskObject" >
+        INSERT INTO inspection_task_object (
+        <include refid="TaskObject_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.taskObjectId,jdbcType=VARCHAR},
+            #{item.taskId,jdbcType=VARCHAR},
+            #{item.templateId,jdbcType=VARCHAR},
+            #{item.objectId,jdbcType=VARCHAR},
+            #{item.objectType,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <select id="selectByTaskId" resultMap="TaskObjectResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="TaskObject_Base_Column" />
+        FROM inspection_task_object inspection_task_object
+        WHERE task_id = #{taskId}
+    </select>
+    <select id="findTaskCountByTemplateId" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT count(*) from (
+          SELECT distinct task_id from inspection_task_object where template_id = #{templateId}
+        ) a
+    </select>
+    <select id="findByTaskIdArrays" resultMap="TaskObjectResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="TaskObject_Base_Column" />
+        FROM inspection_task_object inspection_task_object
+        WHERE task_id in
+        <foreach collection="array" index="index" item="taskId"
+                                   open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </select>
+    <select id="getDeviceNumByTaskId" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select count(distinct object_id) from inspection_task_object where task_id= #{taskId}
+    </select>
+</mapper>

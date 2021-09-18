@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.report.mapper.Cmdb31ProvinceReportMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="resource_owner" property="resourceOwner" jdbcType="VARCHAR" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="submit_month" property="submitMonth" jdbcType="VARCHAR" />
+        <result column="table_id" property="tableId" jdbcType="VARCHAR" />
+        <result column="submit_time" property="submitTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="approve_status" property="approveStatus" jdbcType="VARCHAR" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <collection column="{reportId = id}" property="reportValueList"
+                    select="com.aspire.ums.cmdb.report.mapper.Cmdb31ProvinceReportValueMapper.listByEntity" />
+    </resultMap>
+
+    <resultMap id="orderMap" type="java.util.Map" >
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <collection property="data" ofType="java.util.Map" javaType="java.util.ArrayList">
+            <result column="orderType" property="orderType" jdbcType="VARCHAR" />
+            <result column="orderTotalCnt" property="orderTotalCnt" jdbcType="VARCHAR" />
+            <result column="orderTimeoutCnt" property="orderTimeoutCnt" jdbcType="VARCHAR" />
+            <result column="orderTimelyRate" property="orderTimelyRate" jdbcType="VARCHAR" />
+        </collection>
+
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `resource_owner`,
+        `province_name`,
+        `submit_month`,
+        `table_id`,
+        `submit_time`,
+        `update_time`,
+        `approve_status`,
+        `update_person`
+
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report
+    </select>
+
+
+    <!-- list查询 -->
+    <select id="listOrderReportData" resultMap="orderMap">
+        SELECT province_name,
+               (CASE WHEN b.`setting_id` IN ('16_02','16_03')  THEN '资源申请'
+                     WHEN b.`setting_id` IN ('16_06','16_07') THEN '资源变更'
+                     WHEN b.`setting_id` IN ('16_10','16_11') THEN '资源回收'
+                     WHEN b.`setting_id` IN ('17_02','17_03') THEN '服务请求'
+                     WHEN b.`setting_id` IN ('17_06','17_07') THEN '网络策略'
+                     WHEN b.`setting_id` IN ('17_10','17_11') THEN '安全漏洞'
+                     WHEN b.`setting_id` IN ('17_14','17_15') THEN '割接变更管理'
+                     ELSE '用户账号' END) orderType,
+               MAX((CASE WHEN   b.setting_id IN ('16_02','16_06','16_10','17_02','17_06','17_10','17_14','17_18') THEN b.report_value  ELSE NULL END)) orderTotalCnt,
+               MAX((CASE WHEN   b.setting_id IN ('16_03','16_07','16_11','17_03','17_07','17_11','17_15','17_19') THEN b.report_value  ELSE NULL END)) orderTimeoutCnt,
+               MAX((CASE WHEN   b.setting_id IN ('56','57','58') THEN b.report_value  ELSE NULL END)) orderTimelyRate
+
+        FROM `cmdb_31_province_report` a
+                 LEFT JOIN `cmdb_31_province_report_value` b ON a.id = b.report_id
+        WHERE submit_month =#{submitMonth}
+          AND a.`table_id` IN('16','17') AND b.setting_id IN('16_02','16_03','16_06','16_07','16_10','16_11','17_02','17_03','17_06','17_07','17_10','17_11','17_14','17_15','17_18','17_19')
+        GROUP BY province_name,orderType
+        ORDER BY province_name,orderType
+    </select>
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        <!--SELECT-->
+        <!--<include refid="baseColumn"/>-->
+        <!--FROM cmdb_31_province_report-->
+        <!--WHERE 1=1-->
+        <!--<if test="id != null and id != ''">-->
+        <!--AND `id` = #{id}-->
+        <!--</if>-->
+        <!--<if test="resourceOwner != null and resourceOwner != ''">-->
+            <!--AND `resource_owner` = #{resourceOwner}-->
+        <!--</if>-->
+        <!--<if test="provinceName != null and provinceName != ''">-->
+        <!--AND `province_name` = #{provinceName}-->
+        <!--</if>-->
+        <!--<if test="submitMonth != null and submitMonth != ''">-->
+        <!--AND `submit_month` = #{submitMonth}-->
+        <!--</if>-->
+        <!--<if test="resourceClass != null and resourceClass != ''">-->
+            <!--AND `resource_class` = #{resourceClass}-->
+        <!--</if>-->
+        <!--<if test="idcType != null and idcType != ''">-->
+        <!--AND `idc_type` = #{idcType}-->
+        <!--</if>-->
+        <!--<if test="submitTime != null and submitTime != ''">-->
+        <!--AND `submit_time` = #{submitTime}-->
+        <!--</if>-->
+        <!--<if test="updateTime != null and updateTime != ''">-->
+        <!--AND `update_time` = #{updateTime}-->
+        <!--</if>-->
+        <!--<if test="approveStatus != null and approveStatus != ''">-->
+        <!--AND `approve_status` = #{approveStatus}-->
+        <!--</if>-->
+        <!--<if test="updatePerson != null and updatePerson != ''">-->
+        <!--AND `update_person` = #{updatePerson}-->
+        <!--</if>-->
+
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report
+        WHERE 1=1
+        <if  test="provinceName != null and provinceName != ''">
+           and province_name = #{provinceName}
+        </if>
+        <if  test="submitMonth != null and submitMonth != ''">
+            and submit_month = #{submitMonth}
+        </if>
+        <if  test="resourceOwner != null and resourceOwner != ''">
+            and  resource_owner = #{resourceOwner}
+        </if>
+        <if  test="tableId != null and tableId != ''">
+            and  table_id = #{tableId}
+        </if>
+        <if  test="id != null and id != ''">
+            and  `id` = #{id}
+        </if>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        INSERT INTO cmdb_31_province_report
+        (
+            `id`,
+            `resource_owner`,
+            `province_name`,
+            `submit_month`,
+            `table_id`,
+            `submit_time`,
+            `update_time`,
+            `approve_status`,
+            `update_person`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{resourceOwner, jdbcType=VARCHAR},
+            #{provinceName, jdbcType=VARCHAR},
+            #{submitMonth, jdbcType=VARCHAR},
+            #{tableId, jdbcType=VARCHAR},
+            #{submitTime, jdbcType=TIMESTAMP},
+            #{updateTime, jdbcType=TIMESTAMP},
+            #{approveStatus, jdbcType=VARCHAR},
+            #{updatePerson, jdbcType=VARCHAR}
+        )
+        ON DUPLICATE KEY UPDATE
+        update_time = VALUES( update_time ),
+        update_person = VALUES( update_person)
+    </insert>
+
+    <insert id="insertByBatch" parameterType="java.util.List">
+        INSERT INTO cmdb_31_province_report
+        (
+            `id`,
+            `resource_owner`,
+            `province_name`,
+            `submit_month`,
+            `table_id`,
+            `submit_time`,
+            `update_time`,
+            `approve_status`,
+            `update_person`
+        ) VALUES
+        <foreach collection="list" item="item" separator="," >
+            (  #{item.id, jdbcType=VARCHAR},
+                     #{item.resourceOwner, jdbcType=VARCHAR},
+                     #{item.provinceName, jdbcType=VARCHAR},
+                     #{item.submitMonth, jdbcType=VARCHAR},
+                     #{item.tableId, jdbcType=VARCHAR},
+                     #{item.submitTime, jdbcType=TIMESTAMP},
+                     #{item.updateTime, jdbcType=TIMESTAMP},
+                     #{item.approveStatus, jdbcType=VARCHAR},
+                     #{item.updatePerson, jdbcType=VARCHAR})
+        </foreach>
+
+        ON DUPLICATE KEY UPDATE
+        update_time = VALUES( update_time ),
+        update_person = VALUES( update_person)
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        UPDATE cmdb_31_province_report SET
+        `resource_owner` = #{resourceOwner},
+        `province_name` = #{provinceName},
+        `submit_month` = #{submitMonth},
+        `table_id` = #{tableId},
+        `submit_time` = #{submitTime},
+        `update_time` = #{updateTime},
+        `approve_status` = #{approveStatus},
+        `update_person` = #{updatePerson}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <update id="updateApproveStatus" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        UPDATE cmdb_31_province_report SET
+        `update_time` = #{updateTime},
+        `approve_status` = #{approveStatus}
+        WHERE
+        `resource_owner` = #{resourceOwner}
+        and `province_name` = #{provinceName}
+        and `submit_month` = #{submitMonth}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        DELETE FROM cmdb_31_province_report
+        WHERE
+            `id` = #{id}
+
+    </delete>
+    <delete id="deleteByCurrIds">
+        DELETE FROM cmdb_31_province_report
+        WHERE province_name = #{reportInfo.provinceName}
+              and `submit_month` = #{reportInfo.submitMonth}
+              and `resource_owner` = #{reportInfo.resourceOwner}
+              and `table_id` = #{reportInfo.tableId}
+              and `id` not in
+              <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                  #{id}
+              </foreach>
+    </delete>
+
+    <delete id="deleteByProvinceAndMonth" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReport">
+        DELETE FROM cmdb_31_province_report
+        WHERE `resource_owner` = #{resourceOwner}
+            AND `province_name` = #{provinceName}
+            AND `submit_month` = #{submitMonth}
+    </delete>
+    <delete id="deleteByReportId">
+        DELETE FROM cmdb_31_province_report
+        WHERE `id` = #{reportId}
+
+    </delete>
+
+    <select id="getSettingData"  resultType="java.util.LinkedHashMap">
+        SELECT c.id, c.province_name '省份名称', c.submit_month '月份',
+        <foreach collection="settingList" separator="," item="setting">
+               max(case when v.setting_id = #{setting.id} then v.report_value else null end) '${setting.id}'
+        </foreach>
+        FROM `cmdb_31_province_report_value` v
+        inner join cmdb_31_province_report c on v.report_id = c.id
+        LEFT JOIN `cmdb_31_province_table` t ON c.table_id = t.id
+        where c.province_name = #{query.provinceName} and c.submit_month = #{query.submitMonth}
+          and c.resource_owner = #{query.resourceOwner}
+        and t.name =#{query.resourceClass}
+        group by c.id
+        order by c.submit_time,c.id
+
+    </select>
+
+    <select id="getSettingDataByIdcType"  resultType="java.util.LinkedHashMap">
+        SELECT c.id, c.resource_owner, c.province_name, c.submit_month, c.idc_type,
+        <foreach collection="settingList" separator="," item="setting">
+                max(case when v.setting_id = #{setting.id} then v.report_value else null end) '${setting.id}'
+        </foreach>
+        FROM `cmdb_31_province_report_value` v
+        inner join cmdb_31_province_report c on v.report_id = c.id
+        where c.province_name = #{provinceName} and c.submit_month = #{submitMonth}
+        and c.resource_owner = #{resourceOwner}
+        group by c.idc_type
+        order by c.idc_type
+
+    </select>
+    <select id="getSettingDataByResourceClass"  resultType="java.util.LinkedHashMap">
+        <!--SELECT s.resource_class,c.id, c.resource_owner, c.province_name , c.submit_month, c.idc_type,-->
+        <!--<foreach collection="settingList" separator="," item="setting">-->
+            <!--<if test="resourceClass == null">-->
+                <!--max(case when v.setting_id = #{setting.id} then v.report_value else null end) '${setting.id}'-->
+            <!--</if>-->
+            <!--<if test="resourceClass != null and setting.resourceClass == resourceClass">-->
+                <!--max(case when v.setting_id = #{setting.id} then v.report_value else null end) '${setting.id}'-->
+            <!--</if>-->
+        <!--</foreach>-->
+        <!--FROM `cmdb_31_province_report_value` v-->
+        <!--inner join cmdb_31_province_report c on v.report_id = c.id-->
+        <!--inner join cmdb_31_province_report_setting s on v.setting_id = s.id-->
+        <!--where c.province_name = #{provinceName} and c.submit_month = #{submitMonth}-->
+        <!--and c.resource_owner = #{resourceOwner}-->
+        <!--<if test="resourceClass != null and resourceClass != ''">-->
+            <!--and s.resource_class = #{resourceClass}-->
+        <!--</if>-->
+        <!--group by c.id-->
+        <!--order by c.idc_type-->
+
+    </select>
+
+    <select id="executeToCountTotal" resultType="java.util.Map">
+        ${calcExp} from (
+        SELECT c.id, c.resource_owner, c.province_name, c.submit_month,
+        <foreach collection="settingList" separator="," item="setting">
+            sum(case when v.setting_id = #{setting.id} then v.report_value else 0 end) as '${setting.id}'
+        </foreach>
+        FROM `cmdb_31_province_report_value` v
+        inner join cmdb_31_province_report c on v.report_id = c.id
+        where c.province_name = #{provinceName} and c.submit_month = #{submitMonth}
+        and c.resource_owner = #{resourceOwner}
+        GROUP BY c.id
+        ) res
+
+    </select>
+    <select id="getResourceClass"  resultType="java.lang.String">
+        SELECT resource_class
+        FROM `cmdb_31_province_report_setting`
+        WHERE resource_Owner = #{resourceOwner}
+        GROUP BY resource_class
+        ORDER BY id + 0
+
+    </select>
+
+
+
+    <select id="submitCheck" resultType="java.util.LinkedHashMap">
+
+        SELECT GROUP_CONCAT(resource_type) resource_type FROM `cmdb_31_province_report_setting` WHERE id IN(
+            SELECT a.`setting_id` FROM `cmdb_31_province_report_value` a
+                                           LEFT JOIN `cmdb_31_province_report` b ON  a.report_id = b.id
+                                           LEFT JOIN `cmdb_31_province_table` c ON b.table_id = c.id
+            WHERE b.province_name=#{provinceName} AND b.submit_month=#{submitMonth} AND b.resource_owner = #{resourceOwner}
+              AND LOCATE('update',c.show_page) AND IFNULL(a.report_value, '') = ''
+        ) AND IFNULL(calc_exp,'') = ''
+    </select>
+
+    <select id="getProvinceStatus" resultType="java.util.LinkedHashMap">
+        SELECT province_name `province`, approve_status `status`
+        FROM `cmdb_31_province_report`
+        WHERE submit_month=#{submitMonth}
+          AND resource_owner=#{resourceOwner} AND approve_status != '临时保存'
+        GROUP BY province_name,approve_status
+        ORDER BY  FIND_IN_SET(`approve_status`,'待审核,审核驳回,审核通过'), province_name
+    </select>
+</mapper>

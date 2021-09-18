@@ -1,0 +1,47 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      stat-view-servlet.enabled: true
+      view-servlet.login-username: admin
+      view-servlet.login-password: admin
+      
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://10.12.70.39:8761/eureka/
+      
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  
+  
+orderAutoGen.cron: 0/30 * *  * * ?
+
+province.name: xinjiang
+
+province.ip.port: udp:192.168.172.101/162
+
+server:
+  port: 4567
+  context-path: /misc
+  
+logging:
+  level:
+    root: info
+  file: /opt/data/logs/misc.log
+  

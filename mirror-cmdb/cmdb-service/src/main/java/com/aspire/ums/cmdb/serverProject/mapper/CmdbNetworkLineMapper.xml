@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.serverProject.mapper.CmdbNetworkLineMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLine">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="server_line_count" property="serverLineCount" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `server_line_count`
+        FROM cmdb_network_line
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLine">
+        SELECT
+        `id`,
+        `is_delete`,
+        `server_line_count`
+        FROM cmdb_network_line
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="serverLineCount != null and serverLineCount != ''">
+            AND `server_line_count` = #{serverLineCount}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLine" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `server_line_count`
+        FROM cmdb_network_line
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLine">
+        INSERT INTO cmdb_network_line
+        (
+            `id`,
+            `is_delete`,
+            `server_line_count`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT},
+            #{serverLineCount, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLine">
+        UPDATE cmdb_network_line SET
+        `is_delete` = #{isDelete},
+        `server_line_count` = #{serverLineCount}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLine">
+        DELETE FROM cmdb_network_line
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

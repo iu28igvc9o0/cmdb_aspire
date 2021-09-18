@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.monthReport.AlertMonthReportSyncDao">
+
+    <!-- 新增 -->
+    <insert id="insertIdcType" parameterType="list"  >
+		insert into
+			alert_month_idcType_sync(idcType,cpu_max,cpu_avg,memory_avg,memory_max,
+			deviceType,cpu_eighty_ratio,cpu_fourty_ratio,cpu_fifteen_ratio,cpu_eighty_more_ratio,
+			memory_eighty_ratio,memory_fourty_ratio,memory_fifteen_ratio,memory_eighty_more_ratio,month,type,
+			comment,sort)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.cpu_max,jdbcType=VARCHAR} ,
+			#{item.cpu_avg,jdbcType=VARCHAR} ,
+			#{item.memory_avg,jdbcType=VARCHAR} ,
+			#{item.memory_max,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.cpu_eighty_ratio,jdbcType=VARCHAR} ,
+			#{item.cpu_fourty_ratio,jdbcType=VARCHAR} ,
+			
+			#{item.cpu_fifteen_ratio,jdbcType=VARCHAR} ,
+			#{item.cpu_eighty_more_ratio,jdbcType=VARCHAR} ,
+			
+			
+			#{item.memory_eighty_ratio,jdbcType=VARCHAR} ,
+			#{item.memory_fourty_ratio,jdbcType=VARCHAR} ,
+			
+			#{item.memory_fifteen_ratio,jdbcType=VARCHAR} ,
+			#{item.memory_eighty_more_ratio,jdbcType=VARCHAR} ,
+			#{item.month,jdbcType=VARCHAR},
+			#{item.type,jdbcType=VARCHAR},
+			#{item.comment,jdbcType=VARCHAR},
+			#{item.sort,jdbcType=VARCHAR}
+		)
+		  </foreach> 
+	</insert>
+
+
+
+	
+	<insert id="insertIdcTypeBizSystemDay" parameterType="list"  >
+		insert into
+			alert_month_idctypeSys_day_sync(idcType,cpu_max,cpu_avg,memory_avg,memory_max,
+			deviceType,day,bizSystem,month,history_min_flag,department1,department2)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.cpu_max,jdbcType=VARCHAR} ,
+			#{item.cpu_avg,jdbcType=VARCHAR} ,
+			#{item.memory_avg,jdbcType=VARCHAR} ,
+			#{item.memory_max,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.day,jdbcType=VARCHAR}, 
+			#{item.bizSystem,jdbcType=VARCHAR},
+			#{item.month,jdbcType=VARCHAR},
+			#{item.history_min_flag,jdbcType=INTEGER},
+			#{item.department1,jdbcType=VARCHAR},
+			#{item.department2,jdbcType=VARCHAR}
+		)
+		  </foreach> 
+	</insert>
+	
+	<insert id="insertIdcTypeDay" parameterType="list"  >
+		insert into
+			alert_month_idctype_day_sync(idcType,cpu_max,cpu_avg,memory_avg,memory_max,
+			deviceType,day,month)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.cpu_max,jdbcType=VARCHAR} ,
+			#{item.cpu_avg,jdbcType=VARCHAR} ,
+			#{item.memory_avg,jdbcType=VARCHAR} ,
+			#{item.memory_max,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.day,jdbcType=VARCHAR},
+			#{item.month,jdbcType=VARCHAR}
+		)
+		  </foreach> 
+	</insert>
+	
+	
+	
+	
+	<insert id="insertDepartment" parameterType="list"  >
+		insert into
+			alert_month_department_sync(idcType,cpu_max,cpu_avg,memory_avg,memory_max,
+			deviceType,cpu_eighty_ratio,cpu_fourty_ratio,cpu_fifteen_ratio,cpu_eighty_more_ratio,
+			memory_eighty_ratio,memory_fourty_ratio,memory_fifteen_ratio,memory_eighty_more_ratio,month,bizSystem
+			,bizSystem_id)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.cpu_max,jdbcType=VARCHAR} ,
+			#{item.cpu_avg,jdbcType=VARCHAR} ,
+			#{item.memory_avg,jdbcType=VARCHAR} ,
+			#{item.memory_max,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.cpu_fourty_ratio,jdbcType=VARCHAR} ,
+			#{item.cpu_eighty_ratio,jdbcType=VARCHAR} ,
+			
+			#{item.cpu_fifteen_ratio,jdbcType=VARCHAR} ,
+			#{item.cpu_eighty_more_ratio,jdbcType=VARCHAR} ,
+			
+			
+			#{item.memory_eighty_ratio,jdbcType=VARCHAR} ,
+			#{item.memory_fourty_ratio,jdbcType=VARCHAR} ,
+			
+			#{item.memory_fifteen_ratio,jdbcType=VARCHAR} ,
+			#{item.memory_eighty_more_ratio,jdbcType=VARCHAR} ,
+			#{item.month,jdbcType=VARCHAR},
+			#{item.bizSystem,jdbcType=VARCHAR},
+			#{item.bizSystem_id,jdbcType=VARCHAR}
+		)
+		  </foreach> 
+	</insert>
+	
+	<insert id="insertDepartment2" parameterType="list"  >
+		insert into
+			alert_month_bizSystem_sync(vm_cpu_max,phy_cpu_max,vm_memory_max,phy_memory_max,bizSystem,
+			month,department1,department2,cpu_max,memory_max,
+			cpu_avg,memory_avg,bizSystem_id,department1_id,department2_id,type)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.vm_cpu_max,jdbcType=VARCHAR} ,
+			#{item.phy_cpu_max,jdbcType=VARCHAR} ,
+			#{item.vm_memory_max,jdbcType=VARCHAR} ,
+			#{item.phy_memory_max,jdbcType=VARCHAR} ,
+
+			#{item.bizSystem,jdbcType=VARCHAR} ,
+			#{item.month,jdbcType=VARCHAR} ,
+			#{item.department1,jdbcType=VARCHAR} ,
+			
+			#{item.department2,jdbcType=VARCHAR} ,
+			#{item.cpu_max,jdbcType=VARCHAR} ,
+			
+			
+			#{item.memory_max,jdbcType=VARCHAR} ,
+			#{item.cpu_avg,jdbcType=VARCHAR} ,
+			
+			#{item.memory_avg,jdbcType=VARCHAR} ,
+			#{item.bizSystem_id,jdbcType=VARCHAR} ,
+			#{item.department1_id,jdbcType=VARCHAR} ,
+			#{item.department2_id,jdbcType=VARCHAR} ,
+			#{item.type,jdbcType=INTEGER} 
+			
+		)
+		  </foreach> 
+	</insert>
+     <select id="queryIdctypeDayNewByMonth"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+        select
+       		*
+        from alert_month_idctype_dayNew_sync 
+        where 1=1
+        <if test="day != null and day !=''">
+               and  day = #{day} 
+            </if>
+            <if test="type != null">
+               and  type = #{type} 
+            </if>
+          
+    </select>
+    
+    
+    <select id="queryDepartmentBymonth"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+        select
+       *
+        from alert_month_department_sync 
+        where 1=1
+        <if test="month != null and month !=''">
+               and  month = #{month} 
+            </if>
+            <if test="deviceType != null and deviceType !=''">
+               and deviceType = #{deviceType} 
+            </if>
+    </select>
+    
+    <select id="queryNetMoniter"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.alertNetMonitorConfig">
+        select
+       *
+        from alert_net_monitor_config 
+       
+    </select>
+    
+
+   
+    
+     <insert id="insertNetMonitorData" parameterType="list"  >
+		insert into
+			alert_month_net_sync(idcType,deviceType,outHighSpeed,inHighSpeed,ifOutOctetsAvg,
+			ifOutOctetsMax,ifInOctetsAvg,ifInOctetsMax,outTotal,inTotal,month)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.outHighSpeed,jdbcType=VARCHAR} ,
+			#{item.inHighSpeed,jdbcType=VARCHAR} ,
+			#{item.ifOutOctetsAvg,jdbcType=VARCHAR} ,
+			#{item.ifOutOctetsMax,jdbcType=VARCHAR} ,
+			#{item.ifInOctetsAvg,jdbcType=VARCHAR} ,
+			#{item.ifInOctetsMax,jdbcType=VARCHAR} ,
+			
+			#{item.outTotal,jdbcType=VARCHAR} ,
+			#{item.inTotal,jdbcType=VARCHAR} ,
+			#{item.month,jdbcType=VARCHAR}
+			
+		)
+		  </foreach> 
+	</insert>
+	
+	 <select id="queryDayBizSystem"  resultType="map">
+        select
+       *
+        from alert_month_idctypeSys_day_sync where day like CONCAT(#{month}, '%') 
+        <if test="hisFlag != null ">
+               and history_min_flag = #{hisFlag} 
+            </if>
+          <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType} 
+            </if>
+       order by idcType,day asc
+    </select>
+    
+    <select id="queryDayBizSystemMonth"  resultType="map">
+       SELECT ROUND(avg(s.cpu_avg),2) cpu_avg,MAX(s.cpu_max)cpu_max,ROUND(avg(s.memory_avg),2) memory_avg
+,MAX(s.memory_max)memory_max,s.idcType,s.bizSystem,s.deviceType from alert_month_idctypeSys_day_sync s
+where s.`day` like CONCAT(#{month}, '%') 
+   <if test="hisFlag != null">
+               and history_min_flag = #{hisFlag} 
+            </if>
+  <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType} 
+            </if>
+group by s.idcType,s.bizSystem,s.deviceType
+          order by day asc
+    </select>
+    
+    
+     <select id="queryDepartmentBymonthDay"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+       SELECT ROUND(avg(s.cpu_avg),2) cpu_avg,MAX(s.cpu_max)cpu_max,ROUND(avg(s.memory_avg),2) memory_avg
+,MAX(s.memory_max)memory_max,s.idcType,s.bizSystem,s.deviceType from alert_month_idctypeSys_day_sync s
+where s.`day` like CONCAT(#{month}, '%') 
+  and history_min_flag = 0
+  <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType} 
+            </if>
+            <if test="deviceType != null and deviceType !=''">
+               and deviceType = #{deviceType} 
+            </if>
+group by s.idcType,s.bizSystem,s.deviceType
+         
+    </select>
+    
+    <select id="querybizSysDayType2CountAll"  resultType="map"  parameterType="map">
+      SELECT COUNT(*) count,deviceType FROM alert_month_idctypesys_day_sync where 1=1
+      <if test="hisFlag != null">
+               and  history_min_flag = #{hisFlag}  
+            </if> 
+             <if test="day != null  and day !=''">
+              and day=#{day}  
+            </if> 
+            <if test="department1 != null  and department1 !=''">
+              and department1=#{department1}  
+            </if> 
+             <if test="department2 != null  and department2 !=''">
+              and department2=#{department2}  
+            </if> 
+             <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType} 
+            </if>
+		group by deviceType
+         
+    </select>
+    <select id="querybizSysDayType2Count"  resultType="java.lang.Integer"   parameterType="map">
+      SELECT COUNT(*) count FROM alert_month_idctypesys_day_sync where 1=1
+      <if test="hisFlag != null">
+               and  history_min_flag = #{hisFlag}  
+            </if> 
+             <if test="day != null  and day !=''">
+              and day=#{day}  
+            </if> 
+             <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType} 
+            </if>
+            <if test="department1 != null  and department1 !=''">
+              and department1=#{department1}  
+            </if> 
+            <if test="department2 != null  and department2 !=''">
+              and department2=#{department2}  
+            </if> 
+               <if test="deviceType != null  and deviceType !=''">
+              and deviceType=#{deviceType}  
+            </if> 
+            <if test="cpuMax != null ">
+              and cpu_max <![CDATA[<]]> #{cpuMax}  
+            </if> 
+             <if test="memoryMax != null ">
+              and memory_max <![CDATA[<]]> #{memoryMax}  
+            </if>  
+    </select>
+    
+    <select id="querybizSysDayType2CountTopN"  resultType="map"  parameterType="map">
+      SELECT  bizSystem,idcType,cpu_max,memory_max,cpu_avg,memory_avg
+      FROM alert_month_idctypesys_day_sync where 1=1
+      <if test="hisFlag != null">
+               and  history_min_flag = #{hisFlag}  
+            </if> 
+             <if test="day != null  and day !=''">
+              and day=#{day}  
+            </if> 
+             <if test="idcType != null and idcType !=''">
+               and idcType = #{idcType} 
+            </if>
+            <if test="department1 != null  and department1 !=''">
+              and department1=#{department1}  
+            </if> 
+             <if test="department2 != null  and department2 !=''">
+              and department2=#{department2}  
+            </if> 
+               <if test="deviceType != null  and deviceType !=''">
+              and deviceType=#{deviceType}  
+            </if> 
+            <if test="cpuMax != null ">
+              and cpu_max <![CDATA[<]]> #{cpuMax}  
+            </if> 
+            
+             <if test="memoryMax != null ">
+              and memory_max <![CDATA[<]]> #{memoryMax}  
+            </if>
+             <choose>
+                <when test="order =='cpuMax' ">
+                   ORDER  by cpu_max desc  
+                </when>
+                <when test="order == 'memoryMax'">
+                     ORDER  by memory_max desc  
+                </when>
+                 <when test="order =='cpuAvg' ">
+                   ORDER  by cpu_avg desc  
+                </when>
+                 <when test="order =='memoryAvg' ">
+                   ORDER  by memory_avg desc  
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            LIMIT #{size}
+    </select>
+    
+    <select id="queryIdcTypeBymonthDay"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+		SELECT s.idcType,MAX(s.cpu_max) cpu_max,
+		ROUND(AVG(s.cpu_avg),2)cpu_avg,ROUND(AVG(s.memory_avg),2) memory_avg
+		,MAX(s.memory_max)memory_max
+		,s.deviceType 
+		FROM alert_month_idctype_day_sync s
+		where s.month=#{month}
+		 <if test="idcType != null and idcType !=''">
+               and s.idcType = #{idcType} 
+            </if>
+            <if test="deviceType != null and deviceType !=''">
+               and s.deviceType = #{deviceType} 
+            </if>
+		GROUP BY s.idcType,s.deviceType
+		          
+    </select>
+    
+    <select id="queryIdcTypeByDayMonthDay"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+		SELECT s.idcType,MAX(s.cpu_max) cpu_max,
+		ROUND(AVG(s.cpu_avg),2)cpu_avg,ROUND(AVG(s.memory_avg),2) memory_avg
+		,MAX(s.memory_max)memory_max
+
+		FROM alert_month_idctype_day_sync s
+		where s.day>=#{startDay}  and  and s.day<![CDATA[<]]>#{endDay} 
+		 <if test="idcType != null and idcType !=''">
+               and s.idcType = #{idcType} 
+            </if>
+            <if test="deviceType != null and deviceType !=''">
+               and s.deviceType = #{deviceType} 
+            </if>
+		GROUP BY s.idcType
+		          
+    </select>
+    
+      <select id="queryIdcTypeByDayMonthDayTopN"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+		SELECT bizSystem ,ROUND(avg(s.cpu_max),2) cpu_max,
+		ROUND(AVG(s.cpu_avg),2)cpu_avg,ROUND(AVG(s.memory_avg),2) memory_avg
+		,ROUND(avg(s.memory_max),2)memory_max
+
+		from alert_month_idctypesys_day_sync s
+		
+		where s.day>=#{startDay}  and  and s.day<![CDATA[<]]>#{endDay} 
+		and s.bizSystem in(SELECT DISTINCT(bizSystem) from cmdb_instance c 
+		where c.department1=#{department1} )
+		GROUP BY bizSystem
+		<if test="sort != null and sort =='cpuAvg'">
+              ORDER BY cpu_avg DESC
+            </if>
+		
+		<if test="sort != null and sort =='cpuMax'">
+              ORDER BY cpu_max DESC
+            </if>
+            <if test="sort != null and sort =='memoryAvg'">
+              ORDER BY memory_avg DESC
+            </if>
+            <if test="sort != null and sort =='memoryMax'">
+              ORDER BY memory_max DESC
+            </if>
+		LIMIT #{size} ;
+		          
+    </select>
+    
+     <select id="queryIdcTypeByDayMonthDayAll"  resultType="com.aspire.mirror.alert.server.dao.monthReport.po.AlertMonthReportIdcType">
+		SELECT ROUND(avg(s.cpu_max),2) cpu_max,
+		ROUND(AVG(s.cpu_avg),2)cpu_avg,ROUND(AVG(s.memory_avg),2) memory_avg
+		,ROUND(avg(s.memory_max),2)memory_max
+
+		from alert_month_idctypesys_day_sync s
+		
+		where s.day>=#{startDay}  and  and s.day<![CDATA[<]]>#{endDay} 
+		and s.bizSystem in(SELECT DISTINCT(bizSystem) from cmdb_instance c 
+		where c.department1=#{department1);
+		          
+    </select>
+    
+    
+    <select id="queryDays"  resultType="java.lang.String">
+     SELECT DISTINCT(s.day) FROM alert_month_idctypeSys_day_sync s where s.day like CONCAT(#{month}, '%')
+        <if test="hisFlag != null ">
+               and history_min_flag = #{hisFlag} 
+            </if>
+     <if test="idcType != null and idcType !=''">
+              and idcType = #{idcType} 
+            </if> 
+    order by s.day asc;
+       
+    </select>
+    
+      <select id="queryDaysConfig"  resultType="map">
+    select * from alert_month_day_sync_config where type=#{type}
+       
+    </select>
+    
+     <insert id="insertDaysConfig" parameterType="map"  >
+		insert into
+			alert_month_day_sync_config(idcType,days,type,month)
+		values(
+		#{idcType,jdbcType=VARCHAR} ,
+		#{days,jdbcType=VARCHAR} ,
+		#{type,jdbcType=VARCHAR},
+		#{month,jdbcType=VARCHAR}
+		)
+		
+	</insert>
+	
+	<update id="updateDaysConfig" parameterType="map">
+		update alert_month_day_sync_config 
+		 <set>
+		 <if test="idcType != null and idcType !=''">
+              idcType = #{idcType},
+            </if> 
+             <if test="days != null and days !=''">
+             days = #{days},
+            </if> 
+		<if test="month != null and month !=''">
+           month = #{month}
+            </if> 
+		   </set>
+		where type = #{type}
+	</update>
+    
+    <insert id="insertSuyanConfigLogs" parameterType="map"  >
+		insert into
+			suyan_config_logs(from_time	,to_time,exec_time,status,content,create_time
+			,sum,exec_duration,less_device_count,device_type,esCount,delCount)
+		values(
+		#{from_time,jdbcType=VARCHAR} ,
+		#{to_time,jdbcType=VARCHAR} ,
+		#{exec_time,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR},
+		#{create_time,jdbcType=VARCHAR},
+		#{sum,jdbcType=INTEGER},
+		#{exec_duration,jdbcType=VARCHAR},
+		#{less_device_count,jdbcType=INTEGER},
+		#{device_type,jdbcType=VARCHAR},
+		#{esCount,jdbcType=INTEGER},
+		#{delCount,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<select id="querySuyanConfigLogsByTime"  resultType="java.lang.String">
+    select from_time from suyan_config_logs
+  where  from_time >= #{startTime} and to_time <![CDATA[<=]]> #{endTime}
+  and status = #{status}
+  and device_type = #{device_type}
+     order by  to_time asc
+    </select>
+    
+    
+    <select id="querySuyanConfigLogsByToTime"  resultType="map">
+    select * from suyan_config_logs
+    where  to_time = #{to_time} 
+    and device_type = #{device_type} and status = #{status} 
+    limit 1
+    </select>
+    
+    <insert id="insertIdcTypeIpDay" parameterType="list"  >
+		insert into
+			alert_month_idctypeip_day_sync(idcType,cpu_max,memory_max,
+			deviceType,day,ip,cpu_avg,memory_avg)
+			
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType,jdbcType=VARCHAR} ,
+			#{item.cpu_max,jdbcType=VARCHAR} ,
+			#{item.memory_max,jdbcType=VARCHAR} ,
+			#{item.deviceType,jdbcType=VARCHAR} ,
+			#{item.day,jdbcType=VARCHAR}, 
+			#{item.ip,jdbcType=VARCHAR},
+			#{item.cpu_avg,jdbcType=VARCHAR},
+			#{item.memory_avg,jdbcType=VARCHAR}
+		)
+		  </foreach> 
+	</insert>
+	
+	
+	
+	 <select id="queryIdcTypeIpAllCount"  resultType="map">
+   SELECT count(DISTINCT(p.ip))count,p.idcType,p.deviceType from alert_month_idctypeip_day_sync p 
+   where  p.day like CONCAT(#{month}, '%')
+	group BY p.idcType,p.deviceType
+    </select>
+    
+    <select id="queryBizSystemIpAllCount"  resultType="map">
+  	SELECT count(DISTINCT(p.ip))count,p.idcType,p.deviceType ,c.bizSystem from alert_month_idctypeip_day_sync p 
+	LEFT JOIN cmdb_instance c on c.idcType=p.idcType and c.ip = p.ip
+	where  p.day like CONCAT(#{month}, '%')
+	group BY p.idcType,p.deviceType,c.bizSystem
+    </select>
+    
+    
+    
+     <select id="queryIdcTypeIpCpuCount"  resultType="map">
+   SELECT count(aa.ip) count,aa.idcType,aa.deviceType from(
+	SELECT p.idcType ,p.ip,p.deviceType,MAX(p.cpu_max)cpu from alert_month_idctypeip_day_sync p 
+	where  p.day like CONCAT(#{month}, '%')
+	GROUP BY p.idcType,p.deviceType,p.ip
+	HAVING (
+	<if test="startVal != null and endVal !=null">
+              cpu>=#{startVal} and cpu<![CDATA[<]]>#{endVal}
+            </if> 
+            <if test="startVal != null and endVal ==null">
+              cpu>=#{startVal} 
+            </if> 
+             <if test="startVal == null and endVal !=null">
+             cpu<![CDATA[<]]>#{endVal}
+            </if> 
+	
+	))aa
+	group by aa.idcType,aa.deviceType
+    </select>
+    
+     <select id="queryBizSystemIpCpuCount"  resultType="map">
+   SELECT count(aa.ip) count,aa.idcType,aa.deviceType,aa.bizSystem from(
+	SELECT p.idcType ,p.ip,p.deviceType,c.bizSystem,MAX(p.cpu_max)cpu from alert_month_idctypeip_day_sync p 
+	LEFT JOIN cmdb_instance c on c.idcType=p.idcType and c.ip = p.ip
+	where  p.day like CONCAT(#{month}, '%')
+	GROUP BY p.idcType,p.deviceType,p.ip,c.bizSystem
+	HAVING (
+		<if test="startVal != null and endVal !=null">
+              cpu>=#{startVal} and cpu<![CDATA[<]]>#{endVal}
+            </if> 
+            <if test="startVal != null and endVal ==null">
+              cpu>=#{startVal} 
+            </if> 
+             <if test="startVal == null and endVal !=null">
+             cpu<![CDATA[<]]>#{endVal}
+            </if> 
+	))aa
+	group by aa.idcType,aa.deviceType,aa.bizSystem
+    </select>
+	
+	
+	 <select id="queryIdcTypeIpMemoryCount"  resultType="map">
+   SELECT count(aa.ip) count,aa.idcType,aa.deviceType from(
+	SELECT p.idcType ,p.ip,p.deviceType,MAX(p.memory_max)cpu from alert_month_idctypeip_day_sync p 
+	where  p.day like CONCAT(#{month}, '%')
+	GROUP BY p.idcType,p.deviceType,p.ip
+	HAVING (
+	<if test="startVal != null and endVal !=null">
+              cpu>=#{startVal} and cpu<![CDATA[<]]>#{endVal}
+            </if> 
+            <if test="startVal != null and endVal ==null">
+              cpu>=#{startVal} 
+            </if> 
+             <if test="startVal == null and endVal !=null">
+             cpu<![CDATA[<]]>#{endVal}
+            </if> 
+	
+	))aa
+	group by aa.idcType,aa.deviceType
+    </select>
+    
+     <select id="queryBizSystemIpMemoryCount"  resultType="map">
+   SELECT count(aa.ip) count,aa.idcType,aa.deviceType,aa.bizSystem from(
+	SELECT p.idcType ,p.ip,p.deviceType,c.bizSystem,MAX(p.memory_max)cpu from alert_month_idctypeip_day_sync p 
+	LEFT JOIN cmdb_instance c on c.idcType=p.idcType and c.ip = p.ip
+	where  p.day like CONCAT(#{month}, '%')
+	GROUP BY p.idcType,p.deviceType,p.ip,c.bizSystem
+	HAVING (
+		<if test="startVal != null and endVal !=null">
+              cpu>=#{startVal} and cpu<![CDATA[<]]>#{endVal}
+            </if> 
+            <if test="startVal != null and endVal ==null">
+              cpu>=#{startVal} 
+            </if> 
+             <if test="startVal == null and endVal !=null">
+             cpu<![CDATA[<]]>#{endVal}
+            </if> 
+	))aa
+	group by aa.idcType,aa.deviceType,aa.bizSystem
+    </select>
+	
+	
+	 <select id="queryMonthIdcTypeUseRate"  resultType="map">
+		SELECT
+			round(AVG(cpu_avg), 2) cpu_avg,
+			round(AVG(memory_avg), 2) memory_avg,
+			round(AVG(cpu_max), 2) cpu_max,
+			round(AVG(memory_max), 2) memory_max
+		FROM
+		alert_month_idctype_sync s
+			WHERE 1=1 and type=0
+					 <if test="month != null and month !=''">
+					  	and s.month = #{month}
+			           </if> 
+						<if test="idcType != null and idcType !=''">
+					  	and s.idcType = #{idcType}
+			           </if> 
+			           <if test="deviceType != null and deviceType !=''">
+					  	and s.deviceType = #{deviceType}
+			           </if> 
+
+    </select>
+    
+    
+    <select id="queryMonthIdcTypeTrends"  resultType="map">
+    
+   			 SELECT
+			round(avg(cpu_avg), 2) cpu_avg,
+			round(avg(memory_avg), 2) memory_avg,
+			round(avg(cpu_max), 2) cpu_max,
+			round(avg(memory_max), 2) memory_max,
+			day
+			FROM alert_month_idctype_day_sync s
+			where 1=1
+					 <if test="month != null and month !=''">
+				  	and s.month = #{month}
+		           </if> 
+					<if test="idcType != null and idcType !=''">
+				  	and s.idcType = #{idcType}
+		           </if> 
+		           <if test="deviceType != null and deviceType !=''">
+				  	and s.deviceType = #{deviceType}
+		           </if> 
+			GROUP BY day
+			ORDER BY day asc
+    </select>
+    
+    
+	 <select id="queryMonthUseRateForZH"  resultType="map">
+	
+		SELECT DISTINCT(aa.bizSystem),aa.deviceType,aa.cpu_avg,aa.cpu_max,aa.memory_avg,aa.memory_max 
+		from
+		(select  DISTINCT(bizSystem),deviceType,cpu_avg,cpu_max,memory_avg,memory_max ,idcType
+		
+		 from  alert_month_department_sync 
+		where 
+			 deviceType = #{deviceType} 
+			and month=#{month} )aa  
+			
+			<if test="authFilter != null">
+			 INNER JOIN ( select  DISTINCT(bizSystem),deviceType,cpu_avg,cpu_max,memory_avg,memory_max ,idcType 
+			 from alert_month_department_sync
+			 where month=#{month}   
+               ${authFilter.condition})bb  on aa.idcType=bb.idcType and aa.bizSystem = bb.bizSystem
+            </if>
+    </select>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.teamwork.mapper.TeamworkMessageMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageDTO" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="tw_teamwork_id" property="twTeamworkId" jdbcType="VARCHAR" />
+        <result column="tw_send_user_account" property="twSendUserAccount" jdbcType="VARCHAR" />
+        <result column="tw_send_time" property="twSendTime" jdbcType="DATE" />
+        <result column="tw_label_id" property="twLabelId" jdbcType="VARCHAR" />
+        <result column="tw_send_content" property="twSendContent" jdbcType="VARCHAR" />
+        <result column="tw_message_type" property="twMessageType" jdbcType="VARCHAR" />
+        <result column="tw_ref_message_id" property="twRefMessageId" jdbcType="VARCHAR" />
+        <result column="tw_content_type" property="twContentType" jdbcType="VARCHAR" />
+        <result column="content_url" property="contentUrl" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_send_user_account`,
+        `tw_send_time`,
+        `tw_label_id`,
+        `tw_send_content`,
+        `tw_message_type`,
+        `tw_ref_message_id`,
+        `tw_content_type`,
+        `content_url`,
+        `is_delete`
+        FROM teamwork_message
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageDTO">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_send_user_account`,
+        `tw_send_time`,
+        `tw_label_id`,
+        `tw_send_content`,
+        `tw_message_type`,
+        `tw_ref_message_id`,
+        `tw_content_type`,
+        `content_url`,
+        `is_delete`
+        FROM teamwork_message
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="twTeamworkId != null and twTeamworkId != ''">
+        AND `tw_teamwork_id` = #{twTeamworkId}
+        </if>
+        <if test="twSendUserAccount != null and twSendUserAccount != ''">
+        AND `tw_send_user_account` = #{twSendUserAccount}
+        </if>
+        <if test="twSendTime != null and twSendTime != ''">
+        AND `tw_send_time` = #{twSendTime}
+        </if>
+        <if test="twLabelId != null and twLabelId != ''">
+        AND `tw_label_id` = #{twLabelId}
+        </if>
+        <if test="twSendContent != null and twSendContent != ''">
+        AND `tw_send_content` = #{twSendContent}
+        </if>
+        <if test="twMessageType != null and twMessageType != ''">
+        AND `tw_message_type` = #{twMessageType}
+        </if>
+        <if test="twRefMessageId != null and twRefMessageId != ''">
+        AND `tw_ref_message_id` = #{twRefMessageId}
+        </if>
+        <if test="twContentType != null and twContentType != ''">
+        AND `tw_content_type` = #{twContentType}
+        </if>
+        <if test="contentUrl != null and contentUrl != ''">
+        AND `content_url` = #{contentUrl}
+        </if>
+        
+        AND `is_delete` = 0
+     order by twSendTime desc
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageDTO" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_teamwork_id`,
+        `tw_send_user_account`,
+        `tw_send_time`,
+        `tw_label_id`,
+        `tw_send_content`,
+        `tw_message_type`,
+        `tw_ref_message_id`,
+        `tw_content_type`,
+        `content_url`,
+        `is_delete`
+        FROM teamwork_message
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageDTO">
+        INSERT INTO teamwork_message
+        (
+            `id`,
+            `tw_teamwork_id`,
+            `tw_send_user_account`,
+            `tw_send_time`,
+            `tw_label_id`,
+            `tw_send_content`,
+            `tw_message_type`,
+            `tw_ref_message_id`,
+            `tw_content_type`,
+            `content_url`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{twTeamworkId, jdbcType=VARCHAR},
+            #{twSendUserAccount, jdbcType=VARCHAR},
+            #{twSendTime, jdbcType=DATE},
+            #{twLabelId, jdbcType=VARCHAR},
+            #{twSendContent, jdbcType=VARCHAR},
+            #{twMessageType, jdbcType=VARCHAR},
+            #{twRefMessageId, jdbcType=VARCHAR},
+            #{twContentType, jdbcType=VARCHAR},
+            #{contentUrl, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageDTO">
+        UPDATE teamwork_message SET
+        `tw_teamwork_id` = #{twTeamworkId},
+        `tw_send_user_account` = #{twSendUserAccount},
+        `tw_send_time` = #{twSendTime},
+        `tw_label_id` = #{twLabelId},
+        `tw_send_content` = #{twSendContent},
+        `tw_message_type` = #{twMessageType},
+        `tw_ref_message_id` = #{twRefMessageId},
+        `tw_content_type` = #{twContentType},
+        `content_url` = #{contentUrl},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkMessageDTO">
+        DELETE FROM teamwork_message
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

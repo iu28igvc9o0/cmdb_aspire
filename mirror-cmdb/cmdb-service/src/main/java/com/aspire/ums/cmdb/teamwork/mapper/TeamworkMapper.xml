@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.teamwork.mapper.TeamworkMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.teamwork.entity.TeamworkDTO" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="tw_code" property="twCode" jdbcType="VARCHAR" />
+        <result column="tw_title" property="twTitle" jdbcType="VARCHAR" />
+        <result column="tw_sence" property="twSence" jdbcType="VARCHAR" />
+        <result column="tw_source" property="twSource" jdbcType="VARCHAR" />
+        <result column="tw_content" property="twContent" jdbcType="VARCHAR" />
+        <result column="tw_status" property="twStatus" jdbcType="VARCHAR" />
+        <result column="tw_start_time" property="twStartTime" jdbcType="DATE" />
+        <result column="tw_end_time" property="twEndTime" jdbcType="DATE" />
+        <result column="tw_use_time" property="twUseTime" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+ <sql id="baseColumnList">
+		id,tw_code,tw_title,tw_sence,tw_source,tw_content,tw_status,tw_start_time,tw_start_time,tw_use_time
+		,is_delete
+	 </sql>
+
+
+     <!-- 动态sql -->
+    <sql id="where_sql"> 
+        <if test="params.twStartTime != null and  params.twEndTime != ''  ">
+    		and tw_start_time between  #{params.twStartTime} and  #{params.twEndTime}
+    	</if>
+     
+          <if test="params.twSence != null and params.twSence != ''">
+        AND `tw_sence` = #{params.twSence}
+        </if>
+          <if test="params.twStatus != null and params.twStatus != ''">
+        AND `tw_status` = #{params.twStatus}
+        </if>
+         <if test="params.twTitle != null and params.twTitle != ''">
+        AND `tw_title` like concat('%',#{params.twTitle},'%')
+        </if>
+        <if test="params.twCode != null and params.twCode != ''">
+        AND `tw_code` = #{params.twCode}
+        </if>
+      
+        <if test="params.twSource != null and params.twSource != ''">
+        AND `tw_source` = #{params.twSource}
+        </if>
+        <if test="params.twContent != null and params.twContent != ''">
+        AND `tw_content` = #{params.twContent}
+        </if>
+    </sql>
+    
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_code`,
+        `tw_title`,
+        `tw_sence`,
+        `tw_source`,
+        `tw_content`,
+        `tw_status`,
+        `tw_start_time`,
+        `tw_end_time`,
+        `tw_use_time`,
+        `is_delete`
+        FROM teamwork
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT
+        `id`,
+        `tw_code`,
+        `tw_title`,
+        `tw_sence`,
+        `tw_source`,
+        `tw_content`,
+        `tw_status`,
+        `tw_start_time`,
+        `tw_end_time`,
+        `tw_use_time`,
+        `is_delete`
+        FROM teamwork
+        WHERE 1=1
+         <if test="params != null">
+           <include refid="where_sql" /> 
+           </if>
+        AND `is_delete` = 0
+        order by tw_start_time desc
+        limit #{begin},#{pageSize}
+    </select>
+
+ <sql id="baseColumnList2">
+		t.id,t.tw_code,t.tw_title,t.tw_sence,t.tw_source,t.tw_content,t.tw_status
+		,t.tw_start_time,t.tw_start_time,t.tw_use_time
+		,t.is_delete
+	 </sql>
+   <select id="getListByUser" resultMap="resultMap" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT
+      <include refid="baseColumnList2" /> 
+      
+        FROM teamwork t inner join teamwork_user_manager m
+        on t.id= m.tw_teamwork_id
+        WHERE 1=1
+         <if test="params != null">
+           <include refid="where_sql" /> 
+             <if test="params.twUserAccount != null and params.twUserAccount != ''">
+		        AND m.tw_user_account = #{params.twUserAccount}
+		        </if>
+           </if>
+        AND t.is_delete = 0 and m.is_delete = 0
+        
+        order by tw_start_time desc
+    </select>
+    
+ <select id="listByEntityCount" resultType="Integer" parameterType="com.aspire.mirror.common.entity.Page">
+		select count(*) FROM  teamwork   
+	     where 1=1
+	      <if test="params != null">
+	      <include refid="where_sql" /> 
+	      </if>
+	      and is_delete=0
+	 </select>
+	 
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="String" resultMap="resultMap">
+        SELECT
+        `id`,
+        `tw_code`,
+        `tw_title`,
+        `tw_sence`,
+        `tw_source`,
+        `tw_content`,
+        `tw_status`,
+        `tw_start_time`,
+        `tw_end_time`,
+        `tw_use_time`,
+        `is_delete`
+        FROM teamwork
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkDTO">
+        INSERT INTO teamwork
+        (
+            `id`,
+            `tw_code`,
+            `tw_title`,
+            `tw_sence`,
+            `tw_source`,
+            `tw_content`,
+            `tw_status`,
+            `tw_start_time`,
+            `tw_end_time`,
+            `tw_use_time`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{twCode, jdbcType=VARCHAR},
+            #{twTitle, jdbcType=VARCHAR},
+            #{twSence, jdbcType=VARCHAR},
+            #{twSource, jdbcType=VARCHAR},
+            #{twContent, jdbcType=VARCHAR},
+            #{twStatus, jdbcType=VARCHAR},
+            #{twStartTime, jdbcType=DATE},
+            #{twEndTime, jdbcType=DATE},
+            #{twUseTime, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkDTO">
+        UPDATE teamwork 
+        <set>
+		   
+		   <if test="twTitle != null and  twTitle != ''  ">
+		   		tw_title=#{twTitle},
+		   </if>
+		   
+		   <if test="twSence != null and twSence != '' ">
+		   		tw_sence=#{twSence},
+		   </if>
+		   
+		   
+		   <if test="twSource != null and twSource != '' ">
+		   		tw_source=#{twSource},
+		   </if>
+		    <if test="twContent != null and twContent != '' ">
+		   		tw_content=#{twContent},
+		   </if>
+		    <if test="twSource != null and twSource != '' ">
+		   		tw_source=#{twSource},
+		   </if>
+		    <if test="twStatus != null and twStatus != '' ">
+		   		tw_status=#{twStatus},
+		   </if>
+		    <if test="twStartTime != null ">
+		   		tw_start_time=#{twStartTime},
+		   </if>
+		    <if test="twEndTime != null ">
+		   		tw_end_time=#{twEndTime},
+		   </if>
+		   
+		    <if test="twUseTime != null and twUseTime != '' ">
+		   		tw_use_time=#{twUseTime},
+		   </if>
+		   <if test="isDelete != null ">
+		   		is_delete=#{isDelete}
+		   </if>
+		  
+		  </set>
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.teamwork.entity.TeamworkDTO">
+        update teamwork
+        set is_delete = 1
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

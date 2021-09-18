@@ -1,0 +1,11 @@
+spring: 
+  application:
+    name: rbac
+#  cloud:
+#    config:
+#      enabled: true
+#      name: ms-rbac
+#      profile: ${ENV_TYPE:dev}
+#      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}
+#      label: ${GIT_BRANCH:master}
+#      failFast: true

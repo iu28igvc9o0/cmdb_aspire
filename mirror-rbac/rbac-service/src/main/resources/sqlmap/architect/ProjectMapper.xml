@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.migu.tsg.microservice.atomicservice.architect.dao.ProjectDao">
+
+	<resultMap id="ProjectResultMap"
+		type="com.migu.tsg.microservice.atomicservice.architect.dao.po.Project">
+		<id column="uuid" property="uuid" />
+		<result column="name" property="name" />
+		<result column="namespace" property="namespace" />
+		<result column="template" property="template" />
+		<result column="template_uuid" property="templateUuid" />
+		<result column="status" property="status" />
+		<result column="created_at" property="createdAt" />
+		<result column="updated_at" property="updatedAt" />
+	</resultMap>
+
+	<select id="listProjectByUuids" resultMap="ProjectResultMap">
+		SELECT
+		uuid, name, namespace, status, created_at, updated_at
+		FROM
+		architect_project
+		<if test="uuidList != null and uuidList.size > 0">
+			WHERE
+			uuid in
+			<foreach collection="uuidList" index="index" item="item"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="getProjectByUuid" resultMap="ProjectResultMap">
+		SELECT
+		uuid, name, namespace, status, created_at, updated_at
+		FROM
+		architect_project
+		WHERE
+		uuid = #{uuid}
+	</select>
+
+	<select id="countProjectByName" resultType="int">
+		SELECT
+		count(*)
+		FROM architect_project
+		WHERE namespace = #{namespace} and name = #{name}
+	</select>
+
+	<delete id="deleteProjectByUuid">
+		DELETE
+		FROM
+		architect_project
+		WHERE uuid = #{uuid}
+	</delete>
+	
+	<update id="updateProjectByUuid">
+		UPDATE architect_project
+		SET updated_at = now()
+		WHERE uuid = #{uuid} 
+	</update>
+
+	<insert id="insertProject">
+		INSERT INTO
+		architect_project(uuid, name, namespace, template, template_uuid,
+		status, created_at, updated_at)
+		VALUES(#{uuid}, #{name}, #{namespace},
+		#{template}, #{templateUuid},
+		#{status}, now(), now())
+	</insert>
+
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsConfigSql 描述: 数据访问语句 作者: qianch 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.AlertsConfigDao">
+
+	<resultMap type="com.aspire.mirror.alert.server.dao.po.AlertConfig"
+		id="baseResultMap">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="title" column="title" jdbcType="VARCHAR" />
+		<result property="description" column="description" jdbcType="VARCHAR" />
+		<result property="creator" column="creator" jdbcType="VARCHAR" />
+		<result property="crateTime" column="crate_time" jdbcType="TIMESTAMP" />
+		<result property="isStart" column="is_start" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.aspire.mirror.alert.server.dao.po.AlertConfigDetail"
+		id="alertConfigDetailResultMap">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="alertConfigId" column="alert_config_id"
+			jdbcType="VARCHAR" />
+		<result property="targetId" column="target_id" jdbcType="VARCHAR" />
+		<result property="monitType" column="monit_type" jdbcType="VARCHAR" />
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+	</resultMap>
+
+
+	<select id="findAlarmAutoCofig" resultMap="alertConfigDetailResultMap">
+		SELECT
+		acd.TARGET_ID,acd.MONIT_TYPE,acd.ALERT_LEVEL
+		FROM
+		alert_config ac
+		JOIN alert_config_detail acd on ac.id=acd.alert_config_id
+		where
+		ac.IS_START = '0'
+	</select>
+	
+	<!--<select id="selectAuotAlertData" resultType="java.util.HashMap"-->
+		<!--parameterType="java.util.HashMap">-->
+		<!--SELECT * FROM (SELECT-->
+		<!--a.r_alert_id,-->
+		<!--a.ALERT_ID,-->
+		<!--a.MONI_INDEX,-->
+		<!--a.biz_sys,-->
+		<!--a.DEVICE_IP,-->
+		<!--a.MONI_OBJECT,-->
+		<!--DATE_FORMAT(a.ALERT_START_TIME,'%Y-%m-%d %T') AS ALERT_START_TIME,-->
+		<!--a.CUR_MONI_VALUE,-->
+		<!--DATE_FORMAT(a.CUR_MONI_TIME,'%Y-%m-%d %T') AS-->
+		<!--CUR_MONI_TIME,-->
+		<!--CASE a.ALERT_LEVEL WHEN '2' THEN '3'-->
+		<!--WHEN '3' THEN '2' WHEN '4' THEN '1'-->
+		<!--WHEN '5' THEN '0' END ALERT_LEVEL,-->
+		<!--CASE a.ALERT_LEVEL WHEN '2' THEN '低' WHEN '3' THEN '中' WHEN '4' THEN-->
+		<!--'高'-->
+		<!--WHEN '5' THEN '严重' END ALERT_LEVEL_LABEL,-->
+		<!--a.ORDER_STATUS-->
+		<!--FROM-->
+		<!--alert_alerts a) t-->
+		<!--WHERE t.ALERT_LEVEL IN-->
+		<!--(-->
+		<!--<foreach collection="alertLevelArr" item="item" index="index"-->
+			<!--separator=",">-->
+			<!--#{item}-->
+		<!--</foreach>-->
+		<!--)-->
+		<!--AND t.r_ALERT_ID not in (SELECT ALARM_ID from auto_alert_record WHERE FLAG =-->
+		<!--'true')-->
+		<!---->
+		<!--</select>-->
+
+	<select id="insertAlertRecord" resultType="java.util.HashMap"
+		parameterType="java.util.HashMap">
+		INSERT INTO auto_alert_record
+		( `ALARM_ID`,
+		`FLAG`,
+		`STATUS`)
+		 VALUES
+		(#{alertId},
+		#{flag},
+		#{status})
+	</select>
+
+	<select id="insertAlarmConfig" resultType="java.util.HashMap"
+		parameterType="map">
+		insert into alert_config (`ID`, `TITLE`, `DESCRIPTION`,
+		`CREATOR`,
+		`CRATE_TIME`, `IS_START`)
+		values
+		(#{uuid},'告警自动派单',#{description},'admin',SYSDATE,'0')
+	</select>
+
+	<select id="insertAlarmConfigDetail" resultType="java.util.HashMap"
+		parameterType="map">
+		insert into alert_config_detail (`ID`,
+		`ALERT_CONFIG_ID`, `CONFIG_TYPE`,
+		`TARGET_ID`, `MONIT_TYPE`,
+		`ALERT_LEVEL`)
+		values
+		(replace(uuid(),'-',''),#{alert_config_id},#{config_type},#{target_id},#{moni_type},#{alert_level})
+	</select>
+
+	<delete id="deleteAlarmConfig" parameterType="map">
+		DELETE FROM
+		alert_config WHERE ID = #{id}
+	</delete>
+
+	<delete id="deleteAlarmConfigDetail" parameterType="map">
+		DELETE FROM alert_config_detail WHERE ALERT_CONFIG_ID = #{id}
+	</delete>
+</mapper>

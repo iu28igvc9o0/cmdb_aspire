@@ -1,0 +1,76 @@
+server:
+  port: 8761
+
+eureka:
+  instance:
+#    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}/template
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+druid:
+#  url: jdbc:mysql://10.12.70.38:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+#  username: root
+#  password: mirror@123
+#  useSSL: false
+   url: jdbc:oracle:thin:@10.1.203.50:1522:db12c
+   username: bmc_dev
+   password: bmc_dev_50
+   driver-class-name: oracle.jdbc.driver.OracleDriver
+
+mybatis:
+  mapperLocations:
+    - classpath*:oraclesqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+
+sample:
+  zipkin:
+    enabled: true
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: true
+    com.dy.springboot.server.mapper: DEBUG
+    com.aspire.mirror.template.server.dao: DEBUG
+    com.aspire.mirror.template: info
+  file: ./logs/template.log
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000
+
+#es
+elasticsearch:
+  host: 10.12.70.40
+  port: 9300
+  node.type: client
+  cluster.name: elasticsearch
+  index.name: mirror-theme
+
+##LTS-->Client端配置
+lts:
+  jobclient:
+    cluster-name: mirror_cluster
+    registry-address: zookeeper://10.12.70.39:2181
+    #registry-address: zookeeper://10.153.1.61:2181
+    node-group: mirror_jobclient
+    use-retry-client: true
+    bind-ip: 10.1.28.54
+    configs:
+      job:
+        fail:
+          store: mapdb

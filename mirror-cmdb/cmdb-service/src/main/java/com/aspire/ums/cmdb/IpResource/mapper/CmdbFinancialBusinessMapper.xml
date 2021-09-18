@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.IpResource.mapper.CmdbFinancialBusinessMapper">
+
+    <select id="getFinanciaList" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT
+        id,orgName AS `key`,orgName AS `value`
+        FROM
+        (
+            SELECT
+                tt.*,
+                `ref_tb_parent_id`.`orgName`AS  `parent_id_orgName_name`
+            FROM
+                (
+                    SELECT
+                        *
+                    FROM
+                        (
+                            SELECT
+                                `org_system`.`remark`,
+                                `org_system`.`parent_id`,
+                                `org_system`.`orgType`,
+                                `org_system`.`orgName`,
+                                `dict`.`insert_person`,
+                                `dict`.`dict_type`,
+                                `dict`.`module_id`,
+                                `dict`.`update_person`,
+                                `dict`.`insert_time`,
+                                `dict`.`id`,
+                                `dict`.`update_time`
+                            FROM
+                                cmdb_org_system `org_system`
+                            INNER JOIN cmdb_dict `dict` ON (
+                                `dict`.`id` = `org_system`.`id`
+                                AND `dict`.`is_delete` = 0
+                                AND `dict`.`module_id` = #{moduleId}
+                            )
+                            WHERE
+                                org_system.`is_delete` = 0
+                        ) t
+                    WHERE
+                        1 = 1
+                    AND parent_id != '0'
+                ) tt
+            LEFT JOIN cmdb_org_system ref_tb_parent_id ON (
+                `tt`.`parent_id` = `ref_tb_parent_id`.`id`
+                AND `ref_tb_parent_id`.`is_delete` = '0'
+            )
+        ) res  ORDER BY orgName
+    </select>
+
+    <select id="getFinanciaById" resultType="java.util.Map" parameterType="string">
+        SELECT ID AS id,FINANCIAL_NAME AS label FROM financial_business
+        WHERE 1=1
+        <if test="null != financiaId and '' != financiaId">
+            AND ID = #{financiaId}
+        </if>
+        ORDER BY FINANCIAL_NAME ASC
+    </select>
+
+<!--    <select id="getBusinessByFinanciaId" resultType="java.util.Map" parameterType="string">-->
+<!--        SELECT-->
+<!--            ba.ID AS id,-->
+<!--            ba.business_name AS label,-->
+<!--            ba.business_code AS code-->
+<!--        FROM-->
+<!--            financial_business fb-->
+<!--            INNER JOIN cmdb_financial_business_rel fbr ON fb.ID = fbr.FINANCIAL_BUSINESS_ID-->
+<!--            INNER JOIN cmdb_business_line ba ON fbr.CMDB_BUSINESS_ID = ba.id-->
+<!--        WHERE-->
+<!--	        fb.ID = #{financiaId} ORDER BY ba.business_name-->
+<!--    </select>-->
+
+    <select id="getBusinessByFinanciaId" resultType="java.util.Map" parameterType="string">
+        SELECT cbl.id AS `id`, cbl.business_code AS `key`, cbl.business_name AS `value`
+        FROM cmdb_business_system cbs
+        JOIN cmdb_business_line cbl ON cbl.id=cbs.bizSystem
+        WHERE cbs.department2 = #{financiaId} AND cbs.is_delete='0' AND cbl.is_delete='0'
+        ORDER BY cbl.business_name
+    </select>
+
+</mapper>

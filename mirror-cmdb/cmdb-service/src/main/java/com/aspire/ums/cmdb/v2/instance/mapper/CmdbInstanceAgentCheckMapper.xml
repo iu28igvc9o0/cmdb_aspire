@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.instance.mapper.CmdbInstanceAgentCheckMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.instance.payload.CmdbInstanceAgentCheck" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="idcType" property="idcType" jdbcType="VARCHAR" />
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+        <result column="sync_status" property="syncStatus" jdbcType="VARCHAR" />
+        <result column="scan_time" property="scanTime" jdbcType="TIMESTAMP" />
+        <result column="cmdb_update_time" property="cmdbUpdateTime" jdbcType="TIMESTAMP" />
+        <result column="insert_time" property="insertTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <!-- 基础属性 -->
+    <sql id="base_sql">
+        id, ip, idcType, device_type, device_name, sync_status, scan_time, cmdb_update_time, insert_time
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceAgentCheck">
+        insert into cmdb_instance_agent_check(<include refid="base_sql"/>)
+        values (
+          #{id, jdbcType=VARCHAR},
+          #{ip, jdbcType=VARCHAR},
+          #{idcType, jdbcType=VARCHAR},
+          #{deviceType, jdbcType=VARCHAR},
+          #{deviceName, jdbcType=VARCHAR},
+          #{syncStatus, jdbcType=VARCHAR},
+          #{scanTime, jdbcType=TIMESTAMP},
+          #{cmdbUpdateTime, jdbcType=TIMESTAMP},
+          NOW()
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceAgentCheck">
+        insert into cmdb_instance_agent_check(<include refid="base_sql"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.ip, jdbcType=VARCHAR},
+            #{item.idcType, jdbcType=VARCHAR},
+            #{item.deviceType, jdbcType=VARCHAR},
+            #{item.deviceName, jdbcType=VARCHAR},
+            #{item.syncStatus, jdbcType=VARCHAR},
+            #{item.scanTime, jdbcType=TIMESTAMP},
+            #{item.cmdbUpdateTime, jdbcType=TIMESTAMP},
+            NOW()
+            )
+        </foreach>
+    </insert>
+
+    <delete id="batchDelete" parameterType="java.lang.String">
+        delete from  cmdb_instance_agent_check
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="list" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceAgentCheckQuery" resultMap="resultMap">
+        select *
+        from cmdb_instance_agent_check
+        where 1=1 <include refid="where_sql"/>
+        order by idcType,ip
+        <if test="pageNo != null and pageSize != null">
+            limit #{pageNo},#{pageSize}
+        </if>
+
+    </select>
+
+    <select id="listByCount" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstanceAgentCheckQuery" resultType="java.lang.Integer">
+        select count(*)
+        from cmdb_instance_agent_check
+        where 1=1 <include refid="where_sql"/>
+    </select>
+
+    <sql id="where_sql">
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+        <if test="ip != null and ip != ''">
+            and ip like concat('%',#{ip},'%')
+        </if>
+        <if test="scanStartTime != null and scanEndTime != null">
+            and scan_time BETWEEN #{scanStartTime} and #{scanEndTime}
+        </if>
+    </sql>
+
+    <select id="getCIWithAgent" resultMap="resultMap">
+        SELECT
+            ip,
+            idc.idc_name idcType,
+            dt.dict_note device_name,
+            device_type,
+            update_time cmdb_update_time
+        FROM cmdb_instance a
+        LEFT JOIN cmdb_idc_manager idc ON idc.id = a.idcType
+        LEFT JOIN (SELECT id,dict_note FROM t_cfg_dict where col_name = 'device_type' and is_delete = '0') dt ON dt.id = a.device_type
+        WHERE idc.idc_name = #{idcType} and a.is_delete = '0' and a.is_install_agent = '11462'
+    </select>
+</mapper>

@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: zabbix-integrate
+  cloud:
+    config:
+      enabled: false
+#spring:
+#  application:
+#    name: zabbix-integrate
+#  cloud:
+#    config:
+#      name: ms-zabbix-integrate
+#      label: ${GIT_BRANCH:master}
+#      profile: ${ENV_TYPE:dev}
+#      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}
+#      failFast: true

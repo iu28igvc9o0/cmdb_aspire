@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IIndicationDAO">
+	
+	<resultMap type="com.aspire.mirror.entity.IndicationEntity" id="indicationMap">
+		<result property="indicationId" column="indication_id" jdbcType="TINYINT"/>
+		<result property="indicationOwner" column="indication_owner" jdbcType="VARCHAR"/>
+		<result property="indicationCatalog" column="indication_catalog" jdbcType="VARCHAR"/>
+		<result property="indicationCycle" column="indication_cycle" jdbcType="VARCHAR"/>
+		<result property="indicationGroup" column="indication_group" jdbcType="VARCHAR"/>
+		<result property="indicationUpdateFrequency" column="indication_update_frequency" jdbcType="VARCHAR"/>
+		<result property="indicationName" column="indication_name" jdbcType="VARCHAR"/>
+		<result property="indicationAlias" column="indication_alias" jdbcType="VARCHAR"/>
+		<result property="indicationOrder" column="indication_order" jdbcType="TINYINT"/>
+		<result property="indicationDisplay" column="indication_display" jdbcType="TINYINT"/>
+		<result property="indicationUnit" column="indication_unit" jdbcType="VARCHAR"/>
+		<association property="limitEntity" column="indication_id"
+					 select="com.aspire.mirror.dao.IIndicationLimitDao.getIndicationLimitByIndicationId">
+		</association>
+		<collection property="indicationItemList" column="indication_id"
+					ofType="com.aspire.mirror.entity.IndicationAllItemEntity"
+					select="com.aspire.mirror.dao.IIndicationItemDAO.getIndicationAllItemsByIndicationId">
+		</collection>
+	</resultMap>
+	
+	<select id="getAllIndication" resultMap="indicationMap" >
+		SELECT * FROM mirror_indication_new
+	</select>
+
+	<select id="getIndicationByIndicationId" resultMap="indicationMap" >
+		SELECT * FROM mirror_indication_new where indication_id=#{indicationId}
+	</select>
+
+	<select id="getIndicationListByOwnerAndCatalogAndFrequencyAndGroup" resultMap="indicationMap" >
+		SELECT * FROM mirror_indication_new where indication_owner = #{indicationOwner}
+		<if test="catalogBox!=null and catalogBox!=''">
+			and indication_catalog=#{catalogBox}
+		</if>
+		<if test="indicationFrequency!=null and indicationFrequency!=''">
+			and indication_update_frequency=#{indicationFrequency}
+		</if>
+		<if test="indicationGroup!=null and indicationGroup!=''">
+			and indication_group=#{indicationGroup}
+		</if>
+		<if test="indicationPosition!=null and indicationPosition!=''">
+			and indication_display=#{indicationPosition}
+		</if>
+		order by indication_group desc, indication_order asc
+	</select>
+</mapper>

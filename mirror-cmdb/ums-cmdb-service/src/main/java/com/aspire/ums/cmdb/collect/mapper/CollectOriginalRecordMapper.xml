@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.collect.mapper.CollectOriginalRecordMapper" >
+    <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.collect.entity.CollectOriginalRecordEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="collectId" property="collectId" jdbcType="VARCHAR" />
+        <result column="instanceId" property="instanceId" jdbcType="VARCHAR" />
+        <result column="taskId" property="taskId" jdbcType="VARCHAR" />
+        <result column="operateType" property="operateType" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR"/>
+        <result column="collectTime" property="collectTime" jdbcType="TIMESTAMP" />
+        <result column="collectStatus" property="collectStatus" jdbcType="VARCHAR" />
+        <result column="collectResult" property="collectResult" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getCollectRecordsByCollectId" resultType="java.util.LinkedHashMap"  >
+      SELECT
+        ccor.id, collectId, instanceId, cin.name instanceName, cf.`name` formName, taskId,operateType,operator,DATE_FORMAT(collectTime, '%Y-%m-%d %H:%i:%s') collectTime,collectStatus,collectResult
+      FROM cmdb_collect_original_record ccor
+      inner join cmdb_instance cin on ccor.instanceId = cin.id
+      inner join cmdb_collect cc on cc.id = ccor.collectId
+      inner join cmdb_form cf on cf.id = cc.formId
+      where collectId = #{collectId}
+      order by collectTime desc
+       <if test="pageNo != null and pageSize != null">
+           limit ${pageNo}*${pageSize}, (${pageNo} + 1) * ${pageSize}
+       </if>
+    </select>
+
+    <delete id="deleteVOByCollectId" parameterType="java.lang.String">
+        delete from cmdb_collect_original_record where collectId = #{collectId}
+    </delete>
+
+    <insert id="insertVO" parameterType="com.aspire.ums.cmdb.collect.entity.CollectOriginalRecordEntity">
+        INSERT INTO `cmdb_collect_original_record` (`id`, `collectId`, `instanceId`, `taskId`, `operateType`, `operator`, `collectTime`, `collectStatus`, `collectResult`)
+        VALUES (
+        #{id,jdbcType=VARCHAR}, #{collectId,jdbcType=VARCHAR}, #{instanceId,jdbcType=VARCHAR}, #{taskId,jdbcType=VARCHAR}, #{operateType,jdbcType=VARCHAR},
+        #{operator,jdbcType=VARCHAR}, #{collectTime,jdbcType=TIMESTAMP}, #{collectStatus,jdbcType=VARCHAR}, #{collectResult,jdbcType=VARCHAR});
+    </insert>
+
+    <select id="getCollectInfoByTaskId" resultType="java.util.HashMap"  >
+        select cor.*, cc.formId formId, cf.code formCode from cmdb_collect_original_record cor
+        inner join cmdb_collect cc on cor.collectId = cc.id
+        inner join cmdb_form cf on cf.id = cc.formId
+        where cor.taskId=#{taskId}
+    </select>
+
+    <update id="updateVOByTaskId" parameterType="java.util.HashMap">
+        update cmdb_collect_original_record set collectStatus=#{collectStatus}, collectResult=#{collectResult}
+        where taskId=#{taskId}
+        <if test="instanceId != null and instanceId != ''">
+            and instanceId = #{instanceId}
+        </if>
+        <if test="collectId != null and collectId != ''">
+            and collectId = #{collectId}
+        </if>
+    </update>
+</mapper>

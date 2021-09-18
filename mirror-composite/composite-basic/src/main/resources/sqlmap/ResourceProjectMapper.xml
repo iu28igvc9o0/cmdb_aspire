@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.composite.dao.ResourceProjectDao">
+	<resultMap id="CompositeResource" type="com.migu.tsg.microservice.atomicservice.composite.dao.po.ResourceProject">
+		<result column="project_uuid" property="projectUuid" jdbcType="VARCHAR" />
+		<result column="resource_uuid" property="resourceUuid" jdbcType="VARCHAR" />
+		<result column="belongs_to_project" property="belongsToProject" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="resource_project_columns_join">
+		project_uuid, resource_uuid, belongs_to_project
+	</sql>
+	<delete id="removeResourceProjectByProjectUuid" parameterType="map">
+		delete from resource_project  where 1=1 
+		<if test="projectUuid != null">
+		and project_uuid = #{projectUuid} 
+		</if>
+		<if test="resourceUuid != null">
+		and resource_uuid = #{resourceUuid}
+		</if>
+	</delete>
+	<insert id="insertResourceProject">
+		insert into resource_project(<include refid="resource_project_columns_join" />)
+		values 
+		<foreach collection ="array" item="resProj" index= "index" separator =",">
+			(#{resProj.projectUuid},#{resProj.resourceUuid},#{resProj.belongsToProject})
+		</foreach>
+	</insert>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.deviceStatistic.mapper.ConfigureChangeMapper">
+	<resultMap id="resultMap" type="com.aspire.ums.cmdb.deviceStatistic.payload.ConfigureChangeResp" >
+		<result column="idcType" property="idcType" jdbcType="VARCHAR" />
+		<result column="department1" property="department1" jdbcType="VARCHAR" />
+		<result column="department2" property="department2" jdbcType="VARCHAR" />
+		<result column="bizSystem" property="bizSystem" jdbcType="VARCHAR" />
+		<result column="deviceClass" property="deviceClass" jdbcType="VARCHAR" />
+		<result column="deviceType" property="deviceType" jdbcType="VARCHAR" />
+		<result column="number" property="number" jdbcType="TINYINT" />
+	</resultMap>
+	<!-- 配置项变更报表-->
+	<select id="selectConfigureChange" parameterType="map" resultType="map" >
+		SELECT
+			idcType,
+			department1,
+			department2,
+			bizSystem,
+			device_class deviceClass,
+			device_type deviceType,
+			COUNT(*) number
+		FROM
+		`cmdb_instance`
+		JOIN (
+			select DISTINCT instance_id from cmdb_collect_approval where approval_status = '1'
+		<if test="startDate != null and  startDate != '' ">
+    		and operator_time &gt;= '${startDate}'
+    	</if>
+    	<if test="endDate != null and  endDate != '' ">
+    		and operator_time &lt;= '${endDate}'
+    	</if>
+		) cca
+		ON cmdb_instance.id = cca.`instance_id`
+		where cmdb_instance.is_delete='0'
+	    <if test="idcType != null and  idcType != '' ">
+    		and idcType = #{idcType}
+    	</if>
+    	<if test="department1 != null and  department1 != '' ">
+    		and department1 = #{department1}
+    	</if>
+    	<if test="department2 != null and  department2 != '' ">
+    		and department2 = #{department2}
+    	</if>
+    	<if test="bizSystem != null and  bizSystem != '' ">
+    		and bizSystem = #{bizSystem}
+    	</if>
+    	<if test="deviceClass != null and  deviceClass != '' ">
+    		and device_class = #{deviceClass}
+    	</if>
+    	<if test="deviceType != null and  deviceType != '' ">
+    		and device_type = #{deviceType}
+    	</if>
+    	<include refid="Page_List_Params"></include>
+    	GROUP BY idcType,department1, department2,bizSystem,device_class,device_type
+		order by idcType is null or idcType = '', idcType,
+		bizSystem is null or bizSystem = '', bizSystem
+	</select>
+
+	<!-- 数据粒度权限过滤 -->
+	<sql id="Page_List_Params">
+		<if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">
+			and device_type in (
+			<foreach collection="authDeviceTypeList" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>)
+		</if>
+		<if test="authBizSystemIdList != null and authBizSystemIdList.size > 0">
+			and bizSystem in (
+			<foreach collection="authBizSystemIdList" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>)
+		</if>
+		<if test="authIdcIdList != null and authIdcIdList.size > 0">
+			and idcType in (
+			<foreach collection="authIdcIdList" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>)
+		</if>
+	</sql>
+</mapper>

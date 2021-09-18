@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsIndexPageDao">
+    
+    <select id="selectHisSummary" resultType="map">
+        SELECT
+        SUM(a.count) codeCount,
+        SUM(if(a.alertLevel='2', a.count, 0)) lCount,
+        SUM(if(a.alertLevel='3', a.count, 0)) mCount,
+        SUM(if(a.alertLevel='4', a.count, 0)) hCount,
+        SUM(if(a.alertLevel='5', a.count, 0)) sCount
+        FROM (select alert_level as alertLevel, COUNT(*) as count
+            from alert_alerts_his
+            WHERE 1=1
+            <if test="idcType !=null and idcType != ''">
+                AND idc_type = #{idcType}
+            </if>
+		<if test="startTime !=null and endTime !=null">
+			AND alert_end_time BETWEEN #{startTime} AND #{endTime}
+		</if>
+            group by alert_level) a
+    </select>
+
+    <select id="selectTrendBySection" parameterType="Map"
+            resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticTrend">
+        SELECT a.alert_level AS level, section, COUNT(1) AS alertNum
+        FROM
+        (
+          SELECT alert_id, alert_level,
+        <choose>
+            <when test="interval == 'day'">
+                DATE_FORMAT(cur_moni_time,'%Y-%m-%d') section
+            </when>
+            <when test="interval == 'week'">
+                date_format(subdate(cur_moni_time,weekday(cur_moni_time)),'%Y-%m-%d') section
+            </when>
+            <when test="interval == 'month'">
+                DATE_FORMAT(cur_moni_time,'%Y-%m') section
+            </when>
+            <when test="interval == 'season'">
+                CONCAT(DATE_FORMAT(cur_moni_time, '%Y'),FLOOR((DATE_FORMAT(cur_moni_time, '%m')+2)/3)) section
+            </when>
+            <when test="interval == 'year'">
+                DATE_FORMAT(cur_moni_time,'%Y') section
+            </when>
+        </choose>
+          FROM ( select cur_moni_time,alert_level, alert_id from
+          alert_alerts
+          WHERE operate_status in ('0','1','3') and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+          <if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="deviceClass !=null and deviceClass != ''">
+			AND device_class = #{deviceClass}
+		</if>
+		<if test="deviceType !=null and deviceType != ''">
+			AND device_type = #{deviceType}
+		</if>
+		<if test="alertLevel !=null and alertLevel != ''">
+			AND alert_level = #{alertLevel}
+		</if>
+		<if test="source !=null and source != ''">
+			AND source = #{source}
+		</if>
+		union all
+		select cur_moni_time,alert_level, alert_id from
+          alert_alerts_his
+          WHERE operate_status in ('0','1','3') and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+          <if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="deviceClass !=null and deviceClass != ''">
+			AND device_class = #{deviceClass}
+		</if>
+		<if test="deviceType !=null and deviceType != ''">
+			AND device_type = #{deviceType}
+		</if>
+		<if test="alertLevel !=null and alertLevel != ''">
+			AND alert_level = #{alertLevel}
+		</if>
+		<if test="source !=null and source != ''">
+			AND source = #{source}
+		</if>
+		)aa
+        ) a
+        GROUP BY a.alert_level, section
+        ORDER BY section ASC
+    </select>
+
+    <select id="selectAlertsClassify" parameterType="java.util.HashMap" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticClassify">
+          SELECT a.device_class AS deviceType, COUNT(a.alert_id) AS alertNum
+          FROM (select device_class,alert_id from alert_alerts t
+				  WHERE cur_moni_time >= #{params.beginDate} and cur_moni_time <![CDATA[<]]> date_add(#{params.endDate}, interval 1 day)
+				   <if test="params.idcType !=null and params.idcType != ''">
+						AND idc_type = #{params.idcType}
+				   </if>
+					<include refid="resFilterMapSql" />
+				union all
+				select device_class,alert_id from alert_alerts_his t
+				WHERE cur_moni_time >= #{params.beginDate} and cur_moni_time <![CDATA[<]]> date_add(#{params.endDate}, interval 1 day)
+				   <if test="params.idcType !=null and params.idcType != ''">
+						AND idc_type = #{params.idcType}
+				   </if>
+					<include refid="resFilterMapSql" />
+				)a
+          GROUP BY a.device_class
+          order by alertNum desc
+    </select>
+	<sql id="resFilterMapSql" >
+		<if test="resFilterMap != null and resFilterMap.device_name != null and resFilterMap.device_name.size > 0" >
+			and t.device_ip in (
+			<foreach collection="resFilterMap.device_name" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+		<if test="resFilterMap != null and resFilterMap.idcType_name != null and resFilterMap.idcType_name.size > 0" >
+			and t.idc_type in (
+			<foreach collection="resFilterMap.idcType_name" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+		<if test="resFilterMap != null and resFilterMap.room_name != null and resFilterMap.room_name.size > 0" >
+			and t.source_room in (
+			<foreach collection="resFilterMap.room_name" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+		<if test="resFilterMap != null and resFilterMap.device_type_name != null and resFilterMap.device_type_name.size > 0">
+			and t.device_type in (
+			<foreach collection="resFilterMap.device_type_name" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+		<if test="resFilterMap != null and resFilterMap.bizSystem_name != null and resFilterMap.bizSystem_name.size > 0">
+			and t.biz_sys in (
+			<foreach collection="resFilterMap.bizSystem_name" item="item" index="index" separator=",">
+				#{item, jdbcType=VARCHAR}
+			</foreach>
+			)
+		</if>
+	</sql>
+
+<select id="selectSummeryByOperateCode" resultType="map">
+	SELECT
+	(CASE a.operateStatus WHEN '0' THEN 'toBeConfirmed' WHEN '1' THEN 'confirmed'
+	WHEN '2' THEN 'toBeResolved' WHEN '3' THEN 'resolved' END) operateStatus,
+	SUM(a.count) codeCount,
+	SUM(if(a.alertLevel='2', a.count, 0)) lCount,
+	SUM(if(a.alertLevel='3', a.count, 0)) mCount,
+	SUM(if(a.alertLevel='4', a.count, 0)) hCount,
+	SUM(if(a.alertLevel='5', a.count, 0)) sCount
+	FROM (SELECT t.alert_level AS alertLevel,t.operate_status AS operateStatus, COUNT(*) AS count
+		from alert_alerts t
+		WHERE 1=1
+		<if test="code !=null">
+			AND t.operate_status = #{code}
+		</if>
+		<if test="idcType !=null and idcType != ''">
+			AND t.idc_type = #{idcType}
+		</if>
+	<if test="startTime !=null and endTime !=null">
+		AND t.cur_moni_time BETWEEN #{startTime} AND #{endTime}
+	</if>
+		GROUP BY t.alert_level, t.operate_status) a
+	GROUP BY a.operateStatus
+	</select>
+	
+	<select id="selectByDateRange" resultType="com.aspire.mirror.alert.server.dao.alert.po.AlertsStatisticOverview">
+		select t.alert_level AS alertLevel, COUNT(*) AS count
+		from 
+		(select alert_level from
+		alert_alerts 
+		where 1=1
+		<if test="beginDate != null  and endDate != null">
+			 and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+		</if>
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		union all
+		select alert_level from
+		alert_alerts_his
+		where 1=1
+		<if test="beginDate != null  and endDate != null">
+			 and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> date_add(#{endDate}, interval 1 day)
+		</if>
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		)t
+		group by t.alert_level
+	</select>
+	
+	<select id="selectAlertsTop10" resultType="com.aspire.mirror.alert.server.vo.alert.AlertsTop10Vo">
+		select  colName, COUNT(*) AS count
+		from 
+		(select ${colName} colName from
+		alert_alerts 
+		<where>
+			operate_status in ('0','1','3')
+			<if test="beginDate != null  and endDate != null">
+				and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> #{endDate}
+			</if>
+			<if test="idcType !=null and idcType != ''">
+				AND idc_type = #{idcType}
+			</if>
+			<if test="deviceType !=null and deviceType != ''">
+				AND device_type = #{deviceType}
+			</if>
+			<if test="deviceClass !=null and deviceClass != ''">
+				AND device_class = #{deviceClass}
+			</if>
+			<if test="alertLevel !=null and alertLevel != ''">
+				AND alert_level = #{alertLevel}
+			</if>
+		</where>
+		union all
+		select ${colName} colName from
+		alert_alerts_his 
+		<where>
+			operate_status in ('0','1','3')
+			<if test="beginDate != null  and endDate != null">
+				and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> #{endDate}
+			</if>
+			<if test="idcType !=null and idcType != ''">
+				AND idc_type = #{idcType}
+			</if>
+			<if test="deviceType !=null and deviceType != ''">
+				AND device_type = #{deviceType}
+			</if>
+			<if test="deviceClass !=null and deviceClass != ''">
+				AND device_class = #{deviceClass}
+			</if>
+			<if test="alertLevel !=null and alertLevel != ''">
+				AND alert_level = #{alertLevel}
+			</if>
+		</where>
+		)a
+		where a.colName is not null and trim(a.colName) !=''
+		group by colName
+		ORDER BY count desc
+		<if test="size != null">
+			 LIMIT #{size}
+		</if>
+	</select>
+	
+	<select id="selectAlertsMoniIndexCount" resultType="int">
+		select  COUNT(*) AS count from 
+		(select alert_id from
+		alert_alerts
+		where operate_status in ('0','1','3')
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="deviceType !=null and deviceType != ''">
+			AND device_type = #{deviceType}
+		</if>
+		<if test="deviceClass !=null and deviceClass != ''">
+			AND device_class = #{deviceClass}
+		</if>
+		<if test="alertLevel !=null and alertLevel != ''">
+			AND alert_level = #{alertLevel}
+		</if>
+		<if test="beginDate != null  and endDate != null">
+			 and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> #{endDate}
+		</if>
+		union all
+		select alert_id from
+		alert_alerts_his
+		where operate_status in ('0','1','3')
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="deviceType !=null and deviceType != ''">
+			AND device_type = #{deviceType}
+		</if>
+		<if test="deviceClass !=null and deviceClass != ''">
+			AND device_class = #{deviceClass}
+		</if>
+		<if test="alertLevel !=null and alertLevel != ''">
+			AND alert_level = #{alertLevel}
+		</if>
+		<if test="beginDate != null  and endDate != null">
+			 and cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> #{endDate}
+		</if>
+		)a
+	</select>
+	
+	<resultMap type="com.aspire.mirror.alert.server.dao.alert.po.Alerts"
+		id="baseResultMap">
+		<result property="alertId" column="alert_id" jdbcType="VARCHAR" />
+		<result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR" />
+		<result property="eventId" column="event_id" jdbcType="VARCHAR" />
+		<result property="actionId" column="action_id" jdbcType="VARCHAR" />
+		<result property="deviceId" column="device_id" jdbcType="VARCHAR" />
+		<result property="bizSys" column="biz_sys" jdbcType="VARCHAR" />
+		<result property="moniIndex" column="moni_index" jdbcType="VARCHAR" />
+		<result property="moniObject" column="moni_object" jdbcType="VARCHAR" />
+		<result property="curMoniValue" column="cur_moni_value"
+			jdbcType="VARCHAR" />
+		<result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP" />
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+		<result property="itemId" column="item_id" jdbcType="VARCHAR" />
+		<result property="remark" column="remark" jdbcType="VARCHAR" />
+		<result property="orderStatus" column="order_status" jdbcType="VARCHAR" />
+		<result property="operateStatus" column="operate_status" jdbcType="INTEGER" />
+		<result property="source" column="source" jdbcType="VARCHAR" />
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+		<result property="sourceRoom" column="source_room" jdbcType="VARCHAR" />
+		<result property="objectId" column="object_id" jdbcType="VARCHAR" />
+		<result property="objectType" column="object_type" jdbcType="VARCHAR" />
+		<result property="region" column="region" jdbcType="VARCHAR" />
+		<result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+		<result property="deviceClass" column="device_class" jdbcType="VARCHAR" />
+		<result property="orderId" column="order_id" jdbcType="VARCHAR" />
+		<result property="orderType" column="order_type" jdbcType="VARCHAR" />
+		<result property="alertStartTime" column="alert_start_time"
+			jdbcType="TIMESTAMP" />
+		<result property="prefix" column="prefix" jdbcType="VARCHAR" />
+		<result property="alertCount" column="alert_count" jdbcType="INTEGER" />
+		<result property="deviceType" column="device_type" jdbcType="VARCHAR" />
+		<result property="deviceMfrs" column="device_mfrs" jdbcType="VARCHAR" />
+		<result property="deviceModel" column="device_model" jdbcType="VARCHAR" />
+		<result property="hostName" column="host_name" jdbcType="VARCHAR" />
+		<result property="podName" column="pod_name" jdbcType="VARCHAR" />
+		<result property="projectName" column="project_name" jdbcType="VARCHAR" />
+		<result property="execUser" column="exec_user" jdbcType="VARCHAR" />
+		<result property="execTime" column="exec_time" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<select id="selectLatest"  resultMap="baseResultMap">
+		select *
+		from alert_alerts
+		where alert_level in ('5','4')
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		order by cur_moni_time desc
+		<if test="limit !=null">
+			limit #{limit}
+		</if>
+	</select>
+	
+	<select id="getAlertsCount" resultType="int">
+		select count(1) from alert_alerts
+		 <where>
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		</where>
+	</select>
+	<select id="getAlertsHisCount" resultType="int">
+		select count(1) from alert_alerts_his
+		 <where>
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		</where>
+	</select>
+	<select id="getLevelCounts" resultType="map">
+		select count(1) count,alert_level from alert_alerts
+		 <where>
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		</where>
+		group by alert_level
+	</select>
+	<select id="getDeviceLevelCounts" resultType="map">
+	select device_class  as device,alert_level,sum(count) num from(
+		select device_class,alert_level,count(1) count from alert_alerts
+		 <where>
+            <if test="deviceList != null and deviceList.size() > 0">
+                AND device_class IN
+                <foreach collection="deviceList" index="index" item="code"
+                         open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+        </where>
+		group by device_class,alert_level
+		union all
+		select device_class,alert_level,count(1) count from alert_alerts_his
+		 <where>
+            <if test="deviceList != null and deviceList.size() > 0">
+                AND device_class IN
+                <foreach collection="deviceList" index="index" item="code"
+                         open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+        </where>
+		group by device_class,alert_level
+		)a 
+		group by device_class,alert_level
+		order by device_class
+	</select>
+	
+	
+	<select id="getDeviceTypeLevelCounts" resultType="map">
+	select device_type as device,alert_level,sum(count) num from(
+		select device_type,alert_level,count(1) count from alert_alerts
+		 <where>
+            <if test="deviceList != null and deviceList.size() > 0">
+                AND device_type IN
+                <foreach collection="deviceList" index="index" item="code"
+                         open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+        </where>
+		group by device_type,alert_level
+		union all
+		select device_type,alert_level,count(1) count from alert_alerts_his
+		 <where>
+            <if test="deviceList != null and deviceList.size() > 0">
+                AND device_type IN
+                <foreach collection="deviceList" index="index" item="code"
+                         open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+        </where>
+		group by device_type,alert_level
+		)a 
+		group by device_type,alert_level
+		order by device_type
+	</select>
+	
+	
+	<select id="getLevelCountsBySystem" resultType="map">
+		SELECT count(*) count,alert_level,idc_type,biz_sys from  alert_alerts 
+		where 
+		cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> #{endDate}
+		group by idc_type,biz_sys,alert_level
+		UNION ALL
+		SELECT count(*)count,alert_level,idc_type,biz_sys from  alert_alerts_his 
+		where 
+		cur_moni_time >= #{beginDate} and cur_moni_time <![CDATA[<]]> #{endDate}
+		group by idc_type,biz_sys,alert_level
+	</select>
+	
+	
+	<select id="selectIdcTypeAlertsByOperateStatus" resultType="map">
+		select idc_type col,count(case when operate_status=0 then operate_status end) todoCount
+		,count(case when operate_status=1 then operate_status end)count
+		
+		 from alert_alerts
+		where  idc_type <![CDATA[<>]]> '' and  alert_level in ('5','4') and
+			 cur_moni_time >= #{startTime} and cur_moni_time <![CDATA[<]]> #{endTime}
+			<if test="operateStatus !=null">
+			AND operate_status = #{operateStatus}
+		</if>
+		group by idc_type
+		
+	</select>
+	
+	<select id="selectDeviceTypeAlertsByOperateStatus" resultType="map">
+		select device_class col,count(case when operate_status=0 then operate_status end) todoCount
+		,count(case when operate_status=1 then operate_status end)count
+		 from alert_alerts
+		where device_class <![CDATA[<>]]> ''
+		  and	 cur_moni_time >= #{startTime} and cur_moni_time <![CDATA[<]]> #{endTime}
+			<if test="operateStatus !=null">
+			AND operate_status = #{operateStatus}
+		</if>
+		group by device_class
+	</select>
+
+	<select id="selectIdcTypeAlertsByOperateStatusOrder" resultType="map">
+		select idc_type col,count(case when o.status=0 then o.status end) todoCount
+		,count(case when o.status=1 then o.status end)count
+
+		from alert_alerts a JOIN alert_order_handle o on a.order_id=o.order_id
+		where  idc_type <![CDATA[<>]]> ''
+		<if test="startTime !=null and endTime !=null">
+			and
+			cur_moni_time >= #{startTime} and cur_moni_time <![CDATA[<]]> #{endTime}
+		</if>
+		and a.operate_status in ('0', '1')
+		<choose>
+			<when test="operateStatus !=null">
+				AND o.status = #{operateStatus}
+			</when>
+			<otherwise>
+				AND o.status in ('0','1')
+			</otherwise>
+		</choose>
+		group by idc_type
+
+	</select>
+
+	<select id="selectDeviceTypeAlertsByOperateStatusOrder" resultType="map">
+		select device_class col,count(case when o.status=0 then o.status end) todoCount
+		,count(case when o.status=1 then o.status end)count
+		from alert_alerts a JOIN alert_order_handle o on a.order_id=o.order_id
+		where device_class <![CDATA[<>]]> ''
+		<if test="startTime !=null and endTime !=null">
+			and	 cur_moni_time >= #{startTime} and cur_moni_time <![CDATA[<]]> #{endTime}
+		</if>
+		and a.operate_status in ('0', '1')
+		<choose>
+			<when test="operateStatus !=null">
+				AND o.status = #{operateStatus}
+			</when>
+			<otherwise>
+				AND o.status in ('0','1')
+			</otherwise>
+		</choose>
+		group by device_class
+	</select>
+	
+	<select id="selectLatestAlertsByOperateStatus" resultMap="baseResultMap">
+		select *
+		from alert_alerts
+		where alert_level in ('5','4','3') and
+		cur_moni_time >= #{startTime} and cur_moni_time <![CDATA[<]]> #{endTime}
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="operateStatus !=null">
+			AND operate_status = #{operateStatus}
+		</if>
+		order by cur_moni_time desc
+		<if test="limit !=null">
+			limit #{limit}
+		</if>
+	</select>
+
+	<select id="selectLatestOrderByOperateStatus" resultMap="baseResultMap">
+		select a.*, o.exec_user, o.exec_time
+		from alert_alerts a JOIN alert_order_handle o on a.order_id=o.order_id
+		where alert_level in ('5','4','3')
+		<if test="startTime !=null and endTime !=null">
+			and cur_moni_time >= #{startTime} and cur_moni_time <![CDATA[<]]> #{endTime}
+		</if>
+		and a.operate_status in ('0', '1')
+		<if test="idcType !=null and idcType != ''">
+			AND idc_type = #{idcType}
+		</if>
+		<if test="operateStatus !=null">
+			AND o.status = #{operateStatus}
+		</if>
+		order by cur_moni_time desc
+		<if test="limit !=null">
+			limit #{limit}
+		</if>
+	</select>
+
+	<select id="alertIdcDoHours" parameterType="java.lang.String" resultType="java.util.Map">
+		select idc_type, AVG(time) / 3600 as hours from
+		(select idc_type, UNIX_TIMESTAMP() - UNIX_TIMESTAMP(alert_start_time) time from alert_alerts
+		<where>
+			<if test="alertLevel != null and alertLevel != ''">
+				alert_level=#{alertLevel}
+			</if>
+			and operate_status in ('0', '1')
+			and alert_start_time > date_sub(NOW(),interval 7 day) and idc_type is not null
+		</where>
+		UNION ALL
+		select idc_type, UNIX_TIMESTAMP(alert_end_time) - UNIX_TIMESTAMP(alert_start_time) time from alert_alerts_his
+		<where>
+			<if test="alertLevel != null and alertLevel != ''">
+				alert_level=#{alertLevel}
+			</if>
+			and operate_status in ('0', '1')
+			and alert_start_time > date_sub(NOW(),interval 7 day) and idc_type is not null
+		</where> )
+		tmp GROUP BY tmp.idc_type
+	</select>
+</mapper>

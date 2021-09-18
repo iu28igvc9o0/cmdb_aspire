@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.collect.mapper.CmdbCollectApprovalMapper" >
+    <!-- 定义返回结果结果集 -->
+
+    <resultMap id="resultInstnceMap" type="com.aspire.ums.cmdb.instance.payload.CmdbInstance" >
+        <result column="instance_id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="module_partition_id" property="modulePartitionId" jdbcType="TINYINT" />
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+        <result column="device_class" property="deviceClass" jdbcType="VARCHAR" />
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+        <result column="device_class_3" property="deviceClass3" jdbcType="VARCHAR" />
+        <result column="device_mfrs" property="deviceMfrs" jdbcType="VARCHAR" />
+        <result column="device_status" property="deviceStatus" jdbcType="VARCHAR" />
+        <result column="device_os_type" property="deviceOsType" jdbcType="VARCHAR" />
+        <result column="os_detail_version" property="osDetailVersion" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="is_assigned" property="isAssigned" jdbcType="VARCHAR" />
+        <result column="idcType" property="idcType" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="pod_name" property="podName" jdbcType="VARCHAR" />
+        <result column="roomId" property="roomId" jdbcType="VARCHAR" />
+        <result column="idc_cabinet" property="idcCabinet" jdbcType="VARCHAR" />
+        <result column="bizSystem" property="bizSystem" jdbcType="VARCHAR" />
+        <result column="is_ansible" property="isAnsible" jdbcType="VARCHAR" />
+        <result column="is_pool" property="isPool" jdbcType="VARCHAR" />
+        <result column="dept_operation" property="deptOperation" jdbcType="VARCHAR" />
+        <result column="ops" property="ops" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <result column="insert_person" property="insertPerson" jdbcType="VARCHAR" />
+        <result column="insert_time" property="insertTime" jdbcType="VARCHAR" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="owner_module_id" property="ownerModuleId" jdbcType="VARCHAR" />
+        <result column="filed_name" property="filedName" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="old_value" property="oldValue" jdbcType="VARCHAR" />
+        <result column="curr_value" property="currValue" jdbcType="VARCHAR" />
+        <result column="approval_status" property="approvalStatus" jdbcType="TINYINT" />
+        <result column="approval_type" property="approvalType" jdbcType="VARCHAR" />
+        <result column="approval_user" property="approvalUser" jdbcType="VARCHAR" />
+        <result column="approval_time" property="approvalTime" jdbcType="TIMESTAMP" />
+        <result column="approval_describe" property="approvalDescribe" jdbcType="VARCHAR" />
+        <result column="operater_type" property="operaterType" jdbcType="VARCHAR" />
+        <result column="operator" property="operator" jdbcType="VARCHAR" />
+        <result column="operator_time" property="operatorTime" jdbcType="TIMESTAMP" />
+        <result column="resource_data" property="resourceData" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="baseColumn">
+        `id`,
+        `module_id`,
+        `owner_module_id`,
+        `instance_id`,
+        `code_id`,
+        `old_value`,
+        `curr_value`,
+        `approval_status`,
+        `approval_type`,
+        `approval_user`,
+        `approval_time`,
+        `approval_describe`,
+        `operater_type`,
+        `operator`,
+        `operator_time`,
+        `resource_data`
+    </sql>
+
+    <!-- Get one 查询 -->
+    <select id="getInstanceById" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstance" resultMap="resultInstnceMap">
+        SELECT
+        *
+        FROM `cmdb_instance`
+        WHERE `id` = #{id} and is_delete='0'
+    </select>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_collect_approval
+        WHERE approval_status = '0'
+        order by `operator_time` desc
+<!--        limit ${limitStart}, ${limitEnd}-->
+
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval">
+        INSERT INTO cmdb_collect_approval ( `id`,
+        `instance_id`,
+        `module_id`,
+        `owner_module_id`,
+        `code_id`,
+        `old_value`,
+        `curr_value`,
+        `approval_status`,
+        `approval_type`,
+        `approval_user`,
+        `approval_time`,
+        `approval_describe`,
+        `operater_type`,
+        `operator`,
+        `operator_time`,`resource_data`) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.instanceId, jdbcType=VARCHAR},
+            #{item.moduleId, jdbcType=VARCHAR},
+            #{item.ownerModuleId, jdbcType=VARCHAR},
+            #{item.codeId, jdbcType=VARCHAR},
+            #{item.oldValue, jdbcType=VARCHAR},
+            #{item.currValue, jdbcType=VARCHAR},
+            #{item.approvalStatus, jdbcType=TINYINT},
+            #{item.approvalType, jdbcType=VARCHAR},
+            #{item.approvalUser, jdbcType=VARCHAR},
+            #{item.approvalTime, jdbcType=TIMESTAMP},
+            #{item.approvalDescribe, jdbcType=VARCHAR},
+            #{item.operaterType, jdbcType=VARCHAR},
+            #{item.operator, jdbcType=VARCHAR},
+            #{item.operatorTime, jdbcType=TIMESTAMP},
+            #{item.resourceData, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getFiledNameList" resultType="java.util.LinkedHashMap">
+        SELECT DISTINCT c.code_id id, c.filed_code `key`, c.filed_name `value` FROM cmdb_collect_approval l
+        INNER JOIN cmdb_code c ON l.code_id = c.code_id
+        ORDER BY c.filed_name
+    </select>
+
+    <select id="getOperatorTypeList" resultType="java.util.LinkedHashMap">
+        SELECT DISTINCT c.operater_type id, c.operater_type `key`,  c.operater_type `value` FROM cmdb_collect_approval c
+        ORDER BY c.operater_type
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_collect_approval
+        WHERE 1=1 AND approval_status = '0'
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="oldValue != null and oldValue != ''">
+        AND `old_value` = #{oldValue}
+        </if>
+        <if test="currValue != null and currValue != ''">
+        AND `curr_value` = #{currValue}
+        </if>
+        <if test="approvalStatus != null and approvalStatus != ''">
+        AND `approval_status` = #{approvalStatus}
+        </if>
+        <if test="approvalType != null and approvalType != ''">
+            AND `approval_type` = #{approvalType}
+        </if>
+        <if test="approvalUser != null and approvalUser != ''">
+        AND `approval_user` = #{approvalUser}
+        </if>
+        <if test="approvalTime != null and approvalTime != ''">
+        AND `approval_time` = #{approvalTime}
+        </if>
+        <if test="approvalDescribe != null and approvalDescribe != ''">
+        AND `approval_describe` = #{approvalDescribe}
+        </if>
+        <if test="operaterType != null and operaterType != ''">
+        AND `operater_type` = #{operaterType}
+        </if>
+        <if test="operator != null and operator != ''">
+        AND `operator` = #{operator}
+        </if>
+        <if test="operatorTime != null and operatorTime != ''">
+        AND `operator_time` = #{operatorTime}
+        </if>
+        order by aa.`operator_time` desc
+    </select>
+
+     <!--list查询-->
+    <select id="listByQuery" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApprovalQuery">
+
+        SELECT
+        aa.*,cc.filed_name
+        FROM cmdb_collect_approval aa
+        LEFT JOIN cmdb_code cc ON aa.code_id = cc.code_id
+        WHERE aa.approval_status=0
+        <if test="instanceId != null and instanceId != ''">
+            AND aa.instance_id = #{instanceId}
+        </if>
+        <if test="codeFiledName != null and codeFiledName != ''">
+            AND aa.code_id = #{codeFiledName}
+        </if>
+        <if test="operaterType != null and operaterType != ''">
+            AND aa.operater_type = #{operaterType}
+        </if>
+        <if test="approvalType != null and approvalType != ''">
+            AND aa.approval_type = #{approvalType}
+        </if>
+        <if test="startTime != null and startTime != '' ">
+            <![CDATA[
+              AND aa.operator_time >= #{startTime}
+            ]]>
+        </if>
+        <if test="endTime != null and endTime != ''">
+            <![CDATA[
+              AND aa.operator_time <= #{endTime}
+            ]]>
+        </if>
+        <if test="operator != null and operator != ''">
+            AND aa.`operator` like  concat('%', #{operator}, '%')
+        </if>
+        <if test="type != null and type != '' and type == 'detail'">
+            AND aa.approval_status = '1'
+        </if>
+        <if test="type != null and type != '' and type == 'approval'">
+            AND aa.approval_status = '0'
+        </if>
+        <include refid="Page_List_Params"></include>
+        order by aa.`operator_time` desc
+        <if test="pageNum != null and pageSize != null">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+        </if>
+
+    </select>
+
+    <!-- list查询 -->
+    <select id="listSimpleByQuery" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApprovalQuery">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        cmdb_collect_approval
+        WHERE  1=1  AND approval_status = '0'
+        <if test="instanceId != null and instanceId != ''">
+            and instance_id in ( select id from cmdb_instance where id = #{instanceId} and is_delete = 0)
+        </if>
+        <if test="codeFiledName != null and codeFiledName != ''">
+            and code_id = #{codeFiledName}
+        </if>
+        <if test="operaterType != null and operaterType != ''">
+            AND operater_type = #{operaterType}
+        </if>
+        <if test="startTime != null and startTime != '' ">
+            <![CDATA[
+              AND operator_time >= #{startTime}
+            ]]>
+        </if>
+        <if test="endTime != null and endTime != ''">
+            <![CDATA[
+              AND operator_time <= #{endTime}
+            ]]>
+        </if>
+        <if test="operator != null and operator != ''">
+            AND `operator` = #{operator}
+        </if>
+        <include refid="Page_List_Params"></include>
+        order by `operator_time` desc
+        <if test="pageNum != null and pageSize != null">
+            limit ${(pageNum -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+    <!-- list查询 -->
+    <select id="listByIds" resultMap="resultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM
+        cmdb_collect_approval
+        WHERE  1=1  AND approval_status = '0'
+        and id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        order by `operator_time` desc
+    </select>
+
+    <sql id="Page_List_Params">
+        <choose>
+            <when test="authDeviceIdList == null or authDeviceIdList.size == 0">
+                <if test="authDeviceTypeList != null and authDeviceTypeList.size > 0">
+                    and ci.device_type in (
+                    <foreach collection="authDeviceTypeList" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>)
+                </if>
+                <if test="authIdcIdList != null and authIdcIdList.size > 0">
+                    and ci.idcType in (
+                    <foreach collection="authIdcIdList" item="item" index="index" separator=",">
+                        #{item, jdbcType=VARCHAR}
+                    </foreach>)
+                </if>
+            </when>
+            <otherwise>
+                and ci.id in (
+                <foreach collection="authDeviceIdList" item="item" index="index" separator=",">
+                    #{item, jdbcType=VARCHAR}
+                </foreach>)
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApprovalQuery">
+        SELECT
+       count(1)
+        FROM cmdb_collect_approval aa
+        LEFT JOIN cmdb_code cc ON aa.code_id = cc.code_id
+        WHERE aa.approval_status=0
+        <if test="instanceId != null and instanceId != ''">
+            AND aa.instance_id = #{instanceId}
+        </if>
+        <if test="codeFiledName != null and codeFiledName != ''">
+            AND aa.code_id = #{codeFiledName}
+        </if>
+        <if test="operaterType != null and operaterType != ''">
+            AND aa.operater_type = #{operaterType}
+        </if>
+        <if test="startTime != null and startTime != '' ">
+            <![CDATA[
+              AND aa.operator_time >= #{startTime}
+            ]]>
+        </if>
+        <if test="endTime != null and endTime != ''">
+            <![CDATA[
+              AND aa.operator_time <= #{endTime}
+            ]]>
+        </if>
+        <if test="operator != null and operator != ''">
+            AND aa.`operator` like  concat('%', #{operator}, '%')
+        </if>
+        <if test="type != null and type != '' and type == 'detail'">
+            AND aa.approval_status = '1'
+        </if>
+        <if test="type != null and type != '' and type == 'approval'">
+            AND aa.approval_status = '0'
+        </if>
+        <include refid="Page_List_Params"></include>
+        order by aa.`operator_time` desc
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_collect_approval
+        WHERE 1=1 and approval_status = '0'
+        <if test="instanceId != null and instanceId != ''">
+            AND `instance_id` = #{instanceId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+          <if test="codeId == 'null'" >
+              AND IFNULL(`code_id`, '') = ''
+          </if>
+            <if test="codeId != 'null'" >
+                AND  `code_id` = #{codeId}
+            </if>
+
+        </if>
+        <if test="id != null and id != ''">
+            AND  `id` = #{id}
+        </if>
+
+    </select>
+
+
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval">
+        INSERT INTO cmdb_collect_approval
+        (
+            `id`,
+            `instance_id`,
+            `module_id`,
+            `code_id`,
+            `old_value`,
+            `curr_value`,
+            `approval_status`,
+            `approval_type`,
+            `approval_user`,
+            `approval_time`,
+            `approval_describe`,
+            `operater_type`,
+            `operator`,
+            `operator_time`,
+         `resource_data`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{moduleId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{oldValue, jdbcType=VARCHAR},
+            #{currValue, jdbcType=VARCHAR},
+            #{approvalStatus, jdbcType=TINYINT},
+            #{approvalType, jdbcType=VARCHAR},
+            #{approvalUser, jdbcType=VARCHAR},
+            #{approvalTime, jdbcType=TIMESTAMP},
+            #{approvalDescribe, jdbcType=VARCHAR},
+            #{operaterType, jdbcType=VARCHAR},
+            #{operator, jdbcType=VARCHAR},
+            #{operatorTime, jdbcType=TIMESTAMP},
+            #{resourceData, jdbcType=VARCHAR}
+        )
+        ON DUPLICATE KEY UPDATE
+        old_value = VALUES( old_value ),
+        curr_value = VALUES( curr_value ),
+        approval_status = VALUES( approval_status ),
+         approval_type = VALUES( approval_type ),
+        approval_user = VALUES( approval_user ),
+        approval_time = VALUES( approval_time ),
+        approval_describe = VALUES (approval_describe),
+        operater_type = VALUES (operater_type),
+        operator = VALUES (operator),
+        operator_time = VALUES (operator_time)
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval">
+        UPDATE cmdb_collect_approval SET
+        `old_value` = #{oldValue},
+        `curr_value` = #{currValue},
+        `operater_type` = #{operaterType},
+        `operator` = #{operator},
+        `operator_time` = #{operatorTime},
+        `resource_data` = #{resourceData}
+        WHERE `id` = #{id}
+              <if test="codeId != null and codeId == null">
+                 and `code_id` = #{codeId}
+              </if>
+
+        <if test="id != null and id == null">
+           and `instance_id` = #{instanceId}
+        </if>
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval">
+        DELETE FROM cmdb_collect_approval
+        WHERE approval_status = 0
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="moduleId != null and moduleId != ''">
+            and module_id = #{moduleId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+            and code_id = #{codeId}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+            and instance_id = #{instanceId}
+        </if>
+    </delete>
+    <delete id="deleteByBatch" parameterType="com.aspire.ums.cmdb.collectApproval.payload.CmdbCollectApproval">
+        DELETE FROM cmdb_collect_approval
+        WHERE
+            `id` in
+      <foreach collection="list" item="item" open="(" close=")" separator=",">
+          #{item.id}
+      </foreach>
+    </delete>
+</mapper>

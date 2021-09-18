@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.AssetsMapper">
+
+	<select id="getAssets" resultType="java.util.HashMap"  parameterType="java.lang.String">
+	 	select a.DEVICE_IP,a.ID
+	 	FROM
+		cmdb_device_assets a
+	</select>
+
+	<select id="advancedSearchDeviceDistributionList" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		SELECT distinct a.ID,a.DEVICE_IP,a.IDC_LOCATION,a.DEVICE_LOG_NAME,d3.VALUE as DEVICE_TYPE,d1.VALUE as DEVICE_CLASS,a.CONSOLE_IP,a.BUSINESS_VLAN,a.NETWORK_AREA,
+		(case when cba.PARENT_ID is null then cba.BUSINESS_NAME else cba2.BUSINESS_NAME END) BUSINESS_LEVEL1,
+		(case when cba.PARENT_ID is null then null else cba.BUSINESS_NAME END) BUSINESS_LEVEL2,
+		d2.VALUE as OS_TYPE,d4.LABEL as IDC_LABEL,d5.VALUE as IS_ASSIGN,d12.VALUE as VALUE
+		FROM cmdb_device_assets a
+		LEFT JOIN cmdb_business_attach cba on a.BUSSINESS_ID = cba.ID and cba.DEL_FLAG='0' and  cba.DISABLED = '0'
+		LEFT JOIN cmdb_business_attach cba2 on cba.PARENT_ID = cba2.ID
+		LEFT JOIN cmdb1_host_mountpoint_table m ON a.ID = m.ID
+		LEFT JOIN cmdb1_host_basic_table b ON a.ID = b.ID
+		LEFT JOIN config_dict d1 on d1.id = a.DEVICE_TYPE_ID
+		LEFT JOIN config_dict d2 on d2.id = a.DEVICE_OS_TYPE_ID
+		LEFT JOIN config_dict d3 ON d3.id = a.DEVICE_CLASS_ID
+		LEFT JOIN config_dict d4 ON d4.TYPE = 'idcType' AND a.IDC = d4.`VALUE`
+		LEFT JOIN config_dict d5 ON d5.TYPE = 'assType' AND a.IS_ASSIGN = d5.`VALUE`
+		LEFT JOIN cmdb_financial_business_rel r12 ON (r12.CMDB_BUSINESS_ID = cba.PARENT_ID or 	r12.CMDB_BUSINESS_ID = cba.ID	)
+		LEFT JOIN financial_business b12 on b12.ID = r12.FINANCIAL_BUSINESS_ID
+		LEFT JOIN  config_dict d12 ON d12.TYPE = 'department' and d12.ID=b12.DEPART
+		where 1 = 1
+		<if test="null != list and '' != list">
+			and a.ID in ${list}
+		</if>
+		<if test="null != is_assign and '' != is_assign">
+			and a.IS_ASSIGN = #{is_assign}
+		</if>
+		<if test="null != SYS_BUSINESS_SET and '' != SYS_BUSINESS_SET">
+			and cba.BUSINESS_CODE in ${SYS_BUSINESS_SET}
+		</if>
+
+	</select>
+
+	<select id="advancedSearchDeviceDistributionList_count" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		SELECT count(distinct a.ID) total
+		FROM cmdb_device_assets a
+		LEFT JOIN cmdb_business_attach cba on a.BUSSINESS_ID = cba.ID and cba.DEL_FLAG='0' and  cba.DISABLED = '0'
+		LEFT JOIN cmdb1_host_mountpoint_table m ON a.ID = m.ID
+		LEFT JOIN cmdb1_host_basic_table b ON a.ID = b.ID
+		LEFT JOIN config_dict d1 on d1.id = a.DEVICE_TYPE_ID
+		LEFT JOIN config_dict d2 on d2.id = a.DEVICE_OS_TYPE_ID
+		LEFT JOIN config_dict d3 ON d3.id = a.DEVICE_CLASS_ID
+		LEFT JOIN config_dict d4 ON d4.TYPE = 'idcType' AND a.IDC = d4.`VALUE`
+		where 1 = 1
+		<if test="null != list and '' != list">
+			and a.ID in ${list}
+		</if>
+		<if test="null != is_assign and '' != is_assign">
+			and a.IS_ASSIGN = #{is_assign}
+		</if>
+		<if test="null != SYS_BUSINESS_SET and '' != SYS_BUSINESS_SET">
+			and cba.BUSINESS_CODE in ${SYS_BUSINESS_SET}
+		</if>
+	</select>
+
+	<select id="getAllDeviceAssetList"  resultType="java.util.HashMap">
+		<include refid="getDeviceAssetsSql"></include>
+	</select>
+
+	<sql id="getDeviceAssetsSql">
+		SELECT
+		a.ID,
+		a.DEVICE_IP,
+		a.IDC,
+		d5.LABEL AS IDC_LABEL,
+		a.IDC_LOCATION,
+		a.DEVICE_CELL,
+		<!-- a.DEVICE_MODEL, -->
+		a.DEVICE_LOG_NAME,
+		a.DEVICE_STATUS,
+		a.DEVICE_STANDARD,
+		a.DEVICE_SN,
+		a.ASSET_NUMBER,
+		a.CONSOLE_IP,
+		a.CONSOLE_VLAN,
+		a.CONSOLE_MASK,
+		a.CONSOLE_GW,
+		a.CONSOLE_USER,
+		a.CONSOLE_PASSWORD,
+		a.BUSINESS_VLAN,
+		a.LOCAL_DISK,
+		a.MOUNT_DISK,
+		a.NETWORK_AREA,
+		a.MAINTENANCE_TIME,
+		<!-- ctm.DATE_OF_WARRANTY as MAINTENANCE_TIME, -->
+		a.ONLINE_TIME,
+		a.DEVICE_MAINTENANCE_ID,
+		a.HOST_BACKUP,
+		CASE WHEN cba2.BUSINESS_NAME IS NOT NULL THEN cba2.BUSINESS_NAME  ELSE  cba.BUSINESS_NAME END as BUSINESS_LEVEL1,
+		CASE WHEN cba2.BUSINESS_NAME IS NOT NULL THEN cba.BUSINESS_NAME END as BUSINESS_LEVEL2,
+		CASE WHEN cba2.ID IS NOT NULL THEN cba2.ID  ELSE  cba.ID END as BUSINESS_LEVEL1_ID,
+		CASE WHEN cba2.ID IS NOT NULL THEN cba.ID END as BUSINESS_LEVEL2_ID,
+		a.BUSSINESS_ID,
+		<!-- a.SERVER_CLASS,
+        a.SERVER_TYPE,
+        a.SERVER_MODEL, -->
+		a.BLOCK_SIZE,
+		<!-- a.SERVER_OS_TYPE, -->
+		a.DEVICE_CLASS_ID,
+		a.DEVICE_TYPE_ID,
+		a.DEVICE_MODEL_ID,
+		a.DEVICE_OS_TYPE_ID,
+		a.MANAGED_BY_ANSIBLE,
+		dc.VALUE AS DEVICE_CLASS,
+		dt.VALUE AS DEVICE_TYPE,
+		dm.VALUE AS DEVICE_MODEL_,
+		DO.VALUE AS DEVICE_OS_TYPE,
+		a.BUSSINESS_ID,
+
+
+		a.OTHER_IP,
+		a.BOX_NUM,
+		a.SLOT_NUM,
+		a.BOX_MGD_IP,
+		a.EXSI_IP,
+		a.VM_NAME,
+		a.VM_IP,
+		a.B_CARD_SN,
+		a.DIS_STORAGE,
+		a.DIS_ST_DIR,
+		a.MGD_BY_POOL,
+		a.REMARK,
+
+		a.DIS_ST_TYPE,
+		a.RESOURCE_PLAN,
+		a.BLONG_TO,
+
+		a.TRANS_COST,
+		a.UNIT_PRICE,
+
+		a.IS_ASSIGN
+
+		FROM
+		cmdb_device_assets a
+		JOIN cmdb_business_attach cba ON cba.ID = a.BUSSINESS_ID and cba.DEL_FLAG='0' and  cba.DISABLED = '0'
+
+		LEFT JOIN cmdb_business_attach cba2 ON cba.PARENT_ID = cba2.ID
+		LEFT JOIN config_dict dc ON a.DEVICE_CLASS_ID = dc.ID
+		LEFT JOIN config_dict dt ON a.DEVICE_TYPE_ID = dt.ID
+		LEFT JOIN config_dict dm ON a.DEVICE_MODEL_ID = dm.ID
+		LEFT JOIN config_dict DO ON a.DEVICE_OS_TYPE_ID = DO.ID
+		LEFT JOIN config_dict d5 ON d5.TYPE = 'idcType' AND a.IDC = d5.`VALUE`
+		LEFT JOIN config_dict d6 ON d6.TYPE = 'assType' AND a.IS_ASSIGN = d6.`VALUE`
+		<!-- LEFT JOIN cmdb_thirdparty_maintenance ctm on ctm.DEVICE_SERIAL_NUMBER = a.DEVICE_SN -->
+	</sql>
+
+	<select id="cmdbAdvancedSearchDeviceIdList" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		SELECT a.ID
+		FROM cmdb_device_assets a
+		LEFT JOIN config_dict d5 ON d5.TYPE = 'assType' AND a.IS_ASSIGN = d5.`VALUE`
+		LEFT JOIN cmdb_business_attach cba on a.BUSSINESS_ID = cba.ID and cba.DEL_FLAG='0' and  cba.DISABLED = '0'
+		LEFT JOIN cmdb_financial_business_rel r12 ON (r12.CMDB_BUSINESS_ID = cba.PARENT_ID or r12.CMDB_BUSINESS_ID = cba.ID	)
+		LEFT JOIN financial_business b12 on b12.ID = r12.FINANCIAL_BUSINESS_ID
+		LEFT JOIN  config_dict d12 ON d12.TYPE = 'department' and d12.ID=b12.DEPART
+		<if test="null != brand and '' != brand">
+			inner join cmdb_thirdparty_maintenance ctm on ctm.DEVICE_SERIAL_NUMBER = a.DEVICE_SN
+			and ctm.DEVICE_VENDER = #{brand}
+		</if>
+
+		where 1 = 1
+		<if test="null != ip and '' != ip">
+			and a.DEVICE_IP like '%${ip}%'
+		</if>
+		<if test="maintenanceTimeBeginDate != null and maintenanceTimeBeginDate !=''">
+			and a.MAINTENANCE_TIME &gt;= '${maintenanceTimeBeginDate}'
+		</if>
+		<if test="maintenanceTimeEndDate != null and maintenanceTimeEndDate !=''">
+			and a.MAINTENANCE_TIME &lt;= '${maintenanceTimeEndDate}'
+		</if>
+		<if test="null != idcLocation and '' != idcLocation">
+			and a.IDC_LOCATION = #{idcLocation}
+		</if>
+		<if test="null != service1 and '' != service1 and (null == service2 or '' == service2)">
+			and exists (select 1 from cmdb_business_attach cba
+			where a.BUSSINESS_ID = cba.ID and cba.DEL_FLAG='0' and  cba.DISABLED = '0'
+			and (cba.ID = #{service1} or cba.PARENT_ID= #{service1} ))
+		</if>
+		<if test="null != service2 and '' != service2">
+			and exists (select 1 from cmdb_business_attach cba
+			where a.BUSSINESS_ID = cba.ID and cba.DEL_FLAG='0' and  cba.DISABLED = '0'
+			and (cba.ID = #{service2} or cba.PARENT_ID= #{service2} ))
+		</if>
+		<if test="null != value and '' != value">
+			and exists (select 1 from config_dict d1
+			where d1.id = a.DEVICE_CLASS_ID
+			and d1.VALUE = #{value} )
+		</if>
+		<if test="null != deviceType and '' != deviceType">
+			and exists (select 1 from config_dict d2
+			where d2.id = a.DEVICE_TYPE_ID
+			and d2.VALUE = #{deviceType} )
+		</if>
+		<if test="null != is_assign and '' !=is_assign">
+			and a.IS_ASSIGN = #{is_assign}
+		</if>
+		<if test="null != business_department and '' !=business_department">
+			and d12.VALUE = #{business_department}
+		</if>
+	</select>
+ </mapper>

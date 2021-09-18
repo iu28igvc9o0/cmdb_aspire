@@ -1,0 +1,1244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: 金素 时间: 2018-09-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.inspectionDaily.AlertResourcePoolDao">
+
+	    
+	<resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertResourcePool" id="alertsRecordMap">
+		<result property="count" column="count" jdbcType="INTEGER" />
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+		<result property="alertLevel" column="alert_level" jdbcType="INTEGER" />
+		 <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+		 <result property="month" column="month" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 
+	 <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertResourcePoolNew" id="alertsRecordNewMap">
+		<result property="count" column="count" jdbcType="INTEGER" />
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+		 <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+		 <result property="month" column="month" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 
+	 <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertMoniterObjectTop" id="alertsMoniterMap">
+		<result property="count" column="count" jdbcType="INTEGER" />
+		<result property="sum" column="sum" jdbcType="INTEGER" />
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+	    <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+	    <result property="moniterObject" column="moniter_object" jdbcType="VARCHAR"/>
+	    <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 
+	  <resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertDeviceTypeTop" id="alertsDeviceMap">
+		<result property="count" column="count" jdbcType="INTEGER" />
+		<result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+		<result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+	    <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+	    <result property="companeyName" column="device_mfrs" jdbcType="VARCHAR"/>
+	    <result property="pod" column="pod" jdbcType="VARCHAR"/>
+	    <result property="roomId" column="roomId" jdbcType="VARCHAR"/>
+	    <result property="ip" column="ip" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 
+ <sql id="baseWhereClause">
+            <if test="idcType != null ">
+             	and a.idc_type in
+              <foreach collection="idcType" item="id" index="index" open="(" close=")" separator=",">
+			  	#{id}
+			</foreach>
+         </if>
+         <if test="month != null and  month != ''">
+             and a.cur_moni_time like  CONCAT(#{month},'%')
+         </if>
+    </sql>
+    
+    <sql id="deviceMonisterCondition">
+            <if test="networkType != null  and  networkType != ''">
+             	or (i.device_type in
+              (select config.code from alert_devicetype_config config
+              where config.type= #{networkType})
+              and a.moni_object !=
+              (select c.dict_note from cmdb.t_cfg_dict c where c.col_name =  #{networkType} limit 1)
+              )
+         </if>
+          <if test="physicServer != null  and  physicServer != ''">
+             	or (i.device_type in
+              (select config.code from alert_devicetype_config config
+	              where config.type= #{physicServer})
+	              and (( a.moni_object in 
+	              (select c.dict_note from cmdb.t_cfg_dict c where c.col_name =  #{physicserverZabbix})
+	              and a.source = #{sourceZabbix})
+	               or (
+	              a.moni_object in 
+	              (select c.dict_note from cmdb.t_cfg_dict c where c.col_name =  #{physicserverPrometheus})
+	              and a.source = #{sourcePrometheus})
+	              )
+              )
+         </if>
+          <if test="other != null  and  other != ''">
+             	or (i.device_type in
+              (select config.code from alert_devicetype_config config
+              where config.type= #{other})
+              )
+         </if>
+    </sql>
+    
+    <sql id="listBaseWhereClause">
+            <if test="idcType != null ">
+             	and idc_type in
+              <foreach collection="idcType" item="id" index="index" open="(" close=")" separator=",">
+			  	#{id}
+			</foreach>
+         </if>
+         <if test="month != null and  month != ''">
+             and cur_moni_time like  CONCAT(#{month},'%')
+         </if>
+    </sql>
+    
+	<!-- 分页数据 -->
+	<select id="getResourcePoolCountAlert" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertRourcePoolVo" resultMap="alertsRecordMap" >
+	 	select count(*) count,a.idc_type ,a.alert_level from 
+	 	 (
+		SELECT
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="listBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="listBaseWhereClause"></include>
+	) a ,cmdb_instance i
+	 	where 1=1 and a.device_id = i.instance_id
+	 	and (1 !=1 <include refid="deviceMonisterCondition"></include>)
+		group by a.idc_type,a.alert_level
+		order by a.idc_type,a.alert_level;
+	</select>
+	
+	<!-- 分页数据 -->
+	<select id="getResourcePoolaRecordAlert" parameterType="map" resultMap="alertsRecordMap" >
+	 	select aa.* ,ai.device_type ,ai.count from
+		(select a.idc_type,a.alert_level from alert_alerts a
+		where 1=1 and a.device_id is not null
+		<include refid="baseWhereClause"></include>
+		group BY a.idc_type,a.alert_level
+		order by a.idc_type,a.alert_level desc
+		 limit #{begin},#{pageSize})aa, 
+		(select count(*) count,a.idc_type,a.alert_level,i.device_type from alert_alerts a
+		left join cmdb_instance i on a.device_id = i.instance_id
+		where 1=1
+		<include refid="baseWhereClause"></include> 
+		group by a.idc_type,a.alert_level,i.device_type)ai 
+		where aa.alert_level=ai.alert_level and aa.idc_type = ai.idc_type
+		order by aa.idc_type,aa.alert_level desc
+	</select>
+	
+	<select id="getResourcePoolaRecordAlertNew" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertRourcePoolVo" resultMap="alertsRecordNewMap" >
+		select sum(count) count,idc_type,alert_level,device_type from (
+		select count(*) count,a.idc_type,
+		case 
+	    when a.alert_level = 5 then '重大告警'
+	    when  a.alert_level = 4 then '高告警'
+		when  a.alert_level = 3 then '中告警'
+		when  a.alert_level = 2 then '低告警'
+		else alert_level end
+		 alert_level
+	,i.device_type
+		 from 
+		 (
+		SELECT
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="listBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="listBaseWhereClause"></include>
+	) a
+	, cmdb_instance i
+		where  a.device_id = i.instance_id
+		and (1 !=1 <include refid="deviceMonisterCondition"></include>)
+		group by a.idc_type,a.alert_level,i.device_type
+		)mm
+		group by idc_type,alert_level,device_type
+		order by idc_type,alert_level desc
+	</select>
+	
+	<select id="getResourcePoolaRecordFromNew" parameterType="String" resultMap="alertsRecordNewMap" >
+	select sum(aa.count)count ,aa.idc_type, aa.alert_level,aa.device_type,aa.month from (
+		select idcType idc_type,
+		case 
+	    when alertLevel = 5 then '重大告警'
+	    when  alertLevel = 4 then '高告警'
+		when  alertLevel = 3 then '中告警'
+		when  alertLevel = 2 then '低告警'
+		else alertLevel end
+		 alert_level,deviceType device_type,alertCount count,month
+		 from alert_distribution_sync 
+		where  month = #{month}
+		)aa
+		group by aa.idc_type, aa.alert_level,aa.device_type,aa.month
+		order by idc_type,alert_level desc,device_type
+	</select>
+	
+	<select id="getResourcePoolaRecordAlertCount" parameterType="map" resultType="java.lang.Integer" >
+	select count(*) from (
+	 	select count(*) count ,a.idc_type,a.alert_level from alert_alerts a
+	 	where 1=1 and a.device_id is not null
+	 	<include refid="baseWhereClause"></include>
+		group by a.idc_type,a.alert_level)aa
+	</select>
+	 <select id="getDeviceTypeListCount" parameterType="map" resultType="java.lang.Integer" >
+	 	select count(*) from (
+		 	select count(*) count,a.idc_type,a.alert_level,i.device_type from alert_alerts a,cmdb_instance i
+			where a.device_id = i.instance_id and i.device_type in(SELECT name from alert_devicetype_config)
+			 <include refid="baseWhereClause"></include>
+			<include refid="querysql"></include>
+			group by a.idc_type,a.alert_level ,i.device_type )aa
+	</select>
+	
+	<select id="getDeviceTypeList" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertRourcePoolVo" resultMap="alertsRecordMap" >
+	 	select count(*) count,a.idc_type,a.alert_level,i.device_type from 
+	 	 (
+		SELECT
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="listBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="listBaseWhereClause"></include>
+	) a
+	,cmdb_instance i
+		where a.device_id = i.instance_id
+		and (1 !=1 <include refid="deviceMonisterCondition"></include>)
+		group by a.idc_type,a.alert_level ,i.device_type 
+		order by a.idc_type,a.alert_level desc,i.device_type 
+	</select>
+	
+	 <sql id="querysql">
+            <if test="deviceType != null and  deviceType != ''">
+             and i.device_type = #{deviceType}
+         </if>
+         <if test="alertLevel != null">
+             and a.alert_level = #{alertLevel}
+         </if>
+    </sql>
+	
+	 <select id="getDeviceTop10Alert" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertRourcePoolVo" resultMap="alertsDeviceMap" >
+	 	select sum(count) count,idc_type,alert_level,device_type,device_model ip,device_mfrs from(
+	 	select count(*) count,a.idc_type,
+	 	case 
+	    when a.alert_level = 5 then '重大告警'
+	    when  a.alert_level = 4 then '高告警'
+		when  a.alert_level = 3 then '中告警'
+		when  a.alert_level = 2 then '低告警'
+		else alert_level end
+		 alert_level
+		  ,i.device_type,i.device_model
+		,i.device_mfrs from 
+		(
+		SELECT
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="countBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="countBaseWhereClause"></include>
+	) a
+		,cmdb_instance i
+		where  a.device_id = i.instance_id
+		<include refid="countQuerysql"></include>
+		group by a.idc_type,a.alert_level ,i.device_type,i.device_model,i.device_mfrs
+		order  by count desc
+		limit #{pageSize}
+		)mm
+		group by idc_type,alert_level ,device_type,device_model,device_mfrs
+		order by count desc
+	</select>
+	
+	<sql id="countBaseWhereClause">
+            <if test="idcType != null ">
+             	and idc_type in
+              <foreach collection="idcType" item="id" index="index" open="(" close=")" separator=",">
+			  	#{id}
+			</foreach>
+         </if>
+         <if test="month != null and  month != ''">
+             and cur_moni_time like  CONCAT(#{month},'%')
+         </if>
+		  <if test="alertLevel != null">
+             and alert_level = #{alertLevel}
+         </if>
+    </sql>
+    
+     <sql id="countQuerysql">
+            <if test="deviceType != null and  deviceType != ''">
+             and i.device_type = #{deviceType}
+         </if>
+    </sql>
+	
+	<select id="getMoniterTop10Alert" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertRourcePoolVo" resultMap="alertsMoniterMap" >
+	select tt.*,mm.moni_index from
+	(select sum(count) count,sum(sum) sum,idc_type,alert_level,device_type,moni_object from (
+	select aa.count,bb.count sum,aa.idc_type,
+	case 
+	    when aa.alert_level = 5 then '重大告警'
+	    when  aa.alert_level = 4 then '高告警'
+		when  aa.alert_level = 3 then '中告警'
+		when  aa.alert_level = 2 then '低告警'
+		else aa.alert_level end
+		 alert_level
+	,aa.device_type,aa.moni_object 
+	from
+	 	(SELECT COUNT(*) count,a.idc_type,a.alert_level ,i.device_type,a.moni_object from 
+	 	(
+		SELECT
+			s.moni_index,
+			s.alert_id,
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="countBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.moni_index,
+				h.alert_id,
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="countBaseWhereClause"></include>
+	) a
+	,cmdb_instance i
+		where  a.device_id = i.instance_id
+		<include refid="countQuerysql"></include>
+		group by a.idc_type,a.alert_level ,i.device_type,a.moni_object
+		order  by count desc
+		limit #{pageSize})aa,
+		(SELECT COUNT(*) count,a.idc_type,a.alert_level ,i.device_type from 
+		(
+		SELECT
+			s.moni_index,
+			s.alert_id,
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="countBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.moni_index,
+				h.alert_id,
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="countBaseWhereClause"></include>
+	) a
+	,cmdb_instance i
+		where  a.device_id = i.instance_id
+		<include refid="countQuerysql"></include>
+		group by a.idc_type,a.alert_level ,i.device_type
+		)bb
+		where aa.idc_type= bb.idc_type and aa.alert_level=bb.alert_level and aa.device_type = bb.device_type
+		order by count desc
+		)ttt
+		group by idc_type,alert_level ,device_type,moni_object
+		order by count desc) tt left join
+		(
+		select  monitordata.moni_object,moni_index from (
+		select moni_object,max(alert_id) alertid from 
+		(
+		SELECT
+			s.moni_index,
+			s.alert_id,
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="countBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.moni_index,
+				h.alert_id,
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="countBaseWhereClause"></include>
+	) alert
+	 group by moni_object)  monitordata
+		left join  
+		(
+		SELECT
+			s.moni_index,
+			s.alert_id,
+			s.alert_level,
+			s.idc_type,
+			s.device_id,
+			s.moni_object,
+			s.source,
+			s.cur_moni_time
+		FROM
+			alert_alerts s
+			where 1=1
+			<include refid="countBaseWhereClause"></include>
+		UNION ALL
+			SELECT
+				h.moni_index,
+				h.alert_id,
+				h.alert_level,
+				h.idc_type,
+				h.device_id,
+				h.moni_object,
+				h.source,
+				h.cur_moni_time
+			FROM
+				alert_alerts_his h
+				where 1=1
+			<include refid="countBaseWhereClause"></include>
+	) alert
+	 on monitordata.alertid=alert.alert_id
+		)mm on tt.moni_object = mm.moni_object
+		order  by count desc  
+	</select>
+	
+	<sql id="dailyQuerysql">
+            <if test="params['projectName'] != null and  params['projectName'] != ''">
+             and i.project_name like CONCAT('%',#{params.projectName},'%')
+         </if>
+         <if test="params['pod'] != null and  params['pod'] != ''">
+             and i.pod_name = #{params.pod}
+         </if>
+          <if test="params['deviceMfrs'] != null and  params['deviceMfrs'] != ''">
+             and i.device_mfrs = #{params.deviceMfrs}
+         </if>
+         <if test="params['deviceModel'] != null and  params['deviceModel'] != ''">
+             and i.device_model like  CONCAT('%',#{params.deviceModel},'%')
+         </if>
+         <if test="params['deviceClass'] != null and  params['deviceClass'] != ''">
+             and i.device_class = #{params.deviceClass}
+         </if>
+         <if test="params['deviceType'] != null and  params['deviceType'] != ''">
+             and i.device_type = #{params.deviceType}
+         </if>
+    </sql>
+    
+    <sql id="dailyQuerysqlTime">
+           <if test="params['inspectionDate'] != null and  params['inspectionDate'] != ''">
+             and a.cur_moni_time like  CONCAT(#{params.inspectionDate},'%')
+         </if>
+    </sql>
+    <sql id="dailyQuerysqlTimeNew">
+           <if test="params['inspectionDateStart'] != null and  params['inspectionDateStart'] != ''">
+             and cur_moni_time >  #{params.inspectionDateStart} and cur_moni_time <![CDATA[<=]]> #{params.inspectionDateEnd}
+         </if>
+    </sql>
+	
+	<resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertInspectionDaily" id="inspectionDailyMap">
+		<result property="count" column="count" jdbcType="INTEGER" />
+		<result property="alertCount" column="alertCount" jdbcType="INTEGER" />
+		<result property="cpuCount" column="cpuCount" jdbcType="INTEGER" />
+		<result property="memoryCount" column="memoryCount" jdbcType="INTEGER" />
+	    <result property="deviceType" column="device_type" jdbcType="INTEGER"/>
+	    <result property="companeyName" column="device_mfrs" jdbcType="VARCHAR"/>
+	    <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+	    <result property="projectName" column="project_name" jdbcType="VARCHAR"/>
+	    <result property="deviceModel" column="device_model" jdbcType="VARCHAR"/>
+	    <result property="deviceClass" column="device_class" jdbcType="VARCHAR"/>
+	    <result property="moniObject" column="moni_object" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 <select id="getInspectionDailyCount" parameterType="map" resultType="java.lang.Integer" >
+	 select count(*) from (
+	 select
+					count(*) count,
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+				from
+					cmdb_instance i
+					where i.idcType = #{params.idcType}
+					<include refid="dailyQuerysql"></include>
+				group by
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model)aa
+	 </select>
+	 <select id="getInspectionDaily" parameterType="map" resultMap="inspectionDailyMap" >
+	 	select
+	ii.*,aa.count alertCount,ai4.highCount ,aii5.impCount,aii3.middCount,aii2.lowCount
+from
+	(
+				select
+					count(*) count,
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+				from
+					cmdb_instance i
+					where i.idcType = #{params.idcType}
+					<include refid="dailyQuerysql"></include>
+				group by
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+				order by i.project_name ,i.pod_name,i.device_class,i.device_type,i.device_mfrs,i.device_model
+				<if test="pageSize != null">
+	             limit #{begin},#{pageSize}
+	         	</if>
+	) ii left join
+	(
+	select
+	count(*) count,
+	i.project_name,
+	i.pod_name,
+	i.device_class,
+	i.device_type,
+	i.device_mfrs,
+	i.device_model
+	from
+	(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a,
+	cmdb_instance i
+	where
+	i.instance_id = a.device_id
+	and i.idcType = #{params.idcType}
+				
+				group by
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+			) aa
+		on
+		IFNULL(ii.project_name, '') = IFNULL(aa.project_name, '')
+		AND IFNULL(ii.pod_name, '') = IFNULL(aa.pod_name, '')
+		AND IFNULL(ii.device_class, '') = IFNULL(aa.device_class, '')
+		AND IFNULL(ii.device_type, '') = IFNULL(aa.device_type, '')
+		AND IFNULL(ii.device_mfrs, '') = IFNULL(aa.device_mfrs, '')
+		AND IFNULL(ii.device_model, '') = IFNULL(aa.device_model, '')
+	left join
+	(
+		select
+			count(*) highCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 4
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 4
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+			
+			
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) ai4
+		on IFNULL(ii.project_name, '') = IFNULL(ai4.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(ai4.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(ai4.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(ai4.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(ai4.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(ai4.device_model, '')
+	 left join
+	(
+		select
+			count(*) impCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 5
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 5
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) aii5
+		on IFNULL(ii.project_name, '') = IFNULL(aii5.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(aii5.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(aii5.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(aii5.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(aii5.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(aii5.device_model, '')
+	left join
+	(
+		select
+			count(*) middCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 3
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 3
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+				
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) aii3
+		on IFNULL(ii.project_name, '') = IFNULL(aii3.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(aii3.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(aii3.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(aii3.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(aii3.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(aii3.device_model, '')
+	left join
+	(
+		select
+			count(*) lowCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 2
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 2
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+				
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) aii2
+		on IFNULL(ii.project_name, '') = IFNULL(aii2.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(aii2.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(aii2.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(aii2.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(aii2.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(aii2.device_model, '')
+	<choose>
+	 <when test="sortName != null  and  sortName != ''">
+	 order by  ${sortName}  ${order}
+    </when>
+    <otherwise>
+    	order by alertCount desc,project_name desc,pod_name desc,device_class desc,device_type desc,device_mfrs desc,device_model desc
+    </otherwise>
+    </choose>
+	</select>
+	
+	<select id="exportInspectionDaily" parameterType="map" resultType="java.util.Map" >
+	 	select
+	ii.*,aa.count alertCount,ai4.highCount ,aii5.impCount,aii3.middCount,aii2.lowCount
+from
+	(
+				select
+					count(*) count,
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+				from
+					cmdb_instance i
+					where i.idcType = #{params.idcType}
+					<include refid="dailyQuerysql"></include>
+				group by
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+				order by i.project_name ,i.pod_name,i.device_class,i.device_type,i.device_mfrs,i.device_model
+			) ii left join 
+			(
+				select
+					count(*) count,
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+				from
+					(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a,
+					cmdb_instance i
+				where
+					i.instance_id = a.device_id
+					and i.idcType = #{params.idcType}
+				
+				group by
+					i.project_name,
+					i.pod_name,
+					i.device_class,
+					i.device_type,
+					i.device_mfrs,
+					i.device_model
+			) aa
+		on
+		IFNULL(ii.project_name, '') = IFNULL(aa.project_name, '')
+		AND IFNULL(ii.pod_name, '') = IFNULL(aa.pod_name, '')
+		AND IFNULL(ii.device_class, '') = IFNULL(aa.device_class, '')
+		AND IFNULL(ii.device_type, '') = IFNULL(aa.device_type, '')
+		AND IFNULL(ii.device_mfrs, '') = IFNULL(aa.device_mfrs, '')
+		AND IFNULL(ii.device_model, '') = IFNULL(aa.device_model, '')
+	left join
+	(
+		select
+			count(*) highCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 4
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 4
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+		
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) ai4
+		on IFNULL(ii.project_name, '') = IFNULL(ai4.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(ai4.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(ai4.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(ai4.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(ai4.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(ai4.device_model, '')
+	 left join
+	(
+		select
+			count(*) impCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 5
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 5
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) aii5
+		on IFNULL(ii.project_name, '') = IFNULL(aii5.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(aii5.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(aii5.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(aii5.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(aii5.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(aii5.device_model, '')
+	left join
+	(
+		select
+			count(*) middCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 3
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 3
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) aii3
+		on IFNULL(ii.project_name, '') = IFNULL(aii3.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(aii3.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(aii3.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(aii3.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(aii3.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(aii3.device_model, '')
+	left join
+	(
+		select
+			count(*) lowCount,
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+		from
+			cmdb_instance i,
+				(SELECT device_id from alert_alerts
+	where idc_type=#{params.idcType}
+	and alert_level= 2
+	<include refid="dailyQuerysqlTimeNew"></include>
+	union all
+	SELECT device_id from alert_alerts_his
+	where idc_type=#{params.idcType}
+	and alert_level= 2
+	<include refid="dailyQuerysqlTimeNew"></include>
+	)a
+				where i.instance_id =  a.device_id
+				and i.idcType = #{params.idcType}
+	
+		group by
+			i.project_name,
+			i.pod_name,
+			i.device_class,
+			i.device_type,
+			i.device_mfrs,
+			i.device_model
+	) aii2
+		on IFNULL(ii.project_name, '') = IFNULL(aii2.project_name, '')
+	and IFNULL(ii.pod_name, '') = IFNULL(aii2.pod_name, '')
+	AND IFNULL(ii.device_class, '') = IFNULL(aii2.device_class, '')
+	AND IFNULL(ii.device_type, '') = IFNULL(aii2.device_type, '')
+	AND IFNULL(ii.device_mfrs, '') = IFNULL(aii2.device_mfrs, '')
+	AND IFNULL(ii.device_model, '') = IFNULL(aii2.device_model, '')
+	<choose>
+	 <when test="sortName != null  and  sortName != ''">
+	 order by  ${sortName}  ${order}
+    </when>
+    <otherwise>
+    	order by alertCount desc,project_name desc,pod_name desc,device_class desc,device_type desc,device_mfrs desc,device_model desc
+    </otherwise>
+    </choose>
+ </select>
+	
+	<insert id="insertAlertTotal" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertTotalVo"   >
+		insert into
+			alert_alerts_statistics_sync(idcType,alertTotal,seriousCount,importantCount
+			,secondaryCount,tipsCount,month)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType} ,
+			#{item.sum} ,
+			#{item.seriousCount} ,
+			#{item.importantCount} ,
+			#{item.secondaryCount},
+			#{item.tipsCount},
+			#{item.month}
+		)
+		</foreach>
+	</insert>
+	
+	<update  id="updateAlertTotal" parameterType="com.aspire.mirror.alert.server.vo.inspectionDaily.AlertTotalVo" >
+			update alert_alerts_statistics_sync
+			 <trim prefix="set" suffixOverrides=",">
+				 <if test="sum != null">
+	               alertTotal = #{sum},
+	         	</if>
+	         	<if test="seriousCount != null">
+               seriousCount = #{seriousCount},
+         	</if>
+         	<if test="importantCount != null">
+               importantCount = #{importantCount},
+         	</if>
+         	<if test="secondaryCount != null">
+               secondaryCount = #{secondaryCount},
+         	</if>
+         	<if test="tipsCount != null">
+               tipsCount = #{tipsCount},
+         	</if>
+		    </trim>
+   			 where idcType = #{idcType,jdbcType=VARCHAR}  and month = #{month,jdbcType=VARCHAR} 
+	</update>
+	
+	<insert id="insertAlertDeviceTop" parameterType="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertDeviceTypeTop"   >
+		insert into
+			alert_device_top_sync(idcType,alertLevel,deviceType,countOrder
+			,ip,pod,alertCount,roomId,month,deviceMfrs)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType} ,
+			#{item.alertLevel} ,
+			#{item.deviceType} ,
+			#{item.order} ,
+			#{item.ip},
+			#{item.pod},
+			#{item.count},
+			#{item.roomId},
+			#{item.month},
+			#{item.companeyName}
+		)
+		</foreach>
+	</insert>
+	
+	<update  id="updateAlertDeviceTop" parameterType="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertDeviceTypeTop" >
+			update alert_device_top_sync
+			 <trim prefix="set" suffixOverrides=",">
+	         	<if test="ip != null and ip !=''">
+               ip = #{ip},
+         	</if>
+         	<if test="count != null">
+               alertCount = #{count},
+         	</if>
+         	<if test="pod != null and pod != '' ">
+               pod = #{pod},
+         	</if>
+         	<if test="roomId != null and roomId != '' ">
+               roomId = #{roomId},
+         	</if>
+         	<if test="companeyName != null and companeyName != '' ">
+               deviceMfrs = #{companeyName},
+         	</if>
+		    </trim>
+   			 where idcType = #{idcType,jdbcType=VARCHAR} and alertLevel = #{alertLevel,jdbcType=VARCHAR}
+				 and month =  #{month,jdbcType=VARCHAR} and deviceType =  #{deviceType,jdbcType=VARCHAR}
+				 and countOrder = #{order,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="insertAlertMonisterTop" parameterType="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertMoniterObjectTop"   >
+		insert into
+			alert_moniter_top_sync(idcType,alertLevel,deviceType,countOrder
+			,moniterObject,moniterAlertCount,rate,month)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType} ,
+			#{item.alertLevel} ,
+			#{item.deviceType} ,
+			#{item.order} ,
+			#{item.moniterObject},
+			#{item.count},
+			#{item.rate},
+			#{item.month}
+		)
+		</foreach>
+	</insert>
+	
+	<update  id="updateAlertMonisterTop" parameterType="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertMoniterObjectTop" >
+			update alert_moniter_top_sync
+			 <trim prefix="set" suffixOverrides=",">
+	         	<if test="moniIndex != null and moniIndex != ''">
+               moniterObject = #{moniIndex},
+         	</if>
+         	<if test="count != null">
+               moniterAlertCount = #{count},
+         	</if>
+         	<if test="rate != null">
+               rate = #{rate},
+         	</if>
+		    </trim>
+   			 where idcType = #{idcType,jdbcType=VARCHAR} and alertLevel = #{alertLevel,jdbcType=VARCHAR}
+				 and month =  #{month,jdbcType=VARCHAR} and deviceType =  #{deviceType,jdbcType=VARCHAR}
+				  and countOrder = #{order,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="insertAlertDistribution" parameterType="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertResourcePoolNew"   >
+		insert into
+			alert_distribution_sync(idcType,alertLevel,month,physicalMachineCount,firewallCount,
+			routerCount,switchCount,cloudStorageCount,SDNControllerCount,diskArrayCount,tapeLibraryCount)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+		(
+			#{item.idcType} ,
+			#{item.alertLevel} ,
+			#{item.month},
+			#{item.physicalMachineCount} ,
+			#{item.firewallCount} ,
+			#{item.routerCount} ,
+			#{item.switchDeviceCount} ,
+			#{item.cloudStorageCount} ,
+			#{item.sdnControllerCount} ,
+			#{item.diskArrayCount} ,
+			#{item.tapeLibraryCount} 
+		)
+		</foreach>
+	</insert>
+	
+	<update  id="updateAlertDistribution" parameterType="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertResourcePoolNew" >
+			update alert_distribution_sync
+			 <trim prefix="set" suffixOverrides=",">
+				 <if test="physicalMachineCount != null">
+	               physicalMachineCount = #{physicalMachineCount},
+	         	</if>
+	         	<if test="firewallCount != null">
+               firewallCount = #{firewallCount},
+         	</if>
+         	<if test="routerCount != null">
+               routerCount = #{routerCount},
+         	</if>
+         	<if test="switchDeviceCount != null">
+               switchCount = #{switchDeviceCount},
+         	</if>
+         	<if test="cloudStorageCount != null">
+               cloudStorageCount = #{cloudStorageCount},
+         	</if>
+         	<if test="sdnControllerCount != null">
+               SDNControllerCount = #{sdnControllerCount},
+         	</if>
+         	<if test="diskArrayCount != null">
+               diskArrayCount = #{diskArrayCount},
+         	</if>
+         	<if test="tapeLibraryCount != null">
+               tapeLibraryCount = #{tapeLibraryCount},
+         	</if>
+		    </trim>
+   			 where idcType = #{idcType,jdbcType=VARCHAR} and alertLevel = #{alertLevel,jdbcType=VARCHAR}
+   			 and month =  #{month,jdbcType=VARCHAR}
+
+	</update>
+	
+	<resultMap type="com.aspire.mirror.alert.server.dao.inspectionDaily.po.AlertDeviceTypeConfig" id="deviceTypeMap">
+		<result property="id" column="id" jdbcType="VARCHAR" />
+		<result property="code" column="code" jdbcType="VARCHAR" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		 <result property="type" column="type" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 
+	 <select id="getDeviceTypeConfiged"  resultMap="deviceTypeMap" >
+	 select * from alert_devicetype_config
+	 <where>
+		<if test="type != null and  type != ''">
+             and type = #{type}
+         </if>
+         </where>
+	</select>
+	
+	<delete id="deleteCountByMonth" parameterType="String">
+		delete from alert_alerts_statistics_sync where month = #{month}
+	</delete>
+	
+	<delete id="deleteRecordByMonth" parameterType="String">
+		delete from alert_distribution_sync where month = #{month}
+	</delete>
+	
+	<delete id="deleteDeviceByMonth" parameterType="String">
+		delete from alert_device_top_sync where month = #{month}
+	</delete>
+	
+	<delete id="deleteMoniterByMonth" parameterType="String">
+		delete from alert_moniter_top_sync where month = #{month}
+	</delete>
+</mapper>

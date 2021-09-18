@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.log.server.dao.ConfigCompareLogsDao">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.log.server.dao.po.ConfigCompareLogs">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="compare_id" property="compareId" jdbcType="INTEGER"/>
+        <result column="idc_type" property="idcType" jdbcType="VARCHAR"/>
+        <result column="master_ip" property="masterIp" jdbcType="VARCHAR"/>
+        <result column="backup_ip" property="backupIp" jdbcType="VARCHAR"/>
+        <result column="master_config_file" property="masterConfigFile" jdbcType="VARCHAR"/>
+        <result column="backup_config_file" property="backupConfigFile" jdbcType="VARCHAR"/>
+        <result column="add_result" property="addResult" jdbcType="VARCHAR"/>
+        <result column="modify_result" property="modifyResult" jdbcType="VARCHAR"/>
+        <result column="del_result" property="delResult" jdbcType="VARCHAR"/>
+        <result column="compare_time" property="compareTime" jdbcType="TIMESTAMP"/>
+        <result column="compare_user" property="compareUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, compare_id, idc_type, master_ip, backup_ip, master_config_file, backup_config_file,
+        add_result, modify_result, del_result, compare_time, compare_user
+    </sql>
+    <!-- list查询 -->
+    <select id="listByCompareId" resultMap="resultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM config_compare_logs where compare_id = #{compareId,jdbcType=INTEGER}
+        order by compare_time desc
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.mirror.log.server.dao.po.ConfigCompareLogs" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO config_compare_logs
+        (
+            `compare_id`,
+            `idc_type`,
+            `master_ip`,
+            `backup_ip`,
+            `master_config_file`,
+            `backup_config_file`,
+            `add_result`,
+            `modify_result`,
+            `del_result`,
+            `compare_time`,
+            `compare_user`
+        ) VALUES (
+            #{compareId},
+            #{idcType, jdbcType=VARCHAR},
+            #{masterIp, jdbcType=VARCHAR},
+            #{backupIp, jdbcType=VARCHAR},
+            #{masterConfigFile, jdbcType=VARCHAR},
+            #{backupConfigFile, jdbcType=VARCHAR},
+            #{addResult, jdbcType=VARCHAR},
+            #{modifyResult, jdbcType=VARCHAR},
+            #{delResult, jdbcType=VARCHAR},
+            #{compareTime, jdbcType=TIMESTAMP},
+            #{compareUser, jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

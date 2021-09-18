@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.sync.mapper.CmdbZabbixMaintenanceMapper">
+
+    <resultMap type="com.aspire.ums.cmdb.sync.entity.CmdbZabbixMaintenance" id="cmdbZabbixMaintenance">
+        <result property="id" column="ID" jdbcType="VARCHAR"/>
+        <result property="maintenanceName" column="MAINTENANCE_NAME" jdbcType="VARCHAR"/>
+        <result property="maintenanceDesc" column="MAINTENANCE_DESC" jdbcType="VARCHAR"/>
+        <result property="activeSince" column="ACTIVE_SINCE" jdbcType="TIMESTAMP"/>
+        <result property="activeTill" column="ACTIVE_TILL" jdbcType="TIMESTAMP"/>
+        <result property="maintenanceIp" column="MAINTENANCE_IP" jdbcType="VARCHAR"/>
+        <result property="idc" column="IDC" jdbcType="VARCHAR"/>
+        <result property="maintenanceId" column="MAINTENANCE_ID" jdbcType="VARCHAR"/>
+        <result property="source" column="SOURCE" jdbcType="VARCHAR"/>
+        <result property="createStatus" column="CREATE_STATUS" jdbcType="VARCHAR"/>
+        <result property="comment" column="COMMENT" jdbcType="VARCHAR"/>
+        <result property="maintenanceMoni" column="maintenance_moni" jdbcType="VARCHAR"/>
+        <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+        <result property="opLevel" column="OP_LEVEL" jdbcType="CHAR"/>
+        <result property="opGreat" column="OP_GREAT" jdbcType="CHAR"/>
+        <result property="opCritical" column="OP_CRITICAL" jdbcType="CHAR"/>
+        <result property="opOrdertype" column="OP_ORDERTYPE" jdbcType="CHAR"/>
+        <result property="opOrderCreatoraco" column="OP_ORDER_CREATORACO" jdbcType="VARCHAR"/>
+        <result property="opOrderCreator" column="OP_ORDER_CREATOR" jdbcType="VARCHAR"/>
+        <result property="opResult" column="op_result" jdbcType="VARCHAR"/>
+        <result property="disableFlag" column="disable_flag" jdbcType="CHAR"/>
+    </resultMap>
+
+    <!-- 根据主键查询 -->
+    <select id="findById" parameterType="string" resultMap="cmdbZabbixMaintenance">
+		 SELECT
+	 	  	ID,
+	 	  	MAINTENANCE_NAME,
+	 	  	MAINTENANCE_DESC,
+	 	  	ACTIVE_SINCE,
+	 	  	ACTIVE_TILL,
+	 	  	MAINTENANCE_IP,
+	 	  	IDC,
+	 	  	MAINTENANCE_ID,
+	 	  	SOURCE,
+	 	  	CREATE_STATUS,
+	 	  	COMMENT,
+	 	  	maintenance_moni,
+	 	  	CREATE_TIME,
+	 	  	OP_LEVEL,
+	 	  	OP_GREAT,
+	 	  	OP_CRITICAL,
+	 	  	OP_ORDERTYPE,
+	 	  	OP_ORDER_CREATORACO,
+	 	  	OP_ORDER_CREATOR,
+	 	    op_result,
+	 	    disable_flag
+		  FROM 
+		    cmdb_zabbix_maintenance
+		  WHERE 
+		    ID = #{id}
+	</select>
+
+    <!--分页查询-->
+    <select id="findPage" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbZabbixMaintenance" resultMap="cmdbZabbixMaintenance">
+        SELECT
+        ID,
+        MAINTENANCE_NAME,
+        MAINTENANCE_DESC,
+        ACTIVE_SINCE,
+        ACTIVE_TILL,
+        MAINTENANCE_IP,
+        IDC,
+        MAINTENANCE_ID,
+        SOURCE,
+        CREATE_STATUS,
+        COMMENT,
+        maintenance_moni,
+        CREATE_TIME,
+        OP_LEVEL,
+        OP_GREAT,
+        OP_CRITICAL,
+        OP_ORDERTYPE,
+        OP_ORDER_CREATORACO,
+        OP_ORDER_CREATOR,
+        op_result,
+        disable_flag
+        FROM
+        cmdb_zabbix_maintenance
+        <where>
+            <if test="maintenanceName != null and maintenanceName != ''">
+                AND MAINTENANCE_NAME=#{maintenanceName}
+            </if>
+            <if test="maintenanceDesc != null and maintenanceDesc != ''">
+                AND MAINTENANCE_DESC=#{maintenanceDesc}
+            </if>
+            <if test="activeSince != null and activeSince != ''">
+                AND ACTIVE_SINCE=#{activeSince}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbZabbixMaintenance">
+        INSERT INTO cmdb_zabbix_maintenance (
+        ID,
+        MAINTENANCE_NAME,
+        MAINTENANCE_DESC,
+        ACTIVE_SINCE,
+        ACTIVE_TILL,
+        MAINTENANCE_IP,
+        IDC,
+        MAINTENANCE_ID,
+        SOURCE,
+        CREATE_STATUS,
+        COMMENT,
+        maintenance_moni,
+        CREATE_TIME,
+        OP_LEVEL,
+        OP_GREAT,
+        OP_CRITICAL,
+        OP_ORDERTYPE,
+        OP_ORDER_CREATORACO,
+        OP_ORDER_CREATOR,
+        op_result,
+	 	disable_flag
+        )
+        VALUES (
+        #{id,jdbcType=VARCHAR},
+        #{maintenanceName,jdbcType=VARCHAR},
+        #{maintenanceDesc,jdbcType=VARCHAR},
+        #{activeSince,jdbcType=TIMESTAMP},
+        #{activeTill,jdbcType=TIMESTAMP},
+        #{maintenanceIp,jdbcType=VARCHAR},
+        #{idc,jdbcType=VARCHAR},
+        #{maintenanceId,jdbcType=VARCHAR},
+        #{source,jdbcType=VARCHAR},
+        #{createStatus,jdbcType=VARCHAR},
+        #{comment,jdbcType=VARCHAR},
+        #{maintenanceMoni,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{opLevel,jdbcType=CHAR},
+        #{opGreat,jdbcType=CHAR},
+        #{opCritical,jdbcType=CHAR},
+        #{opOrdertype,jdbcType=CHAR},
+        #{opOrderCreatoraco,jdbcType=VARCHAR},
+        #{opOrderCreator,jdbcType=VARCHAR},
+        #{opResult,jdbcType=VARCHAR},
+        #{disableFlag,jdbcType=CHAR}
+        )
+    </insert>
+
+    <!-- 批量新增 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_zabbix_maintenance (
+        ID,
+        MAINTENANCE_NAME,
+        MAINTENANCE_DESC,
+        ACTIVE_SINCE,
+        ACTIVE_TILL,
+        MAINTENANCE_IP,
+        IDC,
+        MAINTENANCE_ID,
+        SOURCE,
+        CREATE_STATUS,
+        COMMENT,
+        maintenance_moni,
+        CREATE_TIME,
+        OP_LEVEL,
+        OP_GREAT,
+        OP_CRITICAL,
+        OP_ORDERTYPE,
+        OP_ORDER_CREATORACO,
+        OP_ORDER_CREATOR,
+        op_result,
+        disable_flag
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},
+            #{item.maintenanceName,jdbcType=VARCHAR},
+            #{item.maintenanceDesc,jdbcType=VARCHAR},
+            #{item.activeSince,jdbcType=TIMESTAMP},
+            #{item.activeTill,jdbcType=TIMESTAMP},
+            #{item.maintenanceIp,jdbcType=VARCHAR},
+            #{item.idc,jdbcType=VARCHAR},
+            #{item.maintenanceId,jdbcType=VARCHAR},
+            #{item.source,jdbcType=VARCHAR},
+            #{item.createStatus,jdbcType=VARCHAR},
+            #{item.comment,jdbcType=VARCHAR},
+            #{item.maintenanceMoni,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.opLevel,jdbcType=CHAR},
+            #{item.opGreat,jdbcType=CHAR},
+            #{item.opCritical,jdbcType=CHAR},
+            #{item.opOrdertype,jdbcType=CHAR},
+            #{item.opOrderCreatoraco,jdbcType=VARCHAR},
+            #{item.opOrderCreator,jdbcType=VARCHAR},
+            #{item.opResult,jdbcType=VARCHAR},
+            #{item.disableFlag,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbZabbixMaintenance">
+        UPDATE cmdb_zabbix_maintenance
+        <set>
+            <if test="maintenanceName != null ">
+                MAINTENANCE_NAME = #{maintenanceName},
+            </if>
+            <if test="maintenanceDesc != null ">
+                MAINTENANCE_DESC = #{maintenanceDesc},
+            </if>
+            <if test="activeSince != null ">
+                ACTIVE_SINCE = #{activeSince},
+            </if>
+            <if test="activeTill != null ">
+                ACTIVE_TILL = #{activeTill},
+            </if>
+            <if test="maintenanceIp != null ">
+                MAINTENANCE_IP = #{maintenanceIp},
+            </if>
+            <if test="idc != null ">
+                IDC = #{idc},
+            </if>
+            <if test="maintenanceId != null ">
+                MAINTENANCE_ID = #{maintenanceId},
+            </if>
+            <if test="source != null ">
+                SOURCE = #{source},
+            </if>
+            <if test="createStatus != null ">
+                CREATE_STATUS = #{createStatus},
+            </if>
+            <if test="comment != null ">
+                COMMENT = #{comment},
+            </if>
+            <if test="maintenanceMoni != null ">
+                maintenance_moni = #{maintenanceMoni},
+            </if>
+            <if test="createTime != null ">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="opLevel != null ">
+                OP_LEVEL = #{opLevel},
+            </if>
+            <if test="opGreat != null ">
+                OP_GREAT = #{opGreat},
+            </if>
+            <if test="opCritical != null ">
+                OP_CRITICAL = #{opCritical},
+            </if>
+            <if test="opOrdertype != null ">
+                OP_ORDERTYPE = #{opOrdertype},
+            </if>
+            <if test="opOrderCreatoraco != null ">
+                OP_ORDER_CREATORACO = #{opOrderCreatoraco},
+            </if>
+            <if test="opOrderCreator != null ">
+                OP_ORDER_CREATOR = #{opOrderCreator},
+            </if>
+            <if test="opResult != null ">
+                op_result = #{opResult},
+            </if>
+            <if test="disableFlag != null ">
+                disable_flag = #{disableFlag},
+            </if>
+        </set>
+        WHERE ID=#{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="string">
+   		DELETE FROM cmdb_zabbix_maintenance WHERE ID=#{id}
+   </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batchDelete" parameterType="java.util.List">
+        DELETE FROM cmdb_zabbix_maintenance
+        WHERE ID IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

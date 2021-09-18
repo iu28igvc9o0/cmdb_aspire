@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.report.mapper.BizResourceMapper">
+
+    <resultMap id="report" type="com.aspire.ums.cmdb.report.playload.BizResReport">
+        <result property="bizSystem" column="bizSystem" jdbcType="VARCHAR"/>
+        <result property="department1" column="department1" jdbcType="VARCHAR"/>
+        <result property="department2" column="department2" jdbcType="VARCHAR"/>
+        <result property="idcType" column="idcType" jdbcType="VARCHAR"/>
+        <result property="podName" column="pod_name" jdbcType="VARCHAR"/>
+        <result property="totalPlannedApplication" column="total_planned_application" jdbcType="VARCHAR"/>
+        <result property="totalAllocatedEquipment" column="total_allocated_equipment" jdbcType="VARCHAR"/>
+        <result property="deliveryCycle" column="delivery_cycle" jdbcType="VARCHAR"/>
+        <result property="deliveryRatio" column="delivery_ratio" jdbcType="VARCHAR"/>
+        <result property="vcpu" column="vcpu" jdbcType="VARCHAR"/>
+        <result property="totalMemory" column="total_memory" jdbcType="VARCHAR"/>
+        <result property="allocatedPhysical" column="allocatedPhysical" jdbcType="VARCHAR"/>
+        <result property="allocatedVM" column="allocatedVM" jdbcType="VARCHAR"/>
+        <result property="deviceType" column="device_type" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllReportData_total" resultMap="report">
+        SELECT
+            bizSystem,
+            department1,
+            department2,
+            idcType,
+            pod_name,
+            device_type,
+            if (device_type='X86服务器' ,SUM(total_allocated_equipment) ,'') as allocatedPhysical,
+            if (device_type='云主机' ,SUM(total_allocated_equipment),'') as allocatedVM,
+            AVG(delivery_cycle) delivery_cycle,
+            concat(round(SUM(total_allocated_equipment)/SUM(total_planned_application)*100,2),'%') delivery_ratio,
+            createTime
+        FROM
+          cmdb_instance_resource
+        WHERE 1=1
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''" >
+            and bizSystem = #{bizSystem}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''" >
+            and department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''" >
+            and department2 = #{department2}
+        </if>
+        <if test="createTime1 != null and createTime1 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') >= #{createTime1}
+            ]]>
+        </if>
+        <if test="createTime2 != null and createTime2 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') <= #{createTime2}
+            ]]>
+        </if>
+        GROUP BY bizSystem,department1,department2,idcType,pod_name,device_type,createTime
+    </select>
+
+    <select id="getAllReportCount_total" resultType="java.lang.Integer">
+        SELECT count(1) FROM (
+            SELECT
+                bizSystem,
+                department1,
+                department2,
+                idcType,
+                pod_name,
+                device_type
+            FROM
+              cmdb_instance_resource
+            WHERE 1=1
+                <if test="deviceType != null and deviceType != ''">
+                    and device_type = #{deviceType}
+                </if>
+                <if test="bizSystem != null and bizSystem != ''" >
+                    and bizSystem = #{bizSystem}
+                </if>
+                <if test="idcType != null and idcType != ''">
+                    and idcType = #{idcType}
+                </if>
+                <if test="department1 != null and department1 != ''" >
+                    and department1 = #{department1}
+                </if>
+                <if test="department2 != null and department2 != ''" >
+                    and department2 = #{department2}
+                </if>
+                <if test="createTime1 != null and createTime1 != ''">
+                    <![CDATA[
+                      and DATE_FORMAT(createTime, '%Y-%m') >= #{createTime1}
+                    ]]>
+                </if>
+                <if test="createTime2 != null and createTime2 != ''">
+                    <![CDATA[
+                      and DATE_FORMAT(createTime, '%Y-%m') <= #{createTime2}
+                    ]]>
+                </if>
+            GROUP BY bizSystem,department1,department2,idcType,pod_name,device_type
+        ) t
+    </select>
+
+    <select id="getExportData_total" resultType="java.util.Map">
+        SELECT
+            bizSystem,
+            department1,
+            department2,
+            idcType,
+            pod_name,
+            device_type,
+            if (device_type='X86服务器',SUM(total_allocated_equipment),null) as allocatedPhysical,
+            if (device_type='云主机',SUM(total_allocated_equipment),null) as allocatedVM,
+            AVG(delivery_cycle) delivery_cycle,
+            concat(round(SUM(total_allocated_equipment)/SUM(total_planned_application)*100,2),'%') delivery_ratio,
+            createTime
+        FROM
+          cmdb_instance_resource
+        WHERE 1=1
+            <if test="deviceType != null and deviceType != ''">
+                and device_type = #{deviceType}
+            </if>
+            <if test="bizSystem != null and bizSystem != ''" >
+                and bizSystem = #{bizSystem}
+            </if>
+            <if test="idcType != null and idcType != ''">
+                and idcType = #{idcType}
+            </if>
+            <if test="department1 != null and department1 != ''" >
+                and department1 = #{department1}
+            </if>
+            <if test="department2 != null and department2 != ''" >
+                and department2 = #{department2}
+            </if>
+            <if test="createTime1 != null and createTime1 != ''">
+                <![CDATA[
+                  and DATE_FORMAT(createTime, '%Y-%m') >= #{createTime1}
+                ]]>
+            </if>
+            <if test="createTime2 != null and createTime2 != ''">
+                <![CDATA[
+                  and DATE_FORMAT(createTime, '%Y-%m') <= #{createTime2}
+                ]]>
+            </if>
+        GROUP BY bizSystem,department1,department2,idcType,pod_name,device_type,createTime
+    </select>
+
+    <select id="getExportData" resultType="java.util.Map">
+        SELECT
+            bizSystem,
+            department1,
+            department2,
+            idcType,
+            pod_name,
+            total_planned_application,
+            total_allocated_equipment,
+            delivery_cycle,
+            concat(round(delivery_ratio,2),'%') delivery_ratio,
+            vcpu,
+            total_memory,
+            createTime
+        FROM
+            cmdb_instance_resource
+        WHERE 1=1
+            <if test="deviceType != null and deviceType != ''">
+                and device_type = #{deviceType}
+            </if>
+            <if test="bizSystem != null and bizSystem != ''" >
+                and bizSystem = #{bizSystem}
+            </if>
+            <if test="idcType != null and idcType != ''">
+                and idcType = #{idcType}
+            </if>
+            <if test="department1 != null and department1 != ''" >
+                and department1 = #{department1}
+            </if>
+            <if test="department2 != null and department2 != ''" >
+                and department2 = #{department2}
+            </if>
+        <if test="createTime1 != null and createTime1 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') >= #{createTime1}
+            ]]>
+        </if>
+        <if test="createTime2 != null and createTime2 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') <= #{createTime2}
+            ]]>
+        </if>
+    </select>
+
+    <select id="getAllReportData" resultMap="report">
+        SELECT
+        bizSystem,
+        department1,
+        department2,
+        idcType,
+        pod_name,
+        total_planned_application,
+        total_allocated_equipment,
+        delivery_cycle,
+        concat(round(delivery_ratio,2),'%') delivery_ratio,
+        vcpu,
+        total_memory,
+        createTime
+        FROM
+        cmdb_instance_resource
+        WHERE 1=1
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''" >
+            and bizSystem = #{bizSystem}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''" >
+            and department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''" >
+            and department2 = #{department2}
+        </if>
+        <if test="createTime1 != null and createTime1 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') >= #{createTime1}
+            ]]>
+        </if>
+        <if test="createTime2 != null and createTime2 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') <= #{createTime2}
+            ]]>
+        </if>
+    </select>
+
+    <select id="getAllReportCount" resultType="java.lang.Integer">
+        SELECT count(1) FROM cmdb_instance_resource
+        WHERE 1=1
+        <if test="deviceType != null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="bizSystem != null and bizSystem != ''" >
+            and bizSystem = #{bizSystem}
+        </if>
+        <if test="idcType != null and idcType != ''">
+            and idcType = #{idcType}
+        </if>
+        <if test="department1 != null and department1 != ''" >
+            and department1 = #{department1}
+        </if>
+        <if test="department2 != null and department2 != ''" >
+            and department2 = #{department2}
+        </if>
+        <if test="createTime1 != null and createTime1 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') >= #{createTime1}
+            ]]>
+        </if>
+        <if test="createTime2 != null and createTime2 != ''">
+            <![CDATA[
+              and DATE_FORMAT(createTime, '%Y-%m') <= #{createTime2}
+            ]]>
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="java.lang.String">
+        insert into cmdb_instance_resource (bizSystem,department1,department2,device_class,device_type,idcType,pod_name,total_planned_application,total_allocated_equipment,delivery_cycle,delivery_ratio,vcpu,total_memory,createTime)
+        values (#{bizSystem},#{department1},#{department2},#{deviceClass},#{deviceType},#{idcType},#{podName},#{totalPlannedApplication},#{totalAllocatedEquipment},#{deliveryCycle},#{deliveryRatio},#{vcpu},#{totalMemory},#{createTime})
+    </insert>
+</mapper>

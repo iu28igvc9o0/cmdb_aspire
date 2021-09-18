@@ -1,0 +1,422 @@
+@CHARSET "UTF-8";
+
+/*****************************************/
+/* tabmenu */
+/*****************************************/
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html,body{
+	color: #555753;
+	margin: 0px;
+	font-size: 9pt;
+	line-height: 16pt;
+	width: 100%;
+}
+
+.clear{
+	clear:both;
+}
+
+/*main
+*/
+div.main{
+	margin:0;
+	margin-top:6px;
+	padding:0;
+	width:98%;/*ff*/
+	_width:98%;/*ie6*/
+	position:relative;
+	left:0.9%;
+}
+
+.DivPage {
+	width: 100%;
+	height:100%;
+	text-align:center;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1776C6;
+    overfolw:hidden;
+    left:0.9%;
+}
+
+
+.DivCover {
+	width: 100%;
+	height:600px;
+	text-align:center;
+	font-size: 13px;
+	font-weight: bold;
+	color: #1776C6;
+	left:0.9%;
+
+}
+
+.DivCover img{
+	margin-top: 40px;
+	margin-bottom: 60px;
+}
+
+
+.CoverTable{
+	font-size: 13px;
+	color:#559BD2;
+	border:1px #559BD2 solid;
+	margin-left:auto;
+	margin-right:auto;
+	width:450px;
+}
+
+.CoverTable td{
+	border:0;
+	border-bottom:1px solid #559BD2;
+	margin-left:20px;
+	color:#1776C6;
+	font-weight:bolder;
+	height:28px;
+	line-height:28px;
+	padding-left:22px;
+	text-align:left;
+}
+
+.CoverTable td.end{
+	border-bottom:0;
+}
+
+.SummaryTable{
+	font-size: 13px;
+	color:#559BD2;
+	border:0px #559BD2 solid;
+	margin-left:auto;
+	margin-right:auto;
+	width:720px;
+}
+
+.SummaryTable td{
+	border:0;
+	border-bottom:0px solid #559BD2;
+	margin-left:20px;
+	color:#1776C6;
+	font-weight:bolder;
+	height:28px;
+	line-height:28px;
+	background:url(../images/cover_icon.gif) center left no-repeat;
+	padding-left:22px;
+	text-align:center;
+}
+.SummaryTable td div{
+	font-size: 12px !important;
+}
+.SummaryTable td.end{
+	border-bottom:0;
+}
+
+.VChapterTitle{
+	float:left;
+	width:100%;
+	height:35px;
+	border:0;
+	border-left:1px solid #B8C1DD;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FD9D07;
+}
+
+.VChapterTitle div.caption{
+	display:block;
+	float:left;
+	padding-right:42px;
+	padding-left:14px;
+	height:35px;
+	line-height:35px;
+}
+
+.VChapterSummary{
+	float:left;
+	width:100%;
+	margin:0;
+	padding:0;
+	padding-top:5px;
+	padding-bottom:5px;
+	font-size: 14px;
+	border:1px solid #B8C1DD;
+	background-color:#F3F8FD;
+}
+
+
+.VSectionBox{
+	width:100%;
+	margin:0;
+    padding:0;
+}
+
+.VSectionBox table{
+	margin: 20px auto 20px;
+}
+
+.VSectionTitle{
+    margin:0;
+    padding:0;
+	border:0;
+	border-left:1px solid #8AA3E6;
+	border-bottom:1px solid #31CD2C;
+	font-size: 13px;
+	font-weight: bold;
+	color:#fff;
+
+}
+
+.VSectionTitle div.prefix{
+  	float:left;
+    margin:0;
+    padding:0;
+    padding-right:16px;
+}
+
+.VSectionTitle div.preleft_normal{
+  	margin:0;
+	padding:0;
+	display:block;
+	padding-left:12px;
+	font-style: normal;
+	vertical-align: middle;
+	padding-top:2px;
+ }
+
+
+ .VSectionTitle div.preleft_detail{
+  	margin:0;
+	padding:0;
+	display:block;
+	padding-left:12px;
+	font-style: normal;
+	vertical-align: middle;
+	padding-top:2px;
+ }
+
+ .VSectionSummary{
+	margin:0;
+	padding:0;
+	padding-top:5px;
+	padding-bottom:5px;
+	width:100%;
+	font-size: 14px;
+	border:1px solid #B8C1DD;
+	border-top:0;
+	background-color:#F3F8FD;
+ }
+
+.VSectionContent{
+	margin:0;
+	padding:0;
+	padding-bottom:20px;
+	width:100%;
+	border:1px solid #B8C1DD;
+	border-top:0;
+	background-color:#F3F8FD;
+}
+
+.VSectionContent img{
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.VSectionBox caption{
+	color:#000000;
+	padding:8px 20px;
+	text-align:left;
+	border:1px solid #89A3E6;
+	width:80%;
+}
+
+.VSectionBox th.alt{
+	font-size: 12px;
+	line-height:26px;
+	background-color:#CFE3FA;
+	border:1px solid #89A3E6;
+	border-bottom-color:#30CD2C;
+	background-repeat: no-repeat;
+	background-position: 12px center;
+	padding-left:12px;
+	padding-top:4px;
+	text-indent:12px;
+}
+
+
+.SVTable{
+	width:95%;
+	margin: 5px auto 20px;
+	border: 0px solid #89A3E6;
+	border-collapse:collapse;
+	border-spacing:0px;
+	table-layout: fixed;
+}
+
+.SVTable th{
+	font-size: 13px;
+	font-weight: bold;
+	text-align: center;
+	padding-left: 10px;
+	background:#fff url(../images/th_bg.gif) bottom repeat-x;
+	border:0px solid #89A3E6;
+	border-top:0;
+	color:#4363B4;
+	font-weight:bold;
+	white-space:normal;
+	overflow:hidden;
+}
+
+.SVTable td{
+	border:0px solid #89A3E6;
+	border-top:0;
+	color:#4363B4;
+	word-break: break-all;
+	word-wrap: break-word ;
+	/*background:#fff;*/
+}
+
+
+
+
+.SVTable td.title{
+	border:0;
+	border-left:0px solid #8AA3E6;
+	border-bottom:0px solid #31CD2C;
+	background:url(../images/title.gif) top right no-repeat;
+	font-size: 13px;
+	font-weight: bold;
+	color:#fff;
+
+ }
+
+.SVTable td.title p{
+	float:left;
+	margin:0;
+	padding:0;
+	padding-right:16px;
+	display:block;
+	background:url(../images/title_bg_r.gif) top right no-repeat;
+
+}
+
+.SVTable th.title p em{
+	margin:0;
+	padding:0;
+	display:block;
+	padding-left:12px;
+	background:url(../images/title_bg_l.gif) top left no-repeat;
+	font-style: normal;
+	vertical-align: middle;
+	padding-top:2px;
+
+  }
+
+.SVTable tbody tr td{
+	padding-left: 10px;
+	font-size: 13px;
+	border:0px solid #89A3E6;
+	border-top:0;
+	color:#4363B4;
+	word-break: break-all;
+	word-wrap: break-word ;
+  	vertical-align: top;
+
+	/*background:#fff;*/
+}
+
+.SVTable tbody tr td div{
+	font-size: 12px !important;
+}
+
+.SVTable tbody tr.odd{
+	background-color:#F8FAFD;
+}
+
+.SVTable tbody td.center{
+	text-align: center;
+	min-height:100px;
+}
+
+
+.VTable{
+	width:95%;
+	border: 1px solid #89A3E6;
+	border-collapse:collapse;
+	border-spacing:0px;
+}
+
+
+.VTable th{
+	font-size: 13px;
+	font-weight: bold;
+	text-align: left;
+	padding-left: 10px;
+	border:1px solid #89A3E6;
+	border-top:0;
+	color:#4363B4;
+	font-weight:bold;
+	white-space:normal;
+}
+
+.VTable td{
+	border:1px solid #89A3E6;
+	border-top:0;
+	color:#4363B4;
+	word-break: break-all;
+	word-wrap: break-word ;
+	background:#fff;
+}
+
+.VTable td.title{
+	border:0;
+	border-left:1px solid #8AA3E6;
+	border-bottom:1px solid #31CD2C;
+	font-size: 13px;
+	font-weight: bold;
+	color:#fff;
+
+ }
+
+.VTable td.title p{
+	float:left;
+	margin:0;
+	padding:0;
+	padding-right:16px;
+	display:block;
+
+}
+
+.VTable th.title p em{
+	margin:0;
+	padding:0;
+	display:block;
+	padding-left:12px;
+	font-style: normal;
+	vertical-align: middle;
+	padding-top:2px;
+
+  }
+
+.VTable tbody tr td{
+	padding-left: 10px;
+	font-size: 13px;
+	border:1px solid #89A3E6;
+	border-top:0;
+	color:#4363B4;
+	word-break: break-all;
+	word-wrap: break-word ;
+	background:#fff;
+}
+
+.VTable tbody tr.odd{
+	background-color:#F8FAFD;
+}
+
+.VTable tbody td.center{
+	text-align: center;
+	min-height:100px;
+}

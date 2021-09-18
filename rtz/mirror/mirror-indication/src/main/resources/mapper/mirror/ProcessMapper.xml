@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IProcessDAO">
+	
+	<resultMap type="com.aspire.mirror.entity.ProcessEntity" id="processMap">
+		<result property="processId" column="process_id" jdbcType="TINYINT"/>
+		<result property="indicationId" column="indication_id" jdbcType="TINYINT"/>
+		<result property="processClass" column="process_class" jdbcType="VARCHAR"/>
+		<result property="processStatus" column="process_status" jdbcType="VARCHAR"/>
+		<result property="processLastTime" column="process_last_time" jdbcType="DATE"/>
+	</resultMap>
+	
+	<select id="getAllProcess" resultMap="processMap" >
+		SELECT * FROM mirror_process
+	</select>
+
+	<select id="getProcessByIndicationId" parameterType="java.lang.Integer" resultMap="processMap" >
+		SELECT * FROM mirror_process where indication_id = #{indicationId}
+	</select>
+
+	<update id="updateProcess" parameterType="com.aspire.mirror.entity.ProcessEntity">
+		update mirror_process set process_status=#{processStatus}, process_last_time=#{processLastTime}
+		where indication_id = #{indicationId}
+	</update>
+
+</mapper>

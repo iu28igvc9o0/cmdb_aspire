@@ -1,0 +1,79 @@
+package com.aspire.mirror.indication.day.box;
+
+import com.aspire.common.WsdlUtils;
+import com.aspire.mirror.util.IndicationConst;
+import com.aspire.mirror.entity.IndicationAllItemEntity;
+import com.aspire.mirror.entity.IndicationProvinceEntity;
+import com.aspire.mirror.indication.day.AbstractDayIndicationFactory;
+import com.aspire.mirror.util.IndicationUtils;
+import com.aspire.mirror.webservice.IPlatformFactory;
+import net.sf.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: jw.zhu
+ * Date: 2018/11/10
+ * 软探针异常指标监控系统 - 平均首次加载时长指标
+ * FirstLoadAvgHandler
+ */
+public class FirstLoadAvgHandler extends AbstractDayIndicationFactory {
+    @Override
+    public String getEndpointAddress() {
+        return WsdlUtils.PROGRAM_INFO_SERVER;
+    }
+    @Override
+    public String initWsdlMethod() {
+        return "getProgramFirstTime";
+    }
+
+    @Override
+    public void initSDK() {
+        for(IndicationAllItemEntity itemEntity : indicationEntity.getIndicationItemList()) {
+            if (itemEntity.getIndicationItemName().equals("平均首次加载时长")) {
+                List<String> prevDays = IndicationUtils.getPrevDays(calcDate, IndicationConst.QUERY_MONGODB_DATE_PATTERN, 0);
+                String dateStr = prevDays.get(0);
+                Map<String, String> firstMap = new HashMap<String, String>();
+                try {
+                    firstMap = WsdlUtils.getWsdlServiceReturnMap(this.wsdl, this.wsdlMethod, prevDays, null,
+                            null, null, null, IndicationConst.QUERY_MONGODB_TYPE_PROVINCE);
+                } catch (Exception e) {
+                    LOGGER.error("获取指标[{}]-[{}]原始数据错误. WSDL -> {} method -> {}.",
+                            dateStr, indicationEntity.getIndicationName(), this.wsdl, this.wsdlMethod, e);
+                }
+                Double totalFirstTime = 0.0;
+                Double totalPlayCnt = 0.0;
+                for (IndicationProvinceEntity entity : PROVINCE_LIST) {
+                    if (entity.getProvinceCode().equals(IndicationConst.COUNTRY_PROVINCE_CODE)) {
+                        continue;
+                    }
+                    double firstBufferTime = 0.0;
+                    double playCnt = 0.0;
+                    if (firstMap.containsKey(entity.getProvinceCode())) {
+                        JSONObject json = JSONObject.fromObject(firstMap.get(entity.getProvinceCode()));
+                        //平均首次加载时长（s）
+                        firstBufferTime = json.getDouble("firstbuffertime");
+                        playCnt = json.getDouble("playcnt") * 1000;
+                        totalFirstTime = IndicationUtils.formatSum(totalFirstTime, firstBufferTime);
+                        totalPlayCnt = IndicationUtils.formatSum(totalPlayCnt, playCnt);
+                    }
+                    String firstLoadTime = IndicationUtils.formatRate(firstBufferTime, playCnt, 1, null);
+                    String formatUnit = IndicationUtils.formatUnit(firstLoadTime, indicationEntity.getIndicationUnit());
+                    submitData(itemEntity, entity.getProvinceCode(), dateStr, formatUnit, firstLoadTime, false);
+                }
+                String totalFirstLoadTime = IndicationUtils.formatRate(totalFirstTime, totalPlayCnt, 1, null);
+                String formatUnit = IndicationUtils.formatUnit(totalFirstLoadTime, indicationEntity.getIndicationUnit());
+                //全国的数据
+                submitData(itemEntity, IndicationConst.COUNTRY_PROVINCE_CODE, prevDays.get(0), formatUnit, totalFirstLoadTime, false);
+            }
+        }
+    }
+
+    @Override
+    public void calcSpecialItem(IndicationAllItemEntity itemEntity) {
+
+    }
+}

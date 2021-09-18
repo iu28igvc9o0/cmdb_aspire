@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.bills.calculate.mapper.CmdbBillsMonthRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthRecord" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="department_id" property="departmentId" jdbcType="VARCHAR" />
+    <result column="business_system_id" property="businessSystemId" jdbcType="VARCHAR" />
+    <result column="idc_id" property="idcId" jdbcType="VARCHAR" />
+    <result column="pod_id" property="podId" jdbcType="VARCHAR" />
+    <result column="device_type_id" property="deviceTypeId" jdbcType="VARCHAR" />
+    <result column="account_id" property="accountId" jdbcType="VARCHAR" />
+    <result column="need_pay" property="needPay" jdbcType="INTEGER" />
+    <result column="real_pay" property="realPay" jdbcType="INTEGER" />
+    <result column="discount_before_pay" property="discountBeforePay" jdbcType="INTEGER" />
+    <result column="charge_time" property="chargeTime" jdbcType="VARCHAR" />
+    <result column="insert_time" property="insertTime" jdbcType="TIMESTAMP" />
+    <result column="insert_person" property="insertPerson" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, department_id, business_system_id, idc_id, pod_id, device_type_id, account_id, need_pay,
+    real_pay, discount_before_pay, charge_time, insert_time, insert_person, update_time, update_person, is_delete
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_bills_month_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_bills_month_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="delete" parameterType="java.lang.String" >
+    update cmdb_bills_month_record
+    set
+      is_delete = 1
+    where charge_time = #{chargeTime,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteMonthBill" parameterType="java.lang.String" >
+    update cmdb_bills_month_bill
+    set
+    is_delete = 1
+    where charge_time = #{chargeTime,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertMonthBill" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthBill" >
+    insert into cmdb_bills_month_bill (id, department_id, account_id,
+    need_pay, real_pay, charge_time, description,is_delete)
+    values (#{id,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR},
+    #{needPay,jdbcType=INTEGER}, #{realPay,jdbcType=INTEGER}, #{chargeTime,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR},
+    0)
+  </insert>
+
+  <insert id="batchInsert" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthRecord">
+    insert into cmdb_bills_month_record (id, department_id, business_system_id,
+      idc_id, pod_id, device_type_id, account_id,
+      need_pay, real_pay, discount_before_pay, charge_time, insert_time,
+      insert_person, update_time, update_person,
+      is_delete)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id,jdbcType=VARCHAR}, #{item.departmentId,jdbcType=VARCHAR}, #{item.businessSystemId,jdbcType=VARCHAR},
+      #{item.idcId,jdbcType=VARCHAR}, #{item.podId,jdbcType=VARCHAR}, #{item.deviceTypeId,jdbcType=VARCHAR}, #{item.accountId,jdbcType=VARCHAR},
+      #{item.needPay,jdbcType=INTEGER}, #{item.realPay,jdbcType=INTEGER}, #{item.discountBeforePay,jdbcType=INTEGER},#{item.chargeTime,jdbcType=VARCHAR}, #{item.insertTime,jdbcType=TIMESTAMP},
+      #{item.insertPerson,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.updatePerson,jdbcType=VARCHAR},
+      0)
+    </foreach>
+
+  </insert>
+
+  <insert id="insert" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthRecord" >
+    insert into cmdb_bills_month_record (id, department_id, business_system_id, 
+      idc_id, pod_id, device_type_id, account_id,
+      need_pay, real_pay, discount_before_pay, charge_time, insert_time,
+      insert_person, update_time, update_person, 
+      is_delete)
+    values (#{id,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{businessSystemId,jdbcType=VARCHAR}, 
+      #{idcId,jdbcType=VARCHAR},#{podId,jdbcType=VARCHAR}, #{deviceTypeId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR},
+      #{needPay,jdbcType=INTEGER}, #{realPay,jdbcType=INTEGER}, #{discountBeforePay,jdbcType=INTEGER}, #{chargeTime,jdbcType=VARCHAR}, #{insertTime,jdbcType=TIMESTAMP},
+      #{insertPerson,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updatePerson,jdbcType=VARCHAR}, 
+      0)
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthRecord" >
+    update cmdb_bills_month_record
+    <set >
+      <if test="accountId != null" >
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="needPay != null" >
+        need_pay = #{needPay,jdbcType=INTEGER},
+      </if>
+      <if test="realPay != null" >
+        real_pay = #{realPay,jdbcType=INTEGER},
+      </if>
+      <if test="discountBeforePay != null" >
+        discount_before_pay = #{discountBeforePay,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null" >
+        insert_time = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertPerson != null" >
+        insert_person = #{insertPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePerson != null" >
+        update_person = #{updatePerson,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthRecord" >
+    update cmdb_bills_month_record
+    set
+      account_id = #{accountId,jdbcType=VARCHAR},
+      need_pay = #{needPay,jdbcType=INTEGER},
+      real_pay = #{realPay,jdbcType=INTEGER},
+      discount_before_pay = #{discountBeforePay,jdbcType=INTEGER},
+      insert_time = #{insertTime,jdbcType=TIMESTAMP},
+      insert_person = #{insertPerson,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_person = #{updatePerson,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <insert id="insertBillMonth" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthBill">
+    insert into cmdb_bills_month_bill (id, department_id, account_id,
+    need_pay, real_pay, charge_time, description, is_delete)
+    values (#{id,jdbcType=VARCHAR}, #{departmentId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR},
+    #{needPay,jdbcType=INTEGER}, #{realPay,jdbcType=INTEGER}, #{chargeTime,jdbcType=VARCHAR},
+    #{description,jdbcType=VARCHAR}, 0)
+  </insert>
+
+  <update id="updateBillMonth" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthBill">
+      update cmdb_bills_month_bill
+      set
+        need_pay = #{needPay,jdbcType=INTEGER},
+        description = #{description,jdbcType=VARCHAR}
+      where department_id = #{departmentId}
+        and charge_time = #{chargeTime}
+        and is_delete = 0
+  </update>
+
+  <select id="listBillsWithMonth" resultType="java.util.HashMap">
+    SELECT
+      org.orgName,
+      b.department_id departmentId,
+      b.need_pay needPay,
+      description
+    FROM(
+      SELECT * FROM cmdb_bills_month_bill
+      WHERE charge_time = #{chargeTime} AND is_delete = 0
+    ) b
+    LEFT JOIN ${tableName}.cmdb_org_system org ON b.department_id = org.id
+    ORDER BY org.orgName
+  </select>
+
+  <select id="listMonthBillsWithDepartment" parameterType="string" resultType="java.util.HashMap" >
+    SELECT
+      a.department_id department,
+      b.orgName,
+      SUM(IFNULL(r.need_pay,0)) needPay,
+      IFNULL(record.realPay,0)realPay,
+      DATE_FORMAT(r.update_time,'%Y/%m/%d') payTime,
+      IFNULL(a.balance,0) balance,
+      r.charge_time chargeTime
+    FROM `cmdb_bills_account_balance` a
+    INNER JOIN
+      ( SELECT id,orgName FROM ${tableName}.`cmdb_org_system` WHERE is_delete=0
+          <choose>
+            <when test="type == '内部租户'">
+              AND parent_id = #{innerDepartmentFlag}
+            </when>
+            <otherwise>
+              AND parent_id != #{innerDepartmentFlag}
+            </otherwise>
+          </choose>
+      )b
+    ON a.`department_id` = b.`id`
+    LEFT JOIN
+      (
+        SELECT department_id,need_pay, real_pay,update_time,charge_time
+      FROM cmdb_bills_month_record
+      WHERE is_delete = 0 AND charge_time = #{chargeTime}
+        ) r on a.`department_id` = r.department_id
+    LEFT JOIN (
+      SELECT account_id,SUM(amount) realPay
+      FROM cmdb_bills_account_record
+      WHERE deal_type = 1 AND is_delete = 0 AND deal_month = #{chargeTime}
+      GROUP BY account_id
+    ) record ON a.id = record.account_id
+    WHERE a.`is_delete`=0
+    GROUP BY r.department_id
+    ORDER BY a.department_id
+
+  </select>
+
+  <select id="listMonthBillsByDepartment" parameterType="string" resultType="java.util.HashMap" >
+      SELECT (SELECT orgName FROM ${tableName}.`cmdb_org_system` WHERE id = a.department_id) orgname,
+      mon.month `chargeTime`,FLOOR(IFNULL(r.need_pay,0)) need_pay,FLOOR(SUM(IFNULL(amount,0))) real_pay,DATE_FORMAT(r.update_time,'%Y/%m/%d') payTime FROM
+      (SELECT id,department_id,balance FROM `cmdb_bills_account_balance` WHERE department_id=#{departmentId}) a
+      LEFT JOIN
+        (SELECT
+        DATE_FORMAT(@lastDay := LAST_DAY( DATE_ADD(@lastDay,INTERVAL 1 MONTH ) ) ,'%Y-%m'  ) `month`,
+        #{departmentId} department_id
+        FROM
+        (SELECT @lastDay := DATE_ADD(concat(YEAR(CONCAT(#{chargeTime}, '-01')),'-12-01'),INTERVAL -12 MONTH) MONTH FROM `cmdb_bills_month_record`  LIMIT 12) a
+        ) mon ON a.department_id = mon.department_id
+      LEFT JOIN
+        (SELECT department_id,SUM(IFNULL(need_pay,0)) need_pay,update_time,charge_time
+        FROM cmdb_bills_month_record
+        WHERE is_delete = 0  AND department_id=#{departmentId} AND YEAR(CONCAT(charge_time, '-01')) = YEAR(CONCAT(#{chargeTime}, '-01'))
+        GROUP BY charge_time
+        ) r ON a.`department_id` = r.department_id AND mon.month = r.charge_time
+      LEFT JOIN
+        (SELECT account_id,deal_month,IFNULL(amount,0) amount FROM `cmdb_bills_account_record`
+        WHERE YEAR(CONCAT(deal_month, '-01')) = YEAR(CONCAT(#{chargeTime}, '-01'))
+        AND deal_type=1 AND is_delete=0) b ON a.id = b.`account_id` AND mon.month = b.deal_month
+
+      GROUP BY mon.month,a.department_id
+      ORDER BY mon.month
+
+  </select>
+
+
+  <update id="updateRealPay" parameterType="com.aspire.ums.bills.calculate.payload.CmdbBillsMonthRecord">
+    UPDATE cmdb_bills_month_record
+    SET
+      real_pay = #{realPay},
+      update_time = now()
+    WHERE department_id = #{departmentId} and charge_time = #{chargeTime}
+  </update>
+
+  <!-- 一个租户对应着一个实缴费用 -->
+  <select id="listBillsRealPayWithUnique" parameterType="string" resultMap="BaseResultMap" >
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM cmdb_bills_month_record
+    WHERE department_id = #{department} and charge_time = #{chargeTime}
+    LIMIT 1
+  </select>
+</mapper>

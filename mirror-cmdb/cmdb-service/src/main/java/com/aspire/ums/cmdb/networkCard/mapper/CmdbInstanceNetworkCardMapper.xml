@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.networkCard.mapper.CmdbInstanceNetworkCardMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.networkCard.payload.CmdbInstanceNetworkCard" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="network_card_name" property="networkCardName" jdbcType="VARCHAR" />
+        <result column="network_card_status" property="networkCardStatus" jdbcType="VARCHAR" />
+        <result column="port_type" property="portType" jdbcType="VARCHAR" />
+        <result column="port_rate" property="portRate" jdbcType="VARCHAR" />
+        <result column="ipv4_address" property="ipv4Address" jdbcType="VARCHAR" />
+        <result column="ipv6_address" property="ipv6Address" jdbcType="VARCHAR" />
+        <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
+        <result column="default_gateway" property="defaultGateway" jdbcType="VARCHAR" />
+        <result column="is_dhcp" property="isDhcp" jdbcType="VARCHAR" />
+        <result column="dhcp_address" property="dhcpAddress" jdbcType="VARCHAR" />
+        <result column="dns_server" property="dnsServer" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `network_card_name`,
+        `network_card_status`,
+        `port_type`,
+        `port_rate`,
+        `ipv4_address`,
+        `ipv6_address`,
+        `mac_address`,
+        `default_gateway`,
+        `is_dhcp`,
+        `dhcp_address`,
+        `dns_server`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_instance_network_card
+        WHERE `is_delete` = '0'
+    </select>
+
+    <!-- list查询 带条件 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.networkCard.payload.CmdbInstanceNetworkCard">
+        SELECT
+        `id`,
+        `instance_id`,
+        `network_card_name`,
+        `network_card_status`,
+        `port_type`,
+        `port_rate`,
+        `ipv4_address`,
+        `ipv6_address`,
+        `mac_address`,
+        `default_gateway`,
+        `is_dhcp`,
+        `dhcp_address`,
+        `dns_server`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_instance_network_card
+        WHERE 1=1 AND `is_delete` = '0'
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="instanceId != null and instanceId != ''">
+        AND `instance_id` = #{instanceId}
+        </if>
+        <if test="networkCardName != null and networkCardName != ''">
+        AND `network_card_name` = #{networkCardName}
+        </if>
+        <if test="networkCardStatus != null and networkCardStatus != ''">
+        AND `network_card_status` = #{networkCardStatus}
+        </if>
+        <if test="portType != null and portType != ''">
+        AND `port_type` = #{portType}
+        </if>
+        <if test="portRate != null and portRate != ''">
+        AND `port_rate` = #{portRate}
+        </if>
+        <if test="ipv4Address != null and ipv4Address != ''">
+        AND `ipv4_address` = #{ipv4Address}
+        </if>
+        <if test="ipv6Address != null and ipv6Address != ''">
+        AND `ipv6_address` = #{ipv6Address}
+        </if>
+        <if test="macAddress != null and macAddress != ''">
+        AND `mac_address` = #{macAddress}
+        </if>
+        <if test="defaultGateway != null and defaultGateway != ''">
+        AND `default_gateway` = #{defaultGateway}
+        </if>
+        <if test="isDhcp != null and isDhcp != ''">
+        AND `is_dhcp` = #{isDhcp}
+        </if>
+        <if test="dhcpAddress != null and dhcpAddress != ''">
+        AND `dhcp_address` = #{dhcpAddress}
+        </if>
+        <if test="dnsServer != null and dnsServer != ''">
+        AND `dns_server` = #{dnsServer}
+        </if>
+        <if test="remark != null and remark != ''">
+        AND `remark` = #{remark}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+        ORDER BY `network_card_name` ASC
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.networkCard.payload.CmdbInstanceNetworkCard" resultMap="resultMap">
+        SELECT
+        `id`,
+        `instance_id`,
+        `network_card_name`,
+        `network_card_status`,
+        `port_type`,
+        `port_rate`,
+        `ipv4_address`,
+        `ipv6_address`,
+        `mac_address`,
+        `default_gateway`,
+        `is_dhcp`,
+        `dhcp_address`,
+        `dns_server`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_instance_network_card
+        WHERE 1=1
+        AND `network_card_name` = #{networkCardName} AND `is_delete` = '0'
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.networkCard.payload.CmdbInstanceNetworkCard">
+        INSERT INTO cmdb_instance_network_card
+        (
+            `id`,
+            `instance_id`,
+            `network_card_name`,
+            `network_card_status`,
+            `port_type`,
+            `port_rate`,
+            `ipv4_address`,
+            `ipv6_address`,
+            `mac_address`,
+            `default_gateway`,
+            `is_dhcp`,
+            `dhcp_address`,
+            `dns_server`,
+            `remark`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{instanceId, jdbcType=VARCHAR},
+            #{networkCardName, jdbcType=VARCHAR},
+            #{networkCardStatus, jdbcType=VARCHAR},
+            #{portType, jdbcType=VARCHAR},
+            #{portRate, jdbcType=VARCHAR},
+            #{ipv4Address, jdbcType=VARCHAR},
+            #{ipv6Address, jdbcType=VARCHAR},
+            #{macAddress, jdbcType=VARCHAR},
+            #{defaultGateway, jdbcType=VARCHAR},
+            #{isDhcp, jdbcType=VARCHAR},
+            #{dhcpAddress, jdbcType=VARCHAR},
+            #{dnsServer, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.networkCard.payload.CmdbInstanceNetworkCard">
+        UPDATE cmdb_instance_network_card SET
+        `instance_id` = #{instanceId},
+        `network_card_name` = #{networkCardName},
+        `network_card_status` = #{networkCardStatus},
+        `port_type` = #{portType},
+        `port_rate` = #{portRate},
+        `ipv4_address` = #{ipv4Address},
+        `ipv6_address` = #{ipv6Address},
+        `mac_address` = #{macAddress},
+        `default_gateway` = #{defaultGateway},
+        `is_dhcp` = #{isDhcp},
+        `dhcp_address` = #{dhcpAddress},
+        `dns_server` = #{dnsServer},
+        `remark` = #{remark},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.networkCard.payload.CmdbInstanceNetworkCard">
+        UPDATE cmdb_instance_network_card SET
+         `is_delete` = '1'
+        WHERE
+         `id` = #{id}
+    </delete>
+
+    <!-- 逻辑删除 -->
+    <delete id="deleteByLogic" parameterType="java.util.List">
+        UPDATE cmdb_instance_network_card SET
+         `is_delete` = '1'
+        WHERE
+         `id` in 
+         <foreach collection="list" item="item" open="("  separator="," close=")">
+             #{item}
+         </foreach>
+    </delete>
+
+    <!-- list导出查询 -->
+    <select id="exportList" resultType="java.util.LinkedHashMap" parameterType="java.lang.String">
+        SELECT
+        `id`,
+        `instance_id`,
+        `network_card_name`,
+        `network_card_status`,
+        `port_type`,
+        `port_rate`,
+        `ipv4_address`,
+        `ipv6_address`,
+        `mac_address`,
+        `default_gateway`,
+        `is_dhcp`,
+        `dhcp_address`,
+        `dns_server`,
+        `remark`,
+        `is_delete`
+        FROM cmdb_instance_network_card
+        WHERE `is_delete` = '0' AND `instance_id` = #{instanceId}
+    </select>
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.InstanceCircleMapper">
+	<resultMap id="InstanceCircleResultMap"
+		type="com.aspire.ums.cmdb.maintain.entity.InstanceCircle">
+		<result column="instanceId" property="instanceId" jdbcType="DATE" />
+		<result column="circleId" property="circleId" jdbcType="DATE" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.InstanceCircle">
+		INSERT INTO
+		cmdb_instance_circle
+		(instanceId, circleId)
+		VALUES
+		(#{instanceId}, #{circleId})
+	</insert>
+
+</mapper>

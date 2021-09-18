@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.view.mapper.CmdbViewMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.view.payload.CmdbView" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="view_code" property="viewCode" jdbcType="VARCHAR" />
+        <result column="view_name" property="viewName" jdbcType="VARCHAR" />
+        <result column="catalog_id" property="catalogId" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="resultNodeMap" type="com.aspire.ums.cmdb.view.payload.CmdbView" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="view_Code" property="viewCode" jdbcType="VARCHAR" />
+        <result column="view_name" property="viewName" jdbcType="VARCHAR" />
+        <result column="catalog_id" property="catalogId" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <collection property="viewNodeList" column="{viewId = id}" select="com.aspire.ums.cmdb.view.mapper.CmdbViewNodeMapper.list" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `view_code`,
+        `view_name`,
+        `catalog_id`,
+        `module_id`,
+        `create_time`,
+        `update_time`,
+        `create_person`,
+        `update_person`
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.view.payload.CmdbViewQuery">
+        SELECT
+       <include refid="baseColumn"/>
+        FROM cmdb_view
+        where 1=1
+        <if test="catalogId != null and catalogId != ''">
+            and catalog_id = #{catalogId}
+        </if>
+        <if test="viewCode != null and viewCode != ''">
+            and view_code like CONCAT('%', #{viewCode}, '%')
+        </if>
+        <if test="viewName != null and viewName != ''">
+            and view_name like CONCAT('%', #{viewName}, '%')
+        </if>
+        order by create_time desc
+        <if test="pageSize != null and pageSize != '' and currentPage != null and currentPage != ''">
+            limit ${(currentPage -1) * pageSize}, ${pageSize}
+        </if>
+    </select>
+
+    <!-- list查询 -->
+    <select id="count" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.view.payload.CmdbViewQuery">
+        SELECT
+        count(1)
+        FROM cmdb_view
+        where 1=1
+        <if test="catalogId != null and catalogId != ''">
+            and catalog_id = #{catalogId}
+        </if>
+        <if test="viewCode != null and viewCode != ''">
+            and view_code = #{viewCode}
+        </if>
+        <if test="viewName != null and viewName != ''">
+            and view_name = #{viewName}
+        </if>
+    </select>
+    <!-- list查询 -->
+    <select id="getOne" resultMap="resultNodeMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_view
+        where id = #{id}
+    </select>
+    <!-- list查询 -->
+    <select id="getOneByCode" resultMap="resultNodeMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_view
+        where view_code = #{viewCode}
+    </select>
+    <!-- list查询 -->
+    <select id="getSimpleOne" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_view
+        where id = #{id}
+    </select>
+
+    <select id="getSimpleOneByCode" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_view
+        where view_code = #{viewCode}
+    </select>
+
+    <insert id="save" parameterType="com.aspire.ums.cmdb.view.payload.CmdbView">
+        INSERT INTO cmdb_view
+        (`id`,
+         `view_code`,
+         `view_name`,
+         `catalog_id`,
+         `module_id`,
+         `create_time`,
+         `update_time`,
+         `create_person`,
+         `update_person`)
+        VALUES (#{id, jdbcType=VARCHAR},
+                #{viewCode, jdbcType=VARCHAR},
+                #{viewName, jdbcType=VARCHAR},
+                #{catalogId, jdbcType=VARCHAR},
+                #{moduleId, jdbcType=VARCHAR},
+                #{createTime, jdbcType=TIMESTAMP},
+                #{updateTime, jdbcType=TIMESTAMP},
+                #{createPerson, jdbcType=VARCHAR},
+                #{updatePerson, jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+                view_code = values (view_code),
+                view_name = values (view_name),
+                catalog_id = values (catalog_id),
+                module_id = values (module_id),
+                update_time = values (update_time),
+                update_person = values (update_person)
+    </insert>
+
+    <delete id="deleteById">
+      delete FROM cmdb_view where id = #{id}
+    </delete>
+
+</mapper>

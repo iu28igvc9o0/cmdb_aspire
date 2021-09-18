@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.fileCheck.dao.IFileIndicationPeriodStateDAO">
+
+    <resultMap type="com.aspire.fileCheck.entity.FileIndicationPeriodStateEntity" id="indicationStateMap">
+        <result property="periodStateId" column="period_state_id" jdbcType="TINYINT"/>
+        <result property="periodConfigId" column="period_config_id" jdbcType="VARCHAR"/>
+        <result property="fileIndicationId" column="file_indication_id" jdbcType="TINYINT"/>
+        <result property="minutePeriod" column="minute_period" jdbcType="VARCHAR"/>
+        <result property="uploadStatus" column="upload_status" jdbcType="TINYINT"/>
+        <result property="updateIntegrity" column="update_integrity" jdbcType="DOUBLE"/>
+        <result property="uploadDate" column="upload_date" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifyTime" column="modify_time" jdbcType="TIMESTAMP"/>
+        <result property="fileSizeStatus" column="file_size_status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <select id="getDataByDate" resultMap="indicationStateMap">
+		select * from file_indication_period_state s where s.upload_date =  #{uploadDate}
+	</select>
+
+    <select id="getMinUpdateIntegrity" resultMap="indicationStateMap">
+		select min(s.update_integrity) update_integrity,s.period_config_id from file_indication_period_state s where 
+		(s.upload_date= #{startDate} or s.upload_date= #{endDate})
+		group by s.period_config_id
+		order by s.period_config_id 
+	</select>
+
+    <resultMap type="com.aspire.fileCheck.entity.FileStateReport" id="indicationStateReportMap">
+        <result property="periodConfigId" column="period_config_id" jdbcType="VARCHAR"/>
+        <result property="uploadStatus" column="upload_status" jdbcType="TINYINT"/>
+        <result property="updateIntegrity" column="update_integrity" jdbcType="DOUBLE"/>
+        <result property="uploadDate" column="upload_date" jdbcType="VARCHAR"/>
+        <result property="dictLazyStatus" column="dict_lazy_status" jdbcType="TINYINT"/>
+        <result property="provinceCode" column="province_code" jdbcType="VARCHAR"/>
+        <result property="dictPeriod" column="dict_period" jdbcType="VARCHAR"/>
+        <result property="dictValue" column="dict_value" jdbcType="VARCHAR"/>
+        <result property="provinceName" column="province_name" jdbcType="VARCHAR"/>
+        <result property="fileIndicationId" column="file_indication_id" jdbcType="TINYINT"/>
+        <result property="fileIndicationName" column="file_indication_name" jdbcType="VARCHAR"/>
+        <result property="fixFileCount" column="fix_file_count" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <insert id="batchInsertStates" parameterType="java.util.List">
+        INSERT INTO file_indication_period_state ( `file_indication_id`, `period_config_id`, `minute_period`, `upload_status`,
+        `update_integrity`, `upload_date`,`create_time`, `modify_time`, `file_size_status`) VALUES
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.fileIndicationId}, #{item.periodConfigId}, #{item.minutePeriod}, #{item.uploadStatus},#{item.updateIntegrity},
+            #{item.uploadDate},#{item.createTime}, #{item.modifyTime}, #{item.fileSizeStatus})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        upload_status = values (upload_status),
+        update_integrity = values (update_integrity),
+        modify_time = values (modify_time)
+    </insert>
+
+    <update id="batchUpdateStates" parameterType="java.util.List">
+        update file_indication_period_state
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="upload_status =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when period_state_id=#{item.periodStateId} then #{item.uploadStatus}
+                </foreach>
+            </trim>
+            <trim prefix="update_integrity =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when period_state_id=#{item.periodStateId} then #{item.updateIntegrity}
+                </foreach>
+            </trim>
+        </trim>
+        where period_state_id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.periodStateId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+
+    <select id="getReport" resultMap="indicationStateReportMap">
+        SELECT
+        ttt.period_config_id,
+        ttt.upload_date,
+        ttt.update_integrity,
+        ttt.upload_status,
+        ttt.dict_lazy_status,
+        ttt.province_code,
+        ttt.dict_period,
+        ttt.file_indication_id,
+        ttt.file_indication_name,
+        ttt.fix_file_count,
+        ttt.file_size_status,
+        m.dict_value,
+        p.province_name
+        FROM
+        (
+        SELECT
+        aa.period_config_id,
+        aa.upload_date,
+        aa.update_integrity,
+        aa.upload_status,
+        u.dict_lazy_status,
+        aa.province_code,
+        aa.dict_period,
+        aa.file_indication_name,
+        aa.file_indication_id,
+        aa.fix_file_count,
+        aa.file_size_status
+        FROM
+        (
+        select file.file_indication_id,file.file_indication_name ,ttff.*
+        from file_indication file
+        left join (
+        SELECT
+        tt.period_config_id,
+        tt.upload_date,
+        tt.update_integrity,
+        tt.upload_status,
+        ff.province_code,
+        ff.dict_period,
+        ff.fix_file_count,
+        ff.indication_id,
+        tt.file_size_status
+        FROM
+        (
+        SELECT
+        s.period_config_id,
+        s.upload_date,
+        max(s.update_integrity) update_integrity,
+        min(s.upload_status) upload_status,
+        min(s.file_size_status) file_size_status
+        FROM
+        file_indication_period_state s
+        WHERE
+        s.upload_date = #{thisDate} or s.upload_date = #{lastDate}
+        group by s.period_config_id,s.upload_date
+        ) tt,
+        (
+        SELECT
+        f.config_id,
+        f.province_code,
+        f.dict_period,
+        f.fix_file_count,
+        f.indication_id
+        FROM
+        file_indication_period_config f
+        WHERE
+        1=1
+        <if test="provinceCode!=null and provinceCode!=''">
+            and f.province_code=#{provinceCode}
+        </if>
+        <if test="period!=null and period!=''">
+            and f.dict_period=#{period}
+        </if>
+        ) ff
+        WHERE
+        ff.config_id = tt.period_config_id)ttff
+        on file.file_indication_id = ttff.indication_id
+        where 1=1
+        <if test="catolog!=null and catolog!=''">
+            and file.file_indication_type = #{catolog}
+        </if>
+        <if test="fileIndicationId!=null and fileIndicationId!=''">
+            and file.file_indication_id = #{fileIndicationId}
+        </if>
+        ) aa
+        LEFT JOIN file_indication_upload u ON aa.upload_date = u.upload_date
+        AND aa.period_config_id = u.period_config_id
+        ) ttt
+        LEFT JOIN mirror_province p ON p.province_code = ttt.province_code
+        LEFT JOIN mirror_dict m ON m.dict_id = ttt.dict_period
+        order by ttt.file_indication_id,ttt.province_code,ttt.dict_period
+    </select>
+</mapper>

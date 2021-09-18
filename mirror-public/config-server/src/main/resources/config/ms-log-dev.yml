@@ -1,0 +1,35 @@
+server:
+  port: 8150
+
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+druid:
+  url: jdbc:mysql://127.0.0.1:3306/test
+  username: root
+  password: root
+  useUnicode: true
+  characterEncoding: UTF8
+  useSSL: false
+
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+elasticsearch.ip: 10.12.70.38
+elasticsearch.port: 9300
+elasticsearch.nodeType: client
+elasticsearch.clusterName: elasticsearch
+elasticsearch.index: mirror-theme
+elasticsearch.index.fields.limit: 10000

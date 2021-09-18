@@ -1,0 +1,44 @@
+server:
+  port: 4044
+
+#eureka:
+#  instance:
+#    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+#    prefer-ip-address: true
+#  client:
+#    registryFetchIntervalSeconds: 5
+#    instanceInfoReplicationIntervalSeconds: 5
+#    initialInstanceInfoReplicationIntervalSeconds: 5
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level: 
+    org.springframework.web.servlet.DispatcherServlet: debug
+    com.migu.tsg.microservice.atomicservice.phoenix: debug #输出Phoenix日志
+    tk.mybatis.mapper.common.base.select: debug #输出mybatis select SQL
+    tk.mybatis.mapper.common.base.update: debug #输出mybatis update SQL
+    tk.mybatis.mapper.common.base.insert: debug #输出mybatis insert SQL
+    tk.mybatis.mapper.common.base.delete: debug #输出mybatis delete SQL
+  file: phoenixService.log ##日志文件,绝对路径或相对路径
+
+#mybatis:
+#  mapper-locations: classpath:mapper/*.xml
+
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.1.203.99:3306/cmdb?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&allowMultiQueries=true&useServerPrepStmts=true&cachePrepStmts=true
+    username: root
+    password: roo,q1Il.t
+    test-on-borrow: false
+    test-while-idle: true
+    time-between-eviction-runs-millis: 3600000
+  freemarker:
+    template-loader-path: classpath:/freemarker/ #模板加载路径 按需配置
+    charset: UTF-8 #编码格式
+    suffix: .ftl
+    cache: false #缓存配置
+
+generatr:
+  path: /tmp/aspire/code-generatr/

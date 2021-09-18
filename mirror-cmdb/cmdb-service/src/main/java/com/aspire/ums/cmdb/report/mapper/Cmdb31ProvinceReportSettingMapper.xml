@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.report.mapper.Cmdb31ProvinceReportSettingMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportSetting" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="table_id" property="tableId" jdbcType="VARCHAR" />
+        <result column="resource_group" property="resourceGroup" jdbcType="VARCHAR" />
+        <result column="resource_type" property="resourceType" jdbcType="VARCHAR" />
+        <result column="calc_exp" property="calcExp" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="resource_control_type" property="resourceControlType" jdbcType="VARCHAR" />
+        <result column="calc_valid" property="calcValid" jdbcType="VARCHAR" />
+        <result column="value_valid" property="valueValid" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+
+    <sql id="baseColumn">
+        `id`,`table_id`,`resource_group`,`resource_type`,`calc_exp`, `sort_index`,
+        `resource_control_type`, `calc_valid`,`value_valid`
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        order by sort_index;
+    </select>
+
+
+    <!-- list查询 -->
+    <select id="listByTableId" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        where table_id = #{tableId}
+        <if test="showPage != null and showPage != ''">
+            and locate(#{showPage}, show_page)
+        </if>
+        order by sort_index;
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByTableIds" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        where table_id in (
+          <foreach collection="tableIds" separator="," item="tableId">
+              #{tableId}
+          </foreach>)
+        <if test="showPage != null and showPage != ''">
+            and locate(#{showPage}, show_page)
+        </if>
+        order by table_id+0,sort_index;
+    </select>
+    <!-- list查询 -->
+    <select id="listByOwner" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        where table_id in(
+          select id from cmdb_31_province_table where resource_owner = #{resourceOwner}
+        )
+        order by sort_index;
+    </select>
+
+    <!-- 获取表下面唯一列 -->
+    <select id="listByTableUnique" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        where table_id = #{tableId}
+        and LOCATE('unique',calc_valid)
+        order by sort_index;
+    </select>
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportSetting">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="resourceClass != null and resourceClass != ''">
+        AND `resource_class` = #{resourceClass}
+        </if>
+        <if test="resourceGroup != null and resourceGroup != ''">
+        AND `resource_group` = #{resourceGroup}
+        </if>
+        <if test="resourceType != null and resourceType != ''">
+        AND `resource_type` = #{resourceType}
+        </if>
+        <if test="resourceControlType != null and resourceControlType != ''">
+            AND `resource_control_type` = #{resourceControlType}
+        </if>
+        <if test="calcValid != null and calcValid != ''">
+            AND `calc_valid` = #{calcValid}
+        </if>
+        <if test="valueValid != null and valueValid != ''">
+            AND `value_valid` = #{valueValid}
+        </if>
+        order by sort_index;
+    </select>
+
+    <!-- 获取表下面唯一列 -->
+    <select id="listOrderTableData" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        where table_id = #{tableId}
+        and LOCATE('unique',calc_valid)
+        order by sort_index;
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportSetting" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+    <!-- Get one 查询 -->
+    <select id="getById" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+    <!-- Get one 查询 -->
+    <select id="getByQuery" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        left join
+        WHERE 1=1
+        <if test="tableId != null and tableId != ''">
+            AND `table_id` = #{tableId}
+        </if>
+        <if test="resourceGroup != null and resourceGroup != ''">
+            AND `resource_group` = #{resourceGroup}
+        </if>
+        <if test="partOfCalc != null and partOfCalc != ''">
+            AND calc_exp like concat('%',#{partOfCalc})
+        </if>
+        <if test="type != null and type == 'update'">
+            AND IFNULL(`calc_exp`, '') = ''
+        </if>
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        order by sort_index;
+    </select>
+
+
+
+    <select id="getSettingByCalc" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_31_province_report_setting
+        WHERE 1=1
+          and resource_owner=#{resourceOwner}
+        AND calc_exp like concat('%',#{partOfCalc})
+    </select>
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportSetting">
+        INSERT INTO cmdb_31_province_report_setting(
+            `id`,
+            `resource_class`,
+            `resource_group`,
+            `resource_type`,
+            `calc_exp`,
+            `sort_index`,
+            `resource_control_type`,
+            `calc_valid`,
+            `value_valid`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{resourceClass, jdbcType=VARCHAR},
+            #{resourceGroup, jdbcType=VARCHAR},
+            #{resourceType, jdbcType=VARCHAR},
+            #{calcExp, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            #{resourceControlType, jdbcType=VARCHAR},
+            #{calcValid, jdbcType=VARCHAR},
+            #{valueValid, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportSetting">
+        UPDATE cmdb_31_province_report_setting SET
+            `resource_class` = #{resourceClass},
+            `resource_group` = #{resourceGroup},
+            `resource_type` = #{resourceType},
+            `calc_exp` = #{calcExp},
+            `sort_index` = #{sortIndex},
+            `resource_control_type` = #{resourceControlType},
+            `calc_valid` = #{calcValid},
+            `value_valid` = #{valueValid}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.report.playload.Cmdb31ProvinceReportSetting">
+        DELETE FROM cmdb_31_province_report_setting
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.cmic.mapper.CmdbModelTabsMapper">
+    <resultMap id="tabsRtnMap" type="com.aspire.ums.cmdb.cmic.payload.CmdbModelTabsResp">
+        <id column="tabs_id" property="tabsId" jdbcType="VARCHAR"/>
+        <result column="model_id" property="modelId" jdbcType="VARCHAR"/>
+        <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
+        <result column="tab_name" property="tabName" jdbcType="VARCHAR"/>
+        <result column="subassembly_name" property="subassemblyName" jdbcType="VARCHAR"/>
+        <result column="sort_index" property="sortIndex" jdbcType="INTEGER"/>
+        <result column="param_config" property="paramConfig" jdbcType="VARCHAR"/>
+        <result column="callback_config" property="callbackConfig" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--新增一条模型tabs数据-->
+    <insert id="insertTabs" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModelTabsBase">
+        INSERT INTO cmdb_model_tabs
+        (tabs_id, model_id, tab_name, subassembly_name, sort_index,
+         param_config, callback_config, create_time, update_time)
+        VALUES
+        (#{tabsId}, #{modelId}, #{tabName}, #{subassemblyName},
+         #{sortIndex}, #{paramConfig}, #{callbackConfig}, NOW(),
+         NOW())
+    </insert>
+
+    <!--批量插入数据-->
+    <insert id="insertTabsBatch" parameterType="list">
+        INSERT INTO cmdb_model_tabs
+        (tabs_id, model_id, tab_name, subassembly_name, sort_index,
+        param_config, callback_config, create_time, update_time)
+        VALUES
+        (
+        <foreach collection="modelTabsList" item="item" index="index" separator="," open="(" close=")">
+            #{item.tabsId}, #{item.modelId}, #{item.tabName}, #{item.subassemblyName},
+            #{item.sortIndex}, #{item.paramConfig}, #{item.callbackConfig}, NOW(),
+            NOW()
+        </foreach>
+        )
+    </insert>
+
+    <!--根据id修改模型tabs数据-->
+    <update id="updateTabsById" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModelTabsBase">
+        update cmdb_model_tabs
+        <set>
+            <if test="modelId != null and modelId != ''">
+                model_id = #{modelId},
+            </if>
+            <if test="tabName != null and tabName != ''">
+                tab_name = #{tabName},
+            </if>
+            <if test="subassemblyName != null and subassemblyName != ''">
+                subassembly_name = #{subassemblyName},
+            </if>
+            <if test="sortIndex != null">
+                sort_index = #{sortIndex},
+            </if>
+            <if test="paramConfig != null and paramConfig != ''">
+                param_config = #{paramConfig},
+            </if>
+            <if test="callbackConfig != null and callbackConfig != ''">
+                callback_config = #{callbackConfig},
+            </if>
+            update_time = NOW()
+        </set>
+        where
+        tabs_id = #{tabsId}
+    </update>
+
+    <!--查询tabs数据-->
+    <select id="selectTabs" resultMap="tabsRtnMap" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModelTabsReq">
+        select cmt.tabs_id,
+        cmt.model_id,
+        cm.name as model_name,
+        cmt.tab_name,
+        cmt.subassembly_name,
+        cmt.sort_index,
+        cmt.param_config,
+        cmt.callback_config,
+        cmt.create_time,
+        cmt.update_time
+        from cmdb_model_tabs cmt
+        left join cmdb_module cm on cmt.model_id = cm.id
+        <where>
+            cmt.is_delete = '0'
+            <if test="tabsId != null and tabsId != ''">
+                and tabs_id = #{tabsId}
+            </if>
+            <if test="modelId != null and modelId != ''">
+                and model_id = #{modelId}
+            </if>
+            <if test="tabName != null and tabName != ''">
+                and tab_name = #{tabName}
+            </if>
+            <if test="subassemblyName != null and subassemblyName != ''">
+                and subassembly_name = #{subassemblyName}
+            </if>
+            <if test="paramConfig != null and paramConfig != ''">
+                and param_config like concat('%',#{paramConfig},'%')
+            </if>
+            <if test="callbackConfig != null and callbackConfig != ''">
+                and callback_config = like concat('%',#{callbackConfig},'%')
+            </if>
+            <if test="createTime != null and createTime != ''">
+                and create_time = #{createTime}
+            </if>
+        </where>
+        order by cmt.update_time
+        <if test="pageSize > 0">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="selectTabsCount" resultType="integer" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModelTabsReq">
+        select count(cmt.tabs_id) as total
+        from cmdb_model_tabs cmt
+        <where>
+            cmt.is_delete = '0'
+            <if test="tabsId != null and tabsId != ''">
+                and tabs_id = #{tabsId}
+            </if>
+            <if test="modelId != null and modelId != ''">
+                and model_id = #{modelId}
+            </if>
+            <if test="tabName != null and tabName != ''">
+                and tab_name = #{tabName}
+            </if>
+            <if test="subassemblyName != null and subassemblyName != ''">
+                and subassembly_name = #{subassemblyName}
+            </if>
+            <if test="paramConfig != null and paramConfig != ''">
+                and param_config like concat('%',#{paramConfig},'%')
+            </if>
+            <if test="callbackConfig != null and callbackConfig != ''">
+                and callback_config = like concat('%',#{callbackConfig},'%')
+            </if>
+            <if test="createTime != null and createTime != ''">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <update id="deleteByIdBatch" parameterType="list">
+        update cmdb_model_tabs set is_delete = '1' where tabs_id in
+        <foreach collection="tabsIdList" item="tabsId" index="index" separator="," open="(" close=")">
+            #{tabsId}
+        </foreach>
+    </update>
+
+    <select id="isExistTabs" resultType="integer" parameterType="string">
+        select count(tabs_id)
+        from cmdb_model_tabs
+        where is_delete = '0'
+          and model_id = #{modelId}
+          and tab_name = #{tabName}
+    </select>
+
+    <select id="returnModelName" resultType="java.lang.String" parameterType="string">
+        select cm.name as modelName
+        from cmdb_model_tabs cmt
+                 left join cmdb_module cm on cmt.model_id = cm.id
+        where cmt.is_delete = '0'
+          and cmt.model_id = #{modelId}
+          and cmt.tab_name = #{tabName}
+            limit 1
+    </select>
+
+</mapper>

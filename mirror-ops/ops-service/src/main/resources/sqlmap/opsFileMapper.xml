@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.OpsFileDao">
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsFile" id="file">
+        <result property="fileId" column="file_id" jdbcType="BIGINT"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="fileVersion" column="file_version" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+        <result property="fileClass" column="file_class" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileDesc" column="file_desc" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="lastUpdater" column="last_updater" jdbcType="VARCHAR"/>
+        <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.api.domain.OpsFile" id="fileDetail">
+        <result property="fileId" column="file_id" jdbcType="BIGINT"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="fileVersion" column="file_version" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+        <result property="fileClass" column="file_class" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileDesc" column="file_desc" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="lastUpdater" column="last_updater" jdbcType="VARCHAR"/>
+        <result property="lastUpdateTime" column="last_update_time" jdbcType="TIMESTAMP"/>
+        <result property="fileGenerateType" column="file_generate_type" jdbcType="VARCHAR"/>
+        <result property="processRule" column="process_rule" jdbcType="VARCHAR"/>
+        <result property="relationId" column="relation_id" jdbcType="VARCHAR"/>
+        <result property="relationName" column="relation_name" jdbcType="VARCHAR"/>
+        <collection property="groupRelationList" ofType="com.aspire.mirror.ops.api.domain.GroupRelationDetail">
+            <result property="groupRelationId" column="group_relation_id" jdbcType="BIGINT"/>
+            <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+            <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+            <result property="objectId" column="object_id" jdbcType="BIGINT"/>
+            <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <sql id="OpsFileColumns">
+      f.file_id, f.file_name, f.file_version, f.file_type, f.file_class, f.file_path, f.file_desc,
+      f.creater, f.create_time, f.last_updater, f.last_update_time, f.file_generate_type, f.process_rule, f.relation_id, f.relation_name
+    </sql>
+    <select id="selectByNameAndVersion" resultMap="file">
+      select <include refid="OpsFileColumns" />
+      from ops_file f
+      where file_name = #{fileName} and file_version = #{fileVersion}
+    </select>
+    <insert id="insert" parameterType="com.aspire.mirror.ops.api.domain.OpsFile"  useGeneratedKeys="true" keyColumn="file_id"
+            keyProperty="fileId">
+        insert into ops_file (
+        file_id,
+        file_name,
+        file_version,
+        file_type,
+        file_class,
+        file_generate_type,
+        file_path,
+        file_desc,
+        creater,
+        create_time,
+        last_updater,
+        last_update_time,
+        process_rule,
+        relation_id,
+        relation_name
+        ) values (
+        #{fileId},
+        #{fileName},
+        #{fileVersion},
+        #{fileType},
+        #{fileClass},
+        #{fileGenerateType},
+        #{filePath},
+        #{fileDesc},
+        #{creater},
+        #{createTime},
+        #{lastUpdater},
+        #{lastUpdateTime},
+        #{processRule},
+        #{relationId},
+        #{relationName}
+        )
+    </insert>
+    <update id="updateByFileId" parameterType="com.aspire.mirror.ops.api.domain.OpsFile">
+        update ops_file set file_id = #{fileId}
+        <if test="fileName != null and fileName != ''">
+            , file_name = #{fileName}
+        </if>
+        <if test="fileVersion != null and fileVersion != ''">
+            , file_version = #{fileVersion}
+        </if>
+        <if test="fileType != null and fileType != ''">
+            , file_type = #{fileType}
+        </if>
+        <if test="fileClass != null and fileClass != ''">
+            , file_class = #{fileClass}
+        </if>
+        <if test="fileGenerateType != null and fileGenerateType != ''">
+            , file_generate_type = #{fileGenerateType}
+        </if>
+        <if test="filePath != null and filePath != ''">
+            , file_path = #{filePath}
+        </if>
+        <if test="fileDesc != null and fileDesc != ''">
+            , file_desc = #{fileDesc}
+        </if>
+        <if test="lastUpdater != null and lastUpdater != ''">
+            , last_updater = #{lastUpdater}
+        </if>
+        <if test="lastUpdateTime != null">
+            , last_update_time = #{lastUpdateTime}
+        </if>
+        <if test="processRule != null">
+            , process_rule = #{processRule}
+        </if>
+        where file_id = #{fileId}
+    </update>
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from ops_file where file_id = #{fileId}
+    </delete>
+    <select id="getFileById" resultMap="fileDetail" parameterType="java.lang.Long">
+        select <include refid="OpsFileColumns"/>, gr.object_id, gr.object_type, gr.group_relation_id,
+        gr.group_id,g.group_name
+        from ops_file f
+        left join ops_group_relation gr on f.file_id = gr.object_id and gr.object_type = 'file'
+        left join ops_group g on g.group_id = gr.group_id
+        where f.file_id=#{fileId}
+    </select>
+    <select id="queryListTotalSize" resultType="java.lang.Integer" parameterType="com.aspire.mirror.ops.api.domain.OpsFileQueryModel">
+        select count(*) from ops_file f
+        left join ops_group_relation gr on f.file_id = gr.object_id and gr.object_type = 'file'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1=1
+        <if test="fileNameLike != null and fileNameLike != ''">
+            and f.file_name like CONCAT('%', #{fileNameLike}, '%')
+        </if>
+        <if test="fileVersionLike != null and fileVersionLike != ''">
+            and f.file_version like CONCAT('%', #{fileVersionLike}, '%')
+        </if>
+        <if test="fileName != null and fileName != ''">
+            and f.file_name=#{fileName}
+        </if>
+        <if test="fileVersion != null and fileVersion != ''">
+            and f.file_version=#{fileVersion}
+        </if>
+        <if test="fileType != null and fileType != ''">
+            and f.file_type=#{fileType}
+        </if>
+        <if test="fileClass != null and fileClass != ''">
+            and f.file_class=#{fileClass}
+        </if>
+        <if test="fileGenerateType != null and fileGenerateType != ''">
+            and f.file_generate_type = #{fileGenerateType}
+        </if>
+        <if test="filePath != null and filePath != ''">
+            and f.file_path=#{filePath}
+        </if>
+        <if test="fileDesc != null and fileDesc != ''">
+            and f.file_desc=#{fileDesc}
+        </if>
+        <if test="updateTimeStart != null">
+            and f.last_update_time &gt;= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            and  f.last_update_time &lt;= #{updateTimeEnd}
+        </if>
+        <if test="groupIds != null and groupIds !=''">
+            and gr.group_id in (
+            <foreach collection="groupIds.split(',')" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+    </select>
+    <select id="queryList" resultMap="fileDetail" parameterType="com.aspire.mirror.ops.api.domain.OpsFileQueryModel">
+        select <include refid="OpsFileColumns"/>, gr.object_id, gr.object_type, gr.group_relation_id,
+        gr.group_id,g.group_name
+        from ops_file f
+        left join ops_group_relation gr on f.file_id = gr.object_id and gr.object_type = 'file'
+        left join ops_group g on g.group_id = gr.group_id
+        where 1=1
+        <if test="fileNameLike != null and fileNameLike != ''">
+            and f.file_name like CONCAT('%', #{fileNameLike}, '%')
+        </if>
+        <if test="fileVersionLike != null and fileVersionLike != ''">
+            and f.file_version like CONCAT('%', #{fileVersionLike}, '%')
+        </if>
+        <if test="fileName != null and fileName != ''">
+            and f.file_name=#{fileName}
+        </if>
+        <if test="fileVersion != null and fileVersion != ''">
+            and f.file_version=#{fileVersion}
+        </if>
+        <if test="fileType != null and fileType != ''">
+            and f.file_type=#{fileType}
+        </if>
+        <if test="fileClass != null and fileClass != ''">
+            and f.file_class=#{fileClass}
+        </if>
+        <if test="fileGenerateType != null and fileGenerateType != ''">
+            and f.file_generate_type = #{fileGenerateType}
+        </if>
+        <if test="updateTimeStart != null">
+            and f.last_update_time &gt;= #{updateTimeStart}
+        </if>
+        <if test="updateTimeEnd != null">
+            and  f.last_update_time &lt;= #{updateTimeEnd}
+        </if>
+        <if test="groupIds != null and groupIds !=''">
+            and gr.group_id in (
+            <foreach collection="groupIds.split(',')" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by f.last_update_time desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+</mapper>

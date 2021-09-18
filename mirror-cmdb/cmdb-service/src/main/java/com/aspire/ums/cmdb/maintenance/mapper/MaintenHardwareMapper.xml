@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.MaintenHardwareMapper">
+	  
+	    
+	<resultMap type="com.aspire.ums.cmdb.maintenance.entity.MaintenHardware" id="maintenHardwareMap">
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="province" property="province" jdbcType="VARCHAR"/>
+		<result column="city" property="city" jdbcType="VARCHAR" />
+	    <result column="resource_pool" property="resourcePool" jdbcType="VARCHAR" />
+	    <result column="system_name" property="systemName" jdbcType="VARCHAR" />
+	    <result column="device_classify" property="deviceClassify" jdbcType="VARCHAR" />
+	    <result column="device_type" property="deviceType" jdbcType="VARCHAR" />
+		<result column="device_model" property="deviceModel" jdbcType="VARCHAR" />
+		<result column="device_name" property="deviceName" jdbcType="VARCHAR" />
+		<result column="device_serial_number" property="deviceSerialNumber" jdbcType="VARCHAR" />
+		<result column="assets_number" property="assetsNumber" jdbcType="VARCHAR" />
+	    <result column="warranty_date" property="warrantyDate" jdbcType="DATE" />
+	    <result column="buy_mainten" property="buyMainten" jdbcType="VARCHAR" />
+	    <result column="origin_buy" property="originBuy" jdbcType="VARCHAR" />
+	    <result column="origin_buy_explain" property="originBuyExplain" jdbcType="VARCHAR" />
+	    <result column="advice_mainten_factory" property="adviceMaintenFactory" jdbcType="VARCHAR" />
+	    <result column="mainten_factory" property="maintenFactory" jdbcType="VARCHAR" />
+	    <result column="mainten_supply_contact" property="maintenSupplyContact" jdbcType="VARCHAR" />
+	    <result column="mainten_factory_contact" property="maintenFactoryContact" jdbcType="VARCHAR" />
+	    <result column="mainten_begin_date" property="maintenBeginDate" jdbcType="DATE" />
+		<result column="mainten_end_date" property="maintenEndDate" jdbcType="DATE" />
+	    <result column="real_mainten_type" property="realMaintenType" jdbcType="VARCHAR" />
+	    <result column="admin" property="admin" jdbcType="VARCHAR" />
+	    
+	 </resultMap>
+	
+	 
+	 <sql id="baseColumnList">
+		id,province,city,resource_pool,system_name,device_classify,device_type,device_model,device_name,device_serial_number,
+		assets_number,warranty_date,buy_mainten,origin_buy,origin_buy_explain,advice_mainten_factory,mainten_factory,mainten_supply_contact,
+		mainten_factory_contact,mainten_begin_date,mainten_end_date,real_mainten_type,admin
+		 
+	 </sql>
+
+       
+     <!-- 动态sql -->
+    <sql id="where_sql"> 
+        <if test="systemName != null and  systemName != '' ">
+    		and system_name = #{systemName}
+    	</if>
+    	<if test="deviceName != null and  deviceName != '' ">
+    		and device_name like  CONCAT('%',#{deviceName},'%')
+    	</if>
+	    <if test="warrantyDateBefore != null ">
+			 and warranty_date &gt;= '${warrantyDateBefore}'
+		</if>
+		<if test="warrantyDateAfter != null ">
+			and warranty_date &lt;= '${warrantyDateAfter}'
+		</if>	
+		<if test="deviceSerialNumber != null and  deviceSerialNumber != '' ">
+    		and device_serial_number like  CONCAT('%',#{deviceSerialNumber},'%')
+    	</if>
+    	<if test="assetsNumber != null and  assetsNumber != '' ">
+    		and assets_number like  CONCAT('%',#{assetsNumber},'%')
+    	</if>
+    	<if test="resourcePool != null and  resourcePool != '' ">
+    		and resource_pool = #{resourcePool}
+    	</if>	
+		<if test="maintenBeginDateBefore != null ">
+			 and mainten_begin_date &gt;= '${maintenBeginDateBefore}'
+		</if>
+		<if test="maintenBeginDateAfter != null ">
+			and mainten_begin_date &lt;= '${maintenBeginDateAfter}'
+		</if>
+		<if test="maintenEndDateBefore != null ">
+			and mainten_end_date &gt;= '${maintenEndDateBefore}'
+		</if>
+		<if test="maintenEndDateAfter != null ">
+			and mainten_end_date &lt;= '${maintenEndDateAfter}'
+		</if>
+		<if test="deviceClassify != null and  deviceClassify != '' ">
+    		and device_classify = #{deviceClassify}
+    	</if>
+    	<if test="deviceType != null and  deviceType != '' ">
+    		and device_type = #{deviceType}
+    	</if>
+    	<if test="deviceModel != null and  deviceModel != '' ">
+    		and device_model = #{deviceModel}
+    	</if>
+		<if test="buyMainten != null and  buyMainten != '' ">
+    		and buy_mainten = #{buyMainten}
+    	</if>   	
+    	<if test="originBuy != null and  originBuy != '' ">
+    		and origin_buy = #{originBuy}
+    	</if>	 
+    	<if test="maintenFactory != null and  maintenFactory != '' ">
+    		and mainten_factory = #{maintenFactory}
+    	</if>
+    	<if test="realMaintenType != null and  realMaintenType != '' ">
+    		and real_mainten_type = #{realMaintenType}
+    	</if>
+    	 
+    	<if test="admin != null and  admin != '' ">
+    		and admin like  CONCAT('%',#{admin},'%')
+    	</if>
+	
+    </sql>
+
+
+	 <insert id="insertMaintenHardware" useGeneratedKeys="true" keyProperty="id"  parameterType="com.aspire.ums.cmdb.maintenance.entity.MaintenHardware">
+	    INSERT INTO cmdb_maintenance_hardware(province,city,resource_pool,system_name,device_classify,device_type,device_model,device_name,device_serial_number,assets_number,
+		warranty_date,buy_mainten,origin_buy,origin_buy_explain,advice_mainten_factory,mainten_factory,mainten_supply_contact,
+		mainten_factory_contact,mainten_begin_date,mainten_end_date,real_mainten_type,admin ) 
+		values(
+		#{ province,jdbcType=VARCHAR} ,
+		#{ city,jdbcType=VARCHAR} ,
+		#{ resourcePool,jdbcType=VARCHAR} ,
+		#{ systemName,jdbcType=VARCHAR} ,
+		#{ deviceClassify,jdbcType=VARCHAR},
+		#{ deviceType,jdbcType=VARCHAR} ,
+		#{ deviceModel,jdbcType=VARCHAR} ,
+		#{ deviceName,jdbcType=VARCHAR},
+		#{ deviceSerialNumber ,jdbcType=VARCHAR} ,
+		#{ assetsNumber,jdbcType=VARCHAR} ,
+		#{ warrantyDate ,jdbcType=DATE} ,
+		#{ buyMainten,jdbcType=VARCHAR},
+		#{ originBuy,jdbcType=VARCHAR} ,
+		#{ originBuyExplain,jdbcType=VARCHAR},
+		#{ adviceMaintenFactory,jdbcType=VARCHAR} ,
+		#{ maintenFactory,jdbcType=VARCHAR},
+		#{ maintenSupplyContact,jdbcType=VARCHAR} ,
+		#{ maintenFactoryContact,jdbcType=VARCHAR},
+		#{ maintenBeginDate ,jdbcType=DATE} ,
+		#{ maintenEndDate,jdbcType=DATE} ,
+		#{ realMaintenType,jdbcType=VARCHAR},
+		#{ admin,jdbcType=VARCHAR} 
+		)
+	 </insert>
+	
+	<insert id="saveMaintenHardwareList" parameterType="java.util.List">
+		INSERT INTO cmdb_maintenance_hardware (province,city,resource_pool,system_name,device_classify,device_type,device_model,device_name,device_serial_number,assets_number,
+		warranty_date,buy_mainten,origin_buy,origin_buy_explain,advice_mainten_factory,mainten_factory,mainten_supply_contact,
+		mainten_factory_contact,mainten_begin_date,mainten_end_date,real_mainten_type,admin )
+		VALUES
+		<foreach collection="list" item="item" index="index"  separator=","  >
+		  ( #{ item.province,jdbcType=VARCHAR} ,
+			#{ item.city,jdbcType=VARCHAR} ,
+			#{ item.resourcePool,jdbcType=VARCHAR} ,
+			#{ item.systemName,jdbcType=VARCHAR} ,
+			#{ item.deviceClassify,jdbcType=VARCHAR},
+			#{ item.deviceType,jdbcType=VARCHAR} ,
+			#{ item.deviceModel,jdbcType=VARCHAR} ,
+			#{ item.deviceName,jdbcType=VARCHAR},
+			#{ item.deviceSerialNumber ,jdbcType=VARCHAR} ,
+			#{ item.assetsNumber,jdbcType=VARCHAR} ,
+			#{ item.warrantyDate ,jdbcType=DATE} ,
+			#{ item.buyMainten,jdbcType=VARCHAR},
+			#{ item.originBuy,jdbcType=VARCHAR} ,
+			#{ item.originBuyExplain,jdbcType=VARCHAR},
+			#{ item.adviceMaintenFactory,jdbcType=VARCHAR} ,
+			#{ item.maintenFactory,jdbcType=VARCHAR},
+			#{ item.maintenSupplyContact,jdbcType=VARCHAR} ,
+			#{ item.maintenFactoryContact,jdbcType=VARCHAR},
+			#{ item.maintenBeginDate ,jdbcType=DATE} ,
+			#{ item.maintenEndDate,jdbcType=DATE} ,
+			#{ item.realMaintenType,jdbcType=VARCHAR},
+			#{ item.admin,jdbcType=VARCHAR}  )
+		</foreach>
+			ON DUPLICATE KEY UPDATE 
+			 province = VALUES( province ),
+			 city = VALUES( city ),
+			 resource_pool = VALUES( resource_pool ),
+			 system_name = VALUES( system_name ) ,
+			 device_classify = VALUES( device_classify ) ,
+			 device_type = VALUES( device_type ),
+			 device_name = VALUES( device_name ),
+			 device_serial_number = VALUES( device_serial_number ),
+			 assets_number = VALUES( assets_number ),
+			 buy_mainten = VALUES( buy_mainten ),
+			 origin_buy = VALUES( origin_buy ),
+			 origin_buy_explain = VALUES( origin_buy_explain ),
+			 advice_mainten_factory = VALUES( advice_mainten_factory ),
+			 mainten_supply_contact = VALUES( mainten_supply_contact ),
+			 mainten_factory_contact = VALUES( mainten_factory_contact ),
+			 mainten_begin_date = VALUES( mainten_begin_date ),
+			 mainten_end_date = VALUES( mainten_end_date ),
+			 real_mainten_type = VALUES( real_mainten_type ),
+			 admin = VALUES( admin )
+			  
+	</insert> 
+	 
+	     
+	  
+	 <update id="updateMaintenHardware" parameterType="com.aspire.ums.cmdb.maintenance.entity.MaintenHardware">
+	 
+	    UPDATE cmdb_maintenance_hardware
+	     <set>
+		   <if test="province != null and  province != '' ">
+		   		province=#{province},
+		   </if>
+		   <if test="city != null and  city != '' ">
+		   		city=#{city},
+		   </if>
+		   <if test="resourcePool != null and  resourcePool != '' ">
+		   		resource_pool=#{resourcePool},
+		   </if>
+		   
+		   <if test="systemName != null and  systemName != '' ">
+		   		system_name=#{systemName},
+		   </if>
+		   <if test="deviceClassify != null and  deviceClassify != '' ">
+		   		device_classify=#{deviceClassify},
+		   </if>
+		   <if test="deviceType != null and  deviceType != '' ">
+		   		device_type=#{deviceType},
+		   </if>
+		   <if test="deviceModel != null and  deviceModel != '' ">
+		   		device_model=#{deviceModel},
+		   </if>
+		    <if test="deviceName != null and  deviceName != '' ">
+		   		device_name=#{deviceName},
+		   </if>
+		   <if test="deviceSerialNumber != null and  deviceSerialNumber != '' ">
+		   		device_serial_number=#{deviceSerialNumber},
+		   </if>
+		   <if test="assetsNumber != null and  assetsNumber != '' ">
+		   		assets_number=#{assetsNumber},
+		   </if>
+		   <if test="warrantyDate != null ">
+		   		warranty_date=#{warrantyDate},
+		   </if>
+		   
+		   <if test="buyMainten != null and  buyMainten != '' ">
+		   		buy_mainten=#{buyMainten},
+		   </if>
+		   <if test="originBuy != null and  originBuy != '' ">
+		   		origin_buy=#{originBuy},
+		   </if>
+		   <if test="originBuyExplain != null and  originBuyExplain != '' ">
+		   		origin_buy_explain=#{originBuyExplain},
+		   </if>
+		   <if test="adviceMaintenFactory != null and  adviceMaintenFactory != '' ">
+		   		advice_mainten_factory=#{adviceMaintenFactory},
+		   </if>
+		   <if test="maintenFactory != null and  maintenFactory != '' ">
+		   		mainten_factory=#{maintenFactory},
+		   </if>
+		   <if test="maintenSupplyContact != null and  maintenSupplyContact != '' ">
+		   		mainten_supply_contact=#{maintenSupplyContact},
+		   </if>
+		   <if test="maintenFactoryContact != null and  maintenFactoryContact != '' ">
+		   		mainten_factory_contact=#{maintenFactoryContact},
+		   </if>
+		   <if test="maintenBeginDate != null ">
+		   		mainten_begin_date=#{maintenBeginDate},
+		   </if>
+		   <if test="maintenEndDate != null ">
+		   		mainten_end_date=#{maintenEndDate},
+		   </if>
+		   <if test="realMaintenType != null and  realMaintenType != '' ">
+		   		real_mainten_type=#{realMaintenType},
+		   </if>
+		   <if test="admin != null and  admin != '' ">
+		   		admin=#{admin}
+		   </if>
+		    
+		  </set>
+		  where id = #{id}
+	     
+	 </update>
+	   
+	
+	<update id="batchUpdateMaintenHardware" parameterType="map">
+	 
+	    update cmdb_maintenance_hardware
+	     <set>
+		  
+		   <if test="province != null and  province != '' ">
+		   		province=#{province},
+		   </if>
+		   <if test="city != null and  city != '' ">
+		   		city=#{city},
+		   </if>
+		   <if test="resourcePool != null and  resourcePool != '' ">
+		   		resource_pool=#{resourcePool},
+		   </if>
+		   
+		   <if test="systemName != null and  systemName != '' ">
+		   		system_name=#{systemName},
+		   </if>
+		   <if test="deviceClassify != null and  deviceClassify != '' ">
+		   		device_classify=#{deviceClassify},
+		   </if>
+		   <if test="deviceType != null and  deviceType != '' ">
+		   		device_type=#{deviceType},
+		   </if>
+		    
+		    <if test="deviceName != null and  deviceName != '' ">
+		   		device_name=#{deviceName},
+		   </if>
+		   <if test="deviceSerialNumber != null and  deviceSerialNumber != '' ">
+		   		device_serial_number=#{deviceSerialNumber},
+		   </if>
+		   <if test="assetsNumber != null and  assetsNumber != '' ">
+		   		assets_number=#{assetsNumber},
+		   </if>
+		    
+		   <if test="buyMainten != null and  buyMainten != '' ">
+		   		buy_mainten=#{buyMainten},
+		   </if>
+		   <if test="originBuy != null and  originBuy != '' ">
+		   		origin_buy=#{originBuy},
+		   </if>
+		   <if test="originBuyExplain != null and  originBuyExplain != '' ">
+		   		origin_buy_explain=#{originBuyExplain},
+		   </if>
+		   <if test="adviceMaintenFactory != null and  adviceMaintenFactory != '' ">
+		   		advice_mainten_factory=#{adviceMaintenFactory},
+		   </if>
+		   
+		   <if test="maintenSupplyContact != null and  maintenSupplyContact != '' ">
+		   		mainten_supply_contact=#{maintenSupplyContact},
+		   </if>
+		   <if test="maintenFactoryContact != null and  maintenFactoryContact != '' ">
+		   		mainten_factory_contact=#{maintenFactoryContact},
+		   </if>
+		   <if test="maintenBeginDate != null ">
+		   		mainten_begin_date=#{maintenBeginDate},
+		   </if>
+		   <if test="maintenEndDate != null ">
+		   		mainten_end_date=#{maintenEndDate},
+		   </if>
+		   <if test="realMaintenType != null and  realMaintenType != '' ">
+		   		real_mainten_type=#{realMaintenType},
+		   </if>
+		   <if test="admin != null and  admin != '' ">
+		   		admin=#{admin}
+		   </if>
+		   
+		  </set>
+		  where id in
+		  <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+          </foreach>
+	     
+	 </update>
+	
+	
+	
+	 <select id="selectMaintenHardwareById" parameterType="String" resultMap="maintenHardwareMap">
+		select   <include refid="baseColumnList" /> 
+		from cmdb_maintenance_hardware    
+		where  id = #{id} 
+	 </select>
+	 
+	 
+	  <select id="selectMaintenHardwareByDeviceModel" parameterType="map" resultMap="maintenHardwareMap">
+		select   <include refid="baseColumnList" /> 
+		from cmdb_maintenance_hardware    
+		where  mainten_factory = #{maintenFactory} and device_model = #{deviceModel}
+		and warranty_date = #{warrantyDate}  
+	  </select>
+	 
+	 
+	 
+	 <!-- 删除多条数据 -->
+	 <delete id="deleteMaintenHardwareIds" parameterType="java.util.List">
+	     delete from cmdb_maintenance_hardware where id in 
+	     <foreach collection="list"  item="item" index="index"  open="(" separator="," close=")">   
+            #{item}   
+         </foreach>
+     </delete>
+	
+	 
+	 <!-- 分页数据个数 -->
+	 <select id="getMaintenHardwareCount" resultType="Integer" parameterType="map">
+		select count(*) FROM  cmdb_maintenance_hardware mainten  where 1=1
+	    <include refid="where_sql" /> 
+	       
+	 </select>
+	
+
+	<!-- 分页数据 -->
+	<select id="getMaintenHardwareByPage" parameterType="map" resultMap="maintenHardwareMap" >
+	 	select <include refid="baseColumnList" /> FROM  cmdb_maintenance_hardware mainten  where 1=1
+	    <include refid="where_sql" />  limit #{pageNo},#{pageSize}
+	</select>
+	
+	
+	<!-- 导出数据 -->
+	<select id="getMaintenHardwareList" parameterType="map" resultMap="maintenHardwareMap" >
+	 	select <include refid="baseColumnList" /> FROM  cmdb_maintenance_hardware mainten  where 1=1
+	    <include refid="where_sql" />     
+	</select>
+	 
+	 
+</mapper>

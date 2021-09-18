@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.faultReport.FaultReportManageMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.faultReport.po.FaultReportManage">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="fault_id" property="faultId" jdbcType="VARCHAR"/>
+        <result column="fault_report_user" property="faultReportUser" jdbcType="VARCHAR"/>
+        <result column="fault_report_mobile" property="faultReporMobile" jdbcType="VARCHAR"/>
+        <result column="fault_report_email" property="faultReportEmail" jdbcType="VARCHAR"/>
+        <result column="fault_report_bizsys" property="faultReportBizsys" jdbcType="VARCHAR"/>
+        <result column="fault_report_time" property="faultReportTime" jdbcType="VARCHAR"/>
+        <result column="fault_happen_time" property="faultHappenTime" jdbcType="VARCHAR"/>
+        <result column="fault_report_timely" property="faultReportTimely" jdbcType="VARCHAR"/>
+        <result column="fault_idc_type" property="faultIdcType" jdbcType="VARCHAR"/>
+        <result column="fault_order_id" property="faultOrderId" jdbcType="VARCHAR"/>
+        <result column="fault_content" property="faultContent" jdbcType="VARCHAR"/>
+        <result column="fault_regtime" property="faultRegtime" jdbcType="VARCHAR"/>
+        <result column="report_title" property="reportTitle" jdbcType="VARCHAR"/>
+        <result column="report_user" property="reportUser" jdbcType="VARCHAR"/>
+        <result column="report_mobile" property="reportMobile" jdbcType="VARCHAR"/>
+        <result column="report_email" property="reportEmail" jdbcType="VARCHAR"/>
+        <result column="report_bizsys" property="reportBizsys" jdbcType="VARCHAR"/>
+        <result column="report_wn_id" property="reportWnId" jdbcType="VARCHAR"/>
+        <result column="report_order_id" property="reportOrderId" jdbcType="VARCHAR"/>
+        <result column="report_create_time" property="reportCreateTime" jdbcType="VARCHAR"/>
+        <result column="report_plain_finish" property="reportPlainFinish" jdbcType="VARCHAR"/>
+        <result column="report_finish_time" property="reportFinishTime" jdbcType="VARCHAR"/>
+        <result column="report_timely" property="reportTimely" jdbcType="VARCHAR"/>
+        <result column="report_platform_recoverytime" property="reportPlatformRecoverytime" jdbcType="VARCHAR"/>
+        <result column="report_platform_recoveryhours" property="reportPlatformRecoveryhours" jdbcType="VARCHAR"/>
+        <result column="report_bizsys_recoverytime" property="reportBizsysRecoverytime" jdbcType="VARCHAR"/>
+        <result column="report_bizsys_recoveryhours" property="reportBizsysRecoveryhours" jdbcType="VARCHAR"/>
+        <result column="report_affect_bizsyss" property="reportAffectBizsyss" jdbcType="VARCHAR"/>
+        <result column="report_affect_describe" property="reportAffectDescribe" jdbcType="VARCHAR"/>
+        <result column="report_type" property="reportType" jdbcType="VARCHAR"/>
+        <result column="report_resson" property="reportResson" jdbcType="VARCHAR"/>
+        <result column="report_producer" property="reportProducer" jdbcType="VARCHAR"/>
+        <result column="report_nature" property="reportNature" jdbcType="VARCHAR"/>
+        <result column="report_deduct_points" property="reportDeductPoints" jdbcType="VARCHAR"/>
+        <result column="report_enclosure" property="reportEnclosure" jdbcType="VARCHAR"/>
+        <result column="report_follow_plan" property="reportFollowPlan" jdbcType="VARCHAR"/>
+        <result column="report_follow_plan_explain" property="reportFollowPlanExplain" jdbcType="VARCHAR"/>
+        <result column="report_remark" property="reportRemark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="baseColumnList">
+        id,fault_id,fault_report_user,fault_report_mobile,fault_report_email,fault_report_bizsys,fault_report_time,
+        fault_happen_time,fault_report_timely,fault_idc_type,fault_order_id,fault_content,fault_regtime,report_title,
+        report_user,report_mobile,report_email,report_bizsys,report_wn_id,report_order_id,report_create_time,report_plain_finish,
+        report_finish_time,report_timely,report_platform_recoverytime,report_platform_recoveryhours,report_bizsys_recoverytime,
+        report_bizsys_recoveryhours,report_affect_bizsyss,report_affect_describe,report_type,report_resson,report_producer,
+        report_nature,report_deduct_points,report_enclosure,report_follow_plan,report_follow_plan_explain,report_remark
+    </sql>
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.faultReport.po.FaultReportManage" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        insert into fault_report_manage
+        (fault_id,fault_report_user,fault_report_mobile,fault_report_email,fault_report_bizsys,fault_report_time,
+        fault_happen_time,fault_report_timely,fault_idc_type,fault_order_id,fault_content,fault_regtime,report_title,
+        report_user,report_mobile,report_email,report_bizsys,report_wn_id,report_order_id,report_create_time,report_plain_finish,
+        report_finish_time,report_timely,report_platform_recoverytime,report_platform_recoveryhours,report_bizsys_recoverytime,
+        report_bizsys_recoveryhours,report_affect_bizsyss,report_affect_describe,report_type,report_resson,report_producer,
+        report_nature,report_deduct_points,report_enclosure,report_follow_plan,report_follow_plan_explain,report_remark) VALUES
+        (#{faultId},
+        #{faultReportUser},
+        #{faultReporMobile},
+        #{faultReportEmail},
+        #{faultReportBizsys},
+        #{faultReportTime, jdbcType=TIMESTAMP},
+        #{faultHappenTime, jdbcType=TIMESTAMP},
+        #{faultReportTimely},
+        #{faultIdcType},
+        #{faultOrderId},
+        #{faultContent},
+        #{faultRegtime, jdbcType=TIMESTAMP},
+        #{reportTitle},
+        #{reportUser},
+        #{reportMobile},
+        #{reportEmail},
+        #{reportBizsys},
+        #{reportWnId},
+        #{reportOrderId},
+        #{reportCreateTime, jdbcType=TIMESTAMP},
+        #{reportPlainFinish},
+        #{reportFinishTime, jdbcType=TIMESTAMP},
+        #{reportTimely},
+        #{reportPlatformRecoverytime, jdbcType=TIMESTAMP},
+        #{reportPlatformRecoveryhours},
+        #{reportBizsysRecoverytime, jdbcType=TIMESTAMP},
+        #{reportBizsysRecoveryhours},
+        #{reportAffectBizsyss},
+        #{reportAffectDescribe},
+        #{reportType},
+        #{reportResson},
+        #{reportProducer},
+        #{reportNature},
+        #{reportDeductPoints},
+        #{reportEnclosure},
+        #{reportFollowPlan},
+        #{reportFollowPlanExplain},
+        #{reportRemark})
+    </insert>
+
+    <update id="update" parameterType="com.aspire.mirror.alert.server.dao.faultReport.po.FaultReportManage">
+        update fault_report_manage
+        <set>
+        <if test="faultId != null and faultId != ''">
+        fault_id=#{faultId},
+        </if>
+        <if test="faultReportUser != null and faultReportUser != ''">
+        fault_report_user=#{faultReportUser},
+        </if>
+        <if test="faultReporMobile != null and faultReporMobile != ''">
+        fault_report_mobile=#{faultReporMobile},
+        </if>
+        <if test="faultReportEmail != null and faultReportEmail != ''">
+        fault_report_email=#{faultReportEmail},
+        </if>
+        <if test="faultReportBizsys != null and faultReportBizsys != ''">
+        fault_report_bizsys=#{faultReportBizsys},
+        </if>
+        <if test="faultReportTime != null">
+        fault_report_time=#{faultReportTime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="faultHappenTime != null">
+        fault_happen_time=#{faultHappenTime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="faultReportTimely != null">
+        fault_report_timely=#{faultReportTimely},
+        </if>
+        <if test="faultIdcType != null and faultIdcType != ''">
+        fault_idc_type=#{faultIdcType},
+        </if>
+        <if test="faultOrderId != null and faultOrderId != ''">
+        fault_order_id=#{faultOrderId},
+        </if>
+        <if test="faultContent != null and faultContent != ''">
+        fault_content=#{faultContent},
+        </if>
+        <if test="faultRegtime != null">
+        fault_regtime=#{faultRegtime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="reportTitle != null and reportTitle != ''">
+        report_title=#{reportTitle},
+        </if>
+        <if test="reportUser != null and reportUser != ''">
+        report_user=#{reportUser},
+        </if>
+        <if test="reportMobile != null and reportMobile != ''">
+        report_mobile=#{reportMobile},
+        </if>
+        <if test="reportEmail != null and reportEmail != ''">
+        report_email=#{reportEmail},
+        </if>
+        <if test="reportWnId != null and reportWnId != ''">
+        report_bizsys=#{reportBizsys},
+        </if>
+        <if test="reportWnId != null and reportWnId != ''">
+        report_wn_id=#{reportWnId},
+        </if>
+        <if test="reportOrderId != null and reportOrderId != ''">
+        report_order_id=#{reportOrderId},
+        </if>
+        <if test="reportCreateTime != null">
+        report_create_time=#{reportCreateTime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="reportPlainFinish != null">
+        report_plain_finish=#{reportPlainFinish},
+        </if>
+        <if test="reportFinishTime != null">
+        report_finish_time=#{reportFinishTime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="reportTimely != null">
+        report_timely=#{reportTimely},
+        </if>
+        <if test="reportPlatformRecoverytime != null">
+        report_platform_recoverytime=#{reportPlatformRecoverytime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="reportPlatformRecoveryhours != null">
+        report_platform_recoveryhours=#{reportPlatformRecoveryhours},
+        </if>
+        <if test="reportBizsysRecoverytime != null">
+        report_bizsys_recoverytime=#{reportBizsysRecoverytime, jdbcType=TIMESTAMP},
+        </if>
+        <if test="reportBizsysRecoveryhours != null">
+        report_bizsys_recoveryhours=#{reportBizsysRecoveryhours},
+        </if>
+        <if test="reportAffectBizsyss != null and reportAffectBizsyss != ''">
+        report_affect_bizsyss=#{reportAffectBizsyss},
+        </if>
+        <if test="reportAffectDescribe != null and reportAffectDescribe != ''">
+        report_affect_describe=#{reportAffectDescribe},
+        </if>
+        <if test="reportType != null and reportType != ''">
+        report_type=#{reportType},
+        </if>
+        <if test="reportResson != null and reportResson != ''">
+        report_resson=#{reportResson},
+        </if>
+        <if test="reportProducer != null and reportProducer != ''">
+        report_producer=#{reportProducer},
+        </if>
+        <if test="reportNature != null and reportNature != ''">
+        report_nature=#{reportNature},
+        </if>
+        <if test="reportDeductPoints != null and reportDeductPoints != ''">
+        report_deduct_points=#{reportDeductPoints},
+        </if>
+        <if test="reportEnclosure != null and reportEnclosure != ''">
+        report_enclosure=#{reportEnclosure},
+        </if>
+        <if test="reportFollowPlan != null and reportFollowPlan != ''">
+        report_follow_plan=#{reportFollowPlan},
+        </if>
+        <if test="reportFollowPlanExplain != null and reportFollowPlanExplain != ''">
+        report_follow_plan_explain=#{reportFollowPlanExplain},
+        </if>
+        <if test="reportRemark != null and reportRemark != ''">
+        report_remark=#{reportRemark}
+        </if>
+        </set>
+        where id=#{id}
+
+    </update>
+
+    <select id="selectById" resultMap="resultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="baseColumnList"/>
+        from fault_report_manage
+        <where>
+            id = #{id}
+        </where>
+    </select>
+    <select id="selectByIds" resultMap="resultMap">
+        select
+        <include refid="baseColumnList"/>
+        from fault_report_manage
+        <where>
+            id in
+            <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+    <select id="pageList" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="baseColumnList"/>
+        from fault_report_manage
+        <where>
+            <if test="faultReportUser != null and faultReportUser != ''">
+                and fault_report_user = #{faultReportUser}
+            </if>
+            <if test="reportUser != null and reportUser != ''">
+                and report_user = #{reportUser}
+            </if>
+            <if test="faultHappenTimeFrom != null and faultHappenTimeFrom != '' and faultHappenTimeTo != null and faultHappenTimeTo != ''">
+                and fault_happen_time between #{faultHappenTimeFrom} and #{faultHappenTimeTo}
+            </if>
+        </where>
+        order by fault_happen_time desc
+        <if test="begin != null and pageSize != null">
+            limit #{begin},#{pageSize}
+        </if>
+    </select>
+    <select id="pageCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        select
+        count(1)
+        from fault_report_manage
+        <where>
+            <if test="faultReportUser != null and faultReportUser != ''">
+                and fault_report_user = #{faultReportUser}
+            </if>
+            <if test="reportUser != null and reportUser != ''">
+                and report_user = #{reportUser}
+            </if>
+            <if test="faultHappenTimeFrom != null and faultHappenTimeFrom != '' and faultHappenTimeTo != null and faultHappenTimeTo != ''">
+                and fault_happen_time between #{faultHappenTimeFrom} and #{faultHappenTimeTo}
+            </if>
+        </where>
+    </select>
+</mapper>

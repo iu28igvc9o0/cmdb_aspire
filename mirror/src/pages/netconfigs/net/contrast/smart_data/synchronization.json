@@ -1,0 +1,283 @@
+{
+    "formList": [
+      {
+        "label": "栅格布局",
+        "type": "row",
+        "columnName": "row_1609225615232",
+        "icon-dev": "iconfont iconicon-editor-grid",
+        "operation": [],
+        "hidden": false,
+        "rowTypeFlex": false,
+        "formFields": [
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "资源池",
+                "type": "text",
+                "columnName": "idcType",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "isCompare": true,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "主备IP",
+                "type": "text",
+                "columnName": "ip",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "isCompare": true,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "比对类型",
+                "type": "text",
+                "columnName": "type",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                  "disabled": false,
+                  "readonly": false
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "isCompare": true,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "比对时间",
+                "type": "text",
+                "columnName": "compareTime",
+                "defaultValue": "",
+                "isModel": true,
+                "icon-dev": "iconfont icontext",
+                "isLabelWidth": false,
+                "span": 24,
+                "width": "100%",
+                "operation": [],
+                "rules": [],
+                "hidden": false,
+                "props": {
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "style": {
+                  "word-break": "break-all"
+                },
+                "isCompare": true,
+                "isNumberType": false,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "主原始配置文件",
+                "type": "link",
+                "columnName": "masterConfigFile",
+                "targetName": "label_link_1610349757904",
+                "defaultValue": "",
+                "defaultContent": "",
+                "isModel": true,
+                "icon-dev": "iconfont iconwenzilianjie",
+                "icon": "",
+                "isLabelWidth": false,
+                "operation": [],
+                "span": 24,
+                "width": "",
+                "hidden": false,
+                "props": {
+                  "type": "primary",
+                  "underline": false,
+                  "href": null,
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "isCompare": true,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          },
+          {
+            "span": 12,
+            "childList": [
+              {
+                "label": "备原始配置文件",
+                "type": "link",
+                "columnName": "backupConfigFile",
+                "targetName": "label_link_1610349793058",
+                "defaultValue": "",
+                "defaultContent": "",
+                "isModel": true,
+                "icon-dev": "iconfont iconwenzilianjie",
+                "icon": "",
+                "isLabelWidth": false,
+                "operation": [],
+                "span": 24,
+                "width": "",
+                "hidden": false,
+                "props": {
+                  "type": "primary",
+                  "underline": false,
+                  "href": null,
+                  "disabled": false,
+                  "readonly": false,
+                  "text": ""
+                },
+                "isCompare": true,
+                "name": "basic",
+                "labelWidth": 160
+              }
+            ]
+          }
+        ],
+        "name": "layout",
+        "labelWidth": 160
+      },
+      {
+        "label": "",
+        "type": "customArea",
+        "columnName": "customArea_1609225804689",
+        "isModel": true,
+        "icon-dev": "iconfont iconquyu",
+        "isLabelWidth": true,
+        "span": 24,
+        "width": "",
+        "slotName": "dialog-table",
+        "operation": [],
+        "required": false,
+        "rules": [],
+        "hidden": false,
+        "props": {
+          "disabled": false,
+          "readonly": false
+        },
+        "isCompare": true,
+        "name": "advance",
+        "labelWidth": 0
+      }
+    ],
+    "formConfig": {
+      "labelWidth": 160,
+      "labelPosition": "left",
+      "starPostion": "left",
+      "class": "",
+      "exportName": "表单json",
+      "defaultClass": "default",
+      "size": "small",
+      "statusList": [],
+      "serverProps": {
+        "localProxy": "",
+        "nigxProxy": "",
+        "statusKey": "status",
+        "statusValue": "200",
+        "dataKey": "data",
+        "requestDataKey": ""
+      },
+      "bpmProps": {
+        "bpmOpenSwitchFlag": false,
+        "initPrefix": "/web/wf",
+        "actionPrefix": "/web/business",
+        "proxy": "",
+        "bpmFlowKey": "bpmFlowKey",
+        "instanceId": "",
+        "taskId": "",
+        "list": [
+          {
+            "flowKey": "bpmFlowKey",
+            "flowKeyName": "bpmFlowKey",
+            "flowActionList": [
+              {
+                "bpmActionTypeKey": "",
+                "bpmActionType": "",
+                "readOnly": false
+              }
+            ]
+          }
+        ]
+      },
+      "compareStatusList": [],
+      "compareDescript": "变更前："
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+      "ip": "",
+      "type": "",
+      "compareTime": "",
+      "text_1609233966487": "",
+      "idcType": "",
+      "masterConfigFile": "",
+      "backupConfigFile": ""
+    }
+  }
+        
+  
+      
+  

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.inspection.server.dao.ReportDao">
+
+    <resultMap id="ReportResultMap" type="com.aspire.mirror.inspection.server.dao.po.Report">
+        <result property="reportId" column="report_id" jdbcType="VARCHAR"/>
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="reportFilePath" column="report_file_path" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ReportTaskResultMap" type="com.aspire.mirror.inspection.server.dao.po.ReportTask">
+        <result property="reportId" column="report_id" jdbcType="VARCHAR"/>
+        <result property="taskId" column="task_id" jdbcType="VARCHAR"/>
+        <result property="taskName" column="task_name" jdbcType="VARCHAR"/>
+        <result property="taskType" column="task_type" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="finishTime" column="finish_time" jdbcType="TIMESTAMP"/>
+        <result property="reportFilePath" column="report_file_path" jdbcType="VARCHAR"/>
+        <result property="result" column="result" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+
+
+    <sql id="Report_Base_Column">
+        inspection_report.report_id,
+        inspection_report.task_id,
+        inspection_report.name,
+        inspection_report.create_time,
+        inspection_report.status,
+        inspection_report.finish_time,
+        inspection_report.report_file_path,
+        inspection_report.biz_status,
+        inspection_report.result
+    </sql>
+     <sql id="Report_Base_Task_Column">
+        inspection_report.report_id,
+        inspection_report.task_id,
+        INSPECTION_TASK.name AS task_name,
+        INSPECTION_TASK.type AS task_type,
+        inspection_report.name,
+        inspection_report.create_time,
+        inspection_report.status,
+        inspection_report.finish_time,
+        inspection_report.report_file_path,
+        inspection_report.result
+    </sql>
+
+    <sql id="Report_Query_List_Sharing">
+        <where>
+            <if test="reportId != null and reportId != ''">
+                and inspection_report.report_id = #{reportId}
+            </if>
+            <if test="taskId != null and taskId != ''">
+                and inspection_report.task_id = #{taskId}
+            </if>
+            <if test="name != null and name != ''">
+                and inspection_report.name = #{name}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                and inspection_report.create_time = #{createTime}
+            </if>
+            <if test="status != null and status != ''">
+                and inspection_report.status = #{status}
+            </if>
+            <if test="finishTime != null and finishTime != ''">
+                and inspection_report.finish_time = #{finishTime}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="reportId"
+                 open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </sql>
+
+    <insert id="insert" parameterType="com.aspire.mirror.inspection.server.dao.po.Report" >
+        INSERT INTO inspection_report (
+        <include refid="Report_Base_Column" />
+        ) VALUES (
+                #{reportId,jdbcType=VARCHAR},
+                #{taskId,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR},
+                #{createTime,jdbcType=TIMESTAMP},
+                #{status,jdbcType=VARCHAR},
+                #{finishTime,jdbcType=TIMESTAMP},
+                #{reportFilePath,jdbcType=VARCHAR},
+                #{bizStatus,jdbcType=VARCHAR},
+                #{result,jdbcType=VARCHAR}
+        )
+        <!--  需要返回自增id，取消此注释即可
+     <selectKey resultType="long" keyProperty="reportId" order="AFTER">
+         SELECT LAST_INSERT_ID()
+     </selectKey>
+     -->
+    </insert>
+
+    <insert id="insertByBatch" parameterType="com.aspire.mirror.inspection.server.dao.po.Report" >
+        INSERT INTO inspection_report (
+        <include refid="Report_Base_Column" />
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+        (
+                #{item.reportId,jdbcType=VARCHAR},
+                #{item.taskId,jdbcType=VARCHAR},
+                #{item.name,jdbcType=VARCHAR},
+                #{item.createTime,jdbcType=TIMESTAMP},
+                #{item.status,jdbcType=VARCHAR},
+                #{item.finishTime,jdbcType=TIMESTAMP},
+                #{item.report_file_path,jdbcType=VARCHAR},
+                #{item.bizStatus,jdbcType=VARCHAR},
+                #{item.result,jdbcType=VARCHAR}
+        )
+        </foreach>
+    </insert>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        DELETE FROM inspection_report WHERE report_id = #{reportId}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyArrays" parameterType="java.util.List" >
+        DELETE FROM inspection_report WHERE report_id in <include refid="Foreach_PrimaryKeyArrays_Sql"/>
+    </delete>
+
+    <delete id="delete" parameterType="com.aspire.mirror.inspection.server.dao.po.Report" >
+        DELETE FROM inspection_report WHERE report_id = #{reportId}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.mirror.inspection.server.dao.po.Report" >
+        UPDATE inspection_report inspection_report
+        <set >
+                <if test="reportId != null" >
+                inspection_report.report_id = #{reportId},
+                </if>
+                <if test="taskId != null" >
+                inspection_report.task_id = #{taskId},
+                </if>
+                <if test="name != null" >
+                inspection_report.name = #{name},
+                </if>
+                <if test="createTime != null" >
+                inspection_report.create_time = #{createTime},
+                </if>
+                <if test="status != null" >
+                inspection_report.status = #{status},
+                </if>
+                <if test="finishTime != null" >
+                inspection_report.finish_time = #{finishTime},
+                </if>
+                <if test="bizStatus != null" >
+                    inspection_report.biz_status = #{bizStatus},
+                </if>
+                <if test="totalTime != null" >
+                    inspection_report.total_time = #{totalTime},
+                </if>
+                <if test="result != null" >
+                    inspection_report.result = #{result},
+                </if>
+        </set>
+        WHERE report_id = #{reportId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.inspection.server.dao.po.Report" >
+        UPDATE inspection_report inspection_report
+        SET
+        inspection_report.report_id = #{reportId},
+        inspection_report.task_id = #{taskId},
+        inspection_report.name = #{name},
+        inspection_report.create_time = #{createTime},
+        inspection_report.status = #{status},
+        inspection_report.finish_time = #{finishTime},
+        inspection_report.total_time = #{totalTime},
+        inspection_report.result = #{result}
+        WHERE report_id = #{reportId}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="ReportResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Report_Base_Column" />
+        FROM inspection_report inspection_report
+        WHERE report_id = #{reportId}
+    </select>
+    
+    
+    
+    <select id="selectByTaskId" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    	SELECT
+    		COUNT(*)
+    	FROM inspection_report inspection_report
+    	WHERE task_id =#{taskId}
+    </select>
+	
+    <select id="selectByPrimaryKeyArrays" resultMap="ReportResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="Report_Base_Column" />
+        FROM inspection_report inspection_report
+        WHERE report_id = #{reportId}
+    </select>
+    <select id="select" resultMap="ReportResultMap" parameterType="com.aspire.mirror.inspection.server.dao.po.Report">
+        SELECT
+        <include refid="Report_Base_Column" />
+        FROM inspection_report inspection_report
+        <include refid="Report_Query_List_Sharing"/>
+        order by inspection_report.create_time desc;
+    </select>
+    <!-- 以下手写实现部分 -->
+	<sql id="Report_Query_List_Page">
+		 <where>
+		 	<if test="params['task_id'] !=null and params['task_id'] !=''">
+    			and inspection_report.task_id =#{params.task_id}
+    		</if>
+        	<if test="params['name']!=null and params['name']!=''">
+        		and inspection_report.name  like CONCAT('%', #{params.name}, '%')
+        	</if>
+             <if test="params['status']!=null and params['status']!=''">
+                 and inspection_report.status  like ' CONCAT('%', #{params.status}, '%')
+             </if>
+        	<if test="params['inspection_time_start']!=null and params['inspection_time_start']!=''">
+        		and inspection_report.create_time &gt;= str_to_date(#{params.inspection_time_start}, '%Y-%m-%d %H:%i:%s')
+        	</if>
+        	<if test="params['inspection_time_end']!=null and params['inspection_time_end']!=''">
+        		and inspection_report.create_time &lt;= str_to_date(#{params.inspection_time_end}, '%Y-%m-%d %H:%i:%s')
+        	</if>
+             <if test="params['resFilterMap'] != null">
+                 <if test="params['resFilterMap'].authAccounts != null and params['resFilterMap'].authAccounts .size > 0">
+                     and inspection_task.creater in (
+                     <foreach collection="params['resFilterMap'].authAccounts" item="item" index="index" separator=",">
+                         #{item, jdbcType=VARCHAR}
+                     </foreach>
+                     )
+                 </if>
+             </if>
+        </where>
+	</sql>
+	<!-- 根据某个任务id分页查询报告 -->
+	<select id="selectByPage" resultMap="ReportTaskResultMap" parameterType="com.aspire.mirror.common.entity.Page">
+    	SELECT
+    		<include refid="Report_Base_Task_Column"/>
+    	FROM inspection_report inspection_report
+    	LEFT JOIN inspection_task INSPECTION_TASK ON inspection_report.task_id= INSPECTION_TASK.task_id
+    		<include refid="Report_Query_List_Page"/>
+    	order by inspection_report.create_time desc;
+    </select>
+    <!-- 根据分页对象查询分页总记录数 -->
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+        SELECT COUNT(*) FROM inspection_report inspection_report
+        LEFT JOIN inspection_task INSPECTION_TASK ON inspection_report.task_id= INSPECTION_TASK.task_id
+        	<include refid="Report_Query_List_Page"/>
+    </select>
+    <select id="pageList" resultMap="ReportResultMap" parameterType="com.aspire.mirror.common.entity.Page">
+    	SELECT
+        <include refid="Report_Base_Column" />
+        FROM inspection_report inspection_report
+        <include refid="Report_Query_List_Page"/>
+        order by inspection_report.create_time desc;
+    </select>
+    <update id="updateReportFilePath" parameterType="java.lang.String">
+        update inspection_report set report_file_path = #{filePath} where report_id = #{reportId}
+    </update>
+    <select id="selectInspectionCount" resultType="com.aspire.mirror.inspection.api.dto.model.InspectionCountResp" parameterType="com.aspire.mirror.inspection.api.dto.model.InspectionCountQueryModel">
+        select count(status) totalNum,
+        sum(case when biz_status='0' then 1 else 0 end) successNum,
+        sum(case when biz_status='1' then 1 else 0 end) failedNum,
+        sum(case when biz_status='2' then 1 else 0 end) runningNum
+        from inspection_report where 1=1
+        <if test="createTimeStart !=null">
+            and inspection_report.create_time &gt;= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd !=null">
+            and inspection_report.create_time &lt;= #{createTimeEnd}
+        </if>
+    </select>
+    <select id="getInspectionTimeStatistic" resultType="com.aspire.mirror.inspection.api.dto.model.OpsTimeConsumeStatisticBase" parameterType="java.util.Map">
+        select avg(total_time) averageTime, max(total_time) maxTime from inspection_report where 1=1
+        <if test="fromDay != null">
+            and create_time >= #{fromDay}
+        </if>
+    </select>
+</mapper>

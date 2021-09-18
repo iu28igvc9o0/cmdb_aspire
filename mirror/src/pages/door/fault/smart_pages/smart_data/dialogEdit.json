@@ -1,0 +1,1926 @@
+{
+    "formList": [
+      {
+        "label": "故障数据上报",
+        "type": "collapse",
+        "button": false,
+        "isLabelWidth": false,
+        "columnName": "Box2_1604651418830",
+        "hidden": false,
+        "operation": [],
+        "icon-dev": "iconfont iconzhediemianban",
+        "formFields": [
+          {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1604654645121",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "栅格布局",
+                    "type": "row",
+                    "columnName": "row_1604974024755",
+                    "icon-dev": "iconfont iconicon-editor-grid",
+                    "operation": [],
+                    "hidden": false,
+                    "rowTypeFlex": true,
+                    "formFields": [
+                      {
+                        "span": 12,
+                        "childList": [
+                          {
+                            "label": "上报人姓名：",
+                            "type": "text",
+                            "columnName": "faultReportUser",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "icon-dev": "iconfont icontext",
+                            "isLabelWidth": false,
+                            "span": 24,
+                            "width": "100%",
+                            "operation": [],
+                            "rules": [],
+                            "hidden": false,
+                            "props": {
+                              "disabled": false,
+                              "readonly": false,
+                              "text": ""
+                            },
+                            "style": {
+                              "word-break": "break-word"
+                            },
+                            "isCompare": true,
+                            "name": "basic",
+                            "labelWidth": 160
+                          }
+                        ]
+                      },
+                      {
+                        "span": 12,
+                        "childList": [
+                          {
+                            "label": "按钮组",
+                            "type": "buttonGroup",
+                            "isLabelWidth": false,
+                            "columnName": "buttonGroup_1604974052807",
+                            "icon-dev": "iconfont iconanniu",
+                            "span": 24,
+                            "hidden": false,
+                            "position": "center",
+                            "operation": [],
+                            "toolList": [
+                              {
+                                "columnName": "data-user",
+                                "type": "",
+                                "icon": "",
+                                "label": "选择",
+                                "interactive": "",
+                                "validateProp": "",
+                                "apiName": "",
+                                "class": "",
+                                "default": "show",
+                                "dialogConfig": {
+                                  "toolList": []
+                                }
+                              }
+                            ],
+                            "name": "layout",
+                            "labelWidth": 160
+                          }
+                        ]
+                      }
+                    ],
+                    "name": "layout",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "上报人电话：",
+                    "type": "text",
+                    "columnName": "faultReporMobile",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "上报人邮箱：",
+                    "type": "text",
+                    "columnName": "faultReportEmail",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "上报人业务组：",
+                    "type": "input",
+                    "columnName": "faultReportBizsys",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "上报人业务组：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "资源池：",
+                    "type": "text",
+                    "columnName": "faultIdcType",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障ID：",
+                    "type": "input",
+                    "columnName": "faultId",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "故障ID：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障发生时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "故障发生时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "faultHappenTime",
+                    "defaultValue": "2020-11-12",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {},
+                      "text": ""
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160,
+                    "defCurValue": false
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "上报工单ID：",
+                    "type": "input",
+                    "columnName": "faultOrderId",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "上报工单ID：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "上报时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "上报时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "faultReportTime",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {},
+                      "text": ""
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "上报及时：",
+                    "type": "text",
+                    "columnName": "text_1604655161041",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "接收故障时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "接收故障时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "faultRegtime",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {}
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+          },
+          {
+            "label": "上报内容简述：",
+            "type": "textarea",
+            "columnName": "faultContent",
+            "defaultValue": "",
+            "isModel": true,
+            "required": true,
+            "rules": [
+              {
+                "required": true,
+                "message": "上报内容简述：不能为空",
+                "trigger": "blur"
+              }
+            ],
+            "isLabelWidth": false,
+            "icon-dev": "iconfont iconduohangwenben",
+            "icon": "",
+            "class": "",
+            "operation": [],
+            "hidden": false,
+            "props": {
+              "placeholder": "",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "rows": "4",
+              "text": ""
+            },
+            "span": 24,
+            "width": "100%",
+            "isCompare": true,
+            "isDisabledRequired": false,
+            "isReadonlyRequired": false,
+            "name": "basic",
+            "labelWidth": 160
+          }
+        ],
+        "span": 24,
+        "open": true,
+        "toolList": [],
+        "title-background-color": "rgb(255,255,255,1)",
+        "title-font-size": 15,
+        "title-color": "rgb(48,49,51,1)",
+        "name": "layout",
+        "labelWidth": 160
+      },
+      {
+        "label": "故障报告上报",
+        "type": "collapse",
+        "button": false,
+        "isLabelWidth": false,
+        "columnName": "Box2_1604652669790",
+        "hidden": false,
+        "operation": [],
+        "icon-dev": "iconfont iconzhediemianban",
+        "formFields": [
+          {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1604655432636",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "栅格布局",
+                    "type": "row",
+                    "columnName": "row_1604974107871",
+                    "icon-dev": "iconfont iconicon-editor-grid",
+                    "operation": [],
+                    "hidden": false,
+                    "rowTypeFlex": true,
+                    "formFields": [
+                      {
+                        "span": 12,
+                        "childList": [
+                          {
+                            "label": "上报人姓名：",
+                            "type": "text",
+                            "columnName": "reportUser",
+                            "defaultValue": "",
+                            "isModel": true,
+                            "icon-dev": "iconfont icontext",
+                            "isLabelWidth": false,
+                            "span": 24,
+                            "width": "100%",
+                            "operation": [],
+                            "rules": [],
+                            "hidden": false,
+                            "props": {
+                              "disabled": false,
+                              "readonly": false,
+                              "text": ""
+                            },
+                            "style": {
+                              "word-break": "break-all"
+                            },
+                            "isCompare": true,
+                            "name": "basic",
+                            "labelWidth": 160
+                          }
+                        ]
+                      },
+                      {
+                        "span": 12,
+                        "childList": [
+                          {
+                            "label": "按钮组",
+                            "type": "buttonGroup",
+                            "isLabelWidth": false,
+                            "columnName": "buttonGroup_1604974123781",
+                            "icon-dev": "iconfont iconanniu",
+                            "span": 24,
+                            "hidden": false,
+                            "position": "center",
+                            "operation": [],
+                            "toolList": [
+                              {
+                                "columnName": "report-user",
+                                "type": "",
+                                "icon": "",
+                                "label": "选择",
+                                "interactive": "",
+                                "validateProp": "",
+                                "apiName": "",
+                                "class": "",
+                                "default": "show",
+                                "dialogConfig": {
+                                  "toolList": []
+                                }
+                              }
+                            ],
+                            "name": "layout",
+                            "labelWidth": 160
+                          }
+                        ]
+                      }
+                    ],
+                    "name": "layout",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "编写人电话：",
+                    "type": "text",
+                    "columnName": "reportMobile",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "编写人邮箱：",
+                    "type": "text",
+                    "columnName": "reportEmail",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "编写人业务组：",
+                    "type": "input",
+                    "columnName": "reportBizsys",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "编写人业务组：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障报告名称：",
+                    "type": "input",
+                    "columnName": "reportTitle",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "故障报告名称：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障分类：",
+                    "type": "input",
+                    "columnName": "reportType",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "故障分类：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "事件性质：",
+                    "type": "input",
+                    "columnName": "reportNature",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "事件性质：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "全网ID",
+                    "type": "input",
+                    "columnName": "reportWnId",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "全网ID不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "工单ID",
+                    "type": "input",
+                    "columnName": "reportOrderId",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "工单ID不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "事件单下发时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "事件单下发时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "reportCreateTime",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {}
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "事件单要求完成时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "事件单要求完成时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "reportPlainFinish",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": true,
+                      "readonly": false,
+                      "picker-options": {},
+                      "text": ""
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 164
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "实际提交故障时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "实际提交故障报告时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "reportFinishTime",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {},
+                      "text": ""
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 178
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障上报及时性：",
+                    "type": "text",
+                    "columnName": "text_1604973379005",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "平台恢复时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "平台恢复时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "reportPlatformRecoverytime",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {}
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "平台故障持续时长(小时）：",
+                    "type": "text",
+                    "columnName": "reportPlatformRecoveryhours",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": true,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 186
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "业务恢复时间：",
+                    "type": "datePicker",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "业务恢复时间：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "columnName": "reportBizsysRecoverytime",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont iconriqi",
+                    "icon": "",
+                    "isLabelWidth": false,
+                    "operation": [],
+                    "span": 24,
+                    "hidden": false,
+                    "aspProps": {
+                      "dateRange": 0
+                    },
+                    "props": {
+                      "type": "datetime",
+                      "placeholder": "",
+                      "format": "yyyy-MM-dd HH:mm:ss",
+                      "value-format": "yyyy-MM-dd HH:mm:ss",
+                      "range-separator": "-",
+                      "start-placeholder": "",
+                      "end-placeholder": "",
+                      "disabled": false,
+                      "readonly": false,
+                      "picker-options": {}
+                    },
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "影响业务系统数量：",
+                    "type": "input",
+                    "columnName": "reportAffectBizsyss",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "影响业务系统数量：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "厂家：",
+                    "type": "input",
+                    "columnName": "reportProducer",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "厂家：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "扣分：",
+                    "type": "input",
+                    "columnName": "reportDeductPoints",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "class": "",
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "扣分：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "label-width": "",
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont icondanhangwenben",
+                    "icon": "",
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "operation": [],
+                    "button": false,
+                    "slot": "",
+                    "button-name": "",
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+          },
+          {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1604656803119",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障影响描述：",
+                    "type": "textarea",
+                    "columnName": "reportAffectDescribe",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "故障影响描述：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconduohangwenben",
+                    "icon": "",
+                    "class": "",
+                    "operation": [],
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "rows": "4",
+                      "text": ""
+                    },
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障原因描述：",
+                    "type": "textarea",
+                    "columnName": "reportResson",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "required": true,
+                    "rules": [
+                      {
+                        "required": true,
+                        "message": "故障原因描述：不能为空",
+                        "trigger": "blur"
+                      }
+                    ],
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconduohangwenben",
+                    "icon": "",
+                    "class": "",
+                    "operation": [],
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "rows": "4",
+                      "text": ""
+                    },
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "故障报告附件：",
+                    "type": "text",
+                    "columnName": "reportEnclosure",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "icon-dev": "iconfont icontext",
+                    "isLabelWidth": false,
+                    "span": 24,
+                    "width": "100%",
+                    "operation": [],
+                    "rules": [],
+                    "hidden": false,
+                    "props": {
+                      "disabled": false,
+                      "readonly": false,
+                      "text": ""
+                    },
+                    "style": {
+                      "word-break": "break-all"
+                    },
+                    "isCompare": true,
+                    "isNumberType": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "按钮组",
+                    "type": "buttonGroup",
+                    "isLabelWidth": false,
+                    "columnName": "buttonGroup_1605851790477",
+                    "icon-dev": "iconfont iconanniu",
+                    "span": 24,
+                    "hidden": false,
+                    "bpmSwitchFlag": false,
+                    "align": null,
+                    "position": "center",
+                    "operation": [],
+                    "toolList": [
+                      {
+                        "columnName": "upload",
+                        "type": "",
+                        "icon": "",
+                        "label": "附件上传",
+                        "interactive": "",
+                        "validateProp": "",
+                        "apiName": "",
+                        "class": "",
+                        "default": "show",
+                        "dialogConfig": {
+                          "bindName": "",
+                          "title": "",
+                          "subTitle": "",
+                          "width": "",
+                          "height": "",
+                          "toolList": []
+                        }
+                      }
+                    ],
+                    "name": "layout",
+                    "labelWidth": 160
+                  }
+                ]
+              }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+          }
+        ],
+        "span": 24,
+        "open": true,
+        "toolList": [],
+        "title-background-color": "rgb(255,255,255,1)",
+        "title-font-size": 15,
+        "title-color": "rgb(48,49,51,1)",
+        "name": "layout",
+        "labelWidth": 160
+      },
+      {
+        "label": "分组框",
+        "type": "collapse",
+        "button": false,
+        "isLabelWidth": false,
+        "columnName": "Box2_1604652698708",
+        "hidden": false,
+        "operation": [],
+        "icon-dev": "iconfont iconzhediemianban",
+        "formFields": [
+          {
+            "label": "栅格布局",
+            "type": "row",
+            "columnName": "row_1604653239639",
+            "icon-dev": "iconfont iconicon-editor-grid",
+            "operation": [],
+            "hidden": false,
+            "rowTypeFlex": false,
+            "formFields": [
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "后续计划：",
+                    "type": "textarea",
+                    "columnName": "reportFollowPlan",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "required": false,
+                    "rules": [],
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconduohangwenben",
+                    "icon": "",
+                    "class": "",
+                    "operation": [],
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "rows": "4",
+                      "text": ""
+                    },
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              },
+              {
+                "span": 12,
+                "childList": [
+                  {
+                    "label": "后续计划完成说明：",
+                    "type": "textarea",
+                    "columnName": "reportFollowPlanExplain",
+                    "defaultValue": "",
+                    "isModel": true,
+                    "required": false,
+                    "rules": [],
+                    "isLabelWidth": false,
+                    "icon-dev": "iconfont iconduohangwenben",
+                    "icon": "",
+                    "class": "",
+                    "operation": [],
+                    "hidden": false,
+                    "props": {
+                      "placeholder": "",
+                      "maxlength": "",
+                      "show-word-limit": false,
+                      "clearable": true,
+                      "disabled": false,
+                      "readonly": false,
+                      "rows": "4"
+                    },
+                    "span": 24,
+                    "width": "100%",
+                    "isCompare": true,
+                    "isDisabledRequired": false,
+                    "isReadonlyRequired": false,
+                    "name": "basic",
+                    "labelWidth": 160
+                  }
+                ]
+              }
+            ],
+            "name": "layout",
+            "labelWidth": 160
+          }
+        ],
+        "span": 24,
+        "open": true,
+        "toolList": [],
+        "title-background-color": "rgb(255,255,255,1)",
+        "title-font-size": 15,
+        "title-color": "rgb(48,49,51,1)",
+        "name": "layout",
+        "labelWidth": 160
+      },
+      {
+        "label": "其他附注信息：",
+        "type": "textarea",
+        "columnName": "reportRemark",
+        "defaultValue": "",
+        "isModel": true,
+        "required": false,
+        "rules": [],
+        "isLabelWidth": false,
+        "icon-dev": "iconfont iconduohangwenben",
+        "icon": "",
+        "class": "",
+        "operation": [],
+        "hidden": false,
+        "props": {
+          "placeholder": "",
+          "maxlength": "",
+          "show-word-limit": false,
+          "clearable": true,
+          "disabled": false,
+          "readonly": false,
+          "rows": "4",
+          "text": ""
+        },
+        "span": 24,
+        "width": "100%",
+        "isCompare": true,
+        "isDisabledRequired": false,
+        "isReadonlyRequired": false,
+        "name": "basic",
+        "labelWidth": 128,
+        "isTrim": false
+      },
+      {
+        "label": "",
+        "type": "buttonGroup",
+        "isLabelWidth": false,
+        "columnName": "buttonGroup_1604652958202",
+        "icon-dev": "iconfont iconanniu",
+        "span": 24,
+        "hidden": false,
+        "position": "center",
+        "operation": [],
+        "toolList": [
+          {
+            "columnName": "btn-edit-save",
+            "type": "primary",
+            "icon": "",
+            "label": "保存",
+            "interactive": "",
+            "validateProp": "",
+            "apiName": "",
+            "class": "",
+            "default": "show",
+            "dialogConfig": {
+              "toolList": []
+            },
+            "activeType": "",
+            "apiMethod": ""
+          },
+          {
+            "columnName": "btn-edit-cancel",
+            "type": "",
+            "icon": "",
+            "label": "取消",
+            "interactive": "",
+            "validateProp": "",
+            "apiName": "",
+            "class": "",
+            "default": "show",
+            "dialogConfig": {
+              "toolList": []
+            }
+          }
+        ],
+        "name": "layout",
+        "labelWidth": 160,
+        "isNullRowValidate": false
+      }
+    ],
+    "formConfig": {
+      "labelWidth": 160,
+      "labelPosition": "left",
+      "starPostion": "left",
+      "class": "",
+      "exportName": "表单json",
+      "defaultClass": "default",
+      "size": "medium",
+      "statusList": [],
+      "serverProps": {
+        "localProxy": "",
+        "nigxProxy": "",
+        "statusKey": "status",
+        "statusValue": "200",
+        "dataKey": "data",
+        "requestDataKey": ""
+      },
+      "compareStatusList": [],
+      "compareDescript": "变更前：",
+      "bpmProps": {
+        "initPrefix": "/web/wf",
+        "actionPrefix": "/web/business",
+        "proxy": "",
+        "flowKey": "bpmFlowKey",
+        "instanceId": "",
+        "taskId": "",
+        "readOnly": ""
+      }
+    },
+    "dataConfig": {},
+    "virtual_model": {},
+    "model": {
+      "text_1604655161041": "",
+      "input_1604655594265": "",
+      "input_1604655597446": "",
+      "input_1604655639205": "",
+      "datePicker_1604656088497": "",
+      "datePicker_1604656127484": "",
+      "datePicker_1604656154544": "",
+      "text_1604656276563": "",
+      "datePicker_1604656347904": "",
+      "input_1604656540751": "",
+      "datePicker_1604656588917": "",
+      "input_1604656615726": "",
+      "input_1604656631454": "",
+      "input_1604656648076": "",
+      "textarea_1604656794758": "",
+      "text_1604973379005": "",
+      "text_1604973807374": "",
+      "text_1604973996050": "",
+      "faultReportUser": "",
+      "faultReporMobile": "",
+      "faultReportEmail": "",
+      "faultReportBizsys": "",
+      "faultIdcType": "",
+      "faultId": "",
+      "faultHappenTime": "",
+      "faultOrderId": "",
+      "faultReportTime": "",
+      "faultRegtime": "",
+      "faultContent": "",
+      "reportUser": "",
+      "reportMobile": "",
+      "reportEmail": "",
+      "reportBizsys": "",
+      "reportTitle": "",
+      "reportType": "",
+      "reportNature": "",
+      "reportWnId": "",
+      "reportOrderId": "",
+      "reportCreateTime": "",
+      "reportPlainFinish": "",
+      "reportPlatformRecoverytime": "",
+      "reportBizsysRecoverytime": "",
+      "reportAffectBizsyss": "",
+      "reportFinishTime": "",
+      "reportProducer": "",
+      "reportDeductPoints": "",
+      "reportResson": "",
+      "reportAffectDescribe": "",
+      "reportFollowPlan": "",
+      "reportFollowPlanExplain": "",
+      "reportRemark": "",
+      "input_1605851689996": "",
+      "reportEnclosure": "",
+      "reportPlatformRecoveryhours": ""
+    }
+  }
+        
+  
+      

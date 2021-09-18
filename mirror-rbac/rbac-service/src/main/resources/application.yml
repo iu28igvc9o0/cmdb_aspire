@@ -1,0 +1,135 @@
+server:
+  port: 28101
+
+keycloak:
+  url: http://10.1.203.99:8180/auth
+  username: admin
+  password: admin
+  realm: demo_realm
+  clientId: prod_vue
+  namespace: alauda
+  tokenUrl: http://10.1.203.99:8180/auth
+
+sample:
+  zipkin:
+    enabled: true
+
+spring: #配置mvc,resource用来处理请求404抛出NoHandlerFoundException异常
+  zipkin:
+    enabled: false
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+  mvc: 
+    throw-exception-if-no-handler-found: true #当出现404错误时,是否直接抛出异常
+  resources:  
+    add-mappings: false #是否开启默认的资源处理
+  redis:
+    #expiration: 3600 #设置缓存到期时间,单位秒
+    usable: false #是否使用缓存
+    redisKeyPrefixPermission: rbac-service-permission #用户权限缓存KEY前缀
+    redisKeyPrefixResourceSchemaHash: rbac-service-resource-schema-hash #资源模式Hash缓存KEY前缀
+    redisKeyPrefixResourceSchemaList: rbac-service-resource-schema-list #资源模式List缓存KEY前缀
+    redisKeySplit: "~" #缓存KEY分割标识
+    password: redis123
+    database: 2
+    timeout: 5000 #客户端超时时间：单位是毫秒
+    pool: 
+      max-active: 8 #最大连接数：能够同时建立的“最大链接个数”
+      max-idle: 8 #最大空闲数：空闲链接数大于maxIdle时，将进行回收
+      min-idle: 0 #最小空闲数
+      max-wait: -1 #最大等待时间：单位ms
+    #单节点方式
+    host: 110.1.203.99
+    port: 6379
+    #集群方式
+#    cluster: 
+#      max-redirects: 3
+#      nodes:
+#      - 172.30.150.26:6381
+#      - 172.30.150.32:7381
+#      - 172.30.150.35:7381
+      
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      
+druid:
+  url: jdbc:mysql://10.1.203.99:3306/cmdb?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: roo,q1Il.t
+  useSSL: false
+  
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*/*Mapper.xml
+  type-aliases-package: 
+     org.springboot.sample.entity
+ 
+management.security.enabled: false
+
+# 解决第一次请求报超时异常的方案：
+# hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 5000
+# 或者：
+hystrix.command.default.execution.timeout.enabled: false
+# 或者：
+#feign.hystrix.enabled: false ## 索性禁用feign的hystrix
+
+local: 
+  kafka: 
+    #bootstrap-servers: 10.12.70.39:9092
+    bootstrap-servers: localhost:9092 #10.1.203.99:9092
+#    bootstrap_servers: 10.1.5.103:9092
+    producer: 
+      retries: 0
+      batch-size: 5
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer: 
+      group-id: kafka_rbac
+      auto-offset-reset: latest
+      enable-auto-commit: true
+      auto-commit-interval: 500
+      session.timeout.ms: 60000
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer  
+    listener:
+      concurrency: 3    # 配置partions分区数, 保证每个分区一个消费线程     
+    properties: 
+      session.timeout.ms: 60000
+#     max.poll.records: 10
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: debug
+    com.migu.tsg.microservice.atomicservice.composite.controller: debug #输出rbac-service日志
+  file: ./rbac.log ##日志文件,绝对路径或相对路径
+             
+log:
+  hosts: 172.30.150.26:29200
+  userName: 123
+  password: 456
+  needAuth: true
+  maxTotalConnectionPerRoute: 1
+  maxTotalConnection: 10  
+  multiThreaded: true
+  readTimeout:  200000
+    
+eip:
+  url:
+    use-dept: http://10.2.8.57:3002/spc/aspire/GetDeptList
+    all-user: http://10.2.8.57:3002/spc/aspire/GetUserInfoList
+  sync:
+    env: ZY
+
+bpm:
+  front:
+    formStarturl: http://10.12.70.37:8066/front/#/start/

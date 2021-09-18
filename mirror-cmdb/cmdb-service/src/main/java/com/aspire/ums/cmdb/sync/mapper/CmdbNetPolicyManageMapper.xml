@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.sync.mapper.CmdbNetPolicyManageMapper">
+
+
+	<!-- 新增记录 -->
+	<insert id="batchInsert" parameterType="list">
+		INSERT INTO cmdb_pubnet_mapped_ipinfo(ID, FW_IP, OUTER_IP, OUTER_PORT,
+		LB_IP, LB_PORT, INNER_IP, INNER_PORT,
+		BUSINESS_NAME)
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.id},#{item.fwIp},#{item.outerIp},#{item.outerPort},#{item.lbIp},#{item.lbPort},#{item.innerIp},#{item.innerPort},#{item.businessName})
+		</foreach>
+	</insert>
+
+
+	<!-- 删除记录 -->
+	<delete id="delOldData">
+        <![CDATA[  DELETE FROM cmdb_pubnet_mapped_ipinfo where CREATE_TIME<DATE_SUB(NOW(),INTERVAL 50 MINUTE)  ]]>
+	</delete>
+
+    <!-- 根据公网ip查询ip地址库-公网ip存活信息 -->
+	<select id="getIpRepositoryPublicIpSurvivalInfo" parameterType="list" resultType="map">
+		SELECT t.ip,t.id,t.first_survival_time,t.latest_survival_time,t.survival_status
+		FROM cmdb_ip_repository_public_ip t where t.ip in
+		<foreach collection="list" item="item" index="index"
+			separator="," open="(" close=")">
+			#{item.outerIp}
+		</foreach>
+	</select>
+    
+    <!-- 更新ip地址库-公网ip存活状态 -->
+	<update id="updatePublicIpSurvivalStatus" parameterType="list">
+		UPDATE cmdb_ip_repository_public_ip SET survival_status='已存活',
+		first_survival_time=
+		<foreach collection="list" item="item" index="index" 
+	        separator=" " open="case id" close="end">
+	        when #{item.id} then #{item.first_survival_time}
+       </foreach>
+		,
+		latest_survival_time=
+		<foreach collection="list" item="item" index="index" 
+	        separator=" " open="case id" close="end">
+	        when #{item.id} then #{item.latest_survival_time}
+       </foreach>
+		where id in
+		<foreach collection="list" item="item" index="index"
+			separator="," open="(" close=")">
+			#{item.id}
+		</foreach>
+	</update>
+    
+
+
+
+
+</mapper>

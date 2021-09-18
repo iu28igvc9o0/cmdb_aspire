@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.room.mapper.CmdbRoomManagerMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v2.room.entity.CmdbRoomManager" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="room_code" property="roomCode" jdbcType="VARCHAR" />
+        <result column="room_name" property="roomName" jdbcType="VARCHAR" />
+        <result column="pod_id" property="podId" jdbcType="VARCHAR" />
+        <result column="idc_id" property="idcId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        `id`,
+        `room_code`,
+        `room_name`,
+        `pod_id`,
+        idc_id,
+        `sort_index`,
+        `is_delete`
+    </sql>
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+          <include refid="baseColumn"/>
+        FROM cmdb_room_manager
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v2.room.entity.CmdbRoomManager">
+        SELECT DISTINCT
+            r.`id`,
+            r.`room_code`,
+            r.`room_name`,
+            r.`pod_id`,
+            r.idc_id,
+            r.`sort_index`,
+            r.`is_delete`
+        FROM
+        cmdb_room_manager r
+        where
+        <if test="idcId != null and idcId != ''">
+            exists (select * from cmdb_idc_resource_relation d where d.idc_id=#{idcId} and d.room_id = r.id)
+        </if>
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="roomCode != null and roomCode != ''">
+            AND `room_code` = #{roomCode}
+        </if>
+        <if test="roomName != null and roomName != ''">
+            AND `room_name` = #{roomName}
+        </if>
+        and r.is_delete = '0'
+        order by r.sort_index
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v2.room.entity.CmdbRoomManager" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_room_manager
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v2.room.entity.CmdbRoomManager">
+        INSERT INTO cmdb_room_manager
+        (
+            `id`,
+            `room_code`,
+            `room_name`,
+            `pod_id`,
+            idc_id,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{roomCode, jdbcType=VARCHAR},
+            #{roomName, jdbcType=VARCHAR},
+            #{podId, jdbcType=VARCHAR},
+            #{idcId, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            #{isDelete, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v2.room.entity.CmdbRoomManager">
+        UPDATE cmdb_room_manager SET
+        `room_code` = #{roomCode},
+        `room_name` = #{roomName},
+        `pod_id` = #{podId},
+        `idc_id` = #{idcId},
+        `sort_index` = #{sortIndex},
+        `is_delete` = #{isDelete}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v2.room.entity.CmdbRoomManager">
+        DELETE FROM cmdb_room_manager
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

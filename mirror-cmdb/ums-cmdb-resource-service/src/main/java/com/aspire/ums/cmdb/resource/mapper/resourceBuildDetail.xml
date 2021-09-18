@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.resource.mapper.ResourceBuildDetailMapper">
+    <resultMap id="ResBuildDetailResultMap" type="com.aspire.ums.cmdb.resource.entity.ResBuildDetail">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="buildId" column="build_id" jdbcType="INTEGER"/>
+        <result property="serverType" column="server_type" jdbcType="VARCHAR"/>
+        <result property="serverName" column="server_name" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="configDetail" column="config_detail" jdbcType="VARCHAR"/>
+        <result property="imports" column="imports" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="ResBuildDetail_Base_Column">
+        RESOURCE_BUILD_DETAIL.id,
+        RESOURCE_BUILD_DETAIL.build_id,
+        RESOURCE_BUILD_DETAIL.server_type,
+        RESOURCE_BUILD_DETAIL.server_name,
+        RESOURCE_BUILD_DETAIL.unit,
+        RESOURCE_BUILD_DETAIL.count,
+        RESOURCE_BUILD_DETAIL.config_detail,
+        RESOURCE_BUILD_DETAIL.imports
+    </sql>
+    <sql id="ResBuildDetail_Query_List_Sharing">
+        <where>
+            <if test="null != id">
+                and RESOURCE_BUILD_DETAIL.id = #{id}
+            </if>
+            <if test="null != buildId">
+                and RESOURCE_BUILD_DETAIL.build_id = #{buildId}
+            </if>
+            <if test="null != serverType and '' != serverType">
+                and RESOURCE_BUILD_DETAIL.server_type = #{serverType}
+            </if>
+            <if test="null != serverName and '' != serverName">
+                and RESOURCE_BUILD_DETAIL.server_name = #{serverName}
+            </if>
+            <if test="null != unit and '' != unit">
+                and RESOURCE_BUILD_DETAIL.unit = #{unit}
+            </if>
+            <if test="null != count">
+                and RESOURCE_BUILD_DETAIL.count = #{count}
+            </if>
+            <if test="null != configDetail and '' != configDetail">
+                and RESOURCE_BUILD_DETAIL.config_detail = #{configDetail}
+            </if>
+            <if test="null != imports">
+                and RESOURCE_BUILD_DETAIL.imports = #{imports}
+            </if>
+        </where>
+    </sql>
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="id"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="ResBuildDetailResultMap">
+        SELECT
+        <include refid="ResBuildDetail_Base_Column"/>
+        FROM RESOURCE_BUILD_DETAIL RESOURCE_BUILD_DETAIL
+        WHERE id = #{id}
+    </select>
+
+    <insert id="addResourceBuildDetail" parameterType="com.aspire.ums.cmdb.resource.entity.ResBuildDetail">
+        INSERT INTO resource_build_detail(build_id,server_type,server_name,unit,count,config_detail,imports)
+        VALUES (#{buildId},#{serverType},#{serverName},#{unit},#{count},#{configDetail},#{imports})
+    </insert>
+
+    <update id="updateResourceBuildDetail" parameterType="com.aspire.ums.cmdb.resource.entity.ResBuildDetail">
+        UPDATE resource_build_detail rb SET
+         rb.server_type=#{serverType},rb.server_name=#{serverName},rb.count=#{count},rb.unit=#{unit},rb.config_detail=#{configDetail}
+        WHERE rb.build_id=#{buildId}
+    </update>
+</mapper>

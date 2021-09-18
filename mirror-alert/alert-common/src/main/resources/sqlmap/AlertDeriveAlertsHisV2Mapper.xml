@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.derive.AlertDeriveAlertsHisV2Mapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.derive.po.AlertDeriveAlertsV2">
+        <result column="alert_id" property="alertId" jdbcType="VARCHAR"/>
+        <result column="derive_id" property="deriveId" jdbcType="BIGINT"/>
+        <result column="derive_name" property="deriveName" jdbcType="VARCHAR"/>
+        <result column="derive_alert_id" property="deriveAlertId" jdbcType="VARCHAR"/>
+        <result column="r_alert_id" property="rAlertId" jdbcType="VARCHAR"/>
+        <result column="biz_sys" property="bizSys" jdbcType="VARCHAR"/>
+        <result column="moni_index" property="moniIndex" jdbcType="VARCHAR"/>
+        <result column="moni_object" property="moniObject" jdbcType="VARCHAR"/>
+        <result column="cur_moni_value" property="curMoniValue" jdbcType="VARCHAR"/>
+        <result column="cur_moni_time" property="curMoniTime" jdbcType="TIMESTAMP"/>
+        <result column="alert_level" property="alertLevel" jdbcType="VARCHAR"/>
+        <result column="item_id" property="itemId" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="VARCHAR"/>
+        <result column="idc_type" property="idcType" jdbcType="VARCHAR"/>
+        <result column="object_type" property="objectType" jdbcType="VARCHAR"/>
+        <result column="device_ip" property="deviceIp" jdbcType="VARCHAR"/>
+        <result column="alert_start_time" property="alertStartTime" jdbcType="TIMESTAMP"/>
+        <result column="alert_count" property="alertCount" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="alert_type" property="alertType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        a.alert_id, a.derive_id,a.derive_alert_id, a.r_alert_id, a.device_id, a.biz_sys,
+        a.moni_index, a.moni_object, a.cur_moni_value, a.cur_moni_time, a.alert_level, a.item_id, a.remark,
+        a.source, a.idc_type,a.object_type, a.device_ip, a.alert_start_time, a.alert_count,
+        a.create_time, alert_type
+    </sql>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="java.util.Map">
+        insert into alert_derive_alerts_his
+        <foreach collection="map.keys" item="key" open="(" close=")" separator="," >
+            ${key}
+        </foreach>
+        values
+        <foreach collection="map.keys"  item="key" open="(" close=")" separator=",">
+            #{map[${key}]}
+        </foreach>
+    </insert>
+    <!-- 修改 -->
+    <update id="update" parameterType="java.util.Map">
+        update alert_derive_alerts_his set
+        <foreach collection="map.keys" item="key" index="index"
+                 open="" separator="," close="">
+            ${key} = #{map[${key}]}
+        </foreach>
+        where alert_id = #{map.alert_id}
+    </update>
+    <!-- 修改记录 -->
+    <update id="updateByEntity" parameterType="com.aspire.mirror.alert.server.dao.derive.po.AlertDeriveAlertsV2">
+        UPDATE alert_derive_alerts_his SET
+        `derive_id` = #{deriveId},
+        `derive_alert_id` = #{deriveAlertId},
+        `r_alert_id` = #{rAlertId},
+        `biz_sys` = #{bizSys},
+        `moni_index` = #{moniIndex},
+        `moni_object` = #{moniObject},
+        `cur_moni_value` = #{curMoniValue},
+        `cur_moni_time` = #{curMoniTime},
+        `alert_level` = #{alertLevel},
+        `item_id` = #{itemId},
+        `remark` = #{remark},
+        `source` = #{source},
+        `idc_type` = #{idcType},
+        `object_type` = #{objectType},
+        `device_ip` = #{deviceIp},
+        `alert_start_time` = #{alertStartTime},
+        `alert_count` = #{alertCount},
+        `create_time` = #{createTime},
+        `alert_type` = #{alertType}
+        WHERE
+        `alert_id` = #{alertId}
+    </update>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultType="java.util.Map"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria">
+        SELECT
+        <choose>
+            <when test="exportField != null and exportField != ''">
+                ${exportField}
+            </when>
+            <otherwise>
+                t.*
+            </otherwise>
+        </choose>
+        ,
+        b.name derive_name
+        FROM alert_derive_alerts_his t INNER JOIN alert_derive b on t.derive_id=b.id
+        <include refid="Example_Where_Clause"/> order by t.cur_moni_time desc
+        limit 100000
+    </select>
+    <!-- 分页查询 -->
+    <select id="findPageWithResult"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria" resultType="java.util.Map">
+        select
+        a.*, b.name derive_name
+        from alert_derive_alerts_his a INNER JOIN alert_derive b on a.derive_id=b.id
+        <include refid="Example_Where_Clause"/> order by a.cur_moni_time desc
+        <if test="begin != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+            resultType="Integer">
+        select count(1)
+        from alert_derive_alerts_his a INNER JOIN alert_derive b on a.derive_id=b.id
+        <include refid="Example_Where_Clause"/>
+    </select>
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="page_limit" >
+        limit #{begin}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </sql>
+</mapper>

@@ -1,0 +1,457 @@
+.geSidebarContainer::-webkit-scrollbar {
+  width: 0px;
+}
+
+.geSidebarContainer::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+.geDiagramContainer::-webkit-scrollbar {
+  width: 8px !important;
+  height: 10px !important;
+  background: #f6f6f6;
+}
+
+.geDiagramContainer::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #409eff;
+  opacity: 0.42;
+}
+html body {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.geFormatContainer {
+  background-color: #ffffff !important;
+  box-sizing: border-box !important;
+}
+.geSidebarContainer {
+  border-left: 1px solid #e0e0e0 !important;
+}
+
+.geFormatContainer {
+  border-right: 1px solid #e0e0e0 !important;
+}
+.geSidebarContainer .geTitle {
+  background-color: #ffffff !important;
+  font-size: 12px;
+  line-height: 2em;
+}
+
+.geSidebar {
+  background-color: #ffffff !important;
+}
+.geToolbar {
+  border-top: 1px solid #e0e0e0 !important;
+  background: #f6f6f6 !important;
+}
+.geToolbarMenu {
+  border: 1px solid #e0e0e0 !important;
+}
+
+.geToolbarContainer {
+  background-color: #ffffff !important;
+}
+
+.geToolbarContainer .geToolbar {
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  padding-left: 260px;
+}
+
+.geToolbarContainer .geToolbar .geSeparator {
+  display: inline-block;
+  float: none !important;
+}
+
+.geToolbarContainer .geToolbar a {
+  display: inline-block;
+  float: none !important;
+}
+
+.providetitle {
+  line-height: 4em !important;
+  height: 3em !important;
+  font-size: 14px !important;
+  font-family: MicrosoftYaHei;
+  font-weight: bold;
+  color: rgba(51, 51, 51, 1);
+}
+.leftTopBar {
+  height: 35px !important;
+  font-weight: 700 !important;
+  background: #f6f6f6;
+  font-size: 12px !important;
+  color: rgba(51, 51, 51, 1);
+  line-height: 36px !important;
+  padding-left: 14px !important;
+  box-sizing: border-box !important;
+}
+
+.geSidebarContainer input {
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid #dcdfe6;
+  text-align: center;
+  height: 15px;
+  background-color: #fff;
+}
+.geSidebarContainer span {
+  position: relative;
+}
+.geSidebarContainer button {
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 20px;
+  font-size: 12px;
+  color: #606266;
+  vertical-align: middle;
+}
+
+.geSidebarContainer .geColorBtn {
+  background-color: #fff !important;
+  background-image: none;
+  border: 1px solid #dcdfe6;
+  font-size: 12px;
+}
+
+.geSidebarContainer .geBtnDown {
+  background-color: #fff !important;
+}
+
+.geSidebarContainer .geBtnUp {
+  background-color: #fff !important;
+}
+
+#file {
+  height: 30px !important;
+}
+
+#filecell {
+  height: 30px !important;
+}
+#ViewTitleInput {
+  text-align: left !important;
+}
+
+.color-red {
+  stroke: red;
+  fill: red;
+}
+.selected {
+  stroke-width: 3;
+}
+.pathSelected {
+    stroke-width: 3;
+    stroke: red;
+}
+
+/*.color4 {*/
+  /*animation: node4 1s infinite linear;*/
+/*}*/
+/* flow线 */
+.flow {
+  stroke-dasharray: 8;
+  animation: dash 0.5s linear;
+  animation-iteration-count: infinite;
+}
+.flowV {
+  stroke-dasharray: 8;
+  animation: dash 0.5s linear;
+  animation-iteration-count: infinite;
+  stroke: rgb(62, 231, 11);
+  stroke-width: 5;
+}
+.flowc {
+  stroke: rgb(62, 231, 11);
+  stroke-width: 3;
+}
+.flowR {
+  stroke-dasharray: 8;
+  animation: dash 0.5s linear;
+  animation-iteration-count: infinite;
+}
+.flowL {
+  stroke-dasharray: 8;
+  animation: dashL 0.5s linear;
+  animation-iteration-count: infinite;
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+@keyframes dashL {
+  to {
+    stroke-dashoffset: 16;
+  }
+}
+.checkFlow {
+  animation: stroke 1s infinite linear;
+}
+@keyframes stroke {
+  0% {
+    opacity: 1;
+    stroke: red;
+  }
+  100% {
+    opacity: 0;
+    stroke: red;
+  }
+}
+/* element ui 样式 */
+.eleInput {
+  border-radius: 4px;
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
+  box-sizing: border-box;
+  color: #606266;
+  display: inline-block;
+  font-size: inherit;
+  height: 24px;
+  line-height: 24px;
+  outline: none;
+  padding: 0 10px;
+  transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  width: 100%;
+}
+.eleTextarea {
+  border-radius: 4px;
+  background-color: #fff;
+  border: 1px solid #dcdfe6;
+  box-sizing: border-box;
+  color: #606266;
+  display: inline-block;
+  font-size: inherit;
+  line-height: 24px;
+  outline: none;
+  padding: 0 10px;
+  transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  width: 100%;
+}
+.textareaSpan {
+  height: 20px;
+  position: absolute;
+  top: -19px;
+  margin: 0;
+}
+.mxWindowButton {
+  cursor: pointer;
+  position: absolute;
+  display: inline-block;
+  right: 21px;
+  top: 8px;
+  background-color: red;
+  height: 12px;
+  width: 12px;
+}
+.eleButton {
+  display: inline-block;
+  line-height: 25px;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+  -webkit-appearance: none;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  transition: 0.1s;
+  font-weight: 500;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  height: 25px;
+}
+
+.eleColorPicker {
+  display: inline-block;
+  box-sizing: border-box;
+  height: 40px;
+  width: 40px;
+  padding: 4px;
+  border: 1px solid #e6e6e6;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.toolbarDiv {
+  margin-left: 0;
+  margin-top: 0;
+  width: 21px;
+  height: 21px;
+  background-size: 100% 100%;
+}
+.toolbarA {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  width: 34px;
+}
+.pageTypeDiv {
+  border-bottom: 1px solid #e0e0e0;
+  height: 45px;
+  padding-left: 10px;
+}
+.pageTypeDiv input {
+  position: relative;
+  top: 3px;
+  margin-left: 12px;
+}
+.pageTypeDiv .pageTypep {
+  display: inline-block;
+  height: 45px;
+  line-height: 45px;
+  padding: 0px;
+  margin: 0px;
+}
+/* 视图类型选择栏样式 */
+.pictureTypeDiv {
+  margin-top: 10px;
+  border-top: 1px solid #dcdfe6;
+  padding-left: 10px;
+}
+.pictureTypeP {
+  display: inline-block;
+}
+.pictureTypeSelest {
+  width: 156px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  text-align: center;
+  margin-left: 10px;
+  padding-left: 8px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 12px;
+  color: rgb(112, 112, 112);
+}
+.checkBoxUnChecked:hover {
+  border: 1px solid #409eff !important;
+}
+
+.pagersizeButton {
+  height: 24px;
+}
+.pagersizeInput {
+  width: 71px;
+  position: relative;
+  left: -1px;
+}
+/* 事件 */
+.tableDivLeft {
+  height: 40px;
+  width: 60px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-right: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+.tableDivRight {
+  height: 40px;
+  width: 170px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 8px;
+  vertical-align: middle;
+}
+.tableDivTwo {
+  border-top: none;
+}
+/* 切换 */
+.switchTypeDiv {
+  /* margin-top: 10px; */
+  height: 45px;
+  padding-left: 10px;
+}
+.switchTypeDiv2 {
+  height: 45px;
+  padding-left: 60px;
+}
+.switchTypeP {
+  display: inline-block;
+  height: 45px;
+  line-height: 45px;
+  padding: 0px;
+  margin: 0px;
+}
+/* 右侧公共栏样式 */
+.panel_Div {
+  width: 240px;
+  /* height: 100%; */
+  box-sizing: border-box;
+}
+.part_Div {
+  width: 240px;
+  height: 24px;
+  box-sizing: border-box;
+  margin: 20px 0;
+}
+.lable_Title {
+  display: inline-block;
+  margin: 0 10px;
+  height: 24px;
+  width: 48px;
+  line-height: 24px;
+  font-size: 12px;
+  text-align: left;
+}
+.panel_container {
+  display: inline-block;
+  width: 156px;
+}
+.sidebarLabelTitle {
+  text-align: center;
+  width: 52px;
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 10px !important;
+  color: #606266;
+}
+
+.copyright {
+  position: fixed !important;
+  bottom: 15px;
+  left: 50%;
+  margin-left: -120px;
+  width: 100%;
+  font-size: 14px;
+  color: #000;
+}
+.FormattingPanel {
+  position: absolute;
+  display: inline-block;
+  padding: 2px;
+  font-size: 14px;
+  width: 16px;
+  height: 16px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACA0lEQVR4Xu1awVHEMAzc64AS6ABKoAOgAigBKgAqACoAKoAOgA6gA+gAOmB25jJzjxDJF/kUjeTPPeKTV6uVbDlZIflYJfcfRUApIDkDlQLJBVBFUJsCZwD2g6nlC8CThFlDwAWAW8nQQp9fAribwqYh4ATA80IdlGCdAniZSwD/vwfgUFptYc8/APxImDQKkGyEfl4EhA6fAfhSgAGJoU2UAkKHzwB8KcCAxNAmSgGhw2cA3lsBVwCODPwYM8F2mN3gZD+gJYDNEIfYXDQ4Q8dfG+ZvM/UGwLVFN0iwD2tj4iWDEilJfQRwrJzfOu0bAFt5doX/Dq0CNqP1BoDM8jf82IaAwWlGj0Qw18KOOQQMNYFXTvfG9WFnhM4lYAA6VNzJ66ededWwkBUBw5KsC9x6JgtPA77uU60J2KwP4h7c3TvFAr0I4FbJ63TLc4PCnfYp1gS8rx1PlwI8dDDi6Yrg7/rNC7fCxct9LEHmpADznOfsdAch5jkdT3cU5tGXjvPXYrAZ4jvHnu0w3w2aNEPp22GLiI/ZoKJ6KkA8i2iLYC8C3O0WAe4hcAZQCnAOgPvypQD3EDgDKAU4B8B9+VKAewicAWgVwGbowBlr6/KfmksaDQHpP5VN/7E0pXce9HN58fJGkwKtuRdqfhEQKlwdwJYCOpAaymQpIFS4OoBNr4A/BZRMQXqb6qIAAAAASUVORK5CYII=');
+}
+.FormattingPanelA {
+  position: absolute;
+  right: 60px;
+  top: 4px;
+}
+.closeFormattingPanel {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAB+0lEQVR4Xu2Z7U3FMAxFz5sANgAmgA2ADdgARmAURoANYAIYATZgA2ADZKmVItGUtrlxI8X9+T4c35NrO20PdH4dOtdPAAgHdE4gSqBzA0QTjBKIEuicQJRA5waIKRAlECXQOYEogc4NEFOgRgncAO/Ap9hdp8A58KKMqwbwBlwC38D1AEKR7wXwChwDT8CdIqjFUAKw5L6SxFQQUvFjeFneskBDZo/ArRDClPhmHWC6zQVWBlar47XVCVPiP4CrocQkVaB2gAqCi3h1D0h3pMQJbuJrAtjqBFfxtQGsheAu3gPAUgi7iPcC8B8E+3485Ix9RN7tcyOjxhTIrZVrjCMgd/GeDhjFTUFIgbntvPxIueJUkoPgLn4PB9iaUw3PPt96YlzB/u9PPXvAnPjSY/NmCJ4AcqPOklfcO2yC4AVgbs5b4qobqNUQPAAsOeSU3DusFp3+oTaAJeLnRmT1xlgTwBrxu0GoBWCL+F0g1ABQIt4dghqAQrwrBDUAexdwknTZ0uPt1HSwNc6KWn/yZyUAS9aSOxril4rPOeEHsJckNiGKLyUAS8ZeWDwAz8C9KsnhabPFtbdOFtcev0suNQBJUp5BAoAn7RbXCge0uCueOYUDPGm3uFY4oMVd8cwpHOBJu8W1wgEt7opnTuEAT9otrhUOaHFXPHP6BXBmh0GE0OeAAAAAAElFTkSuQmCC');
+  display: inline-block;
+  vertical-align: middle;
+  right: -105px;
+  top: -3px;
+  cursor: pointer;
+}

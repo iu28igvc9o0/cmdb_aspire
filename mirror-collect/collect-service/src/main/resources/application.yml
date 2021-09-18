@@ -1,0 +1,41 @@
+server:
+  port: 10086
+  
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://10.12.70.39:8761/eureka/
+#spring:
+#  kafka: # kafka 配置
+#      bootstrap-servers: 10.12.70.61:9092
+#      producer:
+#        retries: 1
+#        batch-size: 50
+#        buffer-memory: 33554432
+#        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      consumer:
+#        group-id: consumer_alert_service
+#        auto-offset-reset: latest
+#        enable-auto-commit: true
+#        auto-commit-interval: 2000
+#        session.timeout.ms: 20000
+#        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      listener:
+#        concurrency: 3    # 配置partions分区数, 保证每个分区至少1个消费线程
+#      properties:
+#        session.timeout.ms: 60000
+
+logging:
+  level:
+    org.springframework: info
+    com.aspire.mirror.collect: info
+    
+  file: ./collect-service.log      

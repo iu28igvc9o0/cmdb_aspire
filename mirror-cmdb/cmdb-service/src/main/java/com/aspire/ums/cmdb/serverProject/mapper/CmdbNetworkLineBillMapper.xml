@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.serverProject.mapper.CmdbNetworkLineBillMapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineBill">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="bill_month_total1" property="billMonthTotal1" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit1" property="billMonthUnit1" jdbcType="VARCHAR"/>
+        <result column="bill_month_total2" property="billMonthTotal2" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit2" property="billMonthUnit2" jdbcType="VARCHAR"/>
+        <result column="bill_month_total3" property="billMonthTotal3" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit3" property="billMonthUnit3" jdbcType="VARCHAR"/>
+        <result column="bill_month_total4" property="billMonthTotal4" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit4" property="billMonthUnit4" jdbcType="VARCHAR"/>
+        <result column="bill_month_total5" property="billMonthTotal5" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit5" property="billMonthUnit5" jdbcType="VARCHAR"/>
+        <result column="bill_month_total6" property="billMonthTotal6" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit6" property="billMonthUnit6" jdbcType="VARCHAR"/>
+        <result column="bill_month_total7" property="billMonthTotal7" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit7" property="billMonthUnit7" jdbcType="VARCHAR"/>
+        <result column="bill_month_total8" property="billMonthTotal8" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit8" property="billMonthUnit8" jdbcType="VARCHAR"/>
+        <result column="bill_month_total9" property="billMonthTotal9" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit9" property="billMonthUnit9" jdbcType="VARCHAR"/>
+        <result column="bill_month_total10" property="billMonthTotal10" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit10" property="billMonthUnit10" jdbcType="VARCHAR"/>
+        <result column="bill_month_total11" property="billMonthTotal11" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit11" property="billMonthUnit11" jdbcType="VARCHAR"/>
+        <result column="bill_month_total12" property="billMonthTotal12" jdbcType="VARCHAR"/>
+        <result column="bill_month_unit12" property="billMonthUnit12" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `bill_month_total1`,
+        `bill_month_unit1`,
+        `bill_month_total2`,
+        `bill_month_unit2`,
+        `bill_month_total3`,
+        `bill_month_unit3`,
+        `bill_month_total4`,
+        `bill_month_unit4`,
+        `bill_month_total5`,
+        `bill_month_unit5`,
+        `bill_month_total6`,
+        `bill_month_unit6`,
+        `bill_month_total7`,
+        `bill_month_unit7`,
+        `bill_month_total8`,
+        `bill_month_unit8`,
+        `bill_month_total9`,
+        `bill_month_unit9`,
+        `bill_month_total10`,
+        `bill_month_unit10`,
+        `bill_month_total11`,
+        `bill_month_unit11`,
+        `bill_month_total12`,
+        `bill_month_unit12`
+        FROM cmdb_network_line_bill
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineBill">
+        SELECT
+        `id`,
+        `is_delete`,
+        `bill_month_total1`,
+        `bill_month_unit1`,
+        `bill_month_total2`,
+        `bill_month_unit2`,
+        `bill_month_total3`,
+        `bill_month_unit3`,
+        `bill_month_total4`,
+        `bill_month_unit4`,
+        `bill_month_total5`,
+        `bill_month_unit5`,
+        `bill_month_total6`,
+        `bill_month_unit6`,
+        `bill_month_total7`,
+        `bill_month_unit7`,
+        `bill_month_total8`,
+        `bill_month_unit8`,
+        `bill_month_total9`,
+        `bill_month_unit9`,
+        `bill_month_total10`,
+        `bill_month_unit10`,
+        `bill_month_total11`,
+        `bill_month_unit11`,
+        `bill_month_total12`,
+        `bill_month_unit12`
+        FROM cmdb_network_line_bill
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+            AND `is_delete` = #{isDelete}
+        </if>
+        <if test="billMonthTotal1 != null and billMonthTotal1 != ''">
+            AND `bill_month_total1` = #{billMonthTotal1}
+        </if>
+        <if test="billMonthUnit1 != null and billMonthUnit1 != ''">
+            AND `bill_month_unit1` = #{billMonthUnit1}
+        </if>
+        <if test="billMonthTotal2 != null and billMonthTotal2 != ''">
+            AND `bill_month_total2` = #{billMonthTotal2}
+        </if>
+        <if test="billMonthUnit2 != null and billMonthUnit2 != ''">
+            AND `bill_month_unit2` = #{billMonthUnit2}
+        </if>
+        <if test="billMonthTotal3 != null and billMonthTotal3 != ''">
+            AND `bill_month_total3` = #{billMonthTotal3}
+        </if>
+        <if test="billMonthUnit3 != null and billMonthUnit3 != ''">
+            AND `bill_month_unit3` = #{billMonthUnit3}
+        </if>
+        <if test="billMonthTotal4 != null and billMonthTotal4 != ''">
+            AND `bill_month_total4` = #{billMonthTotal4}
+        </if>
+        <if test="billMonthUnit4 != null and billMonthUnit4 != ''">
+            AND `bill_month_unit4` = #{billMonthUnit4}
+        </if>
+        <if test="billMonthTotal5 != null and billMonthTotal5 != ''">
+            AND `bill_month_total5` = #{billMonthTotal5}
+        </if>
+        <if test="billMonthUnit5 != null and billMonthUnit5 != ''">
+            AND `bill_month_unit5` = #{billMonthUnit5}
+        </if>
+        <if test="billMonthTotal6 != null and billMonthTotal6 != ''">
+            AND `bill_month_total6` = #{billMonthTotal6}
+        </if>
+        <if test="billMonthUnit6 != null and billMonthUnit6 != ''">
+            AND `bill_month_unit6` = #{billMonthUnit6}
+        </if>
+        <if test="billMonthTotal7 != null and billMonthTotal7 != ''">
+            AND `bill_month_total7` = #{billMonthTotal7}
+        </if>
+        <if test="billMonthUnit7 != null and billMonthUnit7 != ''">
+            AND `bill_month_unit7` = #{billMonthUnit7}
+        </if>
+        <if test="billMonthTotal8 != null and billMonthTotal8 != ''">
+            AND `bill_month_total8` = #{billMonthTotal8}
+        </if>
+        <if test="billMonthUnit8 != null and billMonthUnit8 != ''">
+            AND `bill_month_unit8` = #{billMonthUnit8}
+        </if>
+        <if test="billMonthTotal9 != null and billMonthTotal9 != ''">
+            AND `bill_month_total9` = #{billMonthTotal9}
+        </if>
+        <if test="billMonthUnit9 != null and billMonthUnit9 != ''">
+            AND `bill_month_unit9` = #{billMonthUnit9}
+        </if>
+        <if test="billMonthTotal10 != null and billMonthTotal10 != ''">
+            AND `bill_month_total10` = #{billMonthTotal10}
+        </if>
+        <if test="billMonthUnit10 != null and billMonthUnit10 != ''">
+            AND `bill_month_unit10` = #{billMonthUnit10}
+        </if>
+        <if test="billMonthTotal11 != null and billMonthTotal11 != ''">
+            AND `bill_month_total11` = #{billMonthTotal11}
+        </if>
+        <if test="billMonthUnit11 != null and billMonthUnit11 != ''">
+            AND `bill_month_unit11` = #{billMonthUnit11}
+        </if>
+        <if test="billMonthTotal12 != null and billMonthTotal12 != ''">
+            AND `bill_month_total12` = #{billMonthTotal12}
+        </if>
+        <if test="billMonthUnit12 != null and billMonthUnit12 != ''">
+            AND `bill_month_unit12` = #{billMonthUnit12}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineBill" resultMap="resultMap">
+        SELECT
+        `id`,
+        `is_delete`,
+        `bill_month_total1`,
+        `bill_month_unit1`,
+        `bill_month_total2`,
+        `bill_month_unit2`,
+        `bill_month_total3`,
+        `bill_month_unit3`,
+        `bill_month_total4`,
+        `bill_month_unit4`,
+        `bill_month_total5`,
+        `bill_month_unit5`,
+        `bill_month_total6`,
+        `bill_month_unit6`,
+        `bill_month_total7`,
+        `bill_month_unit7`,
+        `bill_month_total8`,
+        `bill_month_unit8`,
+        `bill_month_total9`,
+        `bill_month_unit9`,
+        `bill_month_total10`,
+        `bill_month_unit10`,
+        `bill_month_total11`,
+        `bill_month_unit11`,
+        `bill_month_total12`,
+        `bill_month_unit12`
+        FROM cmdb_network_line_bill
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineBill">
+        INSERT INTO cmdb_network_line_bill
+        (
+            `id`,
+            `is_delete`,
+            `bill_month_total1`,
+            `bill_month_unit1`,
+            `bill_month_total2`,
+            `bill_month_unit2`,
+            `bill_month_total3`,
+            `bill_month_unit3`,
+            `bill_month_total4`,
+            `bill_month_unit4`,
+            `bill_month_total5`,
+            `bill_month_unit5`,
+            `bill_month_total6`,
+            `bill_month_unit6`,
+            `bill_month_total7`,
+            `bill_month_unit7`,
+            `bill_month_total8`,
+            `bill_month_unit8`,
+            `bill_month_total9`,
+            `bill_month_unit9`,
+            `bill_month_total10`,
+            `bill_month_unit10`,
+            `bill_month_total11`,
+            `bill_month_unit11`,
+            `bill_month_total12`,
+            `bill_month_unit12`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{isDelete, jdbcType=TINYINT},
+            #{billMonthTotal1, jdbcType=VARCHAR},
+            #{billMonthUnit1, jdbcType=VARCHAR},
+            #{billMonthTotal2, jdbcType=VARCHAR},
+            #{billMonthUnit2, jdbcType=VARCHAR},
+            #{billMonthTotal3, jdbcType=VARCHAR},
+            #{billMonthUnit3, jdbcType=VARCHAR},
+            #{billMonthTotal4, jdbcType=VARCHAR},
+            #{billMonthUnit4, jdbcType=VARCHAR},
+            #{billMonthTotal5, jdbcType=VARCHAR},
+            #{billMonthUnit5, jdbcType=VARCHAR},
+            #{billMonthTotal6, jdbcType=VARCHAR},
+            #{billMonthUnit6, jdbcType=VARCHAR},
+            #{billMonthTotal7, jdbcType=VARCHAR},
+            #{billMonthUnit7, jdbcType=VARCHAR},
+            #{billMonthTotal8, jdbcType=VARCHAR},
+            #{billMonthUnit8, jdbcType=VARCHAR},
+            #{billMonthTotal9, jdbcType=VARCHAR},
+            #{billMonthUnit9, jdbcType=VARCHAR},
+            #{billMonthTotal10, jdbcType=VARCHAR},
+            #{billMonthUnit10, jdbcType=VARCHAR},
+            #{billMonthTotal11, jdbcType=VARCHAR},
+            #{billMonthUnit11, jdbcType=VARCHAR},
+            #{billMonthTotal12, jdbcType=VARCHAR},
+            #{billMonthUnit12, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineBill">
+        UPDATE cmdb_network_line_bill SET
+        `is_delete` = #{isDelete},
+        `bill_month_total1` = #{billMonthTotal1},
+        `bill_month_unit1` = #{billMonthUnit1},
+        `bill_month_total2` = #{billMonthTotal2},
+        `bill_month_unit2` = #{billMonthUnit2},
+        `bill_month_total3` = #{billMonthTotal3},
+        `bill_month_unit3` = #{billMonthUnit3},
+        `bill_month_total4` = #{billMonthTotal4},
+        `bill_month_unit4` = #{billMonthUnit4},
+        `bill_month_total5` = #{billMonthTotal5},
+        `bill_month_unit5` = #{billMonthUnit5},
+        `bill_month_total6` = #{billMonthTotal6},
+        `bill_month_unit6` = #{billMonthUnit6},
+        `bill_month_total7` = #{billMonthTotal7},
+        `bill_month_unit7` = #{billMonthUnit7},
+        `bill_month_total8` = #{billMonthTotal8},
+        `bill_month_unit8` = #{billMonthUnit8},
+        `bill_month_total9` = #{billMonthTotal9},
+        `bill_month_unit9` = #{billMonthUnit9},
+        `bill_month_total10` = #{billMonthTotal10},
+        `bill_month_unit10` = #{billMonthUnit10},
+        `bill_month_total11` = #{billMonthTotal11},
+        `bill_month_unit11` = #{billMonthUnit11},
+        `bill_month_total12` = #{billMonthTotal12},
+        `bill_month_unit12` = #{billMonthUnit12}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.serverProject.payload.CmdbNetworkLineBill">
+        DELETE FROM cmdb_network_line_bill
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     SecurityLeakScanRecord
+	描述:     数据访问语句
+	作者:     梁峻
+	时间:     2019-07-09 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.leakScan.SecurityLeakScanRecordDao">
+    <resultMap id="baseResultMap" type="com.aspire.mirror.alert.server.dao.leakScan.po.SecurityLeakScanRecord">
+        <result property="id" column="id" jdbcType="VARCHAR" />
+        <result property="department1" column="department1" jdbcType="VARCHAR" />
+        <result property="department2" column="department2" jdbcType="VARCHAR" />
+        <result property="bizLine" column="biz_line" jdbcType="VARCHAR" />
+        <result property="reportFileName" column="report_file_name" jdbcType="VARCHAR" />
+        <result property="reportFileUrl" column="report_file_url" jdbcType="VARCHAR" />
+        <result property="scanDate" column="scan_date" jdbcType="DATE" />
+        <result property="repairStat" column="repair_stat" jdbcType="INTEGER"></result>
+        <result property="bpmId" column="bpm_id" jdbcType="VARCHAR"></result>
+        <result property="fileId" column="file_id" jdbcType="VARCHAR"></result>
+        <result property="lowLeaks" column="low_leaks" jdbcType="INTEGER"></result>
+        <result property="mediumLeaks" column="medium_leaks" jdbcType="INTEGER"></result>
+        <result property="highLeaks" column="high_leaks" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="baseSql">
+        SELECT
+          id,
+          department1,
+          department2,
+          biz_line,
+          report_file_name,
+          report_file_url,
+          scan_date,
+          bpm_id,
+          file_id,
+          repair_stat
+      FROM
+          security_leak_scan_records
+    </sql>
+
+    <select id="selectById" parameterType="string" resultMap="baseResultMap">
+      <include refid="baseSql"></include>
+      WHERE id = #{id}
+    </select>
+
+    <select id="selectByDateAndFileName" parameterType="object" resultMap="baseResultMap">
+        <include refid="baseSql"></include>
+        WHERE
+        scan_date = #{date} AND report_file_name = #{fileName}
+    </select>
+
+    <update id="updateBpmFileId" parameterType="string">
+        UPDATE security_leak_scan_records SET file_id = #{fileId} WHERE id = #{scanId}
+    </update>
+
+    <update id="updateBpmId" parameterType="string">
+        UPDATE security_leak_scan_records SET bpm_id = #{bpmId} WHERE id = #{scanId}
+    </update>
+
+    <update id="updateBpmRepairStat" parameterType="object">
+        UPDATE security_leak_scan_records SET repair_stat = #{bpmStat} WHERE bpm_id = #{bpmId}
+    </update>
+
+    <delete id="delete" parameterType="object">
+        DELETE FROM security_leak_scan_records
+        WHERE biz_line = #{bizLine} AND scan_date = #{scanDate}
+    </delete>
+
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.leakScan.po.SecurityLeakScanRecord">
+        INSERT INTO security_leak_scan_records
+        (
+          id,
+          department1,
+          department2,
+          biz_line,
+          report_file_name,
+          report_file_url,
+          scan_date,
+          bpm_id,
+          repair_stat
+        )
+        VALUES (
+          #{id},
+          #{department1},
+          #{department2},
+          #{bizLine},
+          #{reportFileName},
+          #{reportFileUrl},
+          #{scanDate},
+          #{bpmId},
+          #{repairStat}
+        )
+    </insert>
+
+    <sql id="baseQueryWhereClause">
+        SELECT
+            a.id,
+            a.department1,
+            a.department2,
+            a.biz_line,
+            a.report_file_name,
+            a.report_file_url,
+            a.scan_date,
+            a.bpm_id,
+            SUM(b.low_leaks) AS low_leaks,
+            SUM(b.medium_leaks) AS medium_leaks,
+            SUM(b.high_leaks) AS high_leaks,
+            a.repair_stat
+        FROM security_leak_scan_records a
+        INNER JOIN security_leak_scan_reports b
+        ON a.id = b.scan_id
+        INNER JOIN
+        (
+        SELECT DISTINCT scan_date
+        FROM security_leak_scan_records
+        where 1=1
+         <if test="params['beginDate'] != null  and params['endDate'] != null">
+					 and scan_date >= #{params.beginDate} and scan_date <![CDATA[<=]]> #{params.endDate}
+				</if>
+        ORDER BY scan_date DESC
+        LIMIT 1
+        ) d
+        ON a.scan_date = d.scan_date
+        <if test="params != null">
+            <where>
+                1 = 1
+                <if test="params['bizSysList'] != null and params['bizSysList'].size>0">
+                    AND  a.biz_line IN
+                    <foreach collection="params['bizSysList']" index="index" item="obj"
+                             open="(" separator="," close=")">
+                        #{obj}
+                    </foreach>
+                </if>
+                <if test="params['ip'] != null and params['ip'] != ''">
+                    and b.ip like concat(concat('%',#{params.ip}),'%')
+                </if>
+                <if test="params['level'] != null and params['level'] != ''">
+                    <choose>
+                        <when test="params['level'] == 'low'">
+                            and b.low_leaks > 0
+                        </when>
+                        <when test="params['level'] == 'medium'">
+                            and b.medium_leaks > 0
+                        </when>
+                        <when test="params['level'] == 'high'">
+                            and b.high_leaks > 0
+                        </when>
+                    </choose>
+                </if>
+                <!-- 修复状态 -->
+                <if test="params['repairStat'] != null">
+                    and a.repair_stat = #{params.repairStat}
+                </if>
+                <if test="params['beginDate'] != null  and params['endDate'] != null">
+					 and a.scan_date >= #{params.beginDate} and a.scan_date <![CDATA[<=]]> #{params.endDate}
+				</if>
+            </where>
+        </if>
+        GROUP BY
+        a.id,
+        a.biz_line,
+        a.report_file_name,
+        a.report_file_url,
+        a.scan_date,
+        a.bpm_id,
+        a.repair_stat
+    </sql>
+
+    <select id="summaryListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="int">
+        SELECT COUNT(1)
+        FROM (
+        <include refid="baseQueryWhereClause"></include>
+        ) s
+    </select>
+
+    <select id="summaryList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        <include refid="baseQueryWhereClause"></include>
+         <if test="begin != null  and pageSize != null">
+        limit #{begin},#{pageSize}
+        </if>
+    </select>
+
+    <select id="exportList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+        <include refid="baseQueryWhereClause"></include>
+    </select>
+    
+    <select id="getScanCount"  resultType="java.util.Map">
+        select count(distinct (s.scan_date)) count from security_leak_scan_records s
+        where 1=1
+        <if test="beginDate != null  and endDate != null">
+			 and s.scan_date >= #{beginDate} and s.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+    </select>
+    
+    <select id="getBizLineCount"  resultType="java.util.Map">
+        select count(distinct (s.biz_line)) count from security_leak_scan_records s
+        where 1=1
+        <if test="beginDate != null  and endDate != null">
+			 and s.scan_date >= #{beginDate} and s.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+    </select>
+    
+    <select id="getLeaksAllAndRepairedStatCount"  resultType="java.util.Map">
+        SELECT 
+       SUM( CASE WHEN repair_stat = 1 THEN 
+                      (r1.high_leaks + r1.medium_leaks + r1.low_leaks) ELSE 0 END )repairLeakCount,  
+       SUM(r1.high_leaks + r1.medium_leaks + r1.low_leaks) leakCount  
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+    </select>
+    
+    <select id="getLeaksStatCountByBizLine"  resultType="java.util.Map">
+        SELECT r.biz_line,
+       SUM( CASE WHEN repair_stat = '1' THEN 
+                      (r1.high_leaks + r1.medium_leaks + r1.low_leaks) ELSE 0 END )rCount,  
+       SUM(r1.high_leaks + r1.medium_leaks + r1.low_leaks) count  
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+		GROUP BY r.biz_line
+		order by count desc
+		<if test="begin != null  and pageSize != null">
+        limit #{begin},#{pageSize}
+        </if>
+    </select>
+    <select id="getLeaksStatCountTotalByBizLine"  resultType="int">
+    select count(1) from (
+        SELECT r.biz_line 
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+		GROUP BY r.biz_line
+	)a
+    </select>
+    
+    <select id="getleaksStatCount"  resultType="java.util.Map">
+        SELECT
+        SUM(r1.high_leaks) highLeaks,
+        SUM(r1.medium_leaks) mediumLeaks,
+        SUM(r1.low_leaks) lowLeaks,
+        SUM(r1.high_leaks + r1.medium_leaks + r1.low_leaks) sCount
+        FROM
+        security_leak_scan_records r,
+        security_leak_scan_reports r1
+        WHERE
+        r.id = r1.scan_id
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+    </select>
+    
+    <select id="getCountByleaks"  resultType="java.util.Map">
+        SELECT r.biz_line,
+       SUM( CASE WHEN repair_stat = '1' THEN 
+                      (${leak}) ELSE 0 END )rCount,  
+       SUM(${leak}) count  
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+		GROUP BY r.biz_line	
+		order by count desc
+		<if test="begin != null  and pageSize != null">
+        limit #{begin},#{pageSize}
+        </if>
+    </select>
+    
+    <select id="getCountTotalByleaks"  resultType="int">
+    select count(1) from (
+        SELECT r.biz_line 
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+		GROUP BY r.biz_line	
+	)a
+    </select>
+    
+    <select id="getScanResultByDay"  resultType="java.util.Map">
+        SELECT count(DISTINCT(r.biz_line))bizCount,
+       SUM( CASE WHEN repair_stat = '1' THEN 
+                      (r1.high_leaks + r1.medium_leaks + r1.low_leaks) ELSE 0 END )rCount, 
+       SUM(r1.high_leaks + r1.medium_leaks + r1.low_leaks) count  , r.scan_date
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+		GROUP BY r.scan_date
+		order by r.scan_date desc
+		 <if test="begin != null  and pageSize != null">
+        limit #{begin},#{pageSize}
+        </if>
+    </select>
+    
+    <select id="getScanResultCountByDay"  resultType="int">
+    SELECT count(1) from (
+        SELECT r.scan_date
+		FROM  security_leak_scan_records r,security_leak_scan_reports r1
+		where r.id = r1.scan_id 
+		<if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+		GROUP BY r.scan_date
+		)a
+    </select>
+
+    <select id="getLeakByBizSystem" resultType="java.util.LinkedHashMap">
+        SELECT
+        r.biz_line bizSystem,
+        SUM(high_leaks + medium_leaks + low_leaks) sCount,
+        SUM(high_leaks) hCount,
+        SUM(medium_leaks) mCount,
+        SUM(low_leaks) lCount
+        FROM  security_leak_scan_records r,security_leak_scan_reports r1
+        where r.id = r1.scan_id
+        GROUP BY r.biz_line
+        order by sCount desc
+        LIMIT 5
+    </select>
+
+    <select id="getLeakByIp" resultType="java.util.LinkedHashMap">
+        SELECT
+        ip,
+        SUM(high_leaks + medium_leaks + low_leaks) sCount,
+        SUM(high_leaks) hCount,
+        SUM(medium_leaks) mCount,
+        SUM(low_leaks) lCount
+        FROM
+        security_leak_scan_reports
+        GROUP BY ip
+        ORDER BY sCount DESC
+        LIMIT 5
+    </select>
+
+    <select id="getLeakByIdcType" resultType="java.util.LinkedHashMap">
+        SELECT
+        idc_type idcType,
+        SUM(high_leaks + medium_leaks + low_leaks) sCount,
+        SUM(high_leaks) hCount,
+        SUM(medium_leaks) mCount,
+        SUM(low_leaks) lCount
+        FROM
+        security_leak_scan_reports
+        GROUP BY idc_type
+        ORDER BY sCount DESC
+    </select>
+    
+    <!--  <select id="getLeaksCount"  resultType="java.lang.Integer">
+        SELECT sum(r1.high_leaks + r1.medium_leaks + r1.low_leaks) count
+		FROM `security_leak_scan_records` r,security_leak_scan_reports r1
+		where r.id = r1.scan_id
+        <if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+    </select>
+    
+    <select id="getRepairedLeaksCount"  resultType="java.lang.Integer">
+        SELECT sum(r1.high_leaks + r1.medium_leaks + r1.low_leaks) count
+		FROM `security_leak_scan_records` r,security_leak_scan_reports r1
+		where r.id = r1.scan_id and r.repair_stat = 1
+        <if test="beginDate != null  and endDate != null">
+			 and r.scan_date >= #{beginDate} and r.scan_date <![CDATA[<=]]> #{endDate}
+		</if>
+    </select>-->
+    
+</mapper>

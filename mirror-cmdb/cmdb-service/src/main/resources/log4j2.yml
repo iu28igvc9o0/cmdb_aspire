@@ -1,0 +1,81 @@
+configutation:
+  name: Default
+  Properties:
+    Property:
+    - name: log-path
+      value: "G:/opt/data/logs"
+  Appenders:
+    #输出到控制台
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%t]}{faint} %clr{[%X{traceId}]}{faint} %clr{%c}{cyan} %clr{:}{faint} %m%n%xwEx"
+    # 输出到文件
+    RollingFile:
+    - name: FILE
+      fileName: ${log-path}/cmdb-service.log
+      filePattern: "${log-path}/cmdb-service.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      PatternLayout:
+#        pattern: "%-d{yyyy-MM-dd HH:mm:ss}[ %t:%r ] - [%X{traceId}] - [%-5p] %c-%M:%L - %m%n%throwable{full}"
+        pattern: "%d [%t] [%X{traceId}] %-5p [%c] - %m%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 100MB
+      DefaultRollOverStrategy:
+        max: 1
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+      - ref: FILE
+      - ref: CONSOLE
+    Logger:
+    # spring
+    - name: org.springframework
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: FILE
+      - ref: CONSOLE
+    - name: org.apache.ibatis
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: CONSOLE
+
+    - name: java.sql.Connection
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: CONSOLE
+    - name: java.sql.Statement
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: CONSOLE
+
+    - name: java.sql.PreparedStatement
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: CONSOLE
+
+    - name: java.sql.ResultSet
+      additivity: false
+      level: INFO
+      AppenderRef:
+      - ref: CONSOLE
+
+    - name: druid.sql
+      additivity: false
+      level: DEBUG
+      AppenderRef:
+        - ref: CONSOLE
+
+    - name: com.aspire
+      additivity: false
+      level: info
+      AppenderRef:
+      - ref: FILE
+      - ref: CONSOLE

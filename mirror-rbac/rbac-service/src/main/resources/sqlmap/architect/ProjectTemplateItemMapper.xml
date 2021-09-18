@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.migu.tsg.microservice.atomicservice.architect.dao.ProjectTemplateItemDao">
+
+	<resultMap id="ProjectTemplateItemResultMap"
+		type="com.migu.tsg.microservice.atomicservice.architect.dao.po.ProjectTemplateItem">
+		<result column="template_uuid" property="templateUuid" />
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="required" property="required" />
+		<result column="depends_on" property="dependsOn" />
+		<result column="item_type" property="itemType" />
+		<result column="item_data" property="itemData" />
+	</resultMap>
+
+	<delete id="deleteProjectTemplateItemByTemplateUuid">
+		DELETE
+		FROM
+		architect_template_item
+		WHERE template_uuid = #{templateUuid}
+	</delete>
+
+	<insert id="insertProjectTemplateItem">
+		INSERT INTO
+		architect_template_item(template_uuid, id, name, required,
+		depends_on, item_type, item_data)
+		VALUES
+		<foreach collection="projectTemplateItemList" index="index"
+			item="item" separator=",">
+			(#{item.templateUuid}, #{item.id},
+			#{item.name}, #{item.required}, #{item.dependsOn}, #{item.itemType},
+			#{item.itemData})
+		</foreach>
+	</insert>
+
+</mapper>

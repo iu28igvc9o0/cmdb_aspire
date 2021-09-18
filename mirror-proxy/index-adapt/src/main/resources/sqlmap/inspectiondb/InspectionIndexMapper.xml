@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.indexadapt.adapt.inspectiondb.dao.InspectionIndexDao">
+
+    <resultMap id="inspectionRawIdxMap" type="com.aspire.mirror.indexadapt.adapt.inspectiondb.model.InpsectionRawIndex">
+        <result property="reportItemId" column="report_item_id" jdbcType="INTEGER"/>
+        <result property="reportId" column="report_id" jdbcType="VARCHAR"/>
+        <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="objectType" column="object_type" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="clock" column="clock" jdbcType="INTEGER"/>
+        <result property="preValue" column="pre_value" jdbcType="VARCHAR"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="fetchInspectionRawIndexList" resultMap="inspectionRawIdxMap" parameterType="java.lang.Integer">
+        select i.report_item_id as report_item_id, i.report_id as report_id, i.item_id as item_id, 
+        	   i.object_type as object_type, i.object_id as object_id, 
+        	   i.clock as clock, i.pre_value as pre_value, i.value as value
+		  from inspection_report_item i, inspection_report r
+		 where r.status='RUNNING'
+		   and i.value is not null
+		   and i.report_id = r.report_id
+		   and i.report_item_id > #{indexSeq}
+    </select>
+
+</mapper>

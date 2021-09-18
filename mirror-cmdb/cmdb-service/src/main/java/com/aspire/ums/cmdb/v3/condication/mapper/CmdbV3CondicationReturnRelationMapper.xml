@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.condication.mapper.CmdbV3CondicationReturnRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="condication_setting_id" property="condicationSettingId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <association column="code_id" property="cmdbCode" select="com.aspire.ums.cmdb.v2.code.mapper.CmdbCodeMapper.getById"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `condication_setting_id`,
+        `code_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_condication_return_relation
+        where `is_delete` = 0
+        order by `sort_index`
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation">
+        SELECT
+        `id`,
+        `condication_setting_id`,
+        `code_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_condication_return_relation
+        WHERE 1=1 and `is_delete` = 0
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="condicationSettingId != null and condicationSettingId != ''">
+        AND `condication_setting_id` = #{condicationSettingId}
+        </if>
+        <if test="codeId != null and codeId != ''">
+        AND `code_id` = #{codeId}
+        </if>
+        <if test="sortIndex != null and sortIndex != ''">
+        AND `sort_index` = #{sortIndex}
+        </if>
+        <if test="isDelete != null and isDelete != ''">
+        AND `is_delete` = #{isDelete}
+        </if>
+        order by `sort_index`
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation" resultMap="resultMap">
+        SELECT
+        `id`,
+        `condication_setting_id`,
+        `code_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_condication_return_relation
+        WHERE 1=1
+        AND `id` = #{id} and `is_delete` = 0
+    </select>
+
+    <select id="getReturnRelationByCondicationId" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation" resultMap="resultMap">
+        SELECT
+        `id`,
+        `condication_setting_id`,
+        `code_id`,
+        `sort_index`,
+        `is_delete`
+        FROM cmdb_v3_condication_return_relation
+        WHERE 1=1
+        AND `condication_setting_id` = #{condicationSettingId} and `is_delete` = 0
+        order by `sort_index`
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation">
+        INSERT INTO cmdb_v3_condication_return_relation
+        (
+            `id`,
+            `condication_setting_id`,
+            `code_id`,
+            `sort_index`,
+            `is_delete`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{condicationSettingId, jdbcType=VARCHAR},
+            #{codeId, jdbcType=VARCHAR},
+            #{sortIndex, jdbcType=TINYINT},
+            0
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation">
+        UPDATE cmdb_v3_condication_return_relation SET
+        `condication_setting_id` = #{condicationSettingId},
+        `code_id` = #{codeId},
+        `sort_index` = #{sortIndex}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.condication.payload.CmdbV3CondicationReturnRelation">
+        UPDATE cmdb_v3_condication_return_relation set `is_delete` = 1
+        WHERE `id` = #{id}
+    </delete>
+
+    <delete id="deleteByCondicationSettingId">
+        UPDATE cmdb_v3_condication_return_relation set `is_delete` = 1
+        WHERE `condication_setting_id` = #{condicationSettingId}
+    </delete>
+</mapper>

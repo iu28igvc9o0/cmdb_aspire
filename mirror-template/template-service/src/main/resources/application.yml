@@ -1,0 +1,133 @@
+server:
+  port: 8127
+
+eureka:
+  instance:
+#    instance-id: ${spring.application.name}:${spring.cloud.client.ipAddress}:${spring.application.instance_id:${server.port}}/template
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+druid:
+  url: 'jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8'
+  username: root
+  password: 'Nmzw$yjd2@19'
+  useSSL: false
+#   url: jdbc:oracle:thin:@10.1.203.50:1522:db12c
+#   username: bmc_dev
+#   password: bmc_dev_50
+#   driver-class-name: oracle.jdbc.driver.OracleDriver
+
+mybatis:
+  mapperLocations:
+    - classpath*:sqlmap/*Mapper.xml
+  type-aliases-package:
+     org.springboot.sample.entity
+
+spring:
+  zipkin:
+    enabled: true
+    baseUrl: http://localhost:9411/
+  sleuth:
+    sampler:
+      percentage: 1.0
+
+sample:
+  zipkin:
+    enabled: true
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: true
+    com.dy.springboot.server.mapper: DEBUG
+    com.aspire.mirror.template.server.dao: DEBUG
+    com.aspire.mirror.template: info
+  file: ./logs/template.log
+
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 60000
+
+
+#es
+elasticsearch:
+  host: 10.12.70.40:9300
+  port: 9300
+  node.type: client
+  cluster.name: elasticsearch
+  index.name: mirror-theme
+
+##LTS-->Client端配置
+lts:
+  jobclient:
+    cluster-name: mirror_cluster
+    registry-address: zookeeper://10.12.70.39:2181
+    #registry-address: zookeeper://10.153.1.61:2181
+    node-group: mirror_jobclient
+    use-retry-client: true
+    bind-ip: 10.1.28.54
+    configs:
+      job:
+        fail:
+          store: mapdb
+middleware:
+  configuration:
+    switch:
+      redis: true
+
+###-----redisson配置
+redisson:
+  activeConfig: singleServerConfig
+  singleServerConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    password: Nmzw$yjd2@19
+    subscriptionsPerConnection: 5
+    clientName: null
+    address: "redis://10.12.70.40:6379"
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    connectionMinimumIdleSize: 32
+    connectionPoolSize: 64
+    database: 0
+    dnsMonitoringInterval: 5000
+  clusterServersConfig:
+    idleConnectionTimeout: 10000
+    pingTimeout: 1000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    failedSlaveReconnectionInterval: 3000
+    failedSlaveCheckInterval: 60000
+    password: null
+    subscriptionsPerConnection: 5
+    clientName: null
+    subscriptionConnectionMinimumIdleSize: 1
+    subscriptionConnectionPoolSize: 50
+    slaveConnectionMinimumIdleSize: 32
+    slaveConnectionPoolSize: 64
+    masterConnectionMinimumIdleSize: 32
+    masterConnectionPoolSize: 64
+    readMode: "SLAVE"
+    subscriptionMode: "SLAVE"
+    nodeAddresses:
+      - "redis://127.0.0.1:7004"
+      - "redis://127.0.0.1:7001"
+      - "redis://127.0.0.1:7000"
+    scanInterval: 1000
+    pingConnectionInterval: 0
+    keepAlive: false
+    tcpNoDelay: false
+  threads: 0
+  nettyThreads: 0
+  transportMode: "NIO"

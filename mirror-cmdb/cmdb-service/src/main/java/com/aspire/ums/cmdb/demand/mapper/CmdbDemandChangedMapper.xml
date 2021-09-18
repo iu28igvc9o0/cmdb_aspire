@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.demand.mapper.CmdbDemandChangedMapper" >
+    <resultMap id="changed" type="com.aspire.ums.cmdb.demand.entity.CmdbDemandChanged">
+        <result column="demand_id" property="demandId" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="oldVal" property="oldVal" jdbcType="VARCHAR" />
+        <result column="newVal" property="newVal" jdbcType="VARCHAR" />
+        <result column="updateTime" property="updateTime" jdbcType="VARCHAR" />
+        <result column="updateUser" property="updateUser" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <delete id="deleteChanged" parameterType="java.lang.String">
+        delete from cmdb_demand_changed where demand_id = #{demandId}
+    </delete>
+
+    <insert id="insertChanged" parameterType="com.aspire.ums.cmdb.demand.entity.CmdbDemandChanged">
+        insert into cmdb_demand_changed (demand_id,name,oldVal,newVal,updateTime,updateUser)
+        values (#{demandId},#{name},#{oldVal},#{newVal},#{updateTime},#{updateUser})
+    </insert>
+    <select id="listByDemandId" resultMap="changed">
+        select demand_id,name,oldVal,newVal,updateTime,updateUser from cmdb_demand_changed where demand_id = #{demandId}
+    </select>
+</mapper>

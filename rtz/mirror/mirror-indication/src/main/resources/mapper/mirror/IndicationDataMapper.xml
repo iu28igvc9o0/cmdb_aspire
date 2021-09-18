@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- luowenbo 2020-07-23 修改，有风险的SQL查询-->
+<mapper namespace="com.aspire.mirror.dao.IIndicationDataDAO">
+
+	<resultMap type="com.aspire.mirror.entity.IndicationDataEntity" id="indicationDataMap">
+		<result property="calcDate" column="calc_date" jdbcType="VARCHAR"/>
+		<result property="calcValue" column="calc_value" jdbcType="VARCHAR"/>
+		<result property="origCalcValue" column="orig_calc_value" jdbcType="VARCHAR"/>
+		<result property="modifyDate" column="modify_date" jdbcType="TIMESTAMP"/>
+        <association property="provinceEntity" column="province_code"
+                     select="com.aspire.mirror.dao.IIndicationProvinceDao.getIndicationProvinceByCode">
+        </association>
+		<association property="indicationEntity" column="indication_id"
+					 select="com.aspire.mirror.dao.IIndicationDAO.getIndicationByIndicationId">
+		</association>
+		<association property="indicationAllItemEntity" column="indication_item_id"
+					 select="com.aspire.mirror.dao.IIndicationItemDAO.getIndicationItemByItemId">
+		</association>
+	</resultMap>
+
+	<resultMap type="com.aspire.mirror.entity.IndicationDataEntity" id="indicationSimpleDataMap">
+		<result property="indicationId" column="indication_id" jdbcType="TINYINT"/>
+		<result property="calcDate" column="calc_date" jdbcType="VARCHAR"/>
+		<result property="calcValue" column="calc_value" jdbcType="VARCHAR"/>
+		<result property="origCalcValue" column="orig_calc_value" jdbcType="VARCHAR"/>
+		<result property="provinceCode" column="province_code" jdbcType="VARCHAR"/>
+		<result property="indicationItemId" column="indication_item_id" jdbcType="TINYINT"/>
+		<result property="modifyDate" column="modify_date" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<select id="getIndicationDataByCalcDateAndIndicationId" resultMap="indicationDataMap">
+		select * from mirror_indication_data mid
+		where mid.calc_date=#{calcDate} and mid.indication_id=#{indicationId}
+	</select>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into mirror_indication_data (indication_id, indication_item_id, province_code, calc_date, calc_value, orig_calc_value, modify_date) values
+		<foreach collection="indicationDataList" item="item" index="index" separator=",">
+			(#{item.indicationEntity.indicationId,jdbcType=TINYINT},
+			#{item.indicationAllItemEntity.indicationItemId,jdbcType=TINYINT},
+			#{item.provinceEntity.provinceCode,jdbcType=VARCHAR},
+			#{item.calcDate,jdbcType=VARCHAR},
+			#{item.calcValue,jdbcType=VARCHAR},
+			#{item.origCalcValue,jdbcType=VARCHAR},
+			#{item.modifyDate,jdbcType=TIMESTAMP})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		calc_value = values (calc_value),
+		orig_calc_value = values (orig_calc_value),
+		modify_date = values (modify_date)
+	</insert>
+	
+	<select id="getIndicationDataByIndicationId" resultType="java.util.LinkedHashMap">
+		select
+		province_name 省份,
+		calc_date 日期,
+		<foreach collection="itemList" item="item" index="index" separator=",">
+			<choose>
+				<when test="item.indicationItemName == '异常原因'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<otherwise>
+					SUM(case indication_item_name when #{item.indicationItemName} then calc_value else 0 end ) ${item.indicationItemName}
+				</otherwise>
+			</choose>
+		</foreach>
+		from (
+			SELECT mp.province_name, mi.indication_name, mii.indication_item_code, mii.indication_item_name,
+			mid.province_code,mid.calc_date, mid.calc_value FROM mirror_indication_data mid
+			inner join mirror_indication_new mi on mid.indication_id = mi.indication_id
+			inner join mirror_indication_item mii on mii.indication_item_id = mid.indication_item_id
+			inner join mirror_province mp on mp.province_code = mid.province_code
+			where mid.calc_date=#{calcDate} and mid.indication_id=#{indicationId}
+		) tmp
+		group by province_name, calc_date
+		order by calc_value desc
+	</select>
+
+	<select id="getIndicationDataForCountry" resultType="java.util.LinkedHashMap">
+		select
+		province_name 省份,
+		calc_date 日期,
+		<foreach collection="itemList" item="item" index="index" separator=",">
+			<choose>
+				<when test="item.indicationItemName == '异常原因'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<when test="item.indicationItemName == '时间段'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<when test="item.indicationItemName == '异常时间点'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<otherwise>
+					SUM(case indication_item_name when #{item.indicationItemName} then calc_value else 0 end ) ${item.indicationItemName}
+				</otherwise>
+			</choose>
+		</foreach>
+		from (
+		SELECT mp.province_name, mi.indication_name, mii.indication_item_code, mii.indication_item_name,
+		mid.province_code,mid.calc_date, mid.calc_value FROM mirror_indication_data mid
+		inner join mirror_indication_new mi on mid.indication_id = mi.indication_id
+		inner join mirror_indication_item mii on mii.indication_item_id = mid.indication_item_id
+		inner join mirror_province mp on mp.province_code = mid.province_code
+		where mid.indication_id=#{indicationId} and mid.province_code = '000'
+		and mid.calc_date in (${inCalcDate})
+		) tmp
+		group by province_name, calc_date
+		order by calc_date desc
+	</select>
+
+	<select id="getExceptionDataByIndicationIdAndProvinceCode" resultType="java.util.LinkedHashMap">
+		select
+		province_name 省份,
+		calc_date 日期,
+		<foreach collection="itemList" item="item" index="index" separator=",">
+			<choose>
+				<when test="item.indicationItemName == '异常原因'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<otherwise>
+					SUM(case indication_item_name when #{item.indicationItemName} then calc_value else 0 end ) ${item.indicationItemName}
+				</otherwise>
+			</choose>
+		</foreach>
+		from (
+		SELECT mp.province_name, mi.indication_name, mii.indication_item_code, mii.indication_item_name,
+		mid.province_code,mid.calc_date, mid.calc_value FROM mirror_indication_data mid
+		inner join mirror_indication_new mi on mid.indication_id = mi.indication_id
+		inner join mirror_indication_item mii on mii.indication_item_id = mid.indication_item_id
+		inner join mirror_province mp on mp.province_code = mid.province_code
+		where mid.calc_date=#{calcDate}
+		AND mid.calc_value != ''
+		AND mid.indication_id= #{indicationId}
+		<if test="provinceCode != null and provinceCode !=''">
+		    and mid.province_code = #{provinceCode}
+		</if>
+		) tmp
+		group by province_name, calc_date
+		order by ${orderName} desc
+	</select>
+	<select id="getIndicationDataForCountryPeriod" resultType="java.util.LinkedHashMap">
+		select
+		province_name 省份,
+		calc_date 日期,
+		<foreach collection="itemList" item="item" index="index" separator=",">
+			<choose>
+				<when test="item.indicationItemName == '异常原因'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<when test="item.indicationItemName == '时间段'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<when test="item.indicationItemName == '告警数'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<when test="item.indicationItemName == '异常时间点'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<otherwise>
+					SUM(case indication_item_name when #{item.indicationItemName} then calc_value else 0 end ) ${item.indicationItemName}
+				</otherwise>
+			</choose>
+		</foreach>
+		from (
+		SELECT mp.province_name, mi.indication_name, mii.indication_item_code, mii.indication_item_name,
+		mid.province_code,mid.calc_date, mid.calc_value FROM mirror_indication_data mid
+		inner join mirror_indication_new mi on mid.indication_id = mi.indication_id
+		inner join mirror_indication_item mii on mii.indication_item_id = mid.indication_item_id
+		inner join mirror_province mp on mp.province_code = mid.province_code
+		where mid.indication_id=#{indicationId} and mid.province_code = '000'
+		and mid.calc_date <![CDATA[ >= ]]> #{beginDate} and mid.calc_date <![CDATA[ <= ]]> #{endDate}
+		) tmp
+		group by province_name, calc_date
+		order by calc_date desc
+	</select>
+	<select id="getExceptionDataByIndicationIdAndProvinceCodePeriod" resultType="java.util.LinkedHashMap">
+		select
+		province_name 省份,
+		DATE_FORMAT(calc_date,'%Y-%m-%d') 日期,
+		<foreach collection="itemList" item="item" index="index" separator=",">
+			<choose>
+				<when test="item.indicationItemName == '异常原因'">
+					MAX(case indication_item_name when #{item.indicationItemName} then calc_value else '' end ) ${item.indicationItemName}
+				</when>
+				<otherwise>
+					SUM(case indication_item_name when #{item.indicationItemName} then calc_value else 0 end ) ${item.indicationItemName}
+				</otherwise>
+			</choose>
+		</foreach>
+		from (
+		SELECT mp.province_name, mi.indication_name, mii.indication_item_code, mii.indication_item_name,
+		mid.province_code,mid.calc_date, mid.calc_value FROM mirror_indication_data mid
+		inner join mirror_indication_new mi on mid.indication_id = mi.indication_id
+		inner join mirror_indication_item mii on mii.indication_item_id = mid.indication_item_id
+		inner join mirror_province mp on mp.province_code = mid.province_code
+		where (mid.calc_date <![CDATA[ >= ]]> #{calcStartDate} and  mid.calc_date <![CDATA[ < ]]> #{calcEndDate})
+		AND mid.calc_value != ''
+		AND mid.indication_id= #{indicationId}
+		<if test="provinceCode != null and provinceCode !=''">
+		    and mid.province_code = #{provinceCode}
+		</if>
+		<if test="period != null and period !=''">
+		    and mid.province_code = #{provinceCode}
+		</if>
+		) tmp
+		group by province_name, calc_date
+		order by ${orderName} desc
+	</select>
+	
+	<select id="getIndicationDataByIndicationIdAndCalcDate" resultMap="indicationSimpleDataMap">
+		select * from mirror_indication_data
+		where indication_id=#{indicationId} and calc_date = #{calcDate}
+	</select>
+
+	<delete id="deleteByDate" >
+		delete from mirror_indication_data
+		where  calc_date <![CDATA[ < ]]> #{calcDate}
+	</delete>
+
+</mapper>

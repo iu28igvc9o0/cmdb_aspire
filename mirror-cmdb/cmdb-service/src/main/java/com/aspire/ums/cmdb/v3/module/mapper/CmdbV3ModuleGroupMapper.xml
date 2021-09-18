@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleGroupMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="moduleGroupMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroup" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="module_group_code" property="moduleGroupCode" jdbcType="VARCHAR" />
+        <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+        <result column="parent_group_id" property="parentGroupId" jdbcType="VARCHAR" />
+        <result column="is_end_node" property="isEndNode" jdbcType="TINYINT" />
+        <result column="node_level" property="nodeLevel" jdbcType="TINYINT" />
+        <result column="display" property="display" jdbcType="TINYINT" />
+        <result column="fixed" property="fixed" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <resultMap id="moduleGroupCodeMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroupRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="group_id" property="groupId" jdbcType="VARCHAR" />
+        <result column="code_id" property="codeId" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="TINYINT" />
+        <result column="display" property="display" jdbcType="TINYINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="selectFields">
+        id, module_id, module_group_code, group_name, parent_group_id, is_end_node, node_level, display, fixed, sort_index, is_delete
+    </sql>
+
+    <select id="getModuleGroupList" resultMap="moduleGroupMap">
+        SELECT
+          <include refid="selectFields"/>
+        FROM cmdb_v3_module_group
+        where is_delete = '0' and module_id = #{moduleId}
+        order by sort_index
+    </select>
+
+    <select id="getChildModuleGroupList" resultMap="moduleGroupMap">
+        SELECT
+           <include refid="selectFields"/>
+        FROM cmdb_v3_module_group
+        where is_delete = '0' and module_id = #{moduleId} and parent_group_id = #{parentGroupId}
+        <if test="tableHeaderCode != null and tableHeaderCode != ''">
+            and module_group_code = #{tableHeaderCode}
+        </if>
+        order by sort_index
+    </select>
+
+    <select id="getAllGroupCodeList" resultMap="moduleGroupCodeMap">
+        SELECT * FROM `cmdb_v3_module_group_code_relation`
+        where is_delete = '0' and group_id = #{groupId}
+        order by sort_index
+    </select>
+
+<!--    &lt;!&ndash; list查询 &ndash;&gt;-->
+<!--    <select id="list" resultMap="moduleGroupMap">-->
+<!--        SELECT-->
+<!--        `id`,-->
+<!--        `group_code`,-->
+<!--        `group_name`,-->
+<!--        `is_delete`-->
+<!--        FROM cmdb_v3_module_group-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash; list查询 &ndash;&gt;-->
+<!--    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroup">-->
+<!--        SELECT-->
+<!--        `id`,-->
+<!--        `group_code`,-->
+<!--        `group_name`,-->
+<!--        `is_delete`-->
+<!--        FROM cmdb_v3_module_group-->
+<!--        WHERE 1=1-->
+<!--        <if test="id != null and id != ''">-->
+<!--        AND `id` = #{id}-->
+<!--        </if>-->
+<!--        <if test="groupCode != null and groupCode != ''">-->
+<!--        AND `group_code` = #{groupCode}-->
+<!--        </if>-->
+<!--        <if test="groupName != null and groupName != ''">-->
+<!--        AND `group_name` = #{groupName}-->
+<!--        </if>-->
+<!--        <if test="isDelete != null and isDelete != ''">-->
+<!--        AND `is_delete` = #{isDelete}-->
+<!--        </if>-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash; Get one 查询 &ndash;&gt;-->
+<!--    <select id="get" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroup" resultMap="resultMap">-->
+<!--        SELECT-->
+<!--        `id`,-->
+<!--        `group_code`,-->
+<!--        `group_name`,-->
+<!--        `is_delete`-->
+<!--        FROM cmdb_v3_module_group-->
+<!--        WHERE 1=1-->
+<!--        AND `id` = #{id}-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash; 新增记录 &ndash;&gt;-->
+<!--    <insert id="insert" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroup">-->
+<!--        INSERT INTO cmdb_v3_module_group-->
+<!--        (-->
+<!--            `id`,-->
+<!--            `group_code`,-->
+<!--            `group_name`,-->
+<!--            `is_delete`-->
+<!--        ) VALUES (-->
+<!--            #{id, jdbcType=VARCHAR},-->
+<!--            #{groupCode, jdbcType=VARCHAR},-->
+<!--            #{groupName, jdbcType=VARCHAR},-->
+<!--            #{isDelete, jdbcType=TINYINT}-->
+<!--        )-->
+<!--    </insert>-->
+
+<!--    &lt;!&ndash; 修改记录 &ndash;&gt;-->
+<!--    <update id="update" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroup">-->
+<!--        UPDATE cmdb_v3_module_group SET-->
+<!--        `group_code` = #{groupCode},-->
+<!--        `group_name` = #{groupName},-->
+<!--        `is_delete` = #{isDelete}-->
+<!--        WHERE-->
+<!--        `id` = #{id}-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash; 删除记录 &ndash;&gt;-->
+<!--    <delete id="delete" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleGroup">-->
+<!--        DELETE FROM cmdb_v3_module_group-->
+<!--        WHERE-->
+<!--         `id` = #{id}-->
+<!--    </delete>-->
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbixApiJson>
+	
+	<template id="user.login">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "user.login", 
+		    "id": %d,
+			"auth": null,
+		    "params": {
+		        "user": "%s", 
+		        "password": "%s"
+		    }
+		}
+	</template>
+	
+	<template id="user.logout">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "user.logout", 
+		    "auth": "%s", 
+		    "id": %d
+		}
+	</template>
+</zabbixApiJson>

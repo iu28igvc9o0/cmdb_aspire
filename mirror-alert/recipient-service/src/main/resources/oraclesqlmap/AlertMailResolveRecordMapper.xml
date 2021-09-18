@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.mail.recipient.dao.AlertMailResolveRecordDao">
+    <resultMap id="baseResultMap" type="com.aspire.mirror.mail.recipient.po.AlertMailResolveRecord">
+        <result property="id" column="id" jdbcType="INTEGER"></result>
+        <result property="filterId" column="filter_id" jdbcType="VARCHAR"></result>
+        <result property="mailTitle" column="mail_title" jdbcType="VARCHAR"></result>
+        <result property="mailContent" column="mail_content" jdbcType="VARCHAR"></result>
+        <result property="mailSender" column="mail_sender" jdbcType="VARCHAR"></result>
+        <result property="mailReceiver" column="mail_receiver" jdbcType="VARCHAR"></result>
+        <result property="mailSendTime" column="mail_send_time" jdbcType="TIMESTAMP"></result>
+        <result property="resolveTime" column="resolve_time" jdbcType="TIMESTAMP"></result>
+        <result property="alertName" column="alert_name" jdbcType="VARCHAR"></result>
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR"></result>
+        <result property="alertDesc" column="alert_desc" jdbcType="VARCHAR"></result>
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR"></result>
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <insert id="insertResolveRecords" parameterType="com.aspire.mirror.mail.recipient.po.AlertMailResolveRecord">
+        INSERT INTO alert_mail_resolve_record
+        (
+        filter_id,
+        mail_title,
+        mail_content,
+        mail_sender,
+        mail_receiver,
+        mail_send_time,
+        resolve_time,
+        alert_name,
+        moni_index,
+        alert_desc,
+        alert_level,
+        alert_id
+        )
+        VALUES ()
+    </insert>
+</mapper>

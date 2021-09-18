@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.collect.mapper.EsAgentDataMapper" >
+    <insert id="insert" >
+        insert into `es_agent_data`
+            (`ip`,
+             `agent_date`,
+             `pool`,
+             `result`,
+             `instance_id`,
+             `source`,
+             `collector_server`,
+             `other_ip`,
+             `exsi_ip`,
+             `vm_name`,
+             `type`,
+             `message`)
+        values
+            (#{ip},
+             #{agentDate},
+             #{pool},
+             #{result},
+             #{instanceId},
+             #{source},
+             #{collectorServer},
+             #{otherIp},
+             #{exsiIp},
+             #{vmName},
+             #{type},
+             #{message})
+        on DUPLICATE key update
+        result = #{result},
+        instance_id = #{instanceId},
+        source = #{source},
+        collector_server = #{collectorServer},
+        other_ip = #{otherIp},
+        exsi_ip = #{exsiIp},
+        vm_name = #{vmName},
+        type = #{type},
+        message = #{message}
+    </insert>
+    <delete id="deleteByAgentDate">
+        delete from es_agent_data where agent_date = #{agentDate}
+    </delete>
+</mapper>

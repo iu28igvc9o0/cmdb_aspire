@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.taskChange.TaskChangeManageDao">
+
+    <insert id="addTask" parameterType="com.aspire.mirror.alert.server.vo.taskChange.TaskRequestDTO">
+        INSERT INTO task_change_manage_config
+        (uuid,task_name,task_type,task_description,idc_type,task_start_time,task_end_time,task_status,creator,create_time,message_count)
+        VALUES
+        (#{uuid},#{taskName},#{taskType},#{taskDescription},#{idcType},#{taskStartTime},#{taskEndTime},'1',#{creator},now(),0)
+    </insert>
+
+    <select id="getTaskDetail" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.taskChange.TaskDetailDTO">
+        SELECT
+        uuid uuid,
+        task_name taskName,
+        task_type taskType,
+        task_description taskDescription,
+        idc_type idcType,
+        task_start_time taskStartTime,
+        task_end_time taskEndTime,
+        order_id orderId,
+        task_status taskStatus,
+        task_result taskResult,
+        creator,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+        updater,
+        DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+        message_count messageCount
+        FROM task_change_manage_config
+        WHERE uuid = #{uuid}
+    </select>
+
+    <update id="updateTask" parameterType="com.aspire.mirror.alert.server.vo.taskChange.TaskRequestDTO">
+        UPDATE task_change_manage_config
+        SET task_name = #{taskName},
+        task_type = #{taskType},
+        task_description = #{taskDescription},
+        idc_type = #{idcType},
+        task_start_time = #{taskStartTime},
+        task_end_time = #{taskEndTime},
+        updater = #{updater},
+        update_time = now()
+        WHERE uuid = #{uuid}
+    </update>
+
+    <delete id="deleteTask" parameterType="java.lang.String">
+        DELETE FROM task_change_manage_config
+        WHERE uuid = #{uuid}
+    </delete>
+
+    <update id="startTask" parameterType="com.aspire.mirror.alert.server.vo.taskChange.TaskRequestDTO">
+        UPDATE task_change_manage_config
+        SET task_name = #{taskName},
+        task_type = #{taskType},
+        task_description = #{taskDescription},
+        idc_type = #{idcType},
+        task_start_time = #{taskStartTime},
+        task_end_time = #{taskEndTime},
+        order_id = #{orderId},
+        task_status = '2'
+        WHERE uuid = #{uuid}
+    </update>
+
+    <update id="stopTask" parameterType="map">
+        UPDATE task_change_manage_config
+        SET
+        <choose>
+            <when test="task_status != null and task_status != ''">
+                task_status = #{task_status},
+            </when>
+            <otherwise>
+                task_status = '3',
+            </otherwise>
+        </choose>
+        task_result = #{taskResult},
+        content = #{massage}
+        WHERE uuid = #{uuid}
+    </update>
+
+    <select id="getTaskActionList" parameterType="java.lang.String" resultType="java.util.LinkedHashMap">
+        SELECT
+        id,relation_id,operate_type,operate_type_desc,operater,DATE_FORMAT(operate_time,'%Y-%m-%d %H:%i:%s') operate_time,operate_content,remark
+        FROM alert_operate_log
+        WHERE relation_id = #{uuid} AND (remark IS NULL OR remark = '')
+        ORDER BY operate_time DESC
+    </select>
+
+    <select id="getTaskMessageCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM alert_operate_log
+        WHERE relation_id = #{uuid} AND remark = 'message'
+    </select>
+    <select id="getTaskMessageList"  resultType="java.util.LinkedHashMap">
+        SELECT
+        id,relation_id,operate_type,operate_type_desc,operater,DATE_FORMAT(operate_time,'%Y-%m-%d %H:%i:%s') operate_time,operate_content,remark
+        FROM alert_operate_log
+        WHERE relation_id = #{uuid} AND remark = 'message'
+        ORDER BY operate_time DESC
+        limit ${(pageNum -1) * pageSize}, ${pageSize}
+    </select>
+
+    <select id="exportTask" parameterType="map" resultType="java.util.LinkedHashMap">
+        SELECT
+        task_name,
+        CASE task_type when '1' then '割接' when '2' then '变更' else task_type end task_type,
+        task_description,
+        idc_type,
+        task_start_time,
+        task_end_time,
+        CASE task_status when '1' then '待执行' when '2' then '执行中' when '3' then '已执行' else task_status end task_status,
+        CASE task_result when '1' then '执行成功' when '2' then '执行失败' else task_result end task_result,
+        content,
+        order_id,
+        message_count,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') create_time
+        FROM task_change_manage_config
+        WHERE 1=1
+        <if test="startTime != null and endTime != null">
+            AND task_start_time BETWEEN #{startTime} and  date_add(#{endTime}, interval 0 day)
+            AND task_end_time BETWEEN #{startTime} and date_add(#{endTime}, interval 0 day)
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <update id="updateMessageCount" parameterType="java.lang.String">
+        UPDATE task_change_manage_config SET message_count = message_count + 1 WHERE uuid = #{uuid}
+    </update>
+
+    <sql id="viewParamSql">
+        <if test="taskStatus != null and taskStatus != ''">
+            AND FIND_IN_SET(task_status, #{taskStatus})
+        </if>
+        <if test="taskResult != null and taskResult != ''">
+            AND FIND_IN_SET(task_result, #{taskResult})
+        </if>
+        <choose>
+            <when test="taskMassage == '-1'.toString() ">
+                AND message_count &gt; 0
+            </when>
+            <when test="taskMassage == '2'.toString() ">
+                AND message_count = 0
+            </when>
+            <otherwise>
+                AND message_count &gt;= 0
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="getMonWeekViewTaskList" parameterType="com.aspire.mirror.alert.server.vo.taskChange.TaskQueryRequestDTO"
+            resultType="com.aspire.mirror.alert.server.vo.taskChange.TaskDetailDTO">
+        SELECT
+        uuid uuid,
+        task_name taskName,
+        task_type taskType,
+        task_description taskDescription,
+        idc_type idcType,
+        task_start_time taskStartTime,
+        task_end_time taskEndTime,
+        order_id orderId,
+        task_status taskStatus,
+        task_result taskResult,
+        content,
+        creator,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+        updater,
+        DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+        message_count messageCount
+        FROM task_change_manage_config
+        WHERE 1=1
+        <if test="startDateTime != null and endDateTime != null and startDateTime != '' and endDateTime != ''">
+            AND task_start_time BETWEEN #{startDateTime} and  date_add(#{endDateTime}, interval 1 day)
+        </if>
+        <include refid="viewParamSql" />
+        ORDER BY task_start_time
+    </select>
+    <select id="getDayWeekViewTaskCount" parameterType="com.aspire.mirror.alert.server.vo.taskChange.TaskQueryRequestDTO"
+            resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM task_change_manage_config
+        WHERE 1=1
+        <if test="startDateTime != null and endDateTime != null and startDateTime != '' and endDateTime != ''">
+            AND task_start_time BETWEEN #{startDateTime} and #{endDateTime}
+        </if>
+        <include refid="viewParamSql" />
+    </select>
+    <select id="getDayWeekViewTaskList" parameterType="com.aspire.mirror.alert.server.vo.taskChange.TaskQueryRequestDTO"
+            resultType="com.aspire.mirror.alert.server.vo.taskChange.TaskDetailDTO">
+        SELECT
+        uuid uuid,
+        task_name taskName,
+        task_type taskType,
+        task_description taskDescription,
+        idc_type idcType,
+        task_start_time taskStartTime,
+        task_end_time taskEndTime,
+        order_id orderId,
+        task_status taskStatus,
+        task_result taskResult,
+        content,
+        creator,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+        updater,
+        DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+        message_count messageCount
+        FROM task_change_manage_config
+        WHERE 1=1
+        <if test="startDateTime != null and endDateTime != null and startDateTime != '' and endDateTime != ''">
+            AND task_start_time BETWEEN #{startDateTime} and #{endDateTime}
+        </if>
+        <include refid="viewParamSql" />
+        ORDER BY task_start_time
+        limit ${(pageNum -1) * pageSize}, ${pageSize}
+    </select>
+
+    <select id="getTaskDetailByName" parameterType="java.lang.String"
+            resultType="com.aspire.mirror.alert.server.vo.taskChange.TaskDetailDTO">
+        SELECT
+        uuid uuid,
+        task_name taskName,
+        task_type taskType,
+        task_description taskDescription,
+        idc_type idcType,
+        task_start_time taskStartTime,
+        task_end_time taskEndTime,
+        order_id orderId,
+        task_status taskStatus,
+        task_result taskResult,
+        creator,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') createTime,
+        updater,
+        DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') updateTime,
+        message_count messageCount
+        FROM task_change_manage_config
+        WHERE task_name = #{taskName}
+    </select>
+</mapper>

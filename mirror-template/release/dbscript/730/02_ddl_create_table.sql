@@ -1,0 +1,58 @@
+DROP TABLE IF EXISTS `task_config`;
+CREATE TABLE IF NOT EXISTS `task_config` (
+  `config_uuid` VARCHAR(36) COLLATE utf8_bin NOT NULL comment '任务配置ID',
+  `config_name` VARCHAR(128) COLLATE utf8_bin NOT NULL comment '任务名称',
+  `project_uuid` VARCHAR(64) COLLATE utf8_bin comment '项目ID',
+  `space_uuid` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '资源空间ID',
+  `region_id` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '服务所在集群ID',
+  `registry_index` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像源中心uri',
+  `registry_name` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像中心名称',
+  `registry_project` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像中心项目',
+  `image_name` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像名称',
+  `image_tag` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像版本',
+  `command_type` VARCHAR(64) COLLATE utf8_bin NOT NULL comment ' 任务执行命令类型，自定义:DEFAULT_COMMAND,镜像默认:CUSTOM_COMMAND',
+  `command` VARCHAR(128) COLLATE utf8_bin comment '自定义执行的命令',
+  `last_job` text COLLATE utf8_bin comment 'job最后一次执行记录（JSON格式，包括上一次执行时间，执行状态）',
+  `timeout` double comment '任务运行的超时时间',
+  `schedule_rule` VARCHAR(64) COLLATE utf8_bin comment '定时规则',
+  `schedule_config_id` VARCHAR(36) COLLATE utf8_bin comment '定时配置ID',
+  `schedule_config_secret_key` VARCHAR(16) COLLATE utf8_bin comment '定时配置的私钥',
+  `envvars` text COLLATE utf8_bin NOT NULL comment '环境变量',
+  `envfiles` text COLLATE utf8_bin NOT NULL comment '环境变量文件',
+  `cpu` double NOT NULL comment '分配的cpu资源',
+  `memory` int(32) NOT NULL comment '分配的内存资源',
+  `created_by` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '任务配置的创建者',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP comment '任务配置的更新时间',
+  `created_at` timestamp NOT NULL comment '任务配置的创建时间',
+  PRIMARY KEY (`config_uuid`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin comment '任务配置表';
+
+
+DROP TABLE IF EXISTS `task_config_history`;
+CREATE TABLE IF NOT EXISTS `task_config_history` (
+  `job_uuid` VARCHAR(36) COLLATE utf8_bin NOT NULL comment '主键ID',
+  `namespace` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '命名空间',
+  `user_token` VARCHAR(100) COLLATE utf8_bin NOT NULL comment '用户token',
+  `status` VARCHAR(64) COLLATE utf8_bin NOT NULL DEFAULT 'BLOCKED' comment '任务状态,BLOCKED,WAITING,RUNNING,SUCCEEDED,FAILED,STOPPED',
+  `space_uuid` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '资源空间ID',
+  `region_id` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '集群ID',
+  `command_type` VARCHAR(64) COLLATE utf8_bin NOT NULL comment 'job执行的命令类型',
+  `command` VARCHAR(128) COLLATE utf8_bin NOT NULL comment '自定义执行的名令',
+  `timeout` double NOT NULL comment 'job运行的超时时间',
+  `cpu` double NOT NULL comment '分配的cpu资源',
+  `memory` int(32) NOT NULL comment '分配的内存资源',
+  `registry_index` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像中心uri',
+  `registry_name` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像中心名字',
+  `registry_project` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像中心的项目',
+  `image_name` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像名',
+  `image_tag` VARCHAR(64) COLLATE utf8_bin NOT NULL comment '镜像标签',
+  `envvars` text COLLATE utf8_bin NOT NULL comment '环境变量',
+  `envfiles` text COLLATE utf8_bin NOT NULL comment '环境变量文件',
+  `created_by` VARCHAR(30) COLLATE utf8_bin NOT NULL comment '任务的创建者',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP comment '创建时间',
+  `started_at` timestamp NULL DEFAULT NULL comment '任务开始时间',
+  `ended_at` timestamp NULL DEFAULT NULL comment '任务结束时间',
+  `job_config_id` VARCHAR(36) COLLATE utf8_bin NOT NULL comment '外键，关联任务配置',
+  PRIMARY KEY (`job_uuid`),
+  KEY `idx_tsh_config_id` (`job_config_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin comment '任务执行记录表';

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.schema.mapper.SchemaMapper" >
+
+    <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.schema.payload.ColumnInfo">
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="strLength" property="strLength" jdbcType="INTEGER" />
+        <result column="intLength" property="intLength" jdbcType="INTEGER" />
+        <result column="floatLength" property="floatLength" jdbcType="INTEGER" />
+        <result column="isNullable" property="isNullable" jdbcType="VARCHAR" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="BaseTableMap" type="com.aspire.ums.cmdb.schema.payload.TableInfo">
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+        <result column="table_comment" property="tableComment" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="findTableByName" resultType="java.lang.Integer">
+        select count(1) from information_schema.TABLES where lower(table_schema)=lower(#{schemaName})
+        and lower(table_name)=lower(#{tableName})
+    </select>
+
+    <select id="findTableColumnByColumnName" resultType="java.lang.Integer">
+        select count(1) from information_schema.`columns`
+        where lower(`table_schema`)=lower(#{schemaName})
+        and lower(`table_name`)=lower(#{tableName})
+        and lower(`column_name`)=LOWER(#{columnName});
+    </select>
+
+    <update id="createTable" parameterType="String">
+        ${createTabelSql}
+    </update>
+
+    <insert id="batchInsert" parameterType="String">
+        ${insertSql}
+    </insert>
+
+    <update id="alterTable" parameterType="String">
+        ${alterTableSql}
+    </update>
+    
+    <delete id="deleteTableByName" parameterType="String">
+        DROP TABLE ${tableName}
+    </delete>
+
+    <select id="getTableList" parameterType="String" resultMap="BaseTableMap">
+        select
+          c.TABLE_NAME,
+          c.TABLE_COMMENT
+        from information_schema.`TABLES` c
+        where c.TABLE_SCHEMA=#{schemaName}
+        order by c.TABLE_NAME
+    </select>
+
+    <select id="getColumnListByTableName" parameterType="String" resultMap="BaseResultMap">
+        SELECT
+            COLUMN_NAME AS NAME,
+            DATA_TYPE AS type,
+            CHARACTER_MAXIMUM_LENGTH AS strLength,
+            NUMERIC_PRECISION + 1 AS intLength,
+            NUMERIC_SCALE AS floatLength,
+            IS_NULLABLE AS isNullable,
+            COLUMN_COMMENT AS `comment`
+        FROM
+            information_schema. COLUMNS
+        WHERE
+            TABLE_NAME = #{tableName} AND TABLE_SCHEMA = #{schemaName}
+    </select>
+    
+    <select id="checkSql" resultType="java.util.HashMap">
+        ${sql}
+    </select>
+
+    <select id="executeSql" resultType="java.util.HashMap">
+        ${sql}
+    </select>
+    <select id="executeSqlBySort" resultType="java.util.LinkedHashMap">
+        ${sql}
+    </select>
+
+    <select id="executeCount" resultType="java.lang.Integer">
+        ${sql}
+    </select>
+
+    <!--根据表插入ci数据-->
+    <insert id="insertCi">
+        insert into `${tableName}` (
+        <foreach collection="instanceData.keys" item="item" separator=",">
+            `${item}`
+        </foreach>,is_delete
+        ) values (
+        <foreach collection="instanceData.keys" item="item" separator=",">
+            #{instanceData[${item}]}
+        </foreach>,
+                  0
+        )
+    </insert>
+    <!--根据表插入ci数据-->
+    <update id="updateCi">
+        update `${tableName}` set
+        <foreach collection="instanceData.keys" item="item" separator=",">
+            `${item}` = #{instanceData[${item}]}
+        </foreach>
+        <if test="instanceData.keys.size > 0">
+            ,
+        </if>
+        is_delete=0
+        where id = #{instanceId}
+    </update>
+    <!--根据表插入ci数据-->
+    <update id="deleteCi">
+        update `${tableName}` set
+        <foreach collection="instanceData.keys" item="item" separator=",">
+            `${item}` = #{instanceData[${item}]}
+        </foreach>
+        where id = #{instanceId}
+    </update>
+
+    <delete id="delete">
+        delete from `${tableName}`  where id = #{instanceId}
+    </delete>
+</mapper>

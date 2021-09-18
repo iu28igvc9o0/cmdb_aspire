@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.zabbixintegrate.daoAlert.AlertModelFieldMapper">
+
+    <select id="getAlertFieldListByTableName" resultType="com.aspire.mirror.zabbixintegrate.daoAlert.po.AlertModelField" parameterType="java.lang.String">
+        SELECT
+        af.id, model_id modelId, field_code fieldCode, field_name fieldName, field_type fieldType, is_lock isLock, jdbc_type dataType, jdbc_length dataLength,
+        jdbc_tip dataTip, ci_field_code ciCode, is_ci_params isCiParams, params_name paramsName, ci_field_name paramCode, is_list_show isListShow, list_show_sort listShowSort,
+        list_show_name listShowName, list_show_pattern listShowPattern, is_detail_show isDetailShow, detail_show_sort detailShowSort,
+        detail_show_name detailShowName, detail_show_pattern detailShowPattern, is_query_param isQueryParam, query_param_sort queryParamSort, query_param_name queryParamName,
+        query_param_type queryParamType, query_param_source queryParamSource, is_derive_field isDeriveField, derive_field_sort deriveFieldSort, derive_field_name deriveFieldName,
+        derive_field_type deriveFieldType, derive_field_source deriveFieldSource, af.creator,
+        af.updater, table_column_widch tableColumnWidth
+        FROM alert_model_field af INNER JOIN alert_model am on af.model_id=am.id
+        <where>
+        <if test="tableName != null and tableName != ''">
+            AND am.table_name = #{tableName}
+        </if>
+        </where>
+    </select>
+<sql id="baseSql">
+        SELECT
+        id,
+        idc_type idcType,
+        device_ip deviceIp,
+        DATE_FORMAT(start_scan_time,'%Y-%m-%d %H:%i:%s') AS startScanTime,
+        DATE_FORMAT(cur_scan_time,'%Y-%m-%d %H:%i:%s') AS curScanTime,
+        (CASE syn_status WHEN '1' THEN '同步' WHEN '2' THEN '未同步' WHEN '3' THEN '同步失败' END ) synStatus,
+        DATE_FORMAT(cur_syn_time,'%Y-%m-%d %H:%i:%s') AS curSynTime,
+        cur_moni_time AS curMoniTime
+        FROM alert_scan_comparision
+    </sql>
+ <select id="getIdcTypes" resultType="java.util.Map" parameterType="java.util.List">
+      select proxy_name,idc ,remark from alert_proxy_idc c where proxy_name in
+        <foreach collection="list" index="index" item="item" 
+        separator="," open="(" close=")">
+        #{item}
+    </foreach>
+   </select>
+   
+   <update id="batchUpdate" parameterType="java.util.List">
+        UPDATE alert_scan_comparision SET cur_scan_time = NOW()
+    where id in
+    <foreach collection="list" index="index" item="item" 
+        separator="," open="(" close=")">
+        #{item.id}
+    </foreach>
+    
+    </update>
+    
+    <select id="getAlertScanComparisionDetailByIpAndPools" 
+            parameterType="java.util.List" resultType="java.util.Map">
+        <include refid="baseSql"></include>
+        WHERE
+         <foreach collection ="list" item="item" index="index" separator ="or">
+            (type=1
+            <if test="item.deviceIp != null and item.deviceIp != null">
+            AND   device_ip = #{item.deviceIp}
+        </if>
+          <if test="item.deviceIp != null and item.deviceIp != null">
+            AND    idc_type = #{item.idcType}
+        </if>
+           
+            )
+            
+        </foreach>
+       
+    </select>
+
+    <insert id="insertScanComparision" parameterType="java.util.List">
+        INSERT INTO alert_scan_comparision (
+        id,
+        idc_type,
+        device_ip,
+        start_scan_time,
+        syn_status,
+        cur_scan_time,
+        type
+        )
+        VALUES
+        <foreach collection ="list" item="item" index="index" separator =",">
+            (
+            #{item.id},
+            #{item.idcType},
+            #{item.ip},
+            NOW(),
+            #{item.synStatus},
+            NOW(),
+             #{item.type}
+            )
+        </foreach>
+    </insert>
+</mapper>

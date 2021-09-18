@@ -1,0 +1,52 @@
+server:
+  port: 28102
+  
+#OpenLdap
+ldap.contextSource.url: ldap://10.12.70.40:2389
+ldap.contextSource.base: dc=migu,dc=cn
+ldap.contextSource.userDn: cn=admin,dc=migu,dc=cn
+ldap.contextSource.password: aspire
+ldap.defaultOu: migu.Inc
+
+spring:
+  mail: # JavaMailSender 邮件发送的配置
+    usable: false # 是否发送邮件,默认值为fasle
+    host: smtp.qq.com
+    username: 325056665@qq.com
+    password: gevxfzfpjodmbjic
+    properties:
+      mail:
+        transport: 
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls: # TLS协议
+            enable: true
+            required: true
+#          socketFactory: # SSL协议
+#            port: 465
+#            class: javax.net.ssl.SSLSocketFactory
+#  redis:
+#    database: 4
+#    expiration: 3600
+#    host: 10.12.70.40
+#    password: foo
+#    pool:
+#      max-active: 8
+#      max-idle: 8
+#      max-wait: -1
+#      min-idle: 0
+#    port: 6379
+#    timeout: 5000
+#    usable: true
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 10 ##心跳检测时长
+    prefer-ip-address: true
+  client:
+    registryFetchIntervalSeconds: 5
+    instanceInfoReplicationIntervalSeconds: 5
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      

@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceProjectMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProject" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="project_no" property="projectNo" jdbcType="VARCHAR" />
+        <result column="mainten_produce" property="maintenProduce" jdbcType="VARCHAR" />
+        <result column="mainten_produce_name" property="maintenProduceName" jdbcType="VARCHAR" />
+        <result column="mainten_produce_email" property="maintenProduceEmail" jdbcType="VARCHAR" />
+        <result column="mainten_produce_phone" property="maintenProducePhone" jdbcType="VARCHAR" />
+        <result column="contract_produce" property="contractProduce" jdbcType="VARCHAR" />
+        <result column="contract_produce_name" property="contractProduceName" jdbcType="VARCHAR" />
+        <result column="contract_produce_email" property="contractProduceEmail" jdbcType="VARCHAR" />
+        <result column="contract_produce_phone" property="contractProducePhone" jdbcType="VARCHAR" />
+        <result column="service_type" property="serviceType" jdbcType="VARCHAR" />
+        <result column="service_start_time" property="serviceStartTime" jdbcType="VARCHAR" />
+        <result column="service_end_time" property="serviceEndTime" jdbcType="VARCHAR" />
+        <result column="is_delete" property="isDelete" jdbcType="VARCHAR" />
+        <result column="maintenance_type" property="maintenanceType" jdbcType="VARCHAR" />
+        <result column="device_area" property="deviceArea" jdbcType="VARCHAR"/>
+        <result column="maintenance_project_type" property="maintenanceProjectType" jdbcType="VARCHAR"/>
+        <result column="procure_type" property="procureType" jdbcType="VARCHAR"/>
+        <result column="money" property="money" jdbcType="DECIMAL"/>
+        <result column="device_type" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="pre_tax" property="preTax" jdbcType="DECIMAL"/>
+        <result column="tax_rate" property="taxRate" jdbcType="VARCHAR"/>
+        <result column="after_tax" property="afterTax" jdbcType="DECIMAL"/>
+        <result column="unit_price" property="unitPrice" jdbcType="DECIMAL"/>
+        <result column="total_price" property="totalPrice" jdbcType="DECIMAL"/>
+        <result column="pay_method" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="discount_amount" property="discountAmount" jdbcType="DECIMAL"/>
+        <result column="discount_rate" property="discountRate" jdbcType="VARCHAR"/>
+        <result column="quarter_flag" property="quarterFlag" jdbcType="VARCHAR"/>
+        <association property="serviceNums" select="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceServiceNumMapper.getServiceNumByProjectId"
+                     column="id"></association>
+        <collection property="projectInstanceList"
+                    select="com.aspire.ums.cmdb.maintenance.mapper.CmdbMaintenanceProjectInstanceMapper.getProjectInstanceListByProjectId"
+                    column="id"></collection>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_name`,
+        `project_no`,
+        `mainten_produce`,
+        `mainten_produce_name`,
+        `mainten_produce_email`,
+        `mainten_produce_phone`,
+        `service_type`,
+        `service_start_time`,
+        `service_end_time`,
+        `is_delete`,
+        `maintenance_type`,
+        `device_area`,
+        `maintenance_project_type`,
+        `procure_type`,
+        `money`,
+        `device_type`,
+        `contract_produce`,
+        `contract_produce_name`,
+        `contract_produce_email`,
+        `contract_produce_phone`,
+        `pre_tax`,
+        `tax_rate`,
+        `after_tax`,
+        `unit_price`,
+        `total_price`,
+        `pay_method`,
+        `discount_amount`,
+        `discount_rate`
+        FROM cmdb_maintenance_project
+        where `is_delete` = '0'
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectQuery">
+        SELECT
+        `id`,
+        `project_name`,
+        `project_no`,
+        `mainten_produce`,
+        `mainten_produce_name`,
+        `mainten_produce_email`,
+        `mainten_produce_phone`,
+        `service_type`,
+        `service_start_time`,
+        `service_end_time`,
+        `is_delete`,
+        `maintenance_type`,
+        `device_area`,
+        `maintenance_project_type`,
+        `procure_type`,
+        `money`,
+        `device_type`,
+        `contract_produce`,
+        `contract_produce_name`,
+        `contract_produce_email`,
+        `contract_produce_phone`,
+        `pre_tax`,
+        `tax_rate`,
+        `after_tax`,
+        `unit_price`,
+        `total_price`,
+        `pay_method`,
+        `discount_amount`,
+        `discount_rate`
+        FROM cmdb_maintenance_project p
+        where `is_delete` = '0'
+        <include refid="listByEntityWhere"></include>
+        order by service_end_time <![CDATA[ <= ]]> NOW(), service_end_time, project_name
+        <if test="pageNo != null and pageSize != ''">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="listByEntityCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectQuery">
+        SELECT count(1)
+        FROM cmdb_maintenance_project p
+        where `is_delete` = '0'
+        <include refid="listByEntityWhere"></include>
+    </select>
+
+    <!-- list查询没有金额列表 -->
+    <select id="listNotMoney" resultType="HashMap" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectQuery">
+        SELECT
+        `id`,
+        `project_name`,
+        `project_no`,
+        `mainten_produce`,
+        `mainten_produce_name`,
+        `mainten_produce_email`,
+        `mainten_produce_phone`,
+        `service_type`,
+        `service_start_time`,
+        `service_end_time`,
+        `is_delete`,
+        `maintenance_type`,
+        `device_area`,
+        `maintenance_project_type`,
+        `procure_type`,
+        `device_type`,
+        `contract_produce`,
+        `contract_produce_name`,
+        `contract_produce_email`,
+        `contract_produce_phone`
+        FROM cmdb_maintenance_project p
+        where `is_delete` = '0'
+        <include refid="listNotMoneyWhere"/>
+        order by service_end_time <![CDATA[ <= ]]> NOW(), service_end_time, project_name
+        <if test="pageNo != null and pageSize != ''">
+            limit #{pageNo}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="listNotMoneyCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectQuery">
+        SELECT count(1)
+        FROM cmdb_maintenance_project p
+        where `is_delete` = '0'
+        <include refid="listNotMoneyWhere"/>
+    </select>
+
+    <sql id="listNotMoneyWhere">
+        <choose>
+            <when test="(projectName != null and projectName != '') or
+                (maintenProduce != null and maintenProduce != '') or
+                (contractProduce != null and contractProduce != '')">
+                and  ( 1!=1
+            </when>
+            <otherwise>
+                and ( 1=1
+            </otherwise>
+        </choose>
+        <if test="projectName != null and projectName != ''">
+            or `project_name` like concat('%',#{projectName},'%')
+        </if>
+        <if test="maintenProduce != null and maintenProduce != ''">
+            or `mainten_produce` like concat('%',#{maintenProduce},'%')
+        </if>
+        <if test="contractProduce != null and contractProduce != ''">
+            or `contract_produce` like concat('%',#{contractProduce},'%')
+        </if>
+        )
+    </sql>
+
+    <!-- 导出时list查询 -->
+    <select id="exportProjectList" resultType="java.util.LinkedHashMap" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProjectQuery">
+        SELECT
+            project_name,
+            project_no,
+            service_type,
+            maintenance_type,
+            device_area,
+            maintenance_project_type,
+            procure_type,
+            money,
+            device_type,
+            DATE_FORMAT(
+            service_start_time,
+            '%Y-%m-%d'
+            ) service_start_time,
+            DATE_FORMAT(
+            service_end_time,
+            '%Y-%m-%d'
+            ) service_end_time,
+            mainten_produce produce,
+            mainten_produce_name produce_concat_name,
+            mainten_produce_phone produce_concat_phone,
+            mainten_produce_email produce_concat_email,
+            contract_produce contract_produce,
+            contract_produce_name contract_contact,
+            contract_produce_phone contract_contact_phone,
+            contract_produce_email contract_contact_email,
+            pre_tax,
+            tax_rate,
+            after_tax,
+            unit_price,
+            total_price,
+            pay_method,
+            discount_amount,
+            discount_rate,
+            c.serviceNums,
+            c.serviceTypes
+        from cmdb_maintenance_project p
+        LEFT JOIN (
+            SELECT
+                a.id projectId,
+                GROUP_CONCAT(b.service_num) serviceNums,
+                GROUP_CONCAT(b.service_type) serviceTypes
+            FROM cmdb_maintenance_project a
+            LEFT JOIN cmdb_maintenance_service_num b on a.id = b.project_id
+            GROUP BY a.id
+        ) c on c.projectId = p.id
+        where p.is_delete = '0'
+        <include refid="listByEntityWhere"></include>
+        order by service_end_time <![CDATA[ <= ]]> NOW(), service_end_time, project_name
+    </select>
+
+    <sql id="listByEntityWhere">
+        <if test="projectName != null and projectName != ''">
+            AND `project_name` like concat('%',#{projectName},'%')
+        </if>
+        <if test="projectNo != null and projectNo != ''">
+            AND `project_no` like concat('%',#{projectNo},'%')
+        </if>
+        <if test="serviceStartTime != null and serviceStartTime != '' and serviceEndTime != null and serviceEndTime != ''">
+            AND `service_start_time` between #{serviceStartTime} and #{serviceEndTime}
+        </if>
+        <if test="maintenProduce != null and maintenProduce != ''">
+            and `mainten_produce` like concat('%',#{maintenProduce},'%')
+        </if>
+        <if test="maintenanceProjectType != null and maintenanceProjectType != ''">
+            and `maintenance_project_type` = #{maintenanceProjectType}
+        </if>
+        <if test="intervalTime != null and intervalTime != ''">
+            and `service_end_time` between now() and date_add(now(),INTERVAL #{intervalTime} MONTH)
+        </if>
+    </sql>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProject" resultMap="resultMap">
+        SELECT
+        `id`,
+        `project_name`,
+        `project_no`,
+        `mainten_produce`,
+        `mainten_produce_name`,
+        `mainten_produce_email`,
+        `mainten_produce_phone`,
+        `service_type`,
+        `service_start_time`,
+        `service_end_time`,
+        `is_delete`,
+        `maintenance_type`,
+        `device_area`,
+        `maintenance_project_type`,
+        `procure_type`,
+        `money`,
+        `device_type`,
+        `contract_produce`,
+        `contract_produce_name`,
+        `contract_produce_email`,
+        `contract_produce_phone`,
+        `pre_tax`,
+        `tax_rate`,
+        `after_tax`,
+        `unit_price`,
+        `total_price`,
+        `pay_method`,
+        `discount_amount`,
+        `discount_rate`,
+        `quarter_flag`
+        FROM cmdb_maintenance_project
+        WHERE `is_delete` = '0'
+        <if test="id != null and id != ''">
+            AND `id` = #{id}
+        </if>
+        <if test="projectName != null and projectName != ''">
+            AND `project_name` = #{projectName}
+        </if>
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProject">
+        INSERT INTO cmdb_maintenance_project
+        (
+            `id`,
+            `project_name`,
+            `project_no`,
+            `mainten_produce`,
+            `mainten_produce_name`,
+            `mainten_produce_email`,
+            `mainten_produce_phone`,
+            `service_type`,
+            `service_start_time`,
+            `service_end_time`,
+            `maintenance_type`,
+            `device_area`,
+            `maintenance_project_type`,
+            `procure_type`,
+            `money`,
+            `device_type`,
+            `contract_produce`,
+            `contract_produce_name`,
+            `contract_produce_email`,
+            `contract_produce_phone`,
+            `pre_tax`,
+            `tax_rate`,
+            `after_tax`,
+            `unit_price`,
+            `total_price`,
+            `pay_method`,
+            `discount_amount`,
+            `discount_rate`,
+            `quarter_flag`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{projectName, jdbcType=VARCHAR},
+            #{projectNo, jdbcType=VARCHAR},
+            #{maintenProduce, jdbcType=VARCHAR},
+            #{maintenProduceName, jdbcType=VARCHAR},
+            #{maintenProduceEmail, jdbcType=VARCHAR},
+            #{maintenProducePhone, jdbcType=VARCHAR},
+            #{serviceType, jdbcType=VARCHAR},
+            #{serviceStartTime, jdbcType=VARCHAR},
+            #{serviceEndTime, jdbcType=VARCHAR},
+            #{maintenanceType, jdbcType=VARCHAR},
+            #{deviceArea, jdbcType=VARCHAR},
+            #{maintenanceProjectType, jdbcType=VARCHAR},
+            #{procureType, jdbcType=VARCHAR},
+            #{money, jdbcType=VARCHAR},
+            #{deviceType, jdbcType=VARCHAR},
+            #{contractProduce, jdbcType=VARCHAR},
+            #{contractProduceName, jdbcType=VARCHAR},
+            #{contractProduceEmail, jdbcType=VARCHAR},
+            #{contractProducePhone, jdbcType=VARCHAR},
+            #{preTax, jdbcType=VARCHAR},
+            #{taxRate, jdbcType=VARCHAR},
+            #{afterTax, jdbcType=VARCHAR},
+            #{unitPrice, jdbcType=VARCHAR},
+            #{totalPrice, jdbcType=VARCHAR},
+            #{payMethod, jdbcType=VARCHAR},
+            #{discountAmount, jdbcType=VARCHAR},
+            #{discountRate, jdbcType=VARCHAR},
+            #{quarterFlag, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProject">
+        UPDATE cmdb_maintenance_project SET
+        `project_name` = #{projectName},
+        `project_no` = #{projectNo},
+        `mainten_produce` = #{maintenProduce},
+        `mainten_produce_name` = #{maintenProduceName},
+        `mainten_produce_email` = #{maintenProduceEmail},
+        `mainten_produce_phone` = #{maintenProducePhone},
+        `service_type` = #{serviceType},
+        `service_start_time` = #{serviceStartTime},
+        `service_end_time` = #{serviceEndTime},
+        `maintenance_type` = #{maintenanceType},
+        `device_area` = #{deviceArea},
+        `maintenance_project_type` = #{maintenanceProjectType},
+        `procure_type` = #{procureType},
+        `money` = #{money},
+        `device_type` = #{deviceType},
+        `contract_produce` = #{contractProduce},
+        `contract_produce_name` = #{contractProduceName},
+        `contract_produce_email` = #{contractProduceEmail},
+        `contract_produce_phone` = #{contractProducePhone},
+        `pre_tax` = #{preTax},
+        `tax_rate` = #{taxRate},
+        `after_tax` = #{afterTax},
+        `unit_price` = #{unitPrice},
+        `total_price` = #{totalPrice},
+        `pay_method` = #{payMethod},
+        `discount_amount` = #{discountAmount},
+        `discount_rate` = #{discountRate},
+        `quarter_flag` = #{quarterFlag}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.maintenance.payload.CmdbMaintenanceProject">
+        UPDATE cmdb_maintenance_project SET
+        `is_delete` = '1'
+        WHERE `id` = #{id}
+    </delete>
+
+    <!-- list查询 -->
+    <select id="getValidProjectByDeviceSn" resultMap="resultMap">
+        select t.* from cmdb_maintenance_project t
+        inner join cmdb_maintenance_project_instance i on (t.id = i.project_id and i.is_delete = '0')
+        where i.device_sn = #{deviceSn}
+        and t.is_delete='0'
+        and t.service_start_time <![CDATA[ <= ]]> now() and t.service_end_time <![CDATA[ >= ]]> now()
+    </select>
+
+    <select id="getProjectProduceConcat" resultType="java.util.LinkedHashMap">
+        SELECT
+            mp.id,
+            mpi.instance_id,
+            mp.project_name,
+            mp.service_start_time,
+            mp.service_end_time,
+            mp.mainten_produce produce_name,
+            mp.mainten_produce_name produce_concat_name,
+            mp.mainten_produce_phone produce_concat_phone,
+            mp.mainten_produce_email produce_concat_email,
+            ci.device_class,
+            ci.idcType
+        FROM
+        (	select instance_id, project_id
+            from cmdb_maintenance_project_instance
+            where IFNULL(instance_id,'') != '' and is_delete = '0'
+            <if test="projectId != null and projectId != ''">
+                and project_id = #{projectId}
+            </if>
+            <if test="instanceList != null and instanceList.size > 0">
+                and instance_id in
+                <foreach collection="instanceList" item="instanceId" open="(" close=")" separator=",">
+                    #{instanceId}
+                </foreach>
+            </if>
+        ) mpi
+        LEFT JOIN cmdb_maintenance_project mp ON mp.id = mpi.project_id
+        left join cmdb_instance ci on (ci.id = mpi.instance_id)
+    </select>
+
+    <!--依据服务时间和设备序列号反查维保项目-->
+    <select id="getMaintenObjByTimeAndSn" resultType="java.util.HashMap">
+        SELECT
+            a.`id` projectId,
+            `project_name` projectName,
+            `project_no` projectNo,
+            `service_type` serviceType,
+            `service_start_time` serviceStartTime,
+            `service_end_time` serviceEndTime,
+            `maintenance_type` maintenanceType,
+            `device_area` deviceArea,
+            `maintenance_project_type` maintenanceProjectType,
+            `procure_type` procureType,
+            `device_type` deviceType,
+            `mainten_produce` serviceProduce,
+            `mainten_produce_name` serviceNames,
+            `mainten_produce_phone` servicePhones,
+            `mainten_produce_email` serviceEmails,
+            `contract_produce` contractProduce,
+            `contract_produce_name` contractNames,
+            `contract_produce_phone` contractPhones,
+            `contract_produce_email` contractEmails,
+            b.id instanceBindId,
+			b.device_sn deviceSn
+        FROM cmdb_maintenance_project a
+        LEFT JOIN cmdb_maintenance_project_instance b on a.id = b.project_id
+        where a.is_delete = '0' and b.is_delete = '0'
+        and device_sn = #{deviceSn}
+        and service_start_time <![CDATA[ <= ]]> #{serviceTime}
+        and service_end_time <![CDATA[ >= ]]> #{serviceTime}
+    </select>
+</mapper>

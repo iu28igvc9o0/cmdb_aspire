@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.monthReport.mapper.CmdbRecycleReportMapper">
+    <sql id="baseColumn">
+        idcType,
+        bizSystem,
+        department1,
+        department2,
+        roomId,
+        pod_name,
+        phy_count,
+        gpu_count,
+        vm_count,
+        vm_cpu_count,
+        vm_memory_count,
+        vm_storage_count,
+        plan_recycle,
+        recycle_time,
+        month
+
+    </sql>
+
+
+    <select id="save" parameterType="java.util.List">
+        insert into cmdb_month_report_recycle
+        (<include refid="baseColumn"/>)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.idcType,jdbcType=VARCHAR},
+            #{item.bizSystem,jdbcType=VARCHAR},
+            #{item.department1,jdbcType=VARCHAR},
+            #{item.department2,jdbcType=VARCHAR},
+            #{item.roomId,jdbcType=VARCHAR},
+             #{item.podName,jdbcType=VARCHAR},
+            #{item.phy_count,jdbcType=VARCHAR},
+            #{item.gpu_count,jdbcType=VARCHAR},
+            #{item.vm_count,jdbcType=VARCHAR},
+            #{item.vm_cpu_count,jdbcType=VARCHAR},
+            #{item.vm_memory_count,jdbcType=VARCHAR},
+            #{item.vm_storage_count,jdbcType=VARCHAR},
+            #{item.plan_recycle,jdbcType=VARCHAR},
+            #{item.recycle_time,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'))
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        department1 = VALUES( department1 ),
+        department2 = VALUES( department2 ),
+        roomId = VALUES( roomId ),
+        pod_name = VALUES( pod_name ),
+        phy_count = VALUES( phy_count ),
+        gpu_count = VALUES( gpu_count ),
+        vm_count = VALUES( vm_count ),
+        vm_cpu_count = VALUES( vm_cpu_count  ),
+        vm_memory_count = VALUES( vm_memory_count ),
+        vm_storage_count = VALUES( vm_storage_count ),
+        plan_recycle = VALUES( plan_recycle ),
+        recycle_time = VALUES( recycle_time )
+    </select>
+
+
+
+    <!-- 计算节点的设备总量 -->
+    <select id="count" resultType="java.util.Map">
+        SELECT  idcType,
+                bizSystem,
+                department1,
+                department2,
+                roomId,
+                pod_name,
+                SUM( CASE WHEN a.`node_type`='计算节点' THEN 1 ELSE 0 END) phy_count,
+                SUM( CASE WHEN a.device_type = '云主机' THEN 1 ELSE 0 END) vm_count,
+                SUM( CASE WHEN a.device_type = '云主机' THEN b.cpu_core_number ELSE 0 END) vm_cpu_count,
+                TRUNCATE(SUM( CASE WHEN a.device_type = '云主机' THEN b.memory_size ELSE 0 END),2) vm_memory_count,
+                COUNT(1) plan_recycle,
+                MAX( a.update_time) recycle_time
+        FROM cmdb_instance a
+                 LEFT JOIN `cmdb_instance_server` b ON a.id = b.id
+        WHERE a.`is_delete`='0' AND b.`is_delete`='0' AND a.`device_status` IN ('报废', '闲置', '已关闭电源') AND IFNULL(a.bizSystem, '') != '' AND IFNULL(a.idcType, '') != ''
+        GROUP BY a.bizSystem,a.idcType
+
+
+    </select>
+</mapper>

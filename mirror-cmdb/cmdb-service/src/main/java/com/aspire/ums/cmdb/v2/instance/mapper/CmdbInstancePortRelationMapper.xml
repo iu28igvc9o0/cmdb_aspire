@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.instance.mapper.CmdbInstancePortRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="a_icon_url" property="aIconUrl" jdbcType="VARCHAR" />
+        <result column="a_instance_id" property="aInstanceId" jdbcType="VARCHAR" />
+        <result column="a_device_name" property="aDeviceName" jdbcType="VARCHAR" />
+        <result column="a_port_id" property="aPortId" jdbcType="VARCHAR" />
+        <result column="z_icon_url" property="zIconUrl" jdbcType="VARCHAR" />
+        <result column="z_instance_id" property="zInstanceId" jdbcType="VARCHAR" />
+        <result column="z_device_name" property="zDeviceName" jdbcType="VARCHAR" />
+        <result column="z_ip" property="zIp" jdbcType="VARCHAR" />
+        <result column="z_idcType" property="zIdcType" jdbcType="VARCHAR" />
+        <result column="z_port_id" property="zPortId" jdbcType="VARCHAR" />
+        <result column="connect_type" property="connectType" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+        `id`,
+        `a_instance_id`,
+        `a_port_id`,
+        `z_instance_id`,
+        `z_port_id`,
+        `connect_type`,
+        `remark`,
+        `create_time`
+    </sql>
+
+    <!-- list查询 -->
+    <select id="selectByPortAndId" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation">
+        SELECT
+        `id`,
+        `a_instance_id` ,
+        `a_port_id` ,
+        `z_instance_id` ,
+        `z_port_id`,
+        `connect_type`,
+        `remark`,
+        `create_time`
+        FROM
+        cmdb_instance_port_relation
+        where `a_instance_id` = #{aInstanceId}
+        AND  `a_port_id` = #{aPortId}
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortQuery">
+        SELECT
+        a.`id`,
+        a.`a_instance_id`,
+        b.device_name a_device_name,
+        c.icon_url `a_icon_url`,
+        a.`a_port_id`,
+        e.icon_url `z_icon_url`,
+        a.`z_instance_id`,
+        d.device_name z_device_name,
+        d.`idcType` z_idcType,
+        d.`ip` z_ip,
+        a.`z_port_id`,
+        a.`connect_type`,
+        a.`remark`,
+        a.`create_time`
+            FROM cmdb_instance_port_relation a
+        LEFT JOIN cmdb_instance b
+        ON a.a_instance_id = b.id
+        LEFT JOIN cmdb_module c
+        ON b.module_id = c.id
+        LEFT JOIN cmdb_instance d
+        ON a.z_instance_id = d.id
+        LEFT JOIN cmdb_module e
+        ON d.module_id = e.id
+        WHERE 1=1
+        <if test="aInstanceId != null and aInstanceId != ''">
+            AND  `a_instance_id` = #{aInstanceId}
+        </if>
+        <if test="aPortId != null and aPortId != ''">
+            AND  `a_port_id` like CONCAT('%',#{aPortId},'%')
+        </if>
+        <if test="zInstanceIp != null and zInstanceIp != ''">
+            AND  `z_instance_id` in
+            (select id from cmdb_instance where ip like CONCAT('%',#{zInstanceIp},'%'))
+        </if>
+        <if test="zPortId != null and zPortId != ''">
+            AND  `z_port_id` like CONCAT('%',#{zPortId},'%')
+        </if>
+        order by  create_time desc
+        <if test="pageNo != null and pageNo != '' and pageSize != null and pageSize != ''">
+            limit ${(pageNo - 1) * pageSize }, ${pageSize}
+        </if>
+    </select>
+
+
+    <select id="listCount" resultType="java.lang.Integer" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortQuery">
+        SELECT count(1)
+        FROM cmdb_instance_port_relation
+        WHERE 1=1
+        <if test="aInstanceId != null and aInstanceId != ''">
+            AND  `a_instance_id` = #{aInstanceId}
+        </if>
+        <if test="aPortId != null and aPortId != ''">
+            AND  `a_port_id` like CONCAT('%',#{aPortId},'%')
+        </if>
+        <if test="zInstanceIp != null and zInstanceIp != ''">
+            AND  `z_instance_id` in
+            (select id from cmdb_instance where ip like CONCAT('%',#{zInstanceIp},'%'))
+        </if>
+        <if test="zPortId != null and zPortId != ''">
+            AND  `z_port_id` like CONCAT('%',#{zPortId},'%')
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation" resultMap="resultMap">
+        SELECT
+        `id`,
+        `a_instance_id`,
+        `a_port_id`,
+        `z_instance_id`,
+        `z_port_id`,
+        `connect_type`,
+        `remark`,
+        `create_time`
+        FROM cmdb_instance_port_relation
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation">
+        INSERT INTO cmdb_instance_port_relation
+        (
+            `id`,
+            `a_instance_id`,
+            `a_port_id`,
+            `z_instance_id`,
+            `z_port_id`,
+            `connect_type`,
+            `remark`,
+            `create_time`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{aInstanceId, jdbcType=VARCHAR},
+            #{aPortId, jdbcType=VARCHAR},
+            #{zInstanceId, jdbcType=VARCHAR},
+            #{zPortId, jdbcType=VARCHAR},
+            #{connectType, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR},
+            #{createTime, jdbcType=TIMESTAMP}
+        )
+            ON DUPLICATE KEY UPDATE
+            z_instance_id =  VALUES(z_instance_id),
+            z_port_id =  VALUES(z_port_id),
+            connect_type =  VALUES(connect_type),
+            remark =  VALUES(remark)
+    </insert>
+
+    <!-- 批量新增 或者 更新修改（如果带有ID的话）-->
+    <insert id="insertByBatch" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation">
+        insert into cmdb_instance_port_relation
+        (<include refid="Base_Column_List" />)
+        values
+        <foreach collection="list" item="item" index="index"  separator=","  >
+            (#{item.id, jdbcType=VARCHAR},
+            #{item.aInstanceId, jdbcType=VARCHAR},
+            #{item.aPortId, jdbcType=VARCHAR},
+            #{item.zInstanceId, jdbcType=VARCHAR},
+            #{item.zPortId, jdbcType=VARCHAR},
+            #{item.connectType, jdbcType=VARCHAR},
+            #{item.remark, jdbcType=VARCHAR},
+            #{item.createTime, jdbcType=TIMESTAMP})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        z_instance_id =  VALUES(z_instance_id),
+        z_port_id =  VALUES(z_port_id),
+        connect_type =  VALUES(connect_type),
+        remark =  VALUES(remark)
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation">
+        UPDATE cmdb_instance_port_relation SET
+        `z_instance_id` = #{zInstanceId},
+        `z_port_id` = #{zPortId},
+        `connect_type` = #{connectType},
+        `remark` = #{remark}
+        WHERE
+        <if test="aInstanceId != null and aInstanceId !=''">
+            and   `a_instance_id` = #{aInstanceId}
+        </if>
+        <if test="aPortId != null and aPortId != ''">
+            and   `a_port_id` = #{aPortId}
+        </if>
+    </update>
+
+
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.instance.payload.CmdbInstancePortRelation">
+        DELETE FROM cmdb_instance_port_relation
+        WHERE
+            (  `a_instance_id` = #{aInstanceId}
+                and   `a_port_id` = #{aPortId})
+          or(      `z_instance_id` = #{aInstanceId}
+            and   `z_port_id` = #{aPortId})
+
+
+
+    </delete>
+
+
+    <select id="getInstanceIpByPool" parameterType="java.lang.String" resultType="java.util.Map">
+        select id, ip, idcType from cmdb_instance WHERE is_delete='0' and idcType=#{idcType}
+    </select>
+</mapper>

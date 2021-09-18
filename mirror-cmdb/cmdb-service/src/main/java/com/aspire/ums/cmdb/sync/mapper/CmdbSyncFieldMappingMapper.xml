@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.sync.mapper.CmdbSyncFieldMappingMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="mapping_type" property="mappingType" jdbcType="VARCHAR" />
+        <result column="mapping_key" property="mappingKey" jdbcType="VARCHAR" />
+        <result column="mapping_value" property="mappingValue" jdbcType="VARCHAR" />
+        <result column="src_field" property="srcField" jdbcType="VARCHAR" />
+        <result column="dest_field" property="destField" jdbcType="VARCHAR" />
+        <result column="sync_osa_flag" property="syncOsaFlag" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+        `id`,
+        `mapping_type`,
+        `mapping_key`,
+        `mapping_value`,
+        `src_field`,
+        `dest_field`,
+        sync_osa_flag
+        FROM cmdb_sync_field_mapping
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping">
+        SELECT
+        `id`,
+        `mapping_type`,
+        `mapping_key`,
+        `mapping_value`,
+        `src_field`,
+        `dest_field`,
+        sync_osa_flag
+        FROM cmdb_sync_field_mapping
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="mappingType != null and mappingType != ''">
+        AND `mapping_type` = #{mappingType}
+        </if>
+        <if test="mappingKey != null and mappingKey != ''">
+        AND `mapping_key` = #{mappingKey}
+        </if>
+        <if test="mappingValue != null and mappingValue != ''">
+        AND `mapping_value` = #{mappingValue}
+        </if>
+        <if test="srcField != null and srcField != ''">
+        AND `src_field` = #{srcField}
+        </if>
+        <if test="destField != null and destField != ''">
+        AND `dest_field` = #{destField}
+        </if>
+        <if test="syncOsaFlag != null and syncOsaFlag != ''">
+            AND `sync_osa_flag` = #{syncOsaFlag}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping" resultMap="resultMap">
+        SELECT
+        `id`,
+        `mapping_type`,
+        `mapping_key`,
+        `mapping_value`,
+        `src_field`,
+        `dest_field`,
+        sync_osa_flag
+        FROM cmdb_sync_field_mapping
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <select id="getOne" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping" resultMap="resultMap">
+        SELECT
+        `id`,
+        `mapping_type`,
+        `mapping_key`,
+        `mapping_value`,
+        `src_field`,
+        `dest_field`,
+        sync_osa_flag
+        FROM cmdb_sync_field_mapping
+        <where>
+            mapping_type=#{mappingType}
+            and mapping_key=#{mappingKey}
+        </where>
+        limit 1
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping">
+        INSERT INTO cmdb_sync_field_mapping
+        (
+            `id`,
+            `mapping_type`,
+            `mapping_key`,
+            `mapping_value`,
+            `src_field`,
+            `dest_field`
+        <if test="syncOsaFlag!=null and sync_osa_flag!=''">
+            ,osa_sync_flag
+        </if>
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{mappingType, jdbcType=VARCHAR},
+            #{mappingKey, jdbcType=VARCHAR},
+            #{mappingValue, jdbcType=VARCHAR},
+            #{srcField, jdbcType=VARCHAR},
+            #{destField, jdbcType=VARCHAR}
+        <if test="syncOsaFlag!=null and sync_osa_flag!=''">
+            ,#{syncOsaFlag, jdbcType=VARCHAR}
+        </if>
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping">
+        UPDATE cmdb_sync_field_mapping SET
+        `mapping_type` = #{mappingType},
+        `mapping_key` = #{mappingKey},
+        `mapping_value` = #{mappingValue},
+        `src_field` = #{srcField},
+        `dest_field` = #{destField}
+        <if test="syncOsaFlag!=null and sync_osa_flag!=''">
+            ,sync_osa_flag = #{syncOsaFlag, jdbcType=VARCHAR}
+        </if>
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.sync.entity.CmdbSyncFieldMapping">
+        DELETE FROM cmdb_sync_field_mapping
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

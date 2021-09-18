@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IIndicationLimitDao">
+	
+	<resultMap type="com.aspire.mirror.bean.IndicationLimitEntity" id="indicationLimitMap">
+
+		<result property="indicationLimitId" column="indication_limit_id" jdbcType="TINYINT"/>
+		<result property="indicationId" column="indication_id" jdbcType="TINYINT"/>
+		<result property="maxValue" column="max_value" jdbcType="VARCHAR"/>
+		<result property="minValue" column="min_value" jdbcType="VARCHAR"/>
+		<result property="changeValueMax" column="change_value_max" jdbcType="VARCHAR"/>
+		<result property="changeValueMin" column="change_value_min" jdbcType="VARCHAR"/>
+		<result property="changeRateMax" column="change_rate_max" jdbcType="VARCHAR"/>
+		<result property="changeRateMin" column="change_rate_min" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<select id="getIndicationLimitByLimitId" resultMap="indicationLimitMap" >
+		SELECT * FROM mirror_indication_limit where indication_limit_id=#{indicationLimitId}
+	</select>
+
+	<select id="getIndicationLimitByIndicationId" resultMap="indicationLimitMap" >
+		SELECT * FROM mirror_indication_limit where indication_id=#{indicationId}
+	</select>
+
+	<select id="getAll" resultMap="indicationLimitMap" >
+		SELECT * FROM mirror_indication_limit order by indication_id asc
+	</select>
+
+	<select id="getIndicationByIndicationIdAndProvinceCode" resultMap="indicationLimitMap" >
+		select * from (
+			select * from mirror_indication_limit where province_code=#{provinceCode} and indication_id=#{indicationId}
+			union
+			select * from mirror_indication_limit where indication_id=#{indicationId}
+		) tem LIMIT 1
+	</select>
+
+	<delete id="deleteGateWayAll" parameterType="java.util.List" >
+	    delete from mirror_indication_limit
+	     where indication_id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.indicationId}
+        </foreach>
+	  </delete>
+	  <insert id="saveGateWayMerit"   parameterType="java.util.List">
+	  INSERT INTO mirror_indication_limit
+	  ( `indication_id`, `max_value`, `min_value`, `change_value_max`, `change_value_min`,`change_rate_max`,`change_rate_min`)
+	  VALUES
+	  <foreach collection ="list" item="item" separator ="," index="index">
+         (
+         #{item.indicationId}, #{item.maxValue},#{item.minValue}, #{item.changeValueMax}
+         , #{item.changeValueMin}, #{item.changeRateMax},#{item.changeRateMin}
+	)
+    </foreach > 
+	  </insert>
+</mapper>

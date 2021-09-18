@@ -1,0 +1,133 @@
+*{
+	margin:0;
+	padding:0;
+}
+html,body{
+	height:100%;
+	font-size:12px;
+	overflow-x : hidden;
+	*+overflow-x:inherit;/*ie7*/
+	overflow-y : auto;
+	color:#4463B6;
+	scrollbar-face-color:#B9D9FA;
+	scrollbar-highlight-color:#F4F9FF;
+	scrollbar-shadow-color:#8FACCD;
+	scrollbar-3dlight-color:#8DB4DC;
+	scrollbar-arrow-color:#5279E8;
+	scrollbar-track-color:#E7F0F7;
+	scrollbar-darkshadow-color:#2242AB;
+	background:url(../images/tree_fbg.gif) left repeat-y;
+}
+#tree{
+	/*background: url(../images/tree_fbottom.gif) bottom left no-repeat;*/
+	height:100%;
+	overflow:hidden;
+}
+#tree_bg{
+	background:url(../images/tree_flistbottom.gif) bottom left no-repeat;
+	padding-bottom:75px;
+}
+#tree_top{
+	background:url(../images/tree_flisttoptop.gif) top left no-repeat;
+}
+#tooltip{
+	width: 100px;
+	height: 20px;
+	position:absolute;
+	border:solid #aaa 1px;
+	background-color:#F9F9F9;
+	display: none;
+}
+ul.first{
+	list-style:none;
+	padding-top:28px;
+	padding-left:48px;
+	padding-right:25px;
+}
+
+a{
+	font-size:12px;
+	color:#4363B4;
+	background-image:none;
+	display:block;
+	text-indent:12px;
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+	font-weight: normal;
+	text-decoration:none;
+}
+
+ul.first li{
+	line-height:27px;
+	vertical-align:middle;
+	margin:0;
+	padding:0;
+}
+
+ul.first li a{
+	font-weight: bold;
+	display:block;
+	text-decoration:none;
+	border-top:1px solid #E1EEFA;
+	border-bottom:1px solid #A1C4EA;
+	background-image:url(../images/listdot.gif);
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	text-indent:10px;
+	line-height:25px!important;
+	line-height:24px;
+	padding-top:1px!important;
+	padding-top:2px;
+	padding-bottom:5px;!important;
+	padding-bottom:2px;
+	height:22px!important;
+	height:24px;
+	width:150px;
+}
+
+ul.first li a.select1{
+	color:#fff;
+	background: #4363B4 url(../images/tree_list_select1.gif) left center no-repeat;
+	border-left:1px solid #A1C4EA;
+	border-right:1px solid #A1C4EA;
+}
+
+ul.second{
+	margin-top:0;
+	margin-bottom:0;
+	list-style:none;
+}
+
+ul.second li{
+	line-height:27px;
+	vertical-align:middle;
+	margin:0;
+	padding:0;
+	border:0;
+	margin-bottom:1px;
+}
+
+ul.second li a{
+	height:24px!important;
+	height:27px;
+	padding:0;
+	font-weight:normal;
+	display:block;
+	background-color:#D6EAF5;
+	background-image:none;
+	text-decoration:none;
+	border:1px solid #7AA2D5;
+	border-top:0;
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+
+ul.second li a:hover{
+	text-decoration:underline;
+}
+
+ul.second li a.select2{
+	background: #D9E8F8 url(../images/tree_list_select2.gif) left center no-repeat;
+}

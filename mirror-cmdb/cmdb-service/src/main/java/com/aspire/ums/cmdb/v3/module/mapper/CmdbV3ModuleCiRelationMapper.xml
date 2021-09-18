@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCiRelationMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCiRelation" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="relation_Type" property="relationType" jdbcType="VARCHAR" />
+        <result column="relation" property="relation" jdbcType="VARCHAR" />
+        <result column="relation_module_id" property="relationModuleId" jdbcType="VARCHAR" />
+        <result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
+        <result column="relation_sql" property="relationSql" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_person" property="createPerson" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="update_person" property="updatePerson" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="VARCHAR" />
+        <collection column="{relationId = id}" property="codeRelationList"
+                    select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCiCodeRelationMapper.listByRelationId" />
+    </resultMap>
+
+    <resultMap id="resultMapDetail" type="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCiRelationDetail" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="resource_name" property="resourceName" jdbcType="VARCHAR" />
+        <result column="relation_sql" property="relationSql" jdbcType="VARCHAR" />
+        <result column="sort_index" property="sortIndex" jdbcType="VARCHAR" />
+        <association property="curModule" column="module_id"
+                     select="com.aspire.ums.cmdb.v2.module.mapper.ModuleMapper.getSimpleModuleDetail">
+        </association>
+        <association property="relationTypeDict" column="relation_type"
+                     select="com.aspire.ums.cmdb.dict.mapper.ConfigDictMapper.getDictById">
+        </association>
+        <association property="relationDict" column="relation"
+                     select="com.aspire.ums.cmdb.dict.mapper.ConfigDictMapper.getDictById">
+        </association>
+        <association property="relationModule" column="relation_module_id"
+                     select="com.aspire.ums.cmdb.v2.module.mapper.ModuleMapper.getSimpleModuleDetail">
+        </association>
+        <collection column="{relationId = id}" property="codeRelationList"
+                    select="com.aspire.ums.cmdb.v3.module.mapper.CmdbV3ModuleCiCodeRelationMapper.listDetailByRelationId" />
+    </resultMap>
+
+    <sql id="baseColumn">
+        id,module_id,relation_type,relation,relation_module_id,resource_name,
+        relation_sql,create_time,create_person,update_time,update_person
+    </sql>
+    <!-- list查询 -->
+    <select id="listByModuleId" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_ci_relation
+        where module_id = #{moduleId}
+        order by create_time
+    </select>
+    <!-- list查询 -->
+    <select id="listRDetailByModuleId" resultMap="resultMapDetail">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_ci_relation
+        where module_id = #{moduleId}
+        order by create_time
+    </select>
+
+
+
+    <!-- list查询 -->
+    <select id="getById" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_ci_relation
+        where id = #{id}
+    </select>
+
+    <!-- list查询 -->
+    <select id="getDetailById" resultMap="resultMapDetail">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_ci_relation
+        where id = #{id}
+    </select>
+    <!-- list查询 -->
+    <select id="getExist" resultMap="resultMap">
+        SELECT
+        a.id
+        FROM cmdb_module_ci_relation a
+        left join cmdb_module_ci_code_relation b on a.id = b.relation_id
+        where a.module_id = #{moduleId} and b.curr_code_id = #{codeId}
+          <!--<if test="relationType != null and relationType != ''">-->
+              <!--and relation_type = #{relationType}-->
+          <!--</if>-->
+        <!--<if test="relationModuleId != null and relationModuleId != ''">-->
+            <!--and relation_module_id = #{relationModuleId}-->
+        <!--</if>-->
+        <!--<if test="relationSql != null and relationSql != ''">-->
+            <!--and relation_sql = #{relationSql}-->
+        <!--</if>-->
+    </select>
+
+    <select id="save" parameterType="com.aspire.ums.cmdb.v3.module.payload.CmdbV3ModuleCiRelation">
+        insert into cmdb_module_ci_relation (
+        id,module_id,relation_type,relation,relation_module_id,resource_name,
+        relation_sql,create_time,create_person,update_time,update_person
+        ) values (
+                  #{id},
+                  #{moduleId},
+        #{relationType},
+        #{relation},
+        #{relationModuleId},
+        #{resourceName},
+        #{relationSql},
+        DEFAULT,
+        #{createPerson},
+        #{updateTime},
+        #{updatePerson}
+        )
+ON DUPLICATE KEY UPDATE
+module_id = VALUES( module_id ),
+relation_type = VALUES( relation_type ),
+relation = VALUES( relation ),
+relation_module_id = VALUES( relation_module_id ),
+resource_name = VALUES( resource_name ),
+relation_sql = VALUES( relation_sql ),
+create_person = VALUES( create_person ),
+update_time = VALUES( update_time ),
+update_person = VALUES( update_person )
+
+    </select>
+
+    <!-- 删除记录 -->
+    <delete id="deleteByModuleId" parameterType="java.lang.String">
+        DELETE FROM cmdb_module_ci_relation
+        WHERE `module_id` = #{moduleId}
+    </delete>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM cmdb_module_ci_relation
+        WHERE `id` = #{id}
+    </delete>
+</mapper>

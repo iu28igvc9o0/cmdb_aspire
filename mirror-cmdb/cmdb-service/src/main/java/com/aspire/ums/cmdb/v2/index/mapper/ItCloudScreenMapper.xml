@@ -1,0 +1,1108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenMapper">
+
+    <!-- 资源分配实体 -->
+    <resultMap id="resourceAllocationMap" type="com.aspire.ums.cmdb.index.payload.ScreenResourceAllocation">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="system_title_id" jdbcType="INTEGER" property="systemTitleId"/>
+        <result column="department1" jdbcType="VARCHAR" property="department1"/>
+        <result column="department2" jdbcType="VARCHAR" property="department2"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="pod" jdbcType="VARCHAR" property="pod"/>
+        <result column="module_type" jdbcType="VARCHAR" property="moduleType"/>
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="amount" jdbcType="VARCHAR" property="amount"/>
+        <result column="use_allocation" jdbcType="VARCHAR" property="useAllocation"/>
+        <result column="recycle_count" jdbcType="VARCHAR" property="recycleCount"/>
+        <result column="apply_count" jdbcType="VARCHAR" property="applyCount"/>
+        <result column="undeploy_point" jdbcType="VARCHAR" property="undeployPoint"/>
+        <result column="memory_size" jdbcType="VARCHAR" property="memorySize"/>
+        <result column="cpu_num" jdbcType="VARCHAR" property="cpuNum"/>
+        <result column="monthly_time" jdbcType="VARCHAR" property="monthlyTime"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+        <result column="not_inspect_count" jdbcType="VARCHAR" property="notInspectCount"/>
+    </resultMap>
+    <!-- 均峰值利用率实体 -->
+    <resultMap id="maxUtilizationMap" type="com.aspire.ums.cmdb.index.payload.ScreenMaxUtilization">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="system_title_id" jdbcType="INTEGER" property="systemTitleId"/>
+        <result column="department1" jdbcType="VARCHAR" property="department1"/>
+        <result column="department2" jdbcType="VARCHAR" property="department2"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="pod" jdbcType="VARCHAR" property="pod"/>
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
+        <result column="max_utilization" jdbcType="VARCHAR" property="maxUtilization"/>
+        <result column="hardware_type" jdbcType="VARCHAR" property="statistDate"/>
+        <result column="statist_date" jdbcType="VARCHAR" property="hardwareType"/>
+        <result column="monthly_time" jdbcType="VARCHAR" property="monthlyTime"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+    </resultMap>
+    <!-- 平均值利用率实体 -->
+    <resultMap id="avgUtilizationMap" type="com.aspire.ums.cmdb.index.payload.ScreenAvgUtilization">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="system_title_id" jdbcType="INTEGER" property="systemTitleId"/>
+        <result column="department1" jdbcType="VARCHAR" property="department1"/>
+        <result column="department2" jdbcType="VARCHAR" property="department2"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="pod" jdbcType="VARCHAR" property="pod"/>
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
+        <result column="avg_utilization" jdbcType="VARCHAR" property="avgUtilization"/>
+        <result column="hardware_type" jdbcType="VARCHAR" property="statistDate"/>
+        <result column="statist_date" jdbcType="VARCHAR" property="hardwareType"/>
+        <result column="monthly_time" jdbcType="VARCHAR" property="monthlyTime"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+    </resultMap>
+    <!-- 资源分配基础字段 -->
+    <sql id="allocate_base_sql">
+        id, system_title_id, department1, department2, biz_system, resource_pool, pod ,module_type, device_type, unit, amount, use_allocation, not_inspect_count, recycle_count,apply_count,undeploy_point,memory_size,cpu_num,monthly_time, insert_time, is_delete
+    </sql>
+    <!-- 均峰值利用率基础字段 -->
+    <sql id="max_base_sql">
+        id, system_title_id, department1, department2, biz_system, resource_pool, pod , device_type, max_utilization, hardware_type, statist_date, monthly_time, insert_time, is_delete
+    </sql>
+    <!-- 平均值利用率基础字段 -->
+    <sql id="avg_base_sql">
+        id, system_title_id, department1, department2, biz_system, resource_pool, pod , device_type, avg_utilization, hardware_type, statist_date, monthly_time, insert_time, is_delete
+    </sql>
+
+    <insert id="insertResourceAllocate" parameterType="com.aspire.ums.cmdb.index.payload.ScreenResourceAllocation">
+        insert into screen_resource_allocation(
+          <include refid="allocate_base_sql"></include>
+        )
+        values (
+          #{id, jdbcType=VARCHAR},
+          #{systemTitleId, jdbcType=INTEGER},
+          #{department1, jdbcType=VARCHAR},
+          #{department2, jdbcType=VARCHAR},
+          #{bizSystem, jdbcType=VARCHAR},
+          #{resourcePool, jdbcType=VARCHAR},
+          #{pod, jdbcType=VARCHAR},
+          #{moduleType, jdbcType=VARCHAR},
+          #{deviceType, jdbcType=VARCHAR},
+          #{unit, jdbcType=VARCHAR},
+          #{amount, jdbcType=VARCHAR},
+          #{useAllocation, jdbcType=VARCHAR},
+          #{notInspectCount, jdbcType=VARCHAR},
+          #{recycleCount, jdbcType=VARCHAR},
+          #{applyCount, jdbcType=VARCHAR},
+          #{undeployPoint, jdbcType=VARCHAR},
+          #{memorySize, jdbcType=VARCHAR},
+          #{cpuNum, jdbcType=VARCHAR},
+          #{monthlyTime, jdbcType=VARCHAR},
+          #{insertTime, jdbcType=TIMESTAMP},
+          #{isDelete, jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertBatchResourceAllocate" parameterType="com.aspire.ums.cmdb.index.payload.ScreenResourceAllocation">
+        insert into screen_resource_allocation(
+        <include refid="allocate_base_sql"></include>
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.systemTitleId, jdbcType=INTEGER},
+            #{item.department1, jdbcType=VARCHAR},
+            #{item.department2, jdbcType=VARCHAR},
+            #{item.bizSystem, jdbcType=VARCHAR},
+            #{item.resourcePool, jdbcType=VARCHAR},
+            #{item.pod, jdbcType=VARCHAR},
+            #{item.moduleType, jdbcType=VARCHAR},
+            #{item.deviceType, jdbcType=VARCHAR},
+            #{item.unit, jdbcType=VARCHAR},
+            #{item.amount, jdbcType=VARCHAR},
+            #{item.useAllocation, jdbcType=VARCHAR},
+            #{item.notInspectCount, jdbcType=VARCHAR},
+            #{item.recycleCount, jdbcType=VARCHAR},
+            #{item.applyCount, jdbcType=VARCHAR},
+            #{item.undeployPoint, jdbcType=VARCHAR},
+            #{item.memorySize, jdbcType=VARCHAR},
+            #{item.cpuNum, jdbcType=VARCHAR},
+            #{item.monthlyTime, jdbcType=VARCHAR},
+            #{item.insertTime, jdbcType=TIMESTAMP},
+            #{item.isDelete, jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <sql id="where_sql">
+        <if test="systemTitle!=null and systemTitle != ''">
+            and system_title = #{systemTitle}
+        </if>
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="monthlyTime!=null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        <if test="deviceType!=null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        <if test="bizSystem!=null and bizSystem != ''">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="hardwareType!=null and hardwareType != ''">
+            and hardware_type = #{hardwareType}
+        </if>
+        <if test="resourcePool!=null and resourcePool != ''">
+            and resource_pool = #{resourcePool}
+        </if>
+        <if test="pod!=null and pod != ''">
+            and pod = #{pod}
+        </if>
+        <if test="ip!=null and ip != ''">
+            and ip = #{ip}
+        </if>
+    </sql>
+
+    <select id="getResourceAllocateList" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+            device_type deviceType,
+            SUM(amount) amount,
+            unit,
+            IFNULL(SUM(use_allocation),0) useAllocation,
+            IFNULL(SUM(recycle_count),0) recycle,
+            IFNULL(SUM(apply_count),0) apply,
+            IFNULL(SUM(undeploy_point),0) undeploy,
+            module_type moduleType
+        FROM screen_resource_allocation
+        WHERE 1=1 and is_delete = '0' <include refid="where_sql"></include>
+        GROUP BY module_type,device_type desc
+    </select>
+
+    <select id="getSystemTitleList" resultType="java.util.HashMap">
+        select id, system_title from screen_system_title
+    </select>
+
+    <insert id="insertBatchMaxUtilization" parameterType="com.aspire.ums.cmdb.index.payload.ScreenMaxUtilization">
+        insert into screen_max_utilization(
+          <include refid="max_base_sql"></include>
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.systemTitleId, jdbcType=INTEGER},
+            #{item.department1, jdbcType=VARCHAR},
+            #{item.department2, jdbcType=VARCHAR},
+            #{item.bizSystem, jdbcType=VARCHAR},
+            #{item.resourcePool, jdbcType=VARCHAR},
+            #{item.pod, jdbcType=VARCHAR},
+            #{item.deviceType, jdbcType=VARCHAR},
+            #{item.maxUtilization, jdbcType=VARCHAR},
+            #{item.hardwareType, jdbcType=VARCHAR},
+            #{item.statistDate, jdbcType=VARCHAR},
+            #{item.monthlyTime, jdbcType=VARCHAR},
+            #{item.insertTime, jdbcType=TIMESTAMP},
+            #{item.isDelete, jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatchAvgUtilization" parameterType="com.aspire.ums.cmdb.index.payload.ScreenAvgUtilization">
+        insert into screen_avg_utilization(
+        <include refid="avg_base_sql"></include>
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id, jdbcType=VARCHAR},
+            #{item.systemTitleId, jdbcType=INTEGER},
+            #{item.department1, jdbcType=VARCHAR},
+            #{item.department2, jdbcType=VARCHAR},
+            #{item.bizSystem, jdbcType=VARCHAR},
+            #{item.resourcePool, jdbcType=VARCHAR},
+            #{item.pod, jdbcType=VARCHAR},
+            #{item.deviceType, jdbcType=VARCHAR},
+            #{item.avgUtilization, jdbcType=VARCHAR},
+            #{item.hardwareType, jdbcType=VARCHAR},
+            #{item.statistDate, jdbcType=VARCHAR},
+            #{item.monthlyTime, jdbcType=VARCHAR},
+            #{item.insertTime, jdbcType=TIMESTAMP},
+            #{item.isDelete, jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <select id="getMaxUtilizationByMonth" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+      tmp.statist_date statistDate,
+      ifnull(cpuMax,0) cpuMax,
+      ifnull(storeMax,0) storeMax
+    FROM(
+        SELECT DISTINCT statist_date
+        FROM screen_max_utilization
+        where 1=1 and is_delete = '0'
+        <include refid="where_sql"/>
+        ORDER BY statist_date
+    ) tmp
+    LEFT JOIN(
+        SELECT r.statist_date,ROUND(SUM(r.cnt1*r.mx)/SUM(r.cnt1),2) cpuMax
+        FROM(
+            SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.max_utilization)/SUM(t.cnt) mx,SUM(t.cnt) cnt1
+            FROM (
+                SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.max_utilization,t2.statist_date
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    WHERE is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                    HAVING SUM(amount) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    WHERE is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                WHERE t2.statist_date is not null
+            ) t
+            GROUP BY t.biz_system,t.statist_date
+        ) r
+        GROUP BY r.statist_date
+    ) tt1 on tmp.statist_date = tt1.statist_date
+    LEFT JOIN (
+        SELECT r.statist_date,ROUND(SUM(r.cnt1*r.mx)/SUM(r.cnt1),2) storeMax
+        FROM(
+            SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.max_utilization)/SUM(t.cnt) mx,SUM(t.cnt) cnt1
+            FROM (
+                SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.max_utilization,t2.statist_date
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    WHERE is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                    HAVING SUM(amount) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    WHERE is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                WHERE t2.statist_date is not null
+            ) t
+            GROUP BY t.biz_system,t.statist_date
+        ) r
+        GROUP BY r.statist_date
+    ) tt2 on tmp.statist_date = tt2.statist_date
+    ORDER BY tmp.statist_date
+    </select>
+
+    <select id="getMaxUtilizationByBizSystem" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+      r1.biz_system bizSystem,
+      r2.cpuMax,
+      r3.storeMax
+    FROM(
+        SELECT biz_system
+        FROM screen_resource_allocation
+        where is_delete = '0' <include refid="where_sql"/>
+        GROUP BY biz_system
+        HAVING SUM(amount) > 0
+    ) r1 LEFT JOIN (
+        SELECT t.biz_system,MAX(t.cpuMax) cpuMax
+        FROM(
+            SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) cpuMax
+            FROM(
+                select biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                FROM screen_resource_allocation
+                where is_delete = '0' <include refid="where_sql"/>
+                GROUP BY biz_system,resource_pool,pod
+                HAVING SUM(use_allocation) > 0
+            ) t1
+            LEFT JOIN (
+                SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                FROM screen_max_utilization
+                where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+            ) t2 ON(t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+            GROUP BY t1.biz_system,t2.statist_date
+        ) t
+        GROUP BY t.biz_system
+    ) r2 ON r1.biz_system = r2.biz_system
+    LEFT JOIN (
+        SELECT t.biz_system,MAX(t.storeMax) storeMax
+        FROM(
+            SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) storeMax
+            FROM(
+                select biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                FROM screen_resource_allocation
+                where is_delete = '0' <include refid="where_sql"/>
+                GROUP BY biz_system,resource_pool,pod
+                HAVING SUM(use_allocation) > 0
+            ) t1
+            LEFT JOIN (
+                SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                FROM screen_max_utilization
+                where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+            ) t2 ON(t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+            GROUP BY t1.biz_system,t2.statist_date
+        ) t
+        GROUP BY t.biz_system
+    ) r3 ON r1.biz_system = r3.biz_system
+    ORDER BY cpuMax desc,storeMax desc
+    </select>
+
+    <select id="getAvgUtilizationByMonth" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+        tmp.statist_date statistDate,
+        IFNULL(storeAvg,0) storeAvg,
+        IFNULL(cpuAvg,0) cpuAvg
+    FROM(
+        SELECT DISTINCT statist_date
+        FROM screen_avg_utilization
+        where 1=1 and is_delete = '0'
+        <include refid="where_sql"></include>
+        GROUP BY statist_date
+    ) tmp
+    LEFT JOIN(
+        SELECT r.statist_date,ROUND(SUM(r.cnt1*r.ag)/SUM(r.cnt1),2) storeAvg
+        FROM(
+            SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.avg_utilization)/SUM(t.cnt) ag,SUM(t.cnt) cnt1
+            FROM (
+                SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.avg_utilization,t2.statist_date
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    WHERE is_delete = '0' <include refid="where_sql"></include>
+                    GROUP BY biz_system,resource_pool,pod
+                    HAVING SUM(amount) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    WHERE is_delete = '0' and hardware_type = '内存' <include refid="where_sql"></include>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                WHERE t2.statist_date is not null
+            ) t
+            GROUP BY t.biz_system,t.statist_date
+        ) r
+        GROUP BY r.statist_date
+    ) rr1 on tmp.statist_date = rr1.statist_date
+    LEFT JOIN (
+        SELECT r.statist_date,ROUND(SUM(r.cnt1*r.ag)/SUM(r.cnt1),2) cpuAvg
+        FROM(
+            SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.avg_utilization)/SUM(t.cnt) ag,SUM(t.cnt) cnt1
+            FROM (
+                SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.avg_utilization,t2.statist_date
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    WHERE is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                    HAVING SUM(amount) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    WHERE is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                WHERE t2.statist_date is not null
+            ) t
+            GROUP BY t.biz_system,t.statist_date
+        ) r
+        GROUP BY r.statist_date
+    ) rr2 on tmp.statist_date = rr2.statist_date
+    ORDER BY tmp.statist_date
+    </select>
+
+    <select id="getAvgUtilizationByBizSystem" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+          r1.biz_system bizSystem,
+          r2.cpuAvg,
+          r3.storeAvg
+        FROM(
+            SELECT biz_system
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="where_sql"/>
+            GROUP BY biz_system
+            HAVING SUM(amount) > 0
+        ) r1 LEFT JOIN (
+            SELECT t.biz_system,ROUND(AVG(t.cpuAvg),2) cpuAvg
+            FROM(
+                SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.avg_utilization)/SUM(t1.cnt),2) cpuAvg
+                FROM(
+                    select biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                    HAVING SUM(use_allocation) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                ) t2 ON(t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t2.statist_date
+            ) t
+            GROUP BY t.biz_system
+        ) r2 ON r1.biz_system = r2.biz_system
+        LEFT JOIN (
+            SELECT t.biz_system,ROUND(AVG(t.storeAvg),2) storeAvg
+            FROM(
+                SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.avg_utilization)/SUM(t1.cnt),2) storeAvg
+                FROM(
+                    select biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                    HAVING SUM(use_allocation) > 0
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,avg_utilization,statist_date
+                    FROM screen_avg_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                ) t2 ON(t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t2.statist_date
+            ) t
+            GROUP BY t.biz_system
+        ) r3 ON r1.biz_system = r3.biz_system
+        ORDER BY cpuAvg desc,storeAvg desc
+    </select>
+
+    <select id="getMonthMaxUtilization" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT (
+        SELECT IFNULL(MAX(mx1),0) finalMax
+        FROM(
+            SELECT r.statist_date,ROUND(SUM(r.cnt1*r.mx)/SUM(r.cnt1),2) mx1
+            FROM(
+                SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.max_utilization)/SUM(t.cnt) mx,SUM(t.cnt) cnt1
+                FROM (
+                    SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.max_utilization,t2.statist_date
+                    FROM(
+                        SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        WHERE is_delete = '0' <include refid="where_sql"/>
+                        GROUP BY biz_system,resource_pool,pod
+                        HAVING SUM(amount) > 0
+                    ) t1
+                    LEFT JOIN (
+                        SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                        FROM screen_max_utilization
+                        WHERE is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                    ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                    WHERE t2.statist_date is not null
+                ) t
+                GROUP BY t.biz_system,t.statist_date
+            ) r
+            GROUP BY r.statist_date
+        ) rs
+    ) cpuMax,
+    (
+        SELECT IFNULL(MAX(mx1),0) finalMax
+        FROM(
+            SELECT r.statist_date,ROUND(SUM(r.cnt1*r.mx)/SUM(r.cnt1),2) mx1
+            FROM(
+                SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.max_utilization)/SUM(t.cnt) mx,SUM(t.cnt) cnt1
+                FROM (
+                    SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.max_utilization,t2.statist_date
+                    FROM(
+                        SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        WHERE is_delete = '0' <include refid="where_sql"/>
+                        GROUP BY biz_system,resource_pool,pod
+                        HAVING SUM(amount) > 0
+                    ) t1
+                    LEFT JOIN (
+                        SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                        FROM screen_max_utilization
+                        WHERE is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                    ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                    WHERE t2.statist_date is not null
+                ) t
+                GROUP BY t.biz_system,t.statist_date
+            ) r
+            GROUP BY r.statist_date
+        ) rs
+    ) storeMax
+    </select>
+
+    <select id="getMonthAvgUtilization" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT (
+        SELECT IFNULL(ROUND(AVG(rs.ag1),2),0) finalAvg
+        FROM(
+            SELECT r.statist_date,ROUND(SUM(r.cnt1*r.ag)/SUM(r.cnt1),2) ag1
+            FROM(
+                SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.avg_utilization)/SUM(t.cnt) ag,SUM(t.cnt) cnt1
+                FROM (
+                    SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.avg_utilization,t2.statist_date
+                    FROM(
+                        SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        WHERE is_delete = '0' <include refid="where_sql"/>
+                        GROUP BY biz_system,resource_pool,pod
+                        HAVING SUM(amount) > 0
+                    ) t1
+                    LEFT JOIN (
+                        SELECT biz_system,resource_pool,pod,avg_utilization,statist_date
+                        FROM screen_avg_utilization
+                        WHERE is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                    ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                    WHERE t2.statist_date is not null
+                ) t
+                GROUP BY t.biz_system,t.statist_date
+            ) r
+            GROUP BY r.statist_date
+        ) rs
+    ) cpuAvg,
+    (
+        SELECT IFNULL(ROUND(AVG(rs.ag1),2),0) finalAvg
+        FROM(
+            SELECT r.statist_date,ROUND(SUM(r.cnt1*r.ag)/SUM(r.cnt1),2) ag1
+            FROM(
+                SELECT t.biz_system,t.statist_date,SUM(t.cnt*t.avg_utilization)/SUM(t.cnt) ag,SUM(t.cnt) cnt1
+                FROM (
+                    SELECT t1.biz_system,t1.resource_pool,t1.pod,t1.cnt,t2.avg_utilization,t2.statist_date
+                    FROM(
+                        SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        WHERE is_delete = '0' <include refid="where_sql"/>
+                        GROUP BY biz_system,resource_pool,pod
+                        HAVING SUM(amount) > 0
+                    ) t1
+                    LEFT JOIN (
+                        SELECT biz_system,resource_pool,pod,avg_utilization,statist_date
+                        FROM screen_avg_utilization
+                        WHERE is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                    ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                    WHERE t2.statist_date is not null
+                ) t
+                GROUP BY t.biz_system,t.statist_date
+            ) r
+            GROUP BY r.statist_date
+        ) rs
+    ) storeAvg
+    </select>
+    
+    <select id="getBizSystemCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+    SELECT count(DISTINCT biz_system) bizCount
+    FROM screen_resource_allocation
+    where is_delete = '0' <include refid="where_sql"/>
+    </select>
+
+    <select id="getPmBizSystemCountNotIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT r1.biz_system) count
+        FROM(
+            SELECT biz_system
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="vmcount_where_sql"/>
+            GROUP BY biz_system
+            HAVING SUM(use_allocation) > 0
+        ) r1
+        LEFT JOIN(
+            SELECT t.biz_system,MAX(t.mx) cpuMax
+            FROM(
+                SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t2.statist_date
+            ) t
+            GROUP BY t.biz_system
+        ) r2 ON r1.biz_system = r2.biz_system
+        LEFT JOIN (
+            SELECT t.biz_system,MAX(t.mx) storeMax
+            FROM(
+                SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t2.statist_date
+            ) t
+            GROUP BY t.biz_system
+        ) r3 ON r1.biz_system = r3.biz_system
+        WHERE r2.cpuMax <![CDATA[ < ]]> 30 and r3.storeMax <![CDATA[ < ]]> 30
+    </select>
+
+    <select id="getPmBizSystemCountWithIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM(
+            select biz_system,resource_pool
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="vmcount_where_sql"/>
+            GROUP BY biz_system,resource_pool
+            HAVING SUM(use_allocation) > 0
+        ) r1
+        LEFT JOIN(
+            SELECT t.biz_system,t.resource_pool,MAX(t.mx) cpuMax
+            FROM(
+                SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+            ) t
+            GROUP BY t.biz_system,t.resource_pool
+        ) r2 ON (r1.biz_system = r2.biz_system and r1.resource_pool = r2.resource_pool)
+        LEFT JOIN(
+            SELECT t.biz_system,t.resource_pool,MAX(t.mx) storeMax
+            FROM(
+                SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+            ) t
+            GROUP BY t.biz_system,t.resource_pool
+        ) r3 ON (r1.biz_system = r3.biz_system and r1.resource_pool = r3.resource_pool)
+        WHERE r2.cpuMax <![CDATA[ < ]]> 30 and r3.storeMax <![CDATA[ < ]]> 30
+    </select>
+
+    <select id="getBizSystemListWithIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT biz_system bizSystem, resource_pool resourcePool, cpuMax,storeMax,subStandard	 FROM
+        (
+        SELECT monthly_time, biz_system, resource_pool, cpuMax,storeMax,(CASE WHEN MAX(i) <![CDATA[ >= ]]>3 THEN MAX(i) ELSE 0 END) subStandard FROM (
+        SELECT *,@mon = monthly_time flag ,
+        IF (@biz != biz_system OR @pool!=resource_pool , @mon:=#{monthlyTime}, @mon:=DATE_FORMAT(DATE_SUB(CONCAT(@mon, '-01') ,INTERVAL 1 MONTH), '%Y-%m')),
+        (CASE WHEN @mon = monthly_time AND @biz='' AND @pool='' THEN @i:=1
+        WHEN @mon = monthly_time AND @biz = biz_system AND @pool=resource_pool THEN @i:=@i+1
+        WHEN @mon = monthly_time AND (@biz != biz_system OR @pool!=resource_pool) THEN @i:=1
+        WHEN @mon != monthly_time THEN @i:=0 ELSE @i:=0 END) rank,
+        @biz:= biz_system,@pool:= resource_pool,        @i i, @biz b,@mon m,@pool p
+
+        FROM (
+
+        SELECT monthly_time,biz_system,resource_pool,IFNULL(MAX(cpuMax),0) cpuMax,IFNULL(MAX(storeMax),0) storeMax FROM
+        (
+        SELECT monthly_time,biz_system,resource_pool,hardware_type,MAX(mx),
+        (CASE WHEN hardware_type='CPU' THEN MAX(mx) ELSE NULL END ) cpuMax,
+        (CASE WHEN hardware_type='内存' THEN MAX(mx) ELSE NULL END ) storeMax
+        FROM
+        (
+        SELECT sra.`monthly_time`, sra.`biz_system`, sra.`resource_pool`, smu.`statist_date`,smu.`hardware_type`, IFNULL(ROUND(SUM(sra.cnt*smu.max_utilization)/SUM(sra.cnt),2),0) mx FROM
+        (SELECT `monthly_time`, `biz_system`, `resource_pool`,pod, SUM(`use_allocation` - `not_inspect_count`) cnt FROM `screen_resource_allocation`
+        WHERE is_delete = '0'
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="deviceType!=null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+        GROUP BY `biz_system`, `resource_pool`, `monthly_time`, pod
+        ORDER BY monthly_time DESC) sra
+        LEFT JOIN
+        (SELECT monthly_time,biz_system,resource_pool,pod,max_utilization,statist_date,hardware_type
+        FROM screen_max_utilization
+        WHERE is_delete = '0'
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="deviceType!=null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if> AND hardware_type IN ( 'CPU','内存' ) ) smu
+        ON sra.`biz_system` = smu.`biz_system` AND sra.`resource_pool`=smu.`resource_pool` AND sra.`pod`= smu.`pod` AND sra.`monthly_time` = smu.`monthly_time`
+        GROUP BY smu.`hardware_type`,sra.`monthly_time`,smu.`statist_date`,sra.biz_system,sra.resource_pool
+        ) res
+        WHERE IFNULL(res.hardware_type,'') != ''
+        GROUP BY res.biz_system,res.resource_pool,res.`monthly_time`,res.`hardware_type`
+        ORDER BY res.`monthly_time`,res.biz_system,res.resource_pool DESC
+        ) res1
+        GROUP BY biz_system,resource_pool,`monthly_time`
+        ORDER BY biz_system,resource_pool,`monthly_time` DESC
+
+        ) res2
+        ,
+        (SELECT @i:=0,@j:=0, @mon:='',@biz:='',@pool:='') s
+        WHERE 1=1 and (cpuMax != 0 or storeMax != 0) AND monthly_time<![CDATA[ <= ]]> #{monthlyTime}  <include refid="where_biz_list"/>
+        ) res3
+        GROUP BY biz_system,resource_pool
+        ORDER BY biz_system,resource_pool DESC
+        ) res4
+        WHERE monthly_time=#{monthlyTime}
+        ORDER BY cpuMax DESC,storeMax DESC
+    </select>
+    <select id="getBizSystemListWithIdcType-OLD" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+          r1.biz_system bizSystem,
+          r1.resource_pool resourcePool,
+          IFNULL(r2.cpuMax,0) cpuMax,
+          IFNULL(r3.storeMax,0) storeMax
+        FROM(
+            select biz_system,resource_pool
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="vmcount_where_sql"/>
+            GROUP BY biz_system,resource_pool
+        ) r1
+        LEFT JOIN(
+            SELECT t.biz_system,t.resource_pool,MAX(t.mx) cpuMax
+            FROM(
+                SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = 'CPU' <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+            ) t
+            GROUP BY t.biz_system,t.resource_pool
+        ) r2 ON (r1.biz_system = r2.biz_system and r1.resource_pool = r2.resource_pool)
+        LEFT JOIN(
+            SELECT t.biz_system,t.resource_pool,MAX(t.mx) storeMax
+            FROM(
+                SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = '内存' <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+            ) t
+            GROUP BY t.biz_system,t.resource_pool
+        ) r3 ON (r1.biz_system = r3.biz_system and r1.resource_pool = r3.resource_pool)
+        WHERE 1=1 and (cpuMax != 0 or storeMax != 0) <include refid="where_biz_list"/>
+        ORDER BY cpuMax desc,storeMax desc
+    </select>
+
+    <sql id="where_biz_list">
+        <if test="moduleFlag != null and moduleFlag == 1">
+            and cpuMax <![CDATA[ < ]]> 30 and storeMax <![CDATA[ < ]]> 30
+        </if>
+        <if test="moduleFlag != null and moduleFlag == 2">
+            and cpuMax <![CDATA[ < ]]> 30
+        </if>
+        <if test="moduleFlag != null and moduleFlag == 3">
+            and storeMax <![CDATA[ < ]]> 30
+        </if>
+    </sql>
+
+    <select id="getVmBizSystemCountNotIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT r1.biz_system) count
+        FROM(
+            SELECT biz_system
+            FROM screen_resource_allocation
+            WHERE is_delete = '0' <include refid="vmcount_where_sql"/>
+            GROUP BY biz_system
+            HAVING SUM(use_allocation) > 0
+        ) r1
+        LEFT JOIN(
+            SELECT t.biz_system,MAX(t.mx) mx
+            FROM(
+                SELECT t1.biz_system,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0'and hardware_type = #{hardwareType} <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t2.statist_date
+            ) t
+            GROUP BY t.biz_system
+        ) r2 ON r1.biz_system = r2.biz_system
+        WHERE r2.mx <![CDATA[ < ]]> 30
+    </select>
+
+    <sql id="vmcount_where_sql">
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="monthlyTime!=null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        <if test="deviceType!=null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+    </sql>
+
+    <select id="getVmBizSystemCountWithIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT count(*) count
+        FROM(
+            select biz_system,resource_pool
+            FROM screen_resource_allocation
+            where is_delete = '0' <include refid="vmcount_where_sql"/>
+            GROUP BY biz_system,resource_pool
+        ) r1
+        LEFT JOIN(
+            SELECT t.biz_system,t.resource_pool,MAX(t.mx) mx
+            FROM(
+                SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                FROM(
+                    SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="vmcount_where_sql"/>
+                    GROUP BY biz_system,resource_pool,pod
+                ) t1
+                LEFT JOIN (
+                    SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                    FROM screen_max_utilization
+                    where is_delete = '0' and hardware_type = #{hardwareType} <include refid="vmcount_where_sql"/>
+                ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+            ) t
+            GROUP BY t.biz_system,t.resource_pool
+        ) r2 ON (r1.biz_system = r2.biz_system and r1.resource_pool = r2.resource_pool)
+        WHERE r2.mx <![CDATA[ < ]]>  30
+    </select>
+
+    <select id="getStoreBizSystemCountNotIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+    SELECT count(*) count
+    FROM(
+        SELECT biz_system,sum(amount) total,sum(use_allocation) apply
+        FROM screen_resource_allocation
+        where is_delete = '0' and module_type = '存储资源'
+        <include refid="where_sql"></include>
+        GROUP BY biz_system
+    ) t1
+    WHERE t1.apply/t1.total <![CDATA[ < ]]> 40
+    </select>
+
+    <select id="getStoreBizSystemCountWithIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+    SELECT count(*) count
+    FROM(
+        SELECT resource_pool,biz_system,sum(amount) total,sum(use_allocation) apply
+        FROM screen_resource_allocation
+        where is_delete = '0' and module_type = '存储资源'
+        <include refid="where_sql"></include>
+        GROUP BY resource_pool,biz_system
+        having sum(amount) > 0
+    ) t1
+    WHERE IFNULL(t1.apply/t1.total,0) <![CDATA[ < ]]> 40
+    </select>
+
+    <select id="getStoreBizSystemListWithIdcType-old" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+      t1.biz_system bizSystem,
+      t1.resource_pool resourcePool,
+      IFNULL(ROUND(t1.apply*100/t1.total,2),0) cloudStore
+    FROM(
+        SELECT resource_pool,biz_system,sum(amount) total,sum(use_allocation) apply
+        FROM screen_resource_allocation
+        where is_delete = '0' and module_type = '存储资源'
+        <include refid="where_sql"></include>
+        GROUP BY resource_pool,biz_system
+        having sum(amount) > 0
+    ) t1
+    WHERE IFNULL(t1.apply/t1.total,0) <![CDATA[ < ]]> 40
+    order by t1.biz_system,t1.resource_pool,t1.apply/t1.total
+    </select>
+
+    <select id="getStoreBizSystemListWithIdcType" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT bizSystem, resourcePool,cloudStore,rank subStandard FROM (
+        SELECT monthly_time, bizsystem,resourcePool,cloudStore, (CASE WHEN MAX(i) <![CDATA[ >= ]]> 3 THEN MAX(i) ELSE 0 END) RANK FROM (
+        SELECT *,@mon = monthly_time flag ,
+        IF (@biz != bizsystem OR @pool!=resourcePool , @mon:=#{monthlyTime}, @mon:=DATE_FORMAT(DATE_SUB(CONCAT(@mon, '-01') ,INTERVAL 1 MONTH), '%Y-%m')),
+        (CASE WHEN @mon = monthly_time AND @biz='' AND @pool='' THEN @i:=1
+        WHEN @mon = monthly_time AND @biz = bizSystem AND @pool=resourcePool THEN @i:=@i+1
+        WHEN @mon = monthly_time AND (@biz != bizSystem OR @pool!=resourcePool) THEN @i:=1
+        WHEN @mon != monthly_time THEN @i:=1 ELSE @i:=0 END) rank,
+        @biz:= bizSystem,@pool:= resourcePool,
+        @i i, @biz b,@mon m,@pool p  FROM (
+        SELECT
+        t1.monthly_time,
+        t1.biz_system bizSystem,
+        t1.resource_pool resourcePool,
+        IFNULL(ROUND(t1.apply*100/t1.total,2),0) cloudStore
+        FROM(
+        SELECT monthly_time,resource_pool,biz_system,SUM(amount) total,SUM(use_allocation) apply
+        FROM screen_resource_allocation
+        WHERE is_delete = '0' AND module_type = '存储资源'
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        GROUP BY resource_pool,biz_system,monthly_time
+        HAVING SUM(amount) > 0
+        ORDER BY resource_pool,biz_system,monthly_time
+        ) t1
+        WHERE IFNULL(t1.apply/t1.total,0) <![CDATA[ < ]]> 40 AND monthly_time<![CDATA[ <= ]]>#{monthlyTime}
+        ORDER BY t1.biz_system,t1.resource_pool,t1.apply/t1.total,t1.monthly_time DESC
+        ) res,
+        (SELECT @i:=0, @mon:='',@biz:='',@pool:='') s
+        ) res1
+        GROUP BY bizsystem,resourcepool
+        ORDER BY bizsystem,resourcepool DESC
+        ) res2 WHERE 1=1
+        <if test="monthlyTime!=null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        ORDER BY bizSystem,resourcepool,cloudStore
+
+    </select>
+    <select id="getMaxCpuAndStoreCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM screen_max_utilization
+        WHERE is_delete = '0'
+        <include refid="where_sql"/>
+    </select>
+
+    <select id="getAvgCpuAndStoreCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM screen_avg_utilization
+        WHERE is_delete = '0'
+        <include refid="where_sql"/>
+    </select>
+    
+    <select id="getResourceAllocationCount" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.lang.Integer">
+        SELECT SUM(amount)
+        FROM screen_resource_allocation
+        WHERE is_delete = '0'
+        <include refid="where_sql"/>
+    </select>
+
+    <!-- ${tableType} -->
+    <delete id="deleteOldData" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest">
+        delete from ${tableType}
+        where is_delete = '0'
+        <include refid="where_sql"/>
+    </delete>
+
+    <select id="getCpuMaxListWithIT" resultType="java.util.HashMap">
+        SELECT t.department1,t.department2,MAX(t.cpuMax) mxNumber
+        FROM (
+                SELECT t1.department1,t1.department2,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) cpuMax
+                FROM (
+                        SELECT department1,department2,device_type,biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                        FROM screen_resource_allocation
+                        where is_delete = '0' and device_type in ('物理机','虚拟机') and monthly_time = #{monthlyTime} and department1 = '信息技术中心'
+                        GROUP BY department1,department2,device_type,biz_system,resource_pool,pod
+                        HAVING SUM(use_allocation) > 0
+                ) t1
+                LEFT JOIN (
+                        SELECT department1,department2,device_type,biz_system,resource_pool,pod,max_utilization,statist_date
+                        FROM screen_max_utilization
+                        where is_delete = '0' and hardware_type = 'CPU' and monthly_time = #{monthlyTime} and department1 = '信息技术中心'
+                ) t2 ON (t1.department1 = t2.department1 and t1.department2 = t2.department2 and t1.device_type = t2.device_type and t1.biz_system = t2.biz_system
+                                and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                GROUP BY t1.department1,t1.department2,t2.statist_date
+        ) t
+        GROUP BY t.department1,t.department2
+    </select>
+
+    <select id="getCpuMaxListWithNotIT" resultType="java.util.HashMap">
+        SELECT t.department1,null department2,MAX(t.cpuMax) mxNumber
+        FROM (
+            SELECT t1.department1,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) cpuMax
+            FROM (
+                            SELECT department1,device_type,biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                            FROM screen_resource_allocation
+                            where is_delete = '0' and device_type in ('物理机','虚拟机') and monthly_time = #{monthlyTime} and department1 != '信息技术中心'
+                            GROUP BY department1,device_type,biz_system,resource_pool,pod
+                            HAVING SUM(use_allocation) > 0
+            ) t1
+            LEFT JOIN (
+                            SELECT department1,device_type,biz_system,resource_pool,pod,max_utilization,statist_date
+                            FROM screen_max_utilization
+                            where is_delete = '0' and hardware_type = 'CPU' and monthly_time = #{monthlyTime} and department1 != '信息技术中心'
+            ) t2 ON (t1.department1 = t2.department1 and t1.device_type = t2.device_type and t1.biz_system = t2.biz_system
+                     and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+            GROUP BY t1.department1,t2.statist_date
+        ) t
+        GROUP BY t.department1
+    </select>
+
+    <select id="getSpecificDeviceByBz" resultType="java.util.LinkedHashMap">
+        SELECT
+            a.id resourceId,
+            a.ip,
+            a.device_name deviceName,
+            idc.idc_name idcType,
+            b.ServiceIP serviceIp
+        FROM cmdb_instance a
+        LEFT JOIN cmdb_instance_server b ON a.id = b.id
+        LEFT JOIN cmdb_idc_manager idc ON (idc.id = a.idcType and idc.is_delete = '0')
+        WHERE a.is_delete = '0' and device_class = '9561'
+        and a.bizSystem IN (SELECT id FROM cmdb_business_system WHERE bizSystem = #{bizSystem})
+        <if test="idcList != null and idcList.size > 0">
+            and idc.idc_name IN
+            <foreach collection="idcList" open="(" close=")" separator="," item="idc">
+                #{idc}
+            </foreach>
+        </if>
+        <if test="deviceType != null and deviceType == '物理机'">
+            and device_type != 'f5f6b15cc48a43a1b02467f0bfcfbeae'
+        </if>
+        <if test="deviceType != null and deviceType == '虚拟机'">
+            and device_type = 'f5f6b15cc48a43a1b02467f0bfcfbeae'
+        </if>
+        ORDER BY INET_ATON(a.ip)
+        <if test="pageNo != null and pageSize != null">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+
+    <select id="getSpecificDeviceCountByBz" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM cmdb_instance a
+        LEFT JOIN cmdb_idc_manager idc ON (idc.id = a.idcType and idc.is_delete = '0')
+        WHERE a.is_delete = '0' and device_class = '9561'
+        and a.bizSystem IN (SELECT id FROM cmdb_business_system WHERE bizSystem = #{bizSystem})
+        <if test="idcList != null and idcList.size > 0">
+            and idc.idc_name IN
+            <foreach collection="idcList" open="(" close=")" separator="," item="idc">
+                #{idc}
+            </foreach>
+        </if>
+        <if test="deviceType != null and deviceType == '物理机'">
+            and device_type != 'f5f6b15cc48a43a1b02467f0bfcfbeae'
+        </if>
+        <if test="deviceType != null and deviceType == '虚拟机'">
+            and device_type = 'f5f6b15cc48a43a1b02467f0bfcfbeae'
+        </if>
+    </select>
+</mapper>

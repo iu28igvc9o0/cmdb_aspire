@@ -1,0 +1,80 @@
+server:
+  port: 29920
+  tomcat:  
+    max-threads: 100
+    min-spareThreads: 20
+    max-connections: 100
+    accept-count: 100
+    
+    
+#spring.main.web-application-type: none    
+  
+spring: 
+
+  elasticsearch.rest: 
+    uris: https://111.12.83.145:9201
+    username: admin 
+    password: 8UHLr8_86_gg
+    connectionTimeout: PT2S
+    readTimeout: PT5M
+    
+#  elasticsearch.rest: 
+#    uris: http://10.12.70.63:9200
+#    connectionTimeout: PT2S
+#    readTimeout: PT5M
+
+
+  datasource.druid: 
+    url: jdbc:mysql://10.12.70.40:3306/DEPLOY_PROXY
+    username: root
+    password: 1234@qwer
+    useSSL: false
+    initial-size: 0
+    max-active: 8
+    min-idle: 0
+    max-wait: -1
+
+mybatis: 
+  mapper-locations: 
+    - 'classpath*:sqlmap/*Mapper.xml' 
+    
+local: 
+  config:
+    es-run-action: 
+      reindex: 
+        switch: false
+        sync-nodata-alert: false        # 如果连续未同步到数据, 是否触发告警
+        sync-nodata-max-try-count: 10   # 连续未同步到数据的重试次数, 达到此值会触发产生未同步到数据的告警
+        single-req-batch-count: 2000
+        reidx-span-time: PT5M         
+        run-interval: PT30S
+        source-provinces: ah,bj,fj,gs,gd,gx,gz,hi,he,ha,hlj,hb,hn,jl,js,jx,ln,nm,nx,sd,sx,sn,sh,sc,tj,xz,xj,yn,zj,cq,qh
+          
+      compress-overall5min: 
+        switch: false
+        compress-span: PT5M 
+        provinces: 安徽,河南,山东,广西,河北,四川,辽宁,福建,广东,山西,贵州,重庆,云南,黑龙江,陕西,江西,湖南,内蒙古,湖北,上海,甘肃,吉林,北京,天津,江苏,浙江,宁夏,海南,新疆,西藏,青海
+    
+      bytedance-alert: 
+        switch: false
+        min_req_totalcount: 1000
+        trigger_percent_floor_4xx: 0.00010
+        trigger_percent_floor_5xx: 0.0001   
+        api_username: mobile_cdn
+        api_token: 1ccac75d170146999971aa238a02fd92    
+        domainList: 
+          - 'v96-tt.ixigua.com'
+        
+      alert-weixin-notify: 
+        switch: false
+        run-interval: PT5M
+
+matric-alert: 
+  stepcount-cutdown: 3    # 告警收敛频次, 举例：如果配置成3, 则连续3次告警后, 才刷新该告警的 scan_mark_time, 使得该告警进入可扫描 
+          
+logging: 
+  config: classpath:log4j2.yml
+  level:
+    org.springframework: info
+    com.aspire.cdn.esdatawrap: info  
+  

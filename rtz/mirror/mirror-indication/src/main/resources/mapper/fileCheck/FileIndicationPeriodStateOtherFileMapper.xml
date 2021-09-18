@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.fileCheck.dao.IFileIndicationPeriodStateOtherDAO">
+
+    <resultMap type="com.aspire.fileCheck.entity.FileIndicationPeriodStateOtherFileEntity" id="indicationStateMap">
+        <result property="periodConfigId" column="period_config_id" jdbcType="VARCHAR"/>
+        <result property="uploadDate" column="upload_date" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifyTime" column="modify_time" jdbcType="TIMESTAMP"/>
+        <result property="otherDayCount" column="other_day_count" jdbcType="DOUBLE"/>
+        <result property="count" column="count" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <select id="getDataByDate" resultMap="indicationStateMap">
+		select * from file_indication_period_state_otherfile s where s.upload_date =  #{uploadDate}
+	</select>
+
+    <insert id="batchInsertOtherFile" parameterType="java.util.List">
+        INSERT INTO file_indication_period_state_otherfile ( `upload_date`, `period_config_id`, `other_day_count`,`count`,
+        `create_time`) VALUES
+        <foreach collection="list" item="item" separator="," index="index">
+            (
+            #{item.uploadDate},
+            #{item.periodConfigId},
+            #{item.otherDayCount},
+            #{item.count},
+            now()
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        other_day_count = values (other_day_count),
+        `count` = values (`count`),
+        modify_time = now()
+    </insert>
+
+    <select id="getOtherFileData" resultType="java.util.LinkedHashMap">
+        select fpso.upload_date, fi.file_indication_code, md.dict_value, fi.file_indication_name, fpc.province_code, mp.province_name, fpso.other_day_count other_day_count, fpso.count
+        from file_indication_period_state_otherfile fpso
+        inner join file_indication_period_config fpc on fpso.period_config_id = fpc.config_id
+        inner join file_indication fi on fi.file_indication_id = fpc.indication_id
+        inner join mirror_dict md on (fpc.dict_period = md.dict_id and md.dict_value='23:00-00:00')
+        inner join mirror_province mp on mp.province_code = fpc.province_code
+        where 1=1
+        <if test="uploadDate != null and uploadDate != ''">
+            and fpso.upload_date = #{uploadDate}
+        </if>
+        <if test="type != null and type != ''">
+            and fi.file_indication_type = #{type}
+        </if>
+        order by fi.file_indication_code, fpc.province_code
+    </select>
+
+    <resultMap type="com.aspire.fileCheck.entity.FileStateOtherReportEntity" id="indicationStateOtherFileMap">
+        <result property="periodConfigId" column="period_config_id" jdbcType="VARCHAR"/>
+        <result property="uploadDate" column="upload_date" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="modifyTime" column="modify_time" jdbcType="TIMESTAMP"/>
+        <result property="fileIndicationName" column="file_indication_name" jdbcType="VARCHAR"/>
+        <result property="fileIndicationId" column="file_indication_id" jdbcType="TINYINT"/>
+        <result property="provinceCode" column="province_code" jdbcType="VARCHAR"/>
+        <result property="provinceName" column="province_name" jdbcType="VARCHAR"/>
+        <result property="dictPeriod" column="dict_period" jdbcType="VARCHAR"/>
+        <result property="otherDayCount" column="other_day_count" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <select id="getOtherFileReport" resultMap="indicationStateOtherFileMap">
+        SELECT
+        ttt.period_config_id,
+        ttt.upload_date,
+        ttt.other_day_count,
+        ttt.province_code,
+        ttt.dict_period,
+        ttt.file_indication_id,
+        ttt.file_indication_name,
+        ttt.create_time,
+        p.province_name
+        FROM
+        (
+        select file.file_indication_id,file.file_indication_name ,ttff.*
+        from file_indication file
+        left join (
+        SELECT
+        tt.period_config_id,
+        tt.upload_date,
+        tt.other_day_count,
+        tt.create_time,
+        ff.province_code,
+        ff.dict_period,
+        ff.indication_id
+        FROM
+        (
+        SELECT
+        s.period_config_id,
+        s.upload_date,
+        s.other_day_count,
+        s.create_time
+        FROM
+        file_indication_period_state_otherfile s
+        WHERE
+        s.upload_date = #{thisDate}
+        ) tt,
+        (
+        SELECT
+        f.config_id,
+        f.province_code,
+        f.dict_period,
+        f.fix_file_count,
+        f.indication_id
+        FROM
+        file_indication_period_config f,mirror_dict m
+        WHERE
+        f.dict_period = m.dict_id
+        <if test="provinceCode!=null and provinceCode!=''">
+            and f.province_code=#{provinceCode}
+        </if>
+        <if test="period!=null and period!=''">
+            and m.dict_value=#{period}
+        </if>
+        ) ff
+        WHERE
+        ff.config_id = tt.period_config_id)ttff
+        on file.file_indication_id = ttff.indication_id
+        where 1=1
+        <if test="catolog!=null and catolog!=''">
+            and file.file_indication_type = #{catolog}
+        </if>
+        <if test="fileIndication!=null and fileIndication!=''">
+            and file.file_indication_id = #{fileIndication}
+        </if>
+        ) ttt
+        LEFT JOIN mirror_province p ON p.province_code = ttt.province_code
+        order by ttt.file_indication_id,ttt.province_code,ttt.dict_period,ttt.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="36px" height="36px" viewBox="0 0 36 36" enable-background="new 0 0 36 36" xml:space="preserve">
+	<path fill="#FF0000" d="M34,27c0,1.657-1.343,3-3,3H5c-1.657,0-3-1.343-3-3V7c0-1.657,1.343-3,3-3h26c1.657,0,3,1.343,3,3V27z">
+		<animate attributeName="opacity" from="1" to="0" begin="0s" dur="2s" repeatCount="indefinite" />
+		<!--<animate attributeName="fill" from="#FF0000" to="#1362AA" begin="0s" dur="3s" repeatCount="indefinite" />-->
+	</path>
+<g>
+	<polygon fill="#FFFFFF" points="25.572,15.241 24.229,13.759 27.641,10.667 24.229,7.575 25.572,6.093 30.619,10.667 	"/>
+	<rect x="7" y="10" fill="#FFFFFF" width="21" height="2"/>
+</g>
+<g>
+	<polygon fill="#FFFFFF" points="25.572,27.241 24.229,25.759 27.641,22.667 24.229,19.575 25.572,18.093 30.619,22.667 	"/>
+	<rect x="7" y="22" fill="#FFFFFF" width="21" height="2"/>
+</g>
+<g>
+	<polygon fill="#FFFFFF" points="10.725,21.241 5.678,16.667 10.725,12.093 12.068,13.575 8.656,16.667 12.068,19.759 	"/>
+	<rect x="8" y="16" fill="#FFFFFF" width="21" height="2"/>
+</g>
+</svg>

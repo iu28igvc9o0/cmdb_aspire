@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbixApiJson>
+	<template id="host.get">
+		{
+		    "jsonrpc": "2.0",
+		    "method": "host.get",
+		    "auth": "%s",
+		    "id": %d,
+		    "params": {
+	        	"output": [
+		            "hostid", 
+		            "host", 
+		            "name"
+	        	]
+		    }
+		}
+	</template>
+	
+	<template id="hostinterface.get">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "hostinterface.get", 
+		    "auth": "%s", 
+		    "id": %d, 
+		    "params": {
+		        "output": [
+		            "hostid", 
+		            "ip"
+		        ]
+		    }
+		}
+	</template>
+	
+	<template id="item.get">
+		{
+		    "jsonrpc": "2.0", 
+		    "method": "item.get", 
+		    "auth": "%s", 
+		    "id": %d, 
+		    "params": {
+		        "output": [
+		            "itemid", 
+		            "hostid", 
+		            "key_", 
+		            "value_type", 
+		            "lastvalue"
+		        ], 
+		        "search": {
+		            "key_": "%s"
+		        }
+		    }
+		}
+	</template>
+</zabbixApiJson>

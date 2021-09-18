@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.composite.dao.CompositeResourceDao">
+	<resultMap id="CompositeResource" type="com.migu.tsg.microservice.atomicservice.composite.dao.po.CompositeResource">
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="namespace" property="namespace" jdbcType="VARCHAR" />
+		<result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+		<result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="region_id" property="regionId" jdbcType="VARCHAR" />
+		<result column="space_uuid" property="spaceUuid" jdbcType="VARCHAR" />
+		<result column="project_uuid" property="projectUuid" jdbcType="VARCHAR" />
+		<result column="knamespace_uuid" property="knamespaceUuid" jdbcType="VARCHAR" />
+		<result column="region_name" property="regionName" jdbcType="VARCHAR" />
+		<result column="space_name" property="spaceName" jdbcType="VARCHAR" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="knamespace_name" property="knamespaceName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="queryResourceByUuid" parameterType="map" resultMap="CompositeResource">
+		select r.*, p.name as project_name, s.name space_name, c.name cluster_name, k.name knamespace_name 
+		  from (select * from resources_resource r 
+		  		 where namespace = #{namespace} and type = #{resType} and uuid = #{uuid}) r
+		  <include refid="left_join_constraints" />
+	</select>
+	
+	<select id="queryResourceByRegionId" parameterType="map" resultMap="CompositeResource">
+		select * from resources_resource r where namespace = #{namespace} and type = #{resType} and region_id = #{regionId}
+	</select>
+	
+	<select id="queryResourceByName" parameterType="map" resultMap="CompositeResource">
+		select r.*, p.name as project_name, s.name space_name, c.name cluster_name, k.name knamespace_name 
+		  from (select * from resources_resource r 
+		  		 where namespace = #{namespace} and type = #{resType} and name = #{name}
+		  	    ) r
+		<include refid="left_join_constraints" />	    
+	</select>
+	
+	<select id="queryResourcesByNameList" parameterType="map" resultMap="CompositeResource">
+		select r.*, p.name as project_name, s.name space_name, c.name cluster_name, k.name knamespace_name 
+		  from (select * from resources_resource r where namespace = #{namespace} and type = #{resType} 
+		and name in 
+		<foreach collection="nameList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>) r
+		<include refid="left_join_constraints" />
+	</select>
+	
+	<sql id="left_join_constraints">
+		left join resources_resource p on r.project_uuid = p.uuid and p.type = 'project' and p.namespace = #{namespace}
+		left join resources_resource s on r.space_uuid = s.uuid and s.type = 'space' and s.namespace = #{namespace}
+		left join resources_resource c on r.region_id = c.uuid and c.type = 'region' and c.namespace = #{namespace}
+		left join resources_resource k on r.knamespace_uuid = k.uuid and k.type = 'knamespace' and k.namespace = #{namespace}
+	</sql>
+	
+	<select id="queryResourcesByUuidList" parameterType="map" resultMap="CompositeResource">
+		select * from resources_resource r where namespace = #{namespace} and type = #{resType}
+		and
+		<choose>
+			<when test="uuidList != null and uuidList.size() > 0">
+				uuid in
+				<foreach collection="uuidList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				uuid = '458559a1a-11ae-4c1c-9143-452d680eaf01'
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="queryInobject" parameterType="map" resultMap="CompositeResource">
+		select count(*) from resources_resource r where #{uuid} IN 
+		<foreach collection="object" index="index" item="item" open="(" separator="," close=")">
+			#{object}
+		</foreach>
+	</select>
+	
+	<select id="queryResourcesByNameAndType" parameterType="java.util.Map" resultMap="CompositeResource">
+		select * from resources_resource r where name = #{name} and type = #{resType} 
+	</select>
+	
+	<select id="queryResourceList" parameterType="java.util.Map" resultMap="CompositeResource">
+		select r.*, p.name as project_name, s.name space_name, 
+			   c.name region_name, k.name knamespace_name from 
+		(
+		select * from resources_resource r where 1 = 1
+		<if test="type != null">
+			and r.type = #{type}
+		</if>
+		<if test="uuid != null">
+			and r.uuid = #{uuid}
+		</if>
+		<if test="namespace != null">
+			and r.namespace = #{namespace}
+		</if>
+		<if test="createdBy != null">
+			and r.created_by = #{createdBy}
+		</if>
+		<if test="name != null">
+			and r.name = #{name}
+		</if>
+		<if test="regionId != null and regionId != ''">
+			and r.region_id = #{regionId}
+		</if>
+		<if test="spaceUuid != null and spaceUuid != ''">
+			and r.space_uuid = #{spaceUuid}
+		</if>
+		<if test="projectUuid != null and projectUuid != ''">
+			and r.project_uuid = #{projectUuid}
+		</if>
+		<if test="knamespaceUuid != null and knamespaceUuid != ''">
+			and r.knamespace_uuid = #{knamespaceUuid}
+		</if>
+		) r
+		<include refid="left_join_constraints" />
+		<if test="orderBy != null">
+			order by ${orderBy}
+		</if>
+	</select>
+	
+	<select id="queryResourceCount" parameterType="map" resultType="java.lang.Integer">
+		select count(*) resourceCount 
+		  from resources_resource r where 1 = 1
+			<if test="type != null">
+				and r.type = #{type}
+			</if>
+			<if test="uuid != null">
+				and r.uuid = #{uuid}
+			</if>
+			<if test="namespace != null">
+				and r.namespace = #{namespace}
+			</if>
+			<if test="createdBy != null">
+				and r.created_by = #{createdBy}
+			</if>
+			<if test="name != null">
+				and r.name = #{name}
+			</if>
+			<if test="regionId != null and regionId != ''">
+				and r.region_id = #{regionId}
+			</if>
+			<if test="spaceUuid != null and spaceUuid != ''">
+				and r.space_uuid = #{spaceUuid}
+			</if>
+			<if test="projectUuid != null and projectUuid != ''">
+				and r.project_uuid = #{projectUuid}
+			</if>
+			<if test="knamespaceUuid != null and knamespaceUuid != ''">
+				and r.knamespace_uuid = #{knamespaceUuid}
+			</if>
+	</select>
+	
+	<sql id="resource_columns_join">
+		type, uuid, namespace, name, region_id, space_uuid, project_uuid,knamespace_uuid, created_by, created_at
+	</sql>
+
+	<sql id="condop">
+        <choose>
+            <when test='"contains".equals(cond.op)'>
+                like concat('%', #{cond.value} ,'%')
+            </when>
+            <when test='"icontains".equals(cond.op)'>
+                like concat('%', #{cond.value} ,'%')
+            </when>
+            <otherwise>
+                ${cond.op} #{cond.value}
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="condExpr">
+        <foreach item="cond" index="i" collection="conds">
+             ${cond.prefix} ${cond.column} <include refid="condop" /> ${cond.suffix}
+        </foreach>
+    </sql>
+    
+    <select id="queryResourcesByConds" resultMap="CompositeResource">
+        select * from resources_resource
+        <where>
+            <include refid="condExpr" />
+        </where>
+        <if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+    </select>
+    
+    <select id="queryByUuid" parameterType="map" resultMap="CompositeResource">
+    select r.*, p.name as project_name, s.name space_name, c.name region_name, k.name knamespace_name from 
+		(
+        select * from resources_resource r where uuid = #{uuid}
+        ) r
+		left join resources_resource p on r.project_uuid = p.uuid and p.type = 'project'
+		left join resources_resource s on r.space_uuid = s.uuid and s.type = 'space'
+		left join resources_resource c on r.region_id = c.uuid and c.type = 'region'
+		left join resources_resource k on r.knamespace_uuid = k.uuid and k.type = 'knamespace'
+    </select>
+    
+    <select id="queryByUuidAndNamespace" parameterType="map" resultMap="CompositeResource">
+    select r.*, p.name as project_name, s.name space_name, c.name region_name, k.name knamespace_name from 
+		(
+        select * from resources_resource r where uuid = #{uuid}
+        ) r
+		<include refid="left_join_constraints" />
+    </select>
+
+	<insert id="insertCompositeResource">
+		insert into resources_resource(<include refid="resource_columns_join" />)
+		values 
+		<foreach collection ="array" item="compRes" index= "index" separator =",">
+			(#{compRes.type},#{compRes.uuid},#{compRes.namespace},#{compRes.name},#{compRes.regionId},#{compRes.spaceUuid},#{compRes.projectUuid},#{compRes.knamespaceUuid},#{compRes.createdBy},now())
+		</foreach>
+	</insert>
+	
+	<delete id="removeCompositeResource" parameterType="map">
+		delete from resources_resource  where namespace = #{namespace} and type = #{resType} and uuid = #{uuid}
+	</delete>
+	
+	<delete id="removeCompositeList" parameterType="map">
+		delete from resources_resource  where namespace = #{namespace} and type = #{resType} 
+		and uuid in 
+		<foreach collection="uuidList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+	</delete>
+	<delete id="removeCompositeByName" parameterType="map">
+		delete from resources_resource  where namespace = #{namespace} and name like CONCAT(#{name},'%')   
+		and type in 
+		<foreach collection="resTypeList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+	</delete>
+	<select id="queryResourceByNameTypeList" parameterType="map" resultMap="CompositeResource">
+		select * from resources_resource where namespace = #{namespace} and name like CONCAT(#{name},'%')   
+		and type in 
+		<foreach collection="resTypeList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+	</select>
+	<select id="queryResourceByStartNameType" parameterType="map" resultMap="CompositeResource">
+		select * from resources_resource where namespace = #{namespace} and name like CONCAT(#{name},'%')   
+		and type = #{resType}
+	</select>
+	<select id="queryResourceOnlyByUuid" parameterType="map" resultMap="CompositeResource">
+		select * from resources_resource r where  uuid = #{uuid}
+	</select>
+	<select id="queryResourceByUuidlist" parameterType="map" resultMap="CompositeResource">
+		select * from resources_resource r where 1=1 and
+		<choose>
+			<when test="uuidlist != null and uuidlist.size() > 0">
+				uuid in
+				<foreach collection="uuidlist" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				uuid = '458559a1a-11ae-4c1c-9143-452d680eaf01'
+			</otherwise>
+		</choose>
+	</select>
+    <select id="queryProjectResourceList" parameterType="java.util.Map" resultMap="CompositeResource">
+    select r.*, p.name as project_name, s.name space_name, c.name region_name, k.name knamespace_name from 
+		(
+		select * from resources_resource where 1 = 1
+		<if test="type != null and type !='uuidlist'">
+			and type = #{type}
+		</if>
+		<if test="uuid != null and uuid !=''">
+			and uuid = #{uuid}
+		</if>
+		<if test="namespace != null and namespace !=''">
+			and namespace = #{namespace}
+		</if>
+		<if test="createdBy != null and createdBy !=''">
+			and created_by = #{createdBy}
+		</if>
+		<if test="name != null and name !=''">
+			and name = #{name}
+		</if>
+		<if test="regionId != null and regionId !=''">
+			and region_id = #{regionId}
+		</if>
+		<if test="spaceUuid != null and spaceUuid !=''">
+			and space_uuid = #{spaceUuid}
+		</if>
+		<choose>
+			<when test="projectUuid != null and projectUuid !=''">
+			and uuid in (select resource_uuid from resource_project where project_uuid = #{projectUuid})
+			</when>
+			<otherwise>
+				and project_uuid='' 
+			</otherwise>
+		</choose>
+		) r
+		<include refid="left_join_constraints" />
+		<if test="orderBy != null and orderBy !=''">
+			order by #{orderBy}
+		</if>
+	</select>
+	
+	<update  id="updateResourceRegionid" parameterType="map" >
+		 update resources_resource 
+		 set region_id = #{regionId} 
+		 where  uuid=#{uuid}  and type=#{type} and namespace = #{namespace}
+	</update>
+	<update id="updateResourceNameById" parameterType="map">
+		update resources_resource set name = #{name} where id = #{id}
+	</update>
+	<select id="queryResourcesByKnamespaceUuidList" parameterType="map" resultMap="CompositeResource">
+	select r.*, p.name as project_name, s.name space_name, c.name region_name, k.name knamespace_name from 
+		(
+		select * from resources_resource where namespace = #{namespace} and type = #{resType} 
+		<if test="name != null and name !=''">
+			and name = #{name} 
+		</if>
+		and knamespace_uuid in
+		<foreach collection="uuidList" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		) r
+		<include refid="left_join_constraints" />
+	</select>
+	
+	<select id="queryResourcesByKuuidslikename" parameterType="map" resultMap="CompositeResource">
+	select r.*, p.name as project_name, s.name space_name, c.name region_name, k.name knamespace_name from 
+		(
+		select * from resources_resource where namespace = #{namespace} and type = #{resType} 
+		<if test="name != null and name !=''">
+			and name LIKE '%${name}%'
+		</if>
+		    and knamespace_uuid in
+		<foreach collection="uuidList" index="index" item="item" open="(" separator="," close=")">
+			    #{item}
+		</foreach>
+		) r
+		<include refid="left_join_constraints" />
+	</select>
+	
+	<select id="queryResourceCountBySpaceName" parameterType="map" resultType="java.lang.Integer">
+		select count(1) resourceCount 
+		  from resources_resource r where r.namespace = #{namespace} 
+		  and  r.space_uuid=(select res.uuid from resources_resource res where res.namespace = #{namespace}
+		  and res.name=#{space_name} and res.type='space')
+    </select>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.common.AlertScheduleIndexDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.vo.common.AlertScheduleIndexVo"
+               id="AlertScheduleIndexDTO">
+        <result property="id" column="id" jdbcType="VARCHAR" />
+        <result property="indexName" column="index_name" jdbcType="VARCHAR" />
+        <result property="indexValue" column="index_value" jdbcType="VARCHAR" />
+        <result property="indexType" column="index_type" jdbcType="VARCHAR" />
+        <result property="remark" column="remark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="getALLScheduleIndex"
+            resultMap="AlertScheduleIndexDTO">
+        SELECT * FROM alert_schedule_index
+    </select>
+
+    <select id="getAlertScheduleIndexDetail" parameterType="java.lang.String"
+            resultMap="AlertScheduleIndexDTO">
+        SELECT * FROM alert_schedule_index
+        WHERE index_type = #{indexType}
+    </select>
+
+    <insert id="insertAlertScheduleIndex" parameterType="com.aspire.mirror.alert.server.vo.common.AlertScheduleIndexVo">
+        INSERT INTO alert_schedule_index
+        (id,index_name,index_value,index_type,remark)
+        VALUES
+        (#{id},#{indexName},#{indexValue},#{indexType},#{remark})
+    </insert>
+
+    <update id="updateAlertScheduleIndex" parameterType="com.aspire.mirror.alert.server.vo.common.AlertScheduleIndexVo">
+        UPDATE alert_schedule_index SET index_value = #{indexValue}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        DELETE FROM alert_schedule_index WHERE id = #{id}
+    </delete>
+    <!--<select id="" parameterType="">-->
+        <!--SELECT-->
+        <!--a.idcType,-->
+        <!--aa.iCount,-->
+        <!--a.count,-->
+        <!--(FLOOR(cast(a.count*1./aa.iCount as decimal(18,2))*100)) rate-->
+        <!--FROM (SELECT-->
+            <!--idc_type idcType,-->
+            <!--COUNT(idc_type) count-->
+            <!--FROM alert_alerts-->
+            <!--WHERE idc_type IS NOT NULL-->
+            <!--<if test="alertLevel != null and alertLevel != ''">-->
+                <!--AND alert_level = #{alertLevel}-->
+            <!--</if>-->
+            <!--GROUP BY idc_type) a-->
+        <!--INNER JOIN (SELECT COUNT(1) iCount FROM alert_alerts WHERE idc_type IS NOT NULL) aa-->
+        <!--ORDER BY a.count DESC;-->
+    <!--</select>-->
+
+</mapper>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.cmdbInstance.CmdbInstanceMapper">
+
+    <select id="selectAllByField" parameterType="java.util.HashMap" resultType="java.util.Map">
+        select ip,
+        <choose>
+            <when test="cmdbField != null and cmdbField != ''">
+                ${cmdbField}
+            </when>
+            <otherwise>
+                c.*
+            </otherwise>
+        </choose>
+        from cmdb_instance c
+        <where>
+            <if test="field != null">
+                ${field} in
+                <foreach collection="fieldValues" index="index" item="fieldValue" open="(" separator="," close=")">
+                    #{fieldValue}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="java.util.Map">
+        insert into cmdb_instance
+        <foreach collection="fieldList" item="field" index="index" open="(" close=")" separator=",">
+            ${field}
+        </foreach>
+        values
+        <foreach collection="dateList" item="dateValue" index="index" separator=",">
+            <foreach collection="fieldList" item="field" index="index1" open="(" close=")" separator=",">
+                #{dateList[${index}].${field}}
+            </foreach>
+        </foreach>
+        on duplicate key update
+        <foreach collection="fieldList" item="field" index="index" separator=",">
+            ${field} = values(${field})
+        </foreach>
+    </insert>
+
+    <delete id="deleteAll">
+        DELETE FROM cmdb_instance
+    </delete>
+
+    <delete id="deleteById">
+        DELETE FROM cmdb_instance where instance_id = #{id}
+    </delete>
+    <select id="selectByIPAndIdcType" parameterType="java.lang.String" resultType="java.util.Map">
+        select * from cmdb_instance
+        <where>
+            ip = #{ip}
+            <if test="idcType != null and idcType != ''">
+                and idcType_name = #{idcType}
+            </if>
+        </where>
+    </select>
+    <select id="detailsById" parameterType="java.lang.String" resultType="java.util.Map">
+        select * from cmdb_instance
+        <where>
+            instance_id = #{id}
+        </where>
+    </select>
+
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.util.Map">
+        select instance_id
+	,ip
+	,idcType
+	,idcType_name
+	,bizSystem
+	,bizSystem_name
+	,device_class
+	,device_class_name
+	,roomId
+	,roomId_name
+	,device_type
+	,device_type_name
+	,device_mfrs
+	,host_name
+	,department1
+	,department1_name
+	,department2
+	,department2_name
+	,device_model
+	,pod_name
+	,pod_name_name
+	,project_name
+	,project_name_name
+	,insert_time
+	,device_class_3
+	,device_name
+	,suyan_uuid
+	,node_type
+	,node_type_name
+	 from cmdb_instance
+  <if test="params != null">
+        <where>
+            <if test="params['ip'] != null and  params['ip'] != ''">
+                and ip like concat(#{params.ip},"%")
+            </if>
+            <if test="params['deviceClass'] != null and  params['deviceClass'] != ''">
+               and device_class = #{params.deviceClass}
+            </if>
+            <if test="params['deviceType'] != null and  params['deviceType'] != ''">
+               and device_type = #{params.deviceType}
+            </if>
+            <if test="params['idcType'] != null and  params['idcType'] != ''">
+               and idcType = #{params.idcType}
+            </if>
+            <if test="params['bizSystemList'] != null">
+               and bizSystem in (
+                 <foreach collection="params['bizSystemList']" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+        </where>
+        
+        </if>
+        order by instance_id desc
+         limit #{begin},#{pageSize}
+    </select>
+    
+    
+    <select id="pageCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select  count(*)
+	 from cmdb_instance
+  <if test="params != null">
+        <where>
+            <if test="params['ip'] != null and  params['ip'] != ''">
+               and ip like concat(#{params.ip},"%")
+            </if>
+            <if test="params['deviceClass'] != null and  params['deviceClass'] != ''">
+               and device_class = #{params.deviceClass}
+            </if>
+            <if test="params['deviceType'] != null and  params['deviceType'] != ''">
+               and device_type = #{params.deviceType}
+            </if>
+            <if test="params['idcType'] != null and  params['idcType'] != ''">
+               and idcType = #{params.idcType}
+            </if>
+             <if test="params['idcType'] != null and  params['idcType'] != ''">
+               and idcType = #{params.idcType}
+            </if>
+            <if test="params['bizSystemList'] != null  ">
+               and bizSystem in (
+                 <foreach collection="params['bizSystemList']" item="item" index="index" separator=",">
+                #{item, jdbcType=VARCHAR}
+            </foreach>
+            )
+            </if>
+        </where>
+        </if>
+    </select>
+     <sql id="monitorWhereClause">
+		<where>
+			(
+				(is_ansible=#{params.monitorStatus} and ifnull(suyan_uuid, '') = '')
+				 or 
+				(
+				
+				  ifnull(suyan_uuid, '') != ''
+				)
+			)
+			<if test="params['idcType'] != null and  params['idcType'] != ''">
+				and idcType = #{params.idcType}
+			</if>
+			and (node_type !='存储节点' or ifnull(node_type,'')='')
+		</where>
+	</sql>
+    <select id="getMonitorDeviceList" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.util.Map">
+           SELECT  c.instance_id
+	,c.idcType
+	,c.idcType_name
+	,c.bizSystem
+	,c.bizSystem_name
+	,c.device_class
+	,c.device_class_name
+	,c.roomId
+	,c.roomId_name
+	,c.device_type
+	,c.device_type_name
+	,c.device_mfrs
+	,c.host_name
+	,c.department1
+	,c.department1_name
+	,c.department2
+	,c.department2_name
+	,c.device_model
+	,c.pod_name
+	,c.pod_name_name
+	,c.project_name
+	,c.project_name_name
+	,c.insert_time
+	,c.device_class_3
+	,c.device_name
+	,c.suyan_uuid
+	,c.node_type
+	,c.node_type_name
+	,c.ip
+	 FROM cmdb_instance c INNER JOIN (SELECT DISTINCT instance_id id
+	 ,(SELECT ip FROM cmdb_instance WHERE instance_id=id LIMIT 1)ip
+	FROM cmdb_instance 
+	 <if test="params != null">
+            <include refid="monitorWhereClause" />
+        </if>
+	limit #{begin},#{pageSize}
+	)a
+	ON c.instance_id=a.id  AND c.ip = a.ip
+    </select>
+    
+    <select id="getMonitorDeviceCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+     SELECT count(DISTINCT instance_id)
+	FROM cmdb_instance 
+	 <if test="params != null">
+            <include refid="monitorWhereClause" />
+        </if>
+    </select>
+    <select id="getAllIdAndIp" resultType="java.util.Map">
+        SELECT instance_id id, ip FROM cmdb_instance
+    </select>
+    <delete id="deleteByIdAndIp">
+        DELETE FROM cmdb_instance where instance_id = #{id} and ip= #{ip}
+    </delete>
+</mapper>

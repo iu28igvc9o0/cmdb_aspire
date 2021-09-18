@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.systemManager.mapper.OrgManagerMapper" >
+
+    <resultMap id="orgManager" type="com.aspire.ums.cmdb.systemManager.payload.OrgManager">
+        <id property="id" column="id" />
+        <result property="orgName" column="orgName" />
+        <result property="orgType" column="orgType" />
+        <result property="pid" column="parent_id" />
+        <result property="remark" column="remark" />
+        <result property="isdel" column="is_delete" />
+    </resultMap>
+
+    <select id="getOrgManagerDataCount" resultType="java.lang.Integer">
+        select count(1) from cmdb_org_system
+        <where>
+            is_delete != 1
+            <if test="orgName != null and orgName != ''">
+                and orgName like concat('%',#{orgName},'%')
+            </if>
+            <if test="orgType != null and orgType != ''">
+                and orgType = #{orgType}
+            </if>
+            <if test="pid != null and pid != ''">
+                and parent_id = #{pid}
+            </if>
+        </where>
+    </select>
+    <select id="getOrgManagerData"
+            resultType="com.aspire.ums.cmdb.systemManager.payload.OrgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark,
+        is_delete
+        from cmdb_org_system
+        <where>
+            is_delete != 1
+            <if test="orgName != null and orgName != ''">
+                and orgName like concat('%',#{orgName},'%')
+            </if>
+            <if test="orgType != null and orgType != ''">
+                and orgType = #{orgType}
+            </if>
+            <if test="pid != null and pid != ''">
+                and parent_id = #{pid}
+            </if>
+        </where>
+    </select>
+    <select id="getOrgManagerByPid" resultMap="orgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark
+        from cmdb_org_system where parent_id = #{pid} and  is_delete != 1
+    </select>
+
+    <select id="getAllOrg" resultMap="orgManager">
+        select
+          id,
+          orgName,
+          orgType,
+          parent_id,
+          remark
+        from cmdb_org_system
+        where is_delete != 1
+    </select>
+
+    <select id="getAllEipOrg" resultMap="orgManager">
+        select
+          id,
+          orgName,
+          orgType,
+          parent_id,
+          remark
+        from cmdb_org_system
+        where is_delete != 1 AND remark = 'EIP'
+    </select>
+
+    <select id="getOrgManagerById"
+            resultMap="orgManager">
+        select
+        id,
+        orgName,
+        orgType,
+        parent_id,
+        remark,
+        is_delete
+        from cmdb_org_system where id = #{id}
+    </select>
+
+    <insert id="insert">
+      insert into cmdb_org_system (id,orgName,orgType,parent_id,remark,is_delete)
+      values (#{id},#{orgName},#{orgType},#{pid},#{remark},0)
+    </insert>
+    <update id="updateByPrimaryKey">
+        update cmdb_org_system
+        <set>
+            orgName = #{orgName},
+            orgType = #{orgType},
+            parent_id = #{pid},
+            remark = #{remark}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+    <update id="delete" parameterType="java.lang.String">
+        update cmdb_org_system
+        <set>
+            is_delete = 1
+        </set>
+        <where>
+            id = #{id} or parent_id = #{id}
+        </where>
+    </update>
+
+    <select id="getParentOrg" resultMap="orgManager">
+        select
+        id,
+        orgName
+        from cmdb_org_system where  is_delete != 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+    </select>
+
+    <!--<select id="getBizSystemByOrgId" resultType="java.util.Map" parameterType="java.lang.String">-->
+        <!--select id uuid,bizName name, 'biz' type from cmdb_biz_system where orgId=#{orgId} and is_delete!=1-->
+    <!--</select>-->
+    <select id="getBizSystemByDepartment1" resultType="java.util.Map" parameterType="java.lang.String">
+        select id uuid, bizSystem name, 'bizSystem' type from cmdb_business_system where department1=#{department1}
+        and IFNULL(department2, '') = '' and is_delete='0' and IFNULL(bizSystem, '') !=''
+    </select>
+    <select id="getBizSystemByDepartment2" resultType="java.util.Map" parameterType="java.lang.String">
+        select id uuid, bizSystem name, 'bizSystem' type from cmdb_business_system where department2=#{department2}
+        and is_delete='0' and IFNULL(bizSystem, '') !=''
+    </select>
+
+    <select id="getWithDepInfo" resultMap="orgManager">
+        SELECT
+            child.*
+        FROM cmdb_org_system child
+        LEFT JOIN cmdb_org_system parent ON child.parent_id = parent.id
+        WHERE 1=1
+            AND parent.orgName = #{department1}
+            AND child.orgName = #{department2}
+    </select>
+</mapper>

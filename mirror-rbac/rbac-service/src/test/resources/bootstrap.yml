@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: rbac
+  cloud:
+    config:
+      name: pkg2-ms-rbac
+      label: ${GIT_BRANCH:master}
+      profile: ${ENV_TYPE:test}
+      uri:  http://${ENV_CONFIG_IP:localhost}:${ENV_CONFIG_PORT:18888}

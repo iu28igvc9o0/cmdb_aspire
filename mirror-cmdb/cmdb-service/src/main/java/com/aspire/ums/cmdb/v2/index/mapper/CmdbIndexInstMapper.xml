@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.CmdbIndexInstMapper">
+    <!-- 定义返回结果结果集 -->
+    <!--<resultMap id="resultMap" type="com.aspire.ums.cmdb.instance.payload.CmdbInstance">-->
+        <!--<result column="id" property="id" jdbcType="VARCHAR"/>-->
+        <!--<result column="module_id" property="moduleId" jdbcType="VARCHAR"/>-->
+        <!--<result column="module_partition_id" property="modulePartitionId" jdbcType="TINYINT"/>-->
+        <!--<result column="device_name" property="deviceName" jdbcType="VARCHAR"/>-->
+        <!--<result column="host_name" property="hostName" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_class" property="deviceClass" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_type" property="deviceType" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_model" property="deviceModel" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_class_3" property="deviceClass3" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_mfrs" property="deviceMfrs" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_status" property="deviceStatus" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_os_type" property="deviceOsType" jdbcType="VARCHAR"/>-->
+        <!--<result column="os_detail_version" property="osDetailVersion" jdbcType="VARCHAR"/>-->
+        <!--<result column="ip" property="ip" jdbcType="VARCHAR"/>-->
+        <!--<result column="is_assigned" property="isAssigned" jdbcType="VARCHAR"/>-->
+        <!--<result column="idcType" property="idcType" jdbcType="VARCHAR"/>-->
+        <!--<result column="project_name" property="projectName" jdbcType="VARCHAR"/>-->
+        <!--<result column="pod_name" property="podName" jdbcType="VARCHAR"/>-->
+        <!--<result column="roomId" property="roomId" jdbcType="VARCHAR"/>-->
+        <!--<result column="idc_cabinet" property="idcCabinet" jdbcType="VARCHAR"/>-->
+        <!--<result column="department1" property="department1" jdbcType="VARCHAR"/>-->
+        <!--<result column="department2" property="department2" jdbcType="VARCHAR"/>-->
+        <!--<result column="bizSystem" property="bizSystem" jdbcType="VARCHAR"/>-->
+        <!--<result column="is_ansible" property="isAnsible" jdbcType="VARCHAR"/>-->
+        <!--<result column="is_ipmi_monitor" property="isIpmiMonitor" jdbcType="VARCHAR" />-->
+        <!--<result column="is_pool" property="isPool" jdbcType="VARCHAR"/>-->
+        <!--<result column="dept_operation" property="deptOperation" jdbcType="VARCHAR"/>-->
+        <!--<result column="ops" property="ops" jdbcType="VARCHAR"/>-->
+        <!--<result column="is_delete" property="isDelete" jdbcType="VARCHAR"/>-->
+        <!--<result column="insert_person" property="insertPerson" jdbcType="VARCHAR"/>-->
+        <!--<result column="insert_time" property="insertTime" jdbcType="VARCHAR"/>-->
+        <!--<result column="update_person" property="updatePerson" jdbcType="VARCHAR"/>-->
+        <!--<result column="update_time" property="updateTime" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_sn" property="deviceSn" jdbcType="VARCHAR"/>-->
+        <!--<result column="device_description" property="deviceDescription" jdbcType="VARCHAR"/>-->
+        <!--<result column="is_important" property="isImportant" jdbcType="VARCHAR"/>-->
+    <!--</resultMap>-->
+
+    <sql id="baseDict">
+        select t.* from t_cfg_dict t
+                            inner join cmdb_dict d on t.id = d.id
+        where d.is_delete = '0' and t.is_delete='0'
+    </sql>
+    <!-- 统计资源池下各设备类型数据 -->
+    <select id="countByIdcDevCT" resultType="java.util.Map">
+        SELECT
+        <if test="deviceClass == '服务器'">
+            idcType,
+            phyNumber,
+            vmNumber,
+            phyNumber + vmNumber total
+        </if>
+        <if test="deviceClass != '服务器'">
+            idcType,
+            phyNumber,
+            vmNumber,
+            networkNumber,
+            storageNumber,
+            safeNumber,
+            phyNumber + vmNumber + networkNumber + storageNumber + safeNumber total
+        </if>
+        FROM (
+                 SELECT
+                     idcType,
+                     SUM(phyNumber)     phyNumber,
+                     SUM(vmNumber)      vmNumber,
+                     SUM(networkNumber) networkNumber,
+                     SUM(storageNumber) storageNumber,
+                     SUM(safeNumber)    safeNumber
+                 FROM (
+                          SELECT
+                              (CASE WHEN IFNULL(idcType, '') = '' THEN '' ELSE idcType END) idcType,
+                              (CASE device_class_3 WHEN 'X86服务器' THEN 1 ELSE 0 END)               phyNumber,
+                              (CASE device_type WHEN '云主机' THEN 1 ELSE 0 END)               vmNumber,
+                              (CASE
+                                   WHEN device_class = '网络设备' and is_stack = '是' THEN 2
+                                   WHEN device_class = '网络设备' and IFNULL(is_stack, '否') = '否' THEN 1
+                                   ELSE 0 END)                                              networkNumber,
+                              (CASE device_class WHEN '存储设备' THEN 1 ELSE 0 END)             storageNumber,
+                              (CASE device_class WHEN '安全设备' THEN 1 ELSE 0 END)             safeNumber
+                          FROM `cmdb_instance` cin
+                          WHERE 1 = 1
+                            <if test="idcType != null and idcType != ''">
+                                AND idcType=#{idcType}
+                            </if>
+                            <if test="deviceClass != null and deviceClass != ''">
+                                AND device_class=#{deviceClass}
+                            </if>
+                            AND cin.is_delete = '0'
+                            AND IFNULL(idcType, '') != ''
+                      ) t
+            left join cmdb_idc_manager idc on (t.idcType = idc.idc_name and idc.is_delete = '0' )
+        GROUP BY idcType
+--                  ORDER BY idc.sort_index,idcType IS NULL OR idcType = '', idcType
+                 ) p
+        ORDER BY total DESC
+
+    </select>
+
+    <select id="countByIdcPro" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            device_type,
+               <if test="projects != null">
+                   <foreach collection="projects" item="item" index="index" separator=",">
+                       SUM(`${item}`) `${item}`
+                   </foreach>
+               </if>
+        FROM
+             (
+                 SELECT
+                     (CASE WHEN device_type IN ( '云主机') THEN device_type
+                            WHEN device_class_3 IN ('X86服务器') THEN device_class_3
+                           WHEN device_class IN ('网络设备', '存储设备', '安全设备') THEN device_class END) device_type,
+        <if test="projects != null">
+            <foreach collection="projects" item="item" separator=",">
+                (CASE WHEN IFNULL(project_name, '') = #{item} AND device_class = '网络设备' AND IFNULL(is_stack, '否') = '否' THEN 1
+
+                WHEN IFNULL(project_name, '') = #{item} AND device_class = '网络设备' AND is_stack = '是' THEN 2
+                WHEN IFNULL(project_name, '') = #{item} THEN 1
+                  ELSE 0 END) `${item}`
+
+            </foreach>
+        </if>
+
+                 FROM `cmdb_instance` cin
+                 WHERE 1=1
+                <if test="deviceClass != null and deviceClass != ''">
+                    AND device_class=#{deviceClass}
+                </if>
+                   AND idcType=#{idcType}
+                   AND cin.is_delete='0'
+                   AND IFNULL(idcType,'') != ''
+                  AND (device_type =  '云主机' OR device_class_3 = 'X86服务器' OR device_class IN ('网络设备', '存储设备', '安全设备'))
+             ) t
+             where 1=1
+        <if test="deviceType != null and deviceType != ''" >
+            and device_type=#{deviceType}
+        </if>
+        GROUP BY device_type
+        ORDER BY device_type IS NULL OR device_type = '', device_type
+    </select>
+
+    <select id="countByIdcDevPro" parameterType="java.lang.String" resultType="java.util.Map">
+      
+        SELECT t.pod_name, SUM(number) number
+        FROM
+            (
+                SELECT
+                    (CASE WHEN IFNULL(pod_name, '') = '' THEN '' ELSE pod_name END) pod_name,
+                    (CASE  WHEN device_class = '网络设备' and is_stack='是' THEN 2
+                    WHEN device_class = '网络设备' and IFNULL(is_stack,'否') = '否' THEN 1
+                    WHEN device_class != '网络设备' OR IFNULL(device_class,'') = '' THEN 1
+                     END  ) number
+                FROM `cmdb_instance` cin
+                WHERE 1=1
+                  AND idcType=#{idcType}
+                  AND ${column}=#{deviceType}
+                  <if test="projectName != null and projectName != ''">
+                      AND project_name=#{projectName}
+                  </if>
+                  AND cin.is_delete='0'
+            ) t
+        left join cmdb_pod_manager pod on (t.pod_name = pod.pod_name and pod.is_delete = '否' )
+        GROUP BY t.pod_name, pod.sort_index
+        ORDER BY t.pod_name IS NULL OR t.pod_name = '', pod.sort_index
+    </select>
+
+    <!--该资源池下所有项目-->
+    <select id="listDistinctPro" parameterType="java.lang.String" resultType="java.util.HashMap">
+        SELECT
+            pj_id,pj_name
+        FROM
+        (
+            SELECT
+                cin.project_name pj_id,
+                (CASE WHEN IFNULL(cin.project_name, '') = '' THEN '' ELSE cpm.project_name END) pj_name
+            FROM cmdb_instance cin
+            inner JOIN cmdb_project_manager cpm ON (cin.project_name = cpm.id and cpm.is_delete = '0')
+            WHERE 1=1  AND cin.is_delete='0'
+                <if test="idcType != null and idcType != ''" >
+                    and idcType=#{idcType}
+                </if>
+                <if test="deviceType != null and deviceType != ''" >
+                    and ${column}=#{deviceType}
+                </if>
+        ) t
+        GROUP BY pj_id,pj_name
+        ORDER BY pj_name IS NULL OR pj_name = '', pj_name
+    </select>
+
+    <select id="countBizByIdc" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT idcType,  bizSystem ,department1, department2
+        FROM
+            (
+        SELECT idcType,COUNT(DISTINCT bizSystem) bizSystem,COUNT(DISTINCT department1) department1,COUNT(DISTINCT department2) department2 FROM
+        (
+            SELECT
+            (CASE WHEN IFNULL(idcType, '') = '' THEN '' ELSE idcType END) idcType,
+            (CASE WHEN IFNULL(bizSystem, '') = '' THEN '' ELSE bizSystem END) bizSystem,
+        (CASE WHEN IFNULL(department1, '') = '' THEN '' ELSE department1 END) department1,
+        (CASE WHEN IFNULL(department2, '') = '' THEN '' ELSE department2 END) department2
+            FROM `cmdb_instance` cin
+            WHERE 1=1  AND cin.is_delete='0'
+            <if test="deviceClass != null and deviceClass != ''">
+                AND device_class=#{deviceClass}
+            </if>
+        ) a
+
+        GROUP BY idcType
+            ) t
+        GROUP BY idcType
+        ORDER BY idcType IS NULL OR idcType = '', bizSystem desc
+    </select>
+    <select id="countBizByIdcDep1" parameterType="java.lang.String" resultType="java.util.Map">
+            SELECT department1,  COUNT( bizSystem) number
+            FROM
+                (
+                    SELECT
+                        (CASE WHEN IFNULL(department1, '') = '' THEN '' ELSE department1 END) department1,
+                        (CASE WHEN IFNULL(bizSystem, '') = '' THEN '' ELSE bizSystem END) bizSystem
+                    FROM `cmdb_instance` cin
+                    WHERE 1=1
+                      <if test="idcType != '' and idcType != null">
+                          AND idcType=#{idcType}
+                      </if>
+                        <if test="deviceClass != null and deviceClass != ''">
+                            AND device_class=#{deviceClass}
+                        </if>
+                      AND cin.is_delete='0'
+            GROUP BY department1,bizSystem
+                ) t
+            GROUP BY department1
+            ORDER BY department1 IS NULL OR department1 = '', number Desc
+        <if test="top != null and top != 0">
+            limit ${top}
+        </if>
+    </select>
+
+    <select id="countBizByDep1" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT idcType, COUNT( bizSystem) number
+        FROM
+            (
+                SELECT
+                    (CASE WHEN IFNULL(idcType, '') = '' THEN '' ELSE idcType END) idcType,
+                    (CASE WHEN IFNULL(bizSystem, '') = '' THEN '' ELSE bizSystem END) bizSystem
+                FROM `cmdb_instance` cin
+
+                WHERE 1=1 AND cin.is_delete='0' AND department1=#{department1}
+        <if test="deviceClass != null and deviceClass != ''">
+            AND device_class=#{deviceClass}
+        </if>
+                GROUP BY idcType,bizSystem
+            ) t
+        GROUP BY idcType
+        ORDER BY idcType IS NULL OR idcType = '', number desc
+    </select>
+    <select id="countBizByIdcDep2" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT department2, COUNT( bizSystem) number
+        FROM
+            (
+                SELECT
+                    (CASE WHEN IFNULL(department2, '') = '' THEN '' ELSE department2 END) department2,
+                    (CASE WHEN IFNULL(bizSystem, '') = '' THEN '' ELSE bizSystem END) bizSystem
+                FROM `cmdb_instance` cin
+               
+                WHERE 1=1
+                  <if test="idcType != '' and idcType != null">
+                    AND idcType=#{idcType}
+                </if>
+        <if test="deviceClass != null and deviceClass != ''">
+            AND device_class=#{deviceClass}
+        </if>
+       AND cin.is_delete='0' AND department1=#{department1}
+               GROUP BY department2,bizSystem
+            ) t
+        GROUP BY department2
+        ORDER BY department2 IS NULL OR department2 = '', number desc
+        limit 10
+    </select>
+
+    <select id="countIdcAndPod" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+        (select count(1) from cmdb_idc_manager t where t.is_delete='0') idcCount,
+        (select count(1) from cmdb_pod_manager t where t.is_delete='否') podCount
+        from dual
+    </select>
+
+ <!--各资源池一级部门下二级部门下各业务系统的设备数量-->
+    <select id="countByIdcDep2Biz" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT bizSystem, SUM(number) number
+        FROM
+            (
+                SELECT
+                    (CASE WHEN IFNULL(bizSystem, '') = '' THEN '' ELSE bizSystem END) bizSystem,device_class,
+                    (CASE  WHEN device_class = '网络设备' AND is_stack='是' THEN 2
+                           WHEN device_class = '网络设备' AND IFNULL(is_stack,'否') = '否' THEN 1
+                           WHEN device_class != '网络设备' OR IFNULL(device_class,'') = '' THEN 1
+                        END  ) number
+                FROM `cmdb_instance` cin
+                WHERE 1=1
+                  <if test="idcType != null and idcType != ''">
+                      AND idcType=#{idcType}
+                  </if>
+                <if test="department2 != null and department2 != ''">
+                    AND  department2=#{department2}
+                </if>
+        <if test="deviceClass != null and deviceClass != ''">
+            AND device_class=#{deviceClass}
+        </if>
+                  AND cin.is_delete='0' AND department1=#{department1}
+
+            ) t
+        GROUP BY bizSystem
+        ORDER BY bizSystem IS NULL OR bizSystem = '',number desc
+limit 10
+
+    </select>
+    <select id="countDeviceByDeviceClass" parameterType="java.lang.String" resultType="java.util.Map">        SELECT
+        select
+		  SUM(CASE device_class WHEN '服务器' THEN 1 ELSE 0 END ) serverNumber,
+		  SUM(CASE WHEN device_class = '网络设备' and is_stack = '是' THEN  2
+				   WHEN device_class = '网络设备' and IFNULL(is_stack,'否') = '否' THEN 1
+				   ELSE 0  END ) networkNumber,
+		  SUM(CASE device_class WHEN '安全设备' THEN 1 ELSE 0 END ) safeNumber,
+          SUM(CASE device_class WHEN '存储设备' THEN 1 ELSE 0 END ) storageNumber
+		FROM `cmdb_instance` cin
+		WHERE 1=1 and cin.is_delete='0'
+    </select>
+    <!-- 设备类型趋势统计（日）-->
+    <select id="deviceClassTrendWithDay" resultType="java.util.Map">
+        SELECT
+            currentDate,
+            SUM(serverNumber) serverNumber,
+            SUM(networkNumber) networkNumber,
+            SUM(safeNumber) safeNumber,
+            SUM(storageNumber) storageNumber
+        FROM(
+            SELECT
+                 currentDate,
+                (case device_class WHEN '服务器' then 1 ELSE 0 end) serverNumber,
+                (case device_class WHEN '安全设备' then 1 ELSE 0 end) safeNumber,
+                (case device_class WHEN '存储设备' then 1 ELSE 0 end) storageNumber,
+                (case WHEN device_class='网络设备' AND is_stack = '是' then 2
+                            WHEN device_class='网络设备' AND IFNULL(is_stack,'否') = '否' then 1
+                            ELSE 0 end) networkNumber
+            FROM
+                (
+                    SELECT calendar_date currentDate
+                    FROM cmdb_calendar
+                    WHERE DATE_FORMAT(calendar_date,'%Y-%m') = DATE_FORMAT(NOW(),'%Y-%m')
+                ) cc
+            LEFT JOIN
+                cmdb_instance ci
+            ON DATE(ci.insert_time) = currentDate
+            WHERE IFNULL(ci.is_delete,'0') = '0'
+        ) t
+        GROUP BY currentDate
+        ORDER BY currentDate is null or currentDate = '',currentDate
+    </select>
+
+    <!-- 设备类型趋势统计（月）-->
+    <select id="deviceClassTrendWithMonth" resultType="java.util.Map">
+        SELECT
+            currentDate,
+            SUM(serverNumber) serverNumber,
+            SUM(networkNumber) networkNumber,
+            SUM(safeNumber) safeNumber,
+            SUM(storageNumber) storageNumber
+        FROM(
+                SELECT
+                    currentDate,
+                    (case device_class WHEN '服务器' then 1 ELSE 0 end) serverNumber,
+                    (case device_class WHEN '安全设备' then 1 ELSE 0 end) safeNumber,
+                    (case device_class WHEN '存储设备' then 1 ELSE 0 end) storageNumber,
+                    (case WHEN device_class='网络设备' AND is_stack = '是' then 2
+                          WHEN device_class='网络设备' AND IFNULL(is_stack,'否') = '否' then 1
+                          ELSE 0 end) networkNumber
+                FROM
+                    (
+                        SELECT DATE_FORMAT(calendar_date,'%Y-%m') currentDate
+                        FROM cmdb_calendar
+                        WHERE YEAR(calendar_date) = YEAR(NOW())
+                        GROUP BY currentDate
+                    ) cc
+                        LEFT JOIN
+                        cmdb_instance ci
+                        ON DATE_FORMAT(ci.insert_time,'%Y-%m') = currentDate
+                WHERE IFNULL(ci.is_delete,'0') = '0'
+            ) t
+        GROUP BY currentDate
+        ORDER BY currentDate is null or currentDate = '',currentDate
+    </select>
+
+
+    <!-- 设备类型趋势统计（年）-->
+    <select id="deviceClassTrendWithYear" resultType="java.util.Map">
+        SELECT
+            currentDate,
+            SUM(serverNumber) serverNumber,
+            SUM(networkNumber) networkNumber,
+            SUM(safeNumber) safeNumber,
+            SUM(storageNumber) storageNumber
+        FROM(
+                SELECT
+                    currentDate,
+                    (case device_class WHEN '服务器' then 1 ELSE 0 end) serverNumber,
+                    (case device_class WHEN '安全设备' then 1 ELSE 0 end) safeNumber,
+                    (case device_class WHEN '存储设备' then 1 ELSE 0 end) storageNumber,
+                    (case WHEN device_class='网络设备' AND is_stack = '是' then 2
+                          WHEN device_class='网络设备' AND IFNULL(is_stack,'否') = '否' then 1
+                          ELSE 0 end) networkNumber
+                FROM
+                    (
+                        SELECT DATE_FORMAT(calendar_date,'%Y') currentDate
+                        FROM cmdb_calendar
+                        WHERE YEAR(calendar_date) in (YEAR(NOW()) - 2,YEAR(NOW()) -1,YEAR(NOW()))
+                        GROUP BY currentDate
+                    ) cc
+                        LEFT JOIN
+                        cmdb_instance ci
+                        ON DATE_FORMAT(ci.insert_time,'%Y') = currentDate
+                WHERE IFNULL(ci.is_delete,'0') = '0'
+            ) t
+        GROUP BY currentDate
+        ORDER BY currentDate is null or currentDate = '',currentDate
+    </select>
+
+    <select id="countDeviceClassByDepartment1" resultType="java.util.Map">
+        SELECT
+            orgName,
+            SUM(phyNumber) phyNumber,
+            SUM(vmNumber) vmNumber,
+            SUM(phyNumber+vmNumber) totalNumber
+        FROM
+        (
+            SELECT orgName
+            FROM cmdb_org_system
+            where parent_id = '0' and isdel = '0'
+        ) t1
+        LEFT JOIN
+        (
+            SELECT
+                department1,
+                (CASE device_class_3 WHEN 'X86服务器' THEN 1 ELSE 0 END)               phyNumber,
+                (CASE device_type WHEN '云主机' THEN 1 ELSE 0 END)               vmNumber
+            FROM cmdb_instance
+            WHERE IFNULL(is_delete,'0') = '0'
+          and device_class = '服务器'
+        ) t2
+        ON t1.orgName = t2.department1
+        GROUP BY t1.orgName
+        ORDER BY t1.orgName is null or t1.orgName='',totalNumber DESC,t1.orgName
+        LIMIT 0,5
+    </select>
+
+    <select id="countDeviceTypeByDeviceClass" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT device_class,
+          device_type,
+          COUNT(1) num
+        FROM cmdb_instance
+        WHERE device_class = #{deviceClass} AND IFNULL(is_delete ,'0') = '0'
+        GROUP BY device_type
+        ORDER BY device_type is null or device_type = '',device_type
+    </select>
+
+    <select id="countDevClsByDepWithDay" resultType="java.util.Map">
+        SELECT
+            t1.orgName department1,
+            SUM(deviceNumber) deviceNumber,
+            currentDate
+        FROM
+          (
+            SELECT orgName
+            FROM cmdb_org_system
+            where parent_id = '0' and isdel = '0'
+          ) t1
+          LEFT JOIN
+          (
+            SELECT
+                DATE_FORMAT(insert_time,'%Y-%m-%d') currentDate,
+                department1,
+                (CASE WHEN device_class='网络设备' AND is_stack = '是' then 2
+                 ELSE 1 END) deviceNumber
+            FROM cmdb_instance
+            WHERE DATEDIFF(insert_time,NOW())<![CDATA[ <= ]]>0 AND DATEDIFF(insert_time,NOW())<![CDATA[ > ]]>-3
+            AND IFNULL(is_delete ,'0') = '0'
+          ) t2
+          ON t1.orgName = t2.department1
+        GROUP BY t1.orgName,currentDate
+        ORDER BY t1.orgName is null or t1.orgName='',t1.orgName,currentDate
+
+    </select>
+
+    <select id="countDevClsByDepWithMonth" resultType="java.util.Map">
+        SELECT
+            t1.orgName department1,
+            SUM(deviceNumber) deviceNumber,
+            currentDate
+        FROM
+          (
+            SELECT orgName
+            FROM cmdb_org_system
+            where parent_id = '0' and isdel = '0'
+          ) t1
+        LEFT JOIN
+          (
+            SELECT
+                DATE_FORMAT(insert_time,'%Y-%m') currentDate,
+                department1,
+                (CASE WHEN device_class='网络设备' AND is_stack = '是' then 2
+                ELSE 1 END) deviceNumber
+            FROM cmdb_instance
+            WHERE PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(insert_time,'%Y%m')) <![CDATA[ >= ]]> 0
+            AND PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(insert_time,'%Y%m')) <![CDATA[ < ]]> 3
+            AND IFNULL(is_delete ,'0') = '0'
+          ) t2
+          ON t1.orgName = t2.department1
+        GROUP BY t1.orgName,currentDate
+        ORDER BY t1.orgName is null or t1.orgName='',t1.orgName,currentDate
+
+    </select>
+
+
+    <select id="countDevClsByDepWithYear" resultType="java.util.Map">
+        SELECT
+            t1.orgName department1,
+            SUM(deviceNumber) deviceNumber,
+            currentDate
+        FROM
+            (
+                SELECT orgName
+                FROM cmdb_org_system
+                where parent_id = '0' and isdel = '0'
+            ) t1
+                LEFT JOIN
+                (
+                    SELECT
+                        DATE_FORMAT(insert_time,'%Y') currentDate,
+                        department1,
+                        (CASE WHEN device_class='网络设备' AND is_stack = '是' then 2
+                              ELSE 1 END) deviceNumber
+                    FROM cmdb_instance
+                    WHERE PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y'),DATE_FORMAT(insert_time,'%Y')) <![CDATA[ >= ]]> 0
+                      AND PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y'),DATE_FORMAT(insert_time,'%Y')) <![CDATA[ < ]]> 3
+                      AND IFNULL(is_delete ,'0') = '0'
+                ) t2
+                ON t1.orgName = t2.department1
+        GROUP BY t1.orgName,currentDate
+        ORDER BY t1.orgName is null or t1.orgName='',t1.orgName,currentDate
+
+    </select>
+
+    <select id="listStatus" resultType="java.util.HashMap">
+        SELECT cfg.dict_note name,
+               device_status value
+        FROM
+            (
+            SELECT device_status,COUNT(1) COUNT
+            FROM( SELECT
+            device_status `device_status`
+            FROM cmdb_instance
+            WHERE is_delete='0' AND IFNULL(device_status, '') != '') base
+            GROUP BY device_status
+
+            ) res
+            INNER JOIN (SELECT id,dict_note,is_delete FROM t_cfg_dict WHERE col_name = 'device_status' AND is_delete = '0') cfg
+        ON res.device_status = cfg.id
+        ORDER BY res.COUNT DESC
+    </select>
+    <select id="countStatusAll" resultType="java.util.Map">
+        <!--SELECT-->
+        <!--<foreach collection="statusList" separator="," item="status" >-->
+            <!--SUM(`${status}`) `${status}`-->
+        <!--</foreach>-->
+        <!--,SUM(-->
+        <!--<foreach collection="statusList" separator="+" item="status" >-->
+          <!--`${status}`-->
+        <!--</foreach>-->
+        <!--) total-->
+        <!--FROM (-->
+        <!--SELECT-->
+        <!--<foreach collection="statusList" separator="," item="status" >-->
+               <!--<if test="status == '未知'">-->
+
+                   <!--(CASE WHEN IFNULL(device_status, '') = '' THEN 1 ELSE 0 END) `${status}`-->
+               <!--</if>-->
+               <!--<if test="status != '未知'">-->
+                   <!--(CASE  device_status WHEN #{status} THEN 1 ELSE 0 END) `${status}`-->
+               <!--</if>-->
+        <!--</foreach>-->
+        <!--FROM cmdb_instance-->
+        <!--WHERE is_delete='0'-->
+        <!--)a-->
+      <!--order by total-->
+        SELECT  device_status, COUNT FROM (
+            SELECT IFNULL(device_status, '') device_status,COUNT(1) COUNT
+            FROM cmdb_instance cin
+            WHERE is_delete='0'
+            GROUP BY  IFNULL(device_status, '')
+        ) tm
+        ORDER BY device_status = '', COUNT DESC
+    </select>
+    <select id="countStatusByIdc" resultType="java.util.LinkedHashMap">
+        select idcType,
+        <foreach collection="statusList" separator=","  item="status" >
+            `${status}`
+        </foreach>
+      from (
+        select idcType,
+        <foreach collection="statusList" separator="," close="," item="status" >
+            `${status}`
+        </foreach>
+        <foreach collection="statusList" separator="+" open="(" close=") total" item="status" >
+            `${status}`
+        </foreach>
+        from (
+        SELECT idcType,
+        <foreach collection="statusList" separator="," item="status" >
+            SUM(`${status}`) `${status}`
+        </foreach>
+        FROM (
+        SELECT
+        (CASE WHEN IFNULL(idcType, '') = '' THEN '' ELSE idcType END) idcType,
+        <foreach collection="statusList" separator="," item="status" >
+            <if test="status == '未知'">
+                (CASE WHEN IFNULL(device_status, '') = '' THEN 1 ELSE 0 END) `${status}`
+            </if>
+            <if test="status != '未知'">
+                (CASE device_status WHEN #{status} THEN 1 ELSE 0 END) `${status}`
+            </if>
+        </foreach>
+        FROM cmdb_instance
+        WHERE is_delete='0'
+        )a
+        GROUP BY idcType
+        ) base
+        ORDER BY idcType IS NULL OR idcType = '', total desc
+        ) res
+
+    </select>
+    <select id="countByProduceAll" resultType="java.util.Map">
+        SELECT
+        x.device_mfrs,
+        SUM(x.m_count) COUNT,
+        x.total_count total
+        FROM
+        (
+        SELECT
+        CASE
+        WHEN rank_no <![CDATA[ <= ]]> 10 THEN
+        device_mfrs
+        ELSE
+        '其他'
+        END device_mfrs,
+        t.m_count,
+        tc.total_count
+        FROM
+        (
+             SELECT
+            @rank :=@rank + 1 AS rank_no,
+            c.device_mfrs,
+            m_count
+            FROM
+            (
+            SELECT
+                (CASE WHEN IFNULL(device_mfrs, '')='' THEN '' ELSE device_mfrs END) device_mfrs,
+                COUNT(1) m_count
+                FROM
+                cmdb_instance
+              where is_delete = '0'
+                GROUP BY
+                device_mfrs
+                ORDER BY
+                COUNT(1) DESC
+            ) c,
+          (SELECT @rank := 0) b
+        ) t, (SELECT COUNT(1) total_count FROM cmdb_instance where is_delete = '0') tc
+        ) X GROUP BY device_mfrs
+        ORDER BY
+            COUNT DESC
+    </select>
+
+    <select id="countByProduce" resultType="java.util.Map">
+select  idcType,
+       phyNumber,
+        vmNumber,
+       networkNumber,
+       storageNumber,
+       safeNumber,
+       phyNumber + vmNumber + networkNumber + storageNumber + safeNumber total
+       from
+        (SELECT
+        idcType,
+        SUM(phyNumber)     phyNumber,
+        SUM(vmNumber)      vmNumber,
+        SUM(networkNumber) networkNumber,
+        SUM(storageNumber) storageNumber,
+        SUM(safeNumber)    safeNumber
+        FROM (SELECT
+        (CASE WHEN IFNULL(idcType, '') = '' THEN '' ELSE idcType END) idcType,
+        (CASE device_class_3 WHEN 'X86服务器' THEN 1 ELSE 0 END)               phyNumber,
+        (CASE device_type WHEN '云主机' THEN 1 ELSE 0 END)               vmNumber,
+        (CASE
+        WHEN device_class = '网络设备' AND is_stack = '是' THEN 2
+        WHEN device_class = '网络设备' AND IFNULL(is_stack, '否') = '否' THEN 1
+        ELSE 0 END)                                              networkNumber,
+        (CASE device_class WHEN '存储设备' THEN 1 ELSE 0 END)             storageNumber,
+        (CASE device_class WHEN '安全设备' THEN 1 ELSE 0 END)             safeNumber
+        FROM `cmdb_instance` cin
+        WHERE 1 = 1  AND cin.is_delete = '0'
+        AND IFNULL(idcType, '') != ''
+        <if test="produce == '其他'">
+            AND device_mfrs IN
+
+            (
+            SELECT device_mfrs  FROM (SELECT device_mfrs, COUNT,@rank :=@rank + 1 AS rank_no FROM
+            (
+            SELECT  device_mfrs,COUNT(1) COUNT FROM
+            (
+            SELECT (CASE WHEN IFNULL(device_mfrs, '')='' THEN '' ELSE device_mfrs END) device_mfrs
+            FROM cmdb_instance where is_delete='0'
+            ) a
+
+            GROUP BY device_mfrs
+            ORDER BY COUNT DESC
+
+            ) c,(SELECT @rank := 0) b
+
+            ) d WHERE  rank_no > 10)
+        </if>
+        <if test="produce != '' and produce != null and produce != '未知'">
+            AND device_mfrs = #{produce}
+        </if>
+        <if test="produce == '未知'">
+            AND (device_mfrs = '' or device_mfrs is null)
+        </if>
+        )t
+        GROUP BY idcType
+          ) res
+
+                 LEFT JOIN cmdb_idc_manager idc ON (res.idcType = idc.idc_name AND idc.is_delete = '0' )
+        GROUP BY idcType,idc.sort_index
+        ORDER BY idc.sort_index,idcType IS NULL OR idcType = '', total Desc
+
+    </select>
+
+
+    <select id="countOverview" resultType="java.util.Map">
+        SELECT device_class, device_type,
+               SUM(assigned_count) assigned_count,
+               SUM(total_count) type_count,
+               (SELECT SUM(tCount) FROM
+                   (SELECT device_class, (CASE
+                                              WHEN device_class = '网络设备' AND is_stack = '是' THEN 2
+                                              WHEN device_class = '网络设备' AND IFNULL(is_stack, '否') = '否' THEN 1
+                                              ELSE 1 END) tCount FROM cmdb_instance  WHERE is_delete = '0') t
+                WHERE t.device_class = tem_t.device_class
+               ) total
+        FROM (
+                 SELECT
+                     `device_class`,
+                     (CASE WHEN IFNULL(device_type,'')= '' THEN '' ELSE device_type END) device_type,
+                     (CASE WHEN IFNULL(device_class_3,'')= '' THEN '' ELSE device_class_3 END) device_class_3,
+                     (CASE WHEN IFNULL(bizSystem, '') != '' AND device_class = '网络设备' AND is_stack = '是' THEN 2
+                           WHEN IFNULL(bizSystem, '') != ''  THEN 1
+                           ELSE 0 END) assigned_count,
+                     (CASE
+                          WHEN device_class = '网络设备' AND is_stack = '是' THEN 2
+                          WHEN device_class = '网络设备' AND IFNULL(is_stack, '否') = '否' THEN 1
+                          ELSE 1 END) total_count
+                 FROM cmdb_instance
+                 WHERE is_delete = '0'
+                   AND NOT (device_class ='服务器' AND  device_type ='X86服务器' AND NOT device_class_3='X86服务器')
+             ) tem_t
+                 LEFT JOIN
+                     (SELECT * FROM (<include refid="baseDict"/>) t WHERE col_name='device_type') dict
+
+                     ON tem_t.device_type = dict.dict_code
+        GROUP BY device_class,device_type
+        ORDER BY device_type='',device_type='',dict.sort_index
+    </select>
+
+<!--磁盘利用率-->
+    <select id="countDiskSize" resultType="java.util.Map">
+        SELECT SUM(IFNULL(a.block_size,0)) `块存储` ,SUM(IFNULL(a.block_size,0)) SAN
+        FROM cmdb_instance cin
+                 LEFT JOIN cmdb_instance_storage_device a ON cin.id=a.id
+        WHERE device_type IN ('分布式块存储','FC-SAN','IP-SAN')
+          AND cin.is_delete = '0'
+    </select>
+
+        </mapper>

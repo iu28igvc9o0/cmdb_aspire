@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.dao.IIndicationDAO">
+	
+	<resultMap type="com.aspire.mirror.entity.IndicationEntity" id="indicationEntity">
+		<result property="indicationId" column="indication_id" jdbcType="VARCHAR"/>
+		<result property="sysCode" column="sys_code" jdbcType="VARCHAR"/>
+		<result property="themeCode" column="theme_code" jdbcType="VARCHAR"/>
+		<result property="indicationOwner" column="indication_owner" jdbcType="VARCHAR"/>
+		<result property="indicationCatalog" column="indication_catalog" jdbcType="VARCHAR"/>
+		<result property="indicationCycle" column="indication_cycle" jdbcType="VARCHAR"/>
+		<result property="indicationGroup" column="indication_group" jdbcType="VARCHAR"/>
+		<result property="indicationFrequency" column="indication_frequency" jdbcType="VARCHAR"/>
+		<result property="indicationName" column="indication_name" jdbcType="VARCHAR"/>
+		<result property="indicationOrder" column="indication_order" jdbcType="VARCHAR"/>
+		<result property="indicationPosition" column="indication_position" jdbcType="VARCHAR"/>
+		<result property="indicationUnit" column="indication_unit" jdbcType="VARCHAR"/>
+		<result property="bizThemeExp" column="bizThemeExp" jdbcType="VARCHAR"/>
+		<result property="indicationPrefix" column="indication_prefix" jdbcType="VARCHAR"/>
+		<association property="limitEntity" column="indication_id"
+					 select="com.aspire.mirror.dao.IIndicationLimitDao.getIndicationLimitByIndicationId">
+		</association>
+	</resultMap>
+	
+	<select id="getAllIndication" resultMap="indicationEntity" >
+		SELECT * FROM rtz_indication
+	</select>
+
+	<select id="getIndicationByIndicationId" resultMap="indicationEntity" >
+		SELECT * FROM rtz_indication where indication_id=#{indicationId}
+	</select>
+
+	<select id="getIndicationByThemeCode" resultMap="indicationEntity" >
+		SELECT * FROM rtz_indication where theme_code=#{themeCode}
+	</select>
+
+	<select id="filterList" resultMap="indicationEntity" >
+		SELECT * FROM rtz_indication where 1=1
+		<if test="sysCode!=null and sysCode!=''">
+			and sys_code = #{sysCode}
+		</if>
+		<if test="themeCode!=null and themeCode!=''">
+			and theme_code=#{themeCode}
+		</if>
+		<if test="indicationOwner!=null and indicationOwner!=''">
+			and indication_owner = #{indicationOwner}
+		</if>
+		<if test="catalogBox!=null and catalogBox!=''">
+			and indication_catalog=#{catalogBox}
+		</if>
+		<if test="indicationFrequency!=null and indicationFrequency!=''">
+			and indication_frequency=#{indicationFrequency}
+		</if>
+		<if test="indicationGroup!=null and indicationGroup!=''">
+			and indication_group=#{indicationGroup}
+		</if>
+		<if test="indicationPosition!=null and indicationPosition!=''">
+			and indication_position=#{indicationPosition}
+		</if>
+		<if test="indicationPrefix!=null and indicationPrefix!=''">
+			and indication_prefix=#{indicationPrefix}
+		</if>
+		<if test="indicationCycle!=null and indicationCycle!=''">
+			and indication_cycle=#{indicationCycle}
+		</if>
+		order by indication_group desc, indication_order asc
+	</select>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO `rtz_indication` (`indication_id`, `indication_name`, `sys_code`, `theme_code`, `indication_owner`,
+		`indication_catalog`, `indication_group`, `indication_cycle`, `indication_frequency`, `indication_position`, `indication_unit`, `indication_order`,
+		`bizThemeExp`, `indication_prefix`) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.indicationId,jdbcType=VARCHAR},
+			#{item.indicationName,jdbcType=VARCHAR},
+			#{item.sysCode,jdbcType=VARCHAR},
+			#{item.themeCode,jdbcType=VARCHAR},
+			#{item.indicationOwner,jdbcType=VARCHAR},
+			#{item.indicationCatalog,jdbcType=VARCHAR},
+			#{item.indicationGroup,jdbcType=VARCHAR},
+			#{item.indicationCycle,jdbcType=VARCHAR},
+			#{item.indicationFrequency,jdbcType=VARCHAR},
+			#{item.indicationPosition,jdbcType=VARCHAR},
+			#{item.indicationUnit,jdbcType=VARCHAR},
+			#{item.indicationOrder,jdbcType=VARCHAR},
+			#{item.bizThemeExp,jdbcType=VARCHAR},
+			#{item.indicationPrefix,jdbcType=VARCHAR})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		indication_name = values (indication_name),
+		sys_code = values (sys_code),
+		theme_code = values (theme_code),
+		indication_owner = values (indication_owner),
+		indication_catalog = values (indication_catalog),
+		indication_group = values (indication_group),
+		indication_cycle = values (indication_cycle),
+		indication_frequency = values (indication_frequency),
+		indication_position = values (indication_position),
+		indication_unit = values (indication_unit),
+		indication_order = values (indication_order),
+		bizThemeExp = values (bizThemeExp),
+		indication_prefix = values (indication_prefix)
+	</insert>
+</mapper>

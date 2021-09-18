@@ -1,0 +1,4 @@
+systemType: simple
+middleware.configuration.switch:
+  kafka: false
+  redis: false

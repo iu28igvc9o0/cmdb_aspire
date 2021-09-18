@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.migu.tsg.microservice.atomicservice.rbac.dao.RoleParentDao">
+
+	<resultMap id="RoleParentResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.RoleParent">
+		<result column="role_uuid" property="roleUuid" />
+		<result column="parent_uuid" property="parentUuid" />
+		<result column="parent_name" property="parentName" />
+		<result column="assigned_at" property="assignedAt" />
+	</resultMap>
+
+	<resultMap id="ParentRoleResultMap"
+		type="com.migu.tsg.microservice.atomicservice.rbac.dao.po.ParentRole">
+		<result column="role_uuid" property="roleUuid" />
+		<result column="parent_uuid" property="parentUuid" />
+		<result column="grand_parent_uuid" property="grandParentUuid" />
+		<result column="great_grand_uuid" property="greatGrandUuid" />
+	</resultMap>
+
+	<select id="isParentRole" resultType="int">
+		SELECT
+		count(*)
+		FROM role_parents
+		WHERE parent_uuid = #{roleUuid}
+	</select>
+
+	<select id="fetchRoleParentList" resultMap="RoleParentResultMap">
+		SELECT
+		role_uuid, parent_uuid, assigned_at
+		,name parent_name
+		FROM role_parents, role
+		WHERE parent_uuid = uuid and
+		role_uuid =
+		#{roleUuid}
+	</select>
+
+	<select id="fetchRoleChildrenList" resultMap="RoleParentResultMap">
+		SELECT
+		role_uuid, parent_uuid, assigned_at
+		,name parent_name
+		FROM role_parents, role
+		WHERE parent_uuid = uuid and
+		parent_uuid =
+		#{parentRoleUuid}
+	</select>
+
+	<select id="hasFetchRoleParent" resultType="int">
+		SELECT count(*)
+		FROM role_parents
+		WHERE role_uuid = #{roleUuid} and
+		parent_uuid = #{parentUuid}
+	</select>
+
+	<insert id="createRoleParent">
+		INSERT INTO
+		role_parents(
+		role_uuid, parent_uuid, assigned_at
+		)
+		VALUES(#{roleUuid},#{parentUuid},now())
+	</insert>
+
+	<insert id="createRoleParentBatch">
+		INSERT INTO role_parents(
+		role_uuid, parent_uuid, assigned_at
+		)
+		VALUES
+		<foreach collection="roleParentList" index="index" item="item"
+			separator=",">
+			(#{item.roleUuid},#{item.parentUuid},now())
+		</foreach>
+	</insert>
+
+	<delete id="deleteParentRole">
+		DELETE FROM
+		role_parents WHERE role_uuid = #{roleUuid} and parent_uuid =
+		#{parentUuid}
+	</delete>
+
+	<delete id="deleteParentRoles">
+		DELETE FROM
+		role_parents WHERE role_uuid = #{roleUuid}
+	</delete>
+
+	<select id="listOfParentRoleUuid" resultMap="ParentRoleResultMap">
+		SELECT
+		r.uuid role_uuid,
+		c.parent_uuid parent_uuid,
+		p.parent_uuid
+		grand_parent_uuid,
+		g.parent_uuid great_grand_uuid
+		FROM role r
+		LEFT JOIN
+		role_parents c ON c.role_uuid = r.uuid
+		LEFT JOIN role_parents p
+		ON
+		c.parent_uuid=p.role_uuid
+		LEFT JOIN role_parents g ON
+		p.parent_uuid=g.role_uuid
+		WHERE r.uuid in
+		<foreach collection="roleUuidList" index="index" item="item"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+</mapper>

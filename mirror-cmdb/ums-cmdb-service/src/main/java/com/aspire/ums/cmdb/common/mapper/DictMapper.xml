@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.common.mapper.DictMapper" >
+    <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.common.entity.DictEntity" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="value" property="value" jdbcType="VARCHAR"/>
+        <result column="displayOrder" property="displayOrder" jdbcType="BIGINT" />
+    </resultMap>
+
+    <select id="getDictByCode" resultMap="BaseResultMap"  >
+       SELECT id, code, `name`, `value`, displayOrder FROM cmdb_dict where code = #{code} order by displayOrder
+    </select>
+
+</mapper>

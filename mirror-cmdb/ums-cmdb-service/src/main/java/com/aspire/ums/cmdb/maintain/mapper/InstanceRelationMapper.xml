@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.maintain.mapper.InstanceRelationMapper" >
+    <resultMap id="InstanceRelationResultMap" type="com.aspire.ums.cmdb.maintain.entity.InstanceRelation" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="sourceInstanceId" property="sourceInstanceId" jdbcType="VARCHAR" />
+        <result column="targerInstanceId" property="targerInstanceId" jdbcType="VARCHAR" />
+        <result column="moduleRelationId" property="moduleRelationId" jdbcType="VARCHAR" />
+        <result column="circleId" property="circleId" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="InstanceRelation_Column_List" >
+        id, sourceInstanceId, targerInstanceId, moduleRelationId, circleId
+    </sql>
+
+    <select id="getAll" parameterType="com.aspire.ums.cmdb.maintain.entity.InstanceRelation"   resultType="java.util.HashMap"  >
+
+    </select>
+
+    <select id="getOne" parameterType="java.lang.String" resultMap="InstanceRelationResultMap" >
+        SELECT 
+       <include refid="InstanceRelation_Column_List" />
+	   FROM cmdb_instance_relation_detail
+	   WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.maintain.entity.InstanceRelation" >
+       INSERT INTO 
+       		cmdb_instance_relation_detail
+       		(id, sourceInstanceId, targerInstanceId, moduleRelationId, circleId, insertTime, updateTime) 
+       	VALUES
+       		(#{id}, #{sourceInstanceId}, #{targerInstanceId}, #{moduleRelationId}, #{circleId}, NOW(), NOW())
+    </insert>
+    
+    <update id="update" parameterType="com.aspire.ums.cmdb.maintain.entity.InstanceRelation" >
+
+    </update>
+    
+    <delete id="delete" parameterType="java.util.HashMap" >
+       DELETE FROM
+       		 cmdb_instance_relation_detail 
+       WHERE 1 = 1 
+       <if test="moduleRelationId!=null and moduleRelationId!=''"> 
+      and  moduleRelationId =#{moduleRelationId}
+        </if> 
+      <if test="sourceInstanceId!=null and sourceInstanceId!=''"> 
+      and  sourceInstanceId =#{sourceInstanceId}
+        </if> 
+      <if test="targerInstanceId!=null and targerInstanceId!=''"> 
+      and  targerInstanceId =#{targerInstanceId}
+        </if> 
+       <if test="id!=null and id!=''"> 
+       and id =#{id}
+        </if> 
+    </delete>
+    
+    <delete id="deleteByInstanceId" parameterType="java.lang.String" >
+       DELETE FROM
+       		 cmdb_instance_relation_detail 
+       WHERE  sourceInstanceId =#{instanceId} or targerInstanceId=#{instanceId}
+    </delete>
+    
+     <select id="getRetionByCondition" parameterType="com.aspire.ums.cmdb.maintain.entity.InstanceRelation"    resultType="java.util.HashMap"  >
+       SELECT aa.*, cr.name AS relationName, cm1.name AS sourceModuleName, cm1.IconUrl AS sourceIconUrl, cm2.name AS targetModuleName, cm2.IconUrl AS targetIconUrl
+
+              FROM 
+              (
+              SELECT cmr.*,  ci2.moduleId  sourceModuleId, ci2.name  sourceInstanceName , ci1.moduleId targetModuleId, ci1.name targetInstanceName FROM cmdb_instance_relation_detail  cmr, cmdb_instance ci1, cmdb_instance ci2  WHERE 1=1 and ci1.isDelete = 0 and ci2.isDelete = 0 
+<if test="sourceInstanceId!=null and sourceInstanceId!=''"> 
+              AND  cmr.targerInstanceId = #{sourceInstanceId}  AND ci1.id =  cmr.targerInstanceId 
+              AND  ci2.id =  cmr.sourceInstanceId 
+</if>  
+  
+               ) aa, cmdb_relation cr, cmdb_module cm1, cmdb_module cm2 ,cmdb_module_relation cmr  WHERE aa.moduleRelationId = cmr.id AND  cmr.relationId = cr.id AND aa.sourceModuleId = cm1.id AND aa.targetModuleId = cm2.id and cm1.isDelete = 0 and cm2.isDelete = 0 and cm1.disabled='false' and cm2.disabled='false'
+
+               UNION ALL
+              SELECT aa.*, cr.name AS relationName, cm1.name AS sourceModuleName, cm1.IconUrl AS sourceIconUrl, cm2.name AS targetModuleName, cm2.IconUrl AS targetIconUrl
+
+              FROM 
+              (
+              SELECT cmr.* , ci1.moduleId sourceModuleId, ci1.name sourceInstanceName, ci2.moduleId   targetModuleId, ci2.name  targetInstanceName FROM cmdb_instance_relation_detail cmr , cmdb_instance ci1, cmdb_instance ci2  WHERE 1=1 and ci1.isDelete = 0 and ci2.isDelete = 0
+<if test="sourceInstanceId!=null and sourceInstanceId!=''">           
+              AND  cmr.sourceInstanceId = #{sourceInstanceId}  AND ci1.id =  cmr.sourceInstanceId
+              AND  ci2.id =  cmr.targerInstanceId 
+</if>           
+  
+               ) aa, cmdb_relation cr, cmdb_module cm1, cmdb_module cm2 ,cmdb_module_relation cmr  WHERE aa.moduleRelationId = cmr.id AND  cmr.relationId = cr.id AND aa.sourceModuleId = cm1.id AND aa.targetModuleId = cm2.id and cm1.isDelete = 0 and cm2.isDelete = 0 and cm1.disabled='false' and cm2.disabled='false'
+           
+    </select>
+  
+  
+   <select id="getInstanceUpRetionByModule" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+    
+   
+          select ci.*, cird.sourceInstanceId, cird.targerInstanceId,'UP' direction,
+          cm.name moduleName, 
+          (select id from cmdb_module_relation  where   targetModuleId = #{instanceModuleId} 
+               and sourceModuleId = #{selectModuleId}
+               ) moduleRelationId,
+          (select restriction from cmdb_module_relation  where   targetModuleId = #{instanceModuleId} 
+               and sourceModuleId = #{selectModuleId}
+               ) restriction,
+          (select name   from cmdb_relation where id = cird.moduleRelationId) relationName
+            from cmdb_instance ci left join cmdb_module cm on ci.moduleId = cm.id
+                                  left join 
+                                  (select c1.*, c2.moduleId from  cmdb_instance_relation_detail c1, cmdb_instance c2 where  c1.targerInstanceId = #{instanceId} and c1.targerInstanceId = c2.id and c2.moduleId = #{instanceModuleId} and c2.`isDelete` = 0) cird on ci.id = cird.sourceInstanceId 
+             where  1 = 1 AND ci.`isDelete` = 0 and cm.`isDelete` = 0 and cm.disabled='false' 
+             <if test="selectModuleId!=null and selectModuleId!=''"> 
+             and ci.moduleId = #{selectModuleId} 
+             </if>
+             <if test="queryInstanceName!=null and queryInstanceName!=''"> 
+            	    AND ci.name  like concat('%', #{queryInstanceName}, '%')
+             </if>
+              <if test="isSelect!=null and isSelect!='' and isSelect == 'true'">    
+                    AND cird.sourceInstanceId IS NOT NULL 
+             </if>   
+             ORDER BY ci.name  
+    </select>
+    
+   <select id="getInstanceDownRetionByModule" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+     
+          select ci.*, cird.sourceInstanceId, cird.targerInstanceId,'DOWN' direction,
+           cm.name moduleName, 
+           (select id from cmdb_module_relation  where  sourceModuleId = #{instanceModuleId}
+           and targetModuleId = #{selectModuleId}
+           ) moduleRelationId,
+          (select restriction from cmdb_module_relation  where  sourceModuleId = #{instanceModuleId}
+           and targetModuleId = #{selectModuleId}
+           ) restriction,
+          (select name   from cmdb_relation where id = cird.moduleRelationId) relationName  
+          from cmdb_instance ci left join cmdb_module cm on ci.moduleId = cm.id
+                                   left join 
+                                       (select c1.*, c2.moduleId from  cmdb_instance_relation_detail c1, cmdb_instance c2  where  c1.sourceInstanceId = #{instanceId} and c1.sourceInstanceId = c2.id and c2.moduleId = #{instanceModuleId}  and c2.`isDelete` = 0) cird on ci.id = cird.targerInstanceId 
+             where 1 = 1 AND ci.`isDelete` = 0 and cm.`isDelete` = 0 and cm.disabled='false' 
+             <if test="selectModuleId!=null and selectModuleId!=''"> 
+             and ci.moduleId = #{selectModuleId}  
+             </if>
+             <if test="queryInstanceName!=null and queryInstanceName!=''"> 
+            	    AND ci.name  like concat('%', #{queryInstanceName}, '%')
+             </if>   
+              <if test="isSelect!=null and isSelect!='' and isSelect == 'true'">             
+                   AND cird.sourceInstanceId IS NOT NULL 
+              </if> 
+             ORDER BY ci.name  
+    </select>
+    
+       <select id="getInstanceRetionType" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       
+       select id, 'UP' direction from cmdb_module_relation where  targetModuleId = #{instanceModuleId}  and sourceModuleId = #{selectModuleId} 
+       UNION 
+       select id,'DOWN' direction from cmdb_module_relation  where  sourceModuleId = #{instanceModuleId}  and targetModuleId = #{selectModuleId}
+       
+      </select>
+      
+      <select id="getMuduleRelationIdAndInstanceName" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT moduleRelationId,ci1.name as instanceName FROM cmdb_instance_relation_detail crd1
+		JOIN cmdb_instance ci1 ON
+		crd1.sourceInstanceId = ci1.id
+		WHERE crd1.targerInstanceId = #{instanceId}
+		UNION ALL
+		(SELECT moduleRelationId,ci2.name as instanceName FROM cmdb_instance_relation_detail crd2
+		JOIN cmdb_instance ci2 ON
+		crd2.targerInstanceId = ci2.id
+		WHERE crd2.sourceInstanceId = #{instanceId} )
+	</select>
+	
+	  
+      
+    <select id="checkInstanceRelation" parameterType="java.util.HashMap"    resultType="java.util.HashMap"  >
+       select ci1.name sname, ci.name tname from cmdb_instance_relation_detail cird, cmdb_instance ci1, cmdb_instance ci where cird.sourceInstanceId in 
+                  <foreach item="item" index="index" collection="instanceIds" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+       and cird.targerInstanceId = ci.id and cird.sourceInstanceId = ci1.id and ci.moduleId = #{targetModuleId} 
+          <if test="targetInstanceId!=null and targetInstanceId!=''"> 
+           and ci.id  !=  #{targetInstanceId} 
+           </if> 
+           and ci.isDelete = 0 and ci1.isDelete = 0
+       UNION ALL
+       select ci1.name sname, ci.name tname from cmdb_instance_relation_detail cird, cmdb_instance ci1, cmdb_instance ci where cird.targerInstanceId in 
+                  <foreach item="item" index="index" collection="instanceIds" 
+                         open="(" separator="," close=")">
+                        #{item}
+                </foreach>
+       and cird.sourceInstanceId = ci.id and cird.targerInstanceId = ci1.id  and ci.moduleId = #{targetModuleId} 
+           <if test="targetInstanceId!=null and targetInstanceId!=''"> 
+           and ci.id  !=  #{targetInstanceId}  
+            </if>
+           and ci.isDelete = 0 and ci1.isDelete = 0
+    </select>
+    
+   <select id="getRelationHistory" parameterType="java.util.HashMap" resultMap="InstanceRelationResultMap" >
+        SELECT 
+       <include refid="InstanceRelation_Column_List" />
+	   FROM cmdb_instance_relation_detail
+	          WHERE 1 = 1 
+       <if test="moduleRelationId!=null and moduleRelationId!=''"> 
+      and  moduleRelationId =#{moduleRelationId}
+        </if> 
+      <if test="sourceInstanceId!=null and sourceInstanceId!=''"> 
+      and  sourceInstanceId =#{sourceInstanceId}
+        </if> 
+      <if test="targerInstanceId!=null and targerInstanceId!=''"> 
+      and  targerInstanceId =#{targerInstanceId}
+        </if> 
+       <if test="id!=null and id!=''"> 
+       and id =#{id}
+        </if> 
+    </select>
+</mapper>

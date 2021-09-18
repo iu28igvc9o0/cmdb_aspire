@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     SecurityLeakScanReportFile
+	描述:     数据访问语句
+	作者:     梁峻
+	时间:     2019-07-09 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.leakScan.SecurityLeakScanReportFileDao">
+    <resultMap id="baseResultMap" type="com.aspire.mirror.alert.server.dao.leakScan.po.SecurityLeakScanReportFile">
+        <result property="id" column="id" jdbcType="INTEGER"></result>
+        <result property="scanId" column="scan_id" jdbcType="VARCHAR"></result>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"></result>
+        <result property="ftpPath" column="ftp_path" jdbcType="VARCHAR"></result>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.leakScan.po.SecurityLeakScanReportFile">
+        INSERT INTO security_leak_scan_report_files
+        (
+          scan_id,
+          file_name,
+          ftp_path
+        ) VALUES (
+          #{scanId},
+          #{fileName},
+          #{ftpPath}
+        )
+    </insert>
+
+    <select id="getFileByFtpPath" parameterType="string" resultMap="baseResultMap">
+        SELECT id,
+               scan_id,
+               file_name,
+               ftp_path,
+               create_time
+        FROM security_leak_scan_report_files
+        WHERE file_name = #{ftpPath}
+    </select>
+</mapper>

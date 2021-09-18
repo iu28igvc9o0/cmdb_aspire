@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.cmdb.agent.monthReport.mapper.CmdbCompReportMapper">
+    <sql id="baseColumn">
+        idcType,
+        month,
+        m_phy_comp_count,
+        m_dist_count,
+        use_comp_count,
+        bpm_plan_apply_count,
+        bpm_plan_apply_reply_count,
+        bpm_apply_dist_count,
+        bpm_apply_undist_count,
+        bpm_lm_apply_dist_count,
+        bpm_lm_apply_undist_count,
+        unm_comp_count,
+        unm_comp_predist_count,
+        surplus_count,
+        distribute_rate
+    </sql>
+
+    <select id="save" parameterType="java.util.List">
+        insert into cmdb_month_report_comp
+        (
+        idcType,
+        month,
+        m_phy_comp_count,
+        m_dist_count,
+        use_comp_count,
+        unm_comp_count,
+        unm_comp_predist_count,
+        surplus_count,
+        distribute_rate
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+             #{item.idcType,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m'),
+            #{item.m_phy_comp_count,jdbcType=VARCHAR},
+            #{item.m_dist_count,jdbcType=VARCHAR},
+            #{item.use_comp_count,jdbcType=VARCHAR},
+            #{item.unm_comp_count,jdbcType=VARCHAR},
+            #{item.unm_comp_predist_count,jdbcType=VARCHAR},
+            #{item.surplus_count,jdbcType=VARCHAR},
+            #{item.distribute_rate,jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        m_phy_comp_count = VALUES( m_phy_comp_count ),
+        m_dist_count = VALUES( m_dist_count ),
+        use_comp_count = VALUES( use_comp_count ),
+        unm_comp_count = VALUES( unm_comp_count ),
+        unm_comp_predist_count = VALUES( unm_comp_predist_count ),
+        surplus_count = VALUES( surplus_count ),
+        distribute_rate = VALUES( distribute_rate )
+    </select>
+
+    <select id="saveBpm" parameterType="java.util.List">
+        insert into cmdb_month_report_comp
+        (
+         idcType,
+        month,
+        bpm_plan_apply_count,
+        bpm_plan_apply_reply_count,
+        bpm_apply_dist_count,
+        bpm_apply_undist_count,
+        bpm_lm_apply_dist_count,
+        bpm_lm_apply_undist_count)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.resourcePool,jdbcType=VARCHAR},
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m') ,
+            #{item.resourceApplyTotal,jdbcType=VARCHAR},
+            #{item.resourceReplyTotal,jdbcType=VARCHAR},
+            #{item.mApplyAllotTotal,jdbcType=VARCHAR},
+            #{item.mApplyNoAllotTotal,jdbcType=VARCHAR},
+            #{item.lApplyAllotTotal,jdbcType=VARCHAR},
+            #{item.lApplyNoAllotTotal,jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        bpm_plan_apply_count = VALUES( bpm_plan_apply_count ),
+        bpm_plan_apply_reply_count = VALUES( bpm_plan_apply_reply_count ),
+        bpm_apply_dist_count = VALUES( bpm_apply_dist_count ),
+        bpm_apply_undist_count = VALUES( bpm_apply_undist_count ),
+        bpm_lm_apply_dist_count = VALUES( bpm_lm_apply_dist_count ),
+        bpm_lm_apply_undist_count = VALUES( bpm_lm_apply_undist_count )
+    </select>
+
+
+    <!-- 计算节点的设备总量 -->
+    <select id="count" resultType="java.util.Map">
+        SELECT *, CONCAT(TRUNCATE(m_dist_count/m_phy_comp_count * 100,2),'％') AS distribute_rate  FROM
+        (
+            SELECT idcType,
+            SUM(CASE WHEN  device_type= 'X86服务器' THEN 1 ELSE 0  END) AS m_phy_comp_count,
+                   SUM(CASE WHEN device_type= 'X86服务器' AND node_type= '计算节点' AND device_status !='未交维' AND department2 !='基础平台部' THEN 1 ELSE 0 END) AS m_dist_count,
+        SUM(CASE WHEN device_class_3= 'X86服务器' and bizSystem NOT IN( '未分配' ,'待分配')    THEN 1 ELSE 0 END) AS use_comp_count,
+        SUM(CASE WHEN node_type='计算节点' AND device_status ='未交维' THEN 1 ELSE 0 END) AS unm_comp_count,
+        SUM(CASE WHEN node_type='计算节点' AND bizSystem NOT IN( '未分配' ,'待分配')  AND device_status ='未交维' THEN 1 ELSE 0 END) AS unm_comp_predist_count,
+        SUM(CASE WHEN node_type='计算节点' AND bizSystem NOT IN( '未分配' ,'待分配')  AND device_status !='未交维' THEN 1 ELSE 0 END) AS surplus_Count
+            FROM cmdb_instance where is_delete='0' and IFNULL(idcType, '') != ''
+            GROUP BY idcType
+            ORDER BY idcTYPE IS  NULL,COUNT(1) DESC
+        ) res
+
+    </select>
+</mapper>

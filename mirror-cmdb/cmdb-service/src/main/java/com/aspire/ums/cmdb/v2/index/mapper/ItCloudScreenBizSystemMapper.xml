@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.index.mapper.ItCloudScreenBizSystemMapper">
+    
+    <!-- 业务系统免考核资源信息实体 -->
+    <resultMap id="bizSystemNotInspect" type="com.aspire.ums.cmdb.index.payload.ScreenBizSystemNotInspect">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="system_title_id" jdbcType="INTEGER" property="systemTitleId"/>
+        <result column="department1" jdbcType="VARCHAR" property="department1"/>
+        <result column="department2" jdbcType="VARCHAR" property="department2"/>
+        <result column="biz_system" jdbcType="VARCHAR" property="bizSystem"/>
+        <result column="resource_pool" jdbcType="VARCHAR" property="resourcePool"/>
+        <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
+        <result column="pod" jdbcType="VARCHAR" property="pod"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="resource_open_date" jdbcType="VARCHAR" property="resourceOpenDate"/>
+        <result column="start_assess_date" jdbcType="VARCHAR" property="startAssessDate"/>
+        <result column="monthly_time" jdbcType="VARCHAR" property="monthlyTime"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete"/>
+    </resultMap>
+
+    <!-- 业务系统免考核资源信息实体基础语句-->
+    <sql id="bs_not_inspect_base_sql">
+        id, system_title_id, department1, department2, resource_pool, pod,
+        biz_system, device_type, ip, resource_open_date, start_assess_date, monthly_time, insert_time, is_delete
+    </sql>
+
+    <!-- 新增业务系统免考核资源信息实体 -->
+    <select id="batchInsertBizSystemNotInpect" parameterType="com.aspire.ums.cmdb.index.payload.ScreenBizSystemNotInspect">
+    insert into screen_bizsystem_not_inspect
+        (<include refid="bs_not_inspect_base_sql"/>)
+    values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id, jdbcType=VARCHAR},
+            #{item.systemTitleId, jdbcType=INTEGER},
+            #{item.department1, jdbcType=VARCHAR},
+            #{item.department2, jdbcType=VARCHAR},
+            #{item.resourcePool, jdbcType=VARCHAR},
+            #{item.pod, jdbcType=VARCHAR},
+            #{item.bizSystem, jdbcType=VARCHAR},
+            #{item.deviceType, jdbcType=VARCHAR},
+            #{item.ip, jdbcType=VARCHAR},
+            #{item.resourceOpenDate, jdbcType=VARCHAR},
+            #{item.startAssessDate, jdbcType=VARCHAR},
+            #{item.monthlyTime, jdbcType=VARCHAR},
+            #{item.insertTime, jdbcType=TIMESTAMP},
+            #{item.isDelete, jdbcType=VARCHAR})
+        </foreach>
+    </select>
+
+    <select id="getBizSystemAllocation" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+        t1.biz_system bizSystem,
+        hasAllocation,
+        useAllocation,
+        IFNULL(notInspectAllocation,0) notInspectAllocation
+    FROM(
+        SELECT
+            IFNULL(SUM(amount),0) hasAllocation,
+            IFNULL(SUM(use_allocation),0) useAllocation,
+            biz_system
+        FROM screen_resource_allocation
+        where 1=1 and is_delete = '0' and module_type = '计算资源'
+        <include refid="where_sql"/>
+        GROUP BY biz_system
+    ) t1
+    LEFT JOIN(
+        SELECT biz_system,count(DISTINCT ip) notInspectAllocation
+        FROM screen_bizsystem_not_inspect
+        where 1=1 and is_delete ='0'
+        <include refid="where_sql"/>
+        GROUP BY biz_system
+    ) t2 on t1.biz_system = t2.biz_system
+    where t1.hasAllocation <![CDATA[ > ]]> 0
+    ORDER BY t1.hasAllocation desc,t1.useAllocation desc,t2.notInspectAllocation desc
+    </select>
+
+    <select id="getBizSystemNotInpect" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+        resource_open_date resourceOpenDate,
+        start_assess_date startAssessDate,
+        count(*) num
+    FROM screen_bizsystem_not_inspect
+    where 1=1 and is_delete = '0'
+    <include refid="where_sql"/>
+    GROUP BY resource_open_date,start_assess_date
+    ORDER BY resource_open_date,start_assess_date
+    </select>
+
+    <sql id="where_sql">
+        <if test="department1!=null and department1 != ''">
+            and department1 = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 = #{department2}
+        </if>
+        <if test="monthlyTime!=null and monthlyTime != ''">
+            and monthly_time = #{monthlyTime}
+        </if>
+        <if test="bizSystem!=null and bizSystem != ''">
+            and biz_system = #{bizSystem}
+        </if>
+        <if test="deviceType!=null and deviceType != ''">
+            and device_type = #{deviceType}
+        </if>
+    </sql>
+
+    <select id="allDataListExport" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+         a.department1,
+         a.department2,
+         a.bizSystem,
+         a.idcType,
+         a.pod_name,
+         a.device_type,
+         a.ip,
+         b.resource_open_date insert_time,
+         b.start_assess_date inspect_time,
+         c.ServiceIp other_ip,
+         a.VM_type,
+         a.device_os_type,
+         a.device_mfrs,
+         a.device_model,
+         a.project_name,
+         a.roomId
+    FROM (
+        select
+            ci.id,
+            org1.orgName department1,
+            org2.orgName department2,
+            biz.bizSystem bizSystem,
+            idc.idc_name idcType,
+            pod.pod_name pod_name,
+            dt.dict_note device_type,
+            ip,
+            other_ip,
+            VM_type,
+            ost.dict_note device_os_type,
+            mfrs.dict_note device_mfrs,
+            device_model,
+            pj.project_name project_name,
+            room.room_name roomId
+        from cmdb_instance ci
+        left join cmdb_org_system org1 ON (ci.department1 = org1.id and org1.is_delete = 0)
+        left join cmdb_org_system org2 ON (ci.department2 = org2.id  and org2.is_delete = 0)
+        LEFT JOIN cmdb_business_system biz ON (ci.bizSystem = biz.id and biz.is_delete = 0)
+        LEFT JOIN cmdb_idc_manager idc ON (ci.idcType = idc.id and idc.is_delete = 0)
+        LEFT JOIN cmdb_pod_manager pod ON (ci.pod_name = pod.id and pod.is_delete = 0)
+        LEFT JOIN (SELECT id,dict_note FROM t_cfg_dict WHERE col_name = 'device_type' and is_delete = 0) dt ON ci.device_type = dt.id
+        LEFT JOIN (SELECT id,dict_note FROM t_cfg_dict WHERE col_name = 'device_os_type' and is_delete = 0) ost ON ci.device_os_type = ost.id
+        LEFT JOIN (SELECT id,dict_note FROM t_cfg_dict WHERE col_name = 'device_mfrs' and is_delete = 0) mfrs ON ci.device_mfrs = mfrs.id
+        LEFT JOIN cmdb_project_manager pj ON (ci.project_name = pj.id and pj.is_delete = 0)
+        LEFT JOIN cmdb_room_manager room ON (ci.roomId = room.id and room.is_delete = 0)
+        where ci.is_delete = '0'
+        <if test="department1!=null and department1 != ''">
+            and org1.orgName = #{department1}
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and org2.orgName = #{department2}
+        </if>
+    ) a
+    LEFT JOIN screen_bizsystem_not_inspect b
+    ON(
+        a.idcType = b.resource_pool AND
+        a.ip = b.ip AND
+        a.department1 = b.department1 AND
+        a.department2 = b.department2
+    )
+    LEFT JOIN cmdb_instance_server c ON a.id = c.id
+    ORDER BY bizSystem,ip
+    </select>
+
+    <select id="calDataListExport" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+        SELECT
+            r1.department1,
+            r1.department2,
+            r1.biz_system,
+            r1.resource_pool,
+            r1.pod,
+            r1.total,
+            r6.business_concat,
+            r6.business_concat_phone,
+            IFNULL(cpuMax,0) cpuMax,
+            IFNULL(storeMax,0) storeMax,
+            IFNULL(ROUND(cpuAvg,2),0) cpuAvg,
+            IFNULL(ROUND(storeAvg,2),0) storeAvg
+        FROM(
+            SELECT rs1.department1,rs1.department2,rs1.biz_system,rs1.resource_pool,rs2.pod,rs2.total
+            FROM(
+                SELECT r1.biz_system,r1.resource_pool,department1,department2
+                FROM(
+                    select biz_system,resource_pool,department1,department2
+                    FROM screen_resource_allocation
+                    where is_delete = '0' <include refid="where_sql"/>
+                    GROUP BY biz_system,resource_pool
+                ) r1
+                LEFT JOIN(
+                    SELECT t.biz_system,t.resource_pool,MAX(t.mx) cpuMax
+                    FROM(
+                        SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                        FROM(
+                            SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                            FROM screen_resource_allocation
+                            where is_delete = '0' <include refid="where_sql"/>
+                            GROUP BY biz_system,resource_pool,pod
+                        ) t1
+                        LEFT JOIN (
+                            SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                            FROM screen_max_utilization
+                            where is_delete = '0' and hardware_type = 'CPU' <include refid="where_sql"/>
+                        ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                        GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+                    ) t
+                    GROUP BY t.biz_system,t.resource_pool
+                ) r2 ON (r1.biz_system = r2.biz_system and r1.resource_pool = r2.resource_pool)
+                LEFT JOIN(
+                    SELECT t.biz_system,t.resource_pool,MAX(t.mx) storeMax
+                    FROM(
+                        SELECT t1.biz_system,t1.resource_pool,t2.statist_date,ROUND(SUM(t1.cnt*t2.max_utilization)/SUM(t1.cnt),2) mx
+                        FROM(
+                            SELECT biz_system,resource_pool,pod,SUM(use_allocation - not_inspect_count) cnt
+                            FROM screen_resource_allocation
+                            where is_delete = '0' <include refid="where_sql"/>
+                            GROUP BY biz_system,resource_pool,pod
+                        ) t1
+                        LEFT JOIN (
+                            SELECT biz_system,resource_pool,pod,max_utilization,statist_date
+                            FROM screen_max_utilization
+                            where is_delete = '0' and hardware_type = '内存' <include refid="where_sql"/>
+                        ) t2 ON (t1.biz_system = t2.biz_system and t1.resource_pool = t2.resource_pool and t1.pod = t2.pod)
+                        GROUP BY t1.biz_system,t1.resource_pool,t2.statist_date
+                    ) t
+                    GROUP BY t.biz_system,t.resource_pool
+                ) r3 ON (r1.biz_system = r3.biz_system and r1.resource_pool = r3.resource_pool)
+                WHERE 1=1 <include refid="where_biz_list"/>
+            ) rs1
+            LEFT JOIN (
+                SELECT biz_system,resource_pool,pod,SUM(amount) total
+                FROM screen_resource_allocation
+                WHERE is_delete = '0' <include refid="where_sql"/>
+                GROUP BY biz_system,resource_pool,pod
+            ) rs2 ON (rs1.biz_system = rs2.biz_system AND rs1.resource_pool = rs2.resource_pool)
+            WHERE rs2.pod is not null
+        ) r1
+        LEFT JOIN (
+            SELECT biz_system,resource_pool,pod,MAX(CAST(max_utilization AS DECIMAL(6,2))) cpuMax
+            FROM screen_max_utilization
+            where hardware_type = 'CPU' <include refid="where_sql"/>
+            GROUP BY biz_system,resource_pool,pod
+        ) r2 ON(r1.biz_system = r2.biz_system and r1.resource_pool = r2.resource_pool and r1.pod = r2.pod)
+        LEFT JOIN (
+            SELECT biz_system,resource_pool,pod,MAX(CAST(max_utilization AS DECIMAL(6,2))) storeMax
+            FROM screen_max_utilization
+            where hardware_type = '内存' <include refid="where_sql"/>
+            GROUP BY biz_system,resource_pool,pod
+        ) r3 ON(r1.biz_system = r3.biz_system and r1.resource_pool = r3.resource_pool and r1.pod = r3.pod)
+        LEFT JOIN (
+            SELECT biz_system,resource_pool,pod,AVG(avg_utilization) cpuAvg
+            FROM screen_avg_utilization
+            where hardware_type = 'CPU' <include refid="where_sql"/>
+            GROUP BY biz_system,resource_pool,pod
+        ) r4 ON(r1.biz_system = r4.biz_system and r1.resource_pool = r4.resource_pool and r1.pod = r4.pod)
+        LEFT JOIN (
+            SELECT biz_system,resource_pool,pod,AVG(avg_utilization) storeAvg
+            FROM screen_avg_utilization
+            where hardware_type = '内存' <include refid="where_sql"/>
+            GROUP BY biz_system,resource_pool,pod
+        ) r5 ON(r1.biz_system = r5.biz_system and r1.resource_pool = r5.resource_pool and r1.pod = r5.pod)
+        LEFT JOIN (
+            SELECT bizSystem,business_concat,business_concat_phone
+            FROM cmdb_business_system
+            where is_delete = '0'
+            <if test="department1!=null and department1 != ''">
+                and department1 in (SELECT id
+                                    FROM cmdb_org_system
+                                    WHERE is_delete = 0 AND orgName = #{department1})
+            </if>
+            <if test="department2!=null and department2 != ''">
+                and department2 in (SELECT id
+                                    FROM cmdb_org_system
+                                    WHERE is_delete = 0 AND orgName = #{department2})
+            </if>
+            group by bizSystem
+        ) r6 on (r1.biz_system = r6.bizSystem)
+        ORDER BY r1.biz_system,r1.resource_pool,r2.pod
+    </select>
+
+    <!-- 峰值利用率 设置的不同条件 -->
+    <sql id="where_biz_list">
+        <if test="moduleFlag != null and moduleFlag == 1">
+            and cpuMax <![CDATA[ < ]]> 30 and storeMax <![CDATA[ < ]]> 30
+        </if>
+        <if test="moduleFlag != null and moduleFlag == 2">
+            and cpuMax <![CDATA[ < ]]> 30
+        </if>
+        <if test="moduleFlag != null and moduleFlag == 3">
+            and storeMax <![CDATA[ < ]]> 30
+        </if>
+    </sql>
+
+    <select id="storeDataListExport" parameterType="com.aspire.ums.cmdb.index.payload.ItCloudScreenRequest" resultType="java.util.HashMap">
+    SELECT
+      r1.department1,
+      r1.department2,
+      r1.resource_pool,
+      r1.biz_system,
+      r3.business_concat,
+      r3.business_concat_phone,
+      r2.pod,
+      r2.device_type,
+      IFNULL(Round(r2.use_allocation*100/r2.amount,2),0) utilization
+    FROM(
+        SELECT t1.department1,t1.department2,t1.resource_pool,t1.biz_system
+        FROM(
+            SELECT department1,department2,resource_pool,biz_system,sum(amount) total,sum(use_allocation) apply
+            FROM screen_resource_allocation
+            where is_delete = '0' and module_type = '存储资源'
+            <include refid="where_sql"/>
+            GROUP BY resource_pool,biz_system
+            having sum(amount) > 0
+        ) t1
+        WHERE IFNULL(t1.apply/t1.total,0) <![CDATA[ < ]]> 40
+    ) r1
+    LEFT JOIN (
+        SELECT resource_pool,biz_system,pod,device_type,amount,use_allocation
+        FROM screen_resource_allocation
+        WHERE is_delete = '0' and module_type = '存储资源'
+        <include refid="where_sql"/>
+    ) r2 on (r1.resource_pool = r2.resource_pool and r1.biz_system = r2.biz_system)
+    LEFT JOIN (
+        SELECT bizSystem,idcType,business_concat,business_concat_phone
+        FROM cmdb_business_system
+        where is_delete = '0'
+        <if test="department1!=null and department1 != ''">
+            and department1 in (SELECT id
+                                FROM cmdb_org_system
+                                WHERE is_delete = 0 AND orgName = #{department1})
+        </if>
+        <if test="department2!=null and department2 != ''">
+            and department2 in (SELECT id
+                                FROM cmdb_org_system
+                                WHERE is_delete = 0 AND orgName = #{department2})
+        </if>
+    ) r3 on (r1.biz_system = r3.bizSystem and r1.resource_pool = r3.idcType)
+    ORDER BY r1.biz_system,r1.resource_pool,r2.pod,r2.device_type
+    </select>
+</mapper>

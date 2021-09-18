@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.ums.cmdb.automate.mapper.AutomateInstanceLogMapper">
+
+    <resultMap type="com.aspire.ums.cmdb.automate.payload.AutomateInstanceLog" id="autoMateInstanceLog">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="instanceId" column="instance_id" jdbcType="VARCHAR"/>
+        <result property="eventType" column="event_type" jdbcType="VARCHAR"/>
+        <result property="eventId" column="event_id" jdbcType="VARCHAR"/>
+        <result property="system" column="system" jdbcType="VARCHAR"/>
+        <result property="objectId" column="object_id" jdbcType="VARCHAR"/>
+        <result property="objectName" column="object_name" jdbcType="VARCHAR"/>
+        <result property="objectVersion" column="object_version" jdbcType="INTEGER"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="optTimestamp" column="opt_timestamp" jdbcType="BIGINT"/>
+        <result property="operator" column="operator" jdbcType="VARCHAR"/>
+        <result property="optDesc" column="opt_desc" jdbcType="VARCHAR"/>
+        <result property="targetCategory" column="target_category" jdbcType="VARCHAR"/>
+        <result property="targetId" column="target_id" jdbcType="VARCHAR"/>
+        <result property="targetName" column="target_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="optContent" column="opt_content" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.automate.payload.AutomateInstanceLog">
+        INSERT INTO cmdb_automate_instance_log (
+        id,
+        instance_id,
+        event_type,
+        event_id,
+        system,
+        object_id,
+        object_name,
+        object_version,
+        version,
+        opt_timestamp,
+        operator,
+        opt_desc,
+        target_category,
+        target_id,
+        target_name,
+        syn_status,
+        syn_log_id
+        )
+        VALUES (
+        #{id,jdbcType=VARCHAR},
+        #{instanceId,jdbcType=VARCHAR},
+        #{eventType,jdbcType=VARCHAR},
+        #{eventId,jdbcType=VARCHAR},
+        #{system,jdbcType=VARCHAR},
+        #{objectId,jdbcType=VARCHAR},
+        #{objectName,jdbcType=VARCHAR},
+        #{objectVersion,jdbcType=INTEGER},
+        #{version,jdbcType=INTEGER},
+        #{optTimestamp,jdbcType=BIGINT},
+        #{operator,jdbcType=VARCHAR},
+        #{optDesc,jdbcType=VARCHAR},
+        #{targetCategory,jdbcType=VARCHAR},
+        #{targetId,jdbcType=VARCHAR},
+        #{targetName,jdbcType=VARCHAR},
+        '0',
+        #{synLogId,jdbcType=VARCHAR}
+        )
+        ON DUPLICATE KEY UPDATE
+        instance_id = VALUES(instance_id),
+        opt_desc = VALUES(opt_desc)
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cmdb_automate_instance_log (
+        id,
+        instance_id,
+        event_type,
+        event_id,
+        system,
+        object_id,
+        object_name,
+        object_version,
+        version,
+        opt_timestamp,
+        operator,
+        opt_desc,
+        target_category,
+        target_id,
+        target_name,
+        opt_content
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id,jdbcType=VARCHAR},
+            #{item.instanceId,jdbcType=VARCHAR},
+            #{item.eventType,jdbcType=VARCHAR},
+            #{item.eventId,jdbcType=VARCHAR},
+            #{item.system,jdbcType=VARCHAR},
+            #{item.objectId,jdbcType=VARCHAR},
+            #{item.objectName,jdbcType=VARCHAR},
+            #{item.objectVersion,jdbcType=INTEGER},
+            #{item.version,jdbcType=INTEGER},
+            #{item.optTimestamp,jdbcType=BIGINT},
+            #{item.operator,jdbcType=VARCHAR},
+            #{item.optDesc,jdbcType=VARCHAR},
+            #{item.targetCategory,jdbcType=VARCHAR},
+            #{item.targetId,jdbcType=VARCHAR},
+            #{item.targetName,jdbcType=VARCHAR},
+            #{item.optContent,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="saveKafkaHostLog" parameterType="java.util.Map">
+        INSERT INTO `cmdb_automate_syn_log`
+        (`id`,`request_content`,`create_time`,`type`,`syn_type`,`syn_result`)
+        VALUES
+        ( #{synLogId,jdbcType=VARCHAR},#{requestContent,jdbcType=VARCHAR}, NOW(),
+        #{type,jdbcType=VARCHAR},#{synType,jdbcType=CHAR},#{synResult,jdbcType=VARCHAR} )
+    </insert>
+
+    <!--同步失败更新日志标识-->
+    <update id="updateHostLogStatus" parameterType="java.lang.String">
+        UPDATE cmdb_automate_instance_log SET syn_status = '1'
+        WHERE syn_log_id = #{synLogId}
+    </update>
+
+    <!--同步失败更新日志标识和结果描述-->
+    <select id="getKafkaHostLog" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT id FROM cmdb_automate_syn_log
+        WHERE id = #{synLogId}
+    </select>
+
+    <!--同步失败更新日志标识和结果描述-->
+    <update id="updateKafkaHostLogStatus" parameterType="java.util.Map">
+        UPDATE cmdb_automate_syn_log SET syn_type = #{synStatus},syn_result = #{synResult}
+        WHERE id = #{synLogId}
+    </update>
+
+</mapper>

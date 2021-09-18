@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     金素
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.filter.AlertFilterSceneDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.filter.po.AlertFilterScene" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="filterId" column="filter_id" jdbcType="INTEGER"/>
+        <result property="filterName" column="filter_name" jdbcType="VARCHAR"/>
+        <result property="optionCondition" column="option_condition" jdbcType="VARCHAR"/>
+        <result property="operateUser" column="operate_user" jdbcType="VARCHAR"/>
+        <result property="creater" column="creater" jdbcType="VARCHAR"/>
+        <result property="editer" column="editer" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
+        <result property="updated_at" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="created_at" column="created_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="baseWhereClause">
+        <where>
+            1=1
+            <if test="params['name'] != null and  params['name'] != ''">
+                and name like concat (concat("%",#{params.name}),"%")
+            </if>
+            <if test="params['filterName'] != null ">
+                and updated_at &gt;= #{params.timeStart}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="baseColumnList">
+    	id,name,creater,editer,created_at,updated_at,note,operate_user,option_condition,filter_id
+	</sql>
+	<select id="getByfilterId"  resultMap="baseResultMap">
+    select  <include refid="baseColumnList" /> 
+    from alert_filter_scene s where s.filter_id = #{filterId}
+    		<if test="operateUser != null and 'operateUser' !=''">
+               and (s.creater =  #{operateUser} or find_in_set(#{operateUser},s.operate_user))
+            </if>
+        order by id desc
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.filter.po.AlertFilterScene">
+		insert into
+			alert_filter_scene(name,creater,editer,note,created_at,option_condition,filter_id,operate_user)
+		values(
+			#{name,jdbcType=VARCHAR} ,
+			#{creater,jdbcType=VARCHAR} ,
+			#{editer,jdbcType=VARCHAR} ,
+			#{note,jdbcType=VARCHAR} ,
+			#{created_at,jdbcType=TIMESTAMP},
+			#{optionCondition,jdbcType=VARCHAR},
+			#{filterId,jdbcType=VARCHAR},
+			#{operateUser,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	 <insert id="batchInsert" parameterType="com.aspire.mirror.alert.server.dao.filter.po.AlertFilterScene">
+		insert into
+			alert_filter_scene(name,creater,editer,note,created_at,option_condition,filter_id,operate_user)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+          ( #{item.name,jdbcType=VARCHAR} ,
+			#{item.creater,jdbcType=VARCHAR} ,
+			#{item.editer,jdbcType=VARCHAR} ,
+			#{item.note,jdbcType=VARCHAR} ,
+			#{item.created_at,jdbcType=TIMESTAMP},
+			#{item.optionCondition,jdbcType=VARCHAR},
+			#{item.filterId,jdbcType=VARCHAR},
+			#{item.operateUser,jdbcType=VARCHAR})  
+      </foreach> 
+		
+	</insert>
+	
+    <!-- 列表 -->
+    <select id="pageList" parameterType="com.aspire.mirror.common.entity.Page" resultMap="baseResultMap">
+    select * from (
+        select s.id,s.name,s.creater,s.editer,s.created_at,s.updated_at,s.note,s.option_condition,s.operate_user,s.filter_id,
+        f.name as filter_name
+        from alert_filter_scene s left join alert_filter f on  s.filter_id = f.id
+        <if test="params != null">
+             <where>
+            1=1
+            <if test="params['name'] != null and  params['name'] != ''">
+               and s.name like concat(concat("%",#{params.name}),"%")
+            </if>
+            <if test="params['filterName'] != null and  params['filterName'] != ''">
+                 and f.name like concat(concat("%",#{params.filterName}),"%")
+            </if>
+            <if test="params['operateUser'] != null and  params['operateUser'] != ''">
+                and (s.creater =  #{params.operateUser} or find_in_set(#{params.operateUser},s.operate_user))
+            </if>
+             <if test="params['filterId'] != null and  params['filterId'] != ''">
+             	and s.filter_id = #{params.filterId}
+            </if>
+        </where>
+        </if>
+        )aa
+        order by ${sortName} ${order}
+        limit #{begin},#{pageSize}
+    </select>
+    <select id="pageListCount" parameterType="com.aspire.mirror.common.entity.Page" resultType="java.lang.Integer">
+        select count(*) from alert_filter_scene s left join alert_filter f on  s.filter_id = f.id
+        <if test="params != null">
+             <where>
+           	1=1
+            <if test="params['name'] != null and  params['name'] != ''">
+               and s.name like concat (concat("%",#{params.name}),"%")
+            </if>
+            <if test="params['filterName'] != null and  params['name'] != ''">
+                and f.name like concat (concat("%",#{params.filterName}),"%")
+            </if>
+             <if test="params['filterId'] != null and  params['filterId'] != ''">
+             	and s.filter_id = #{params.filterId}
+            </if>
+        </where>
+        </if>
+    </select>
+    <select id="getByName"  resultMap="baseResultMap">
+        select  <include refid="baseColumnList" />
+         from alert_filter_scene
+        where name = #{name} and  filter_id = #{filterId}
+    </select>
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="Integer" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from alert_filter_scene  where id = #{id}
+    </select>
+    
+   
+   <!-- 修改 -->
+	<update id="update" parameterType="com.aspire.mirror.alert.server.dao.filter.po.AlertFilterScene">
+		update alert_filter_scene set 
+		editer = #{editer},
+		name = #{name},
+		note = #{note},
+		option_condition = #{optionCondition},
+		operate_user = #{operateUser},
+		filter_id = #{filterId}
+		where id = #{id}
+	</update>
+   
+    <delete id="deleteByPrimaryKey" parameterType="Integer">
+		DELETE FROM alert_filter_scene WHERE id = #{id}
+	</delete>
+</mapper>

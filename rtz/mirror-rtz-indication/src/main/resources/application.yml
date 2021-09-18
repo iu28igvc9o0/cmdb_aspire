@@ -1,0 +1,92 @@
+server:
+  port: 8507
+  context-path: /mirror
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true #当出现404错误时,是否直接抛出异常
+  resources:
+    add-mappings: false #是否开启默认的资源处理
+
+logging:
+  config: classpath:log4j2.yml
+  level:
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    #com.aspire.mirror.dao: debug
+    #tk.mybatis.mapper.common.base.select: debug #输出mybatis select SQL
+    #tk.mybatis.mapper.common.base.update: debug #输出mybatis update SQL
+    #tk.mybatis.mapper.common.base.insert: debug #输出mybatis insert SQL
+    #tk.mybatis.mapper.common.base.delete: debug #输出mybatis delete SQL
+
+mybatis:
+  mapperLocations:
+  - classpath*:mapper/mirror/*Mapper.xml
+  type-aliases-package:
+    org.springboot.sample.entity
+  configLocation: classpath:mybatis-config.xml
+
+##模板引擎
+#freemarker:
+#  #关闭缓存
+#  cache: false
+#  #模板加载的位置
+#  template-loader-path: classpath:/freemarker
+
+druid:
+  url: jdbc:mysql://10.12.70.40:3306/mirror?useUnicode=true&characterEncoding=UTF-8
+  username: root
+  password: 1234@qwer
+  useUnicode: true
+  characterEncoding: UTF8
+  useSSL: false
+
+#druid:
+#  url: jdbc:mysql://10.100.2.214:3306/nationalweb_indexexception_rtz?useUnicode=true&characterEncoding=UTF-8
+#  username: root
+#  password: cmcc1234
+#  useUnicode: true
+#  characterEncoding: UTF8
+#  useSSL: false
+
+#envconfig:
+#  familyOpen:
+#    national: http://10.12.70.40:8080/familyopen
+#    nationalReal: http://10.12.70.40:8080/familyopen
+#    qName: http://national.server.webservice.family.cmcc.com/
+#  interFace:
+#    interfaceRoot: http://10.12.70.39:28129/v1
+#    updateItems: ${envconfig.interFace.interfaceRoot}/items/
+#    indicationList: ${envconfig.interFace.interfaceRoot}/items/pageList
+#    indicationResult: ${envconfig.interFace.interfaceRoot}/items/getThemeCalcResult/
+#    themeCalcItem: http://10.12.70.39:8999/v1/themeCalcItem/calcItem/
+#    postThemeData: http://10.12.70.39:8132/v1/theme/createThemeData
+#    themeInfo: ${envconfig.interFace.interfaceRoot}/theme/{theme_id}
+#  alertAgent:
+#    server: "vmhadoop12:9092,vmhadoop13:9092,vmhadoop14:9092"
+#  nationalWeb:
+#    autoSendTopic: "IndexExceptionWarning"
+#    sendTopic: "IndexExceptionAlertForTest"
+#  realNationalWeb:
+#    autoSendTopic: "IndexExceptionAlertForTest"
+#    sendTopic: "IndexExceptionAlertForTest"
+
+envconfig:
+  familyOpen:
+    national: http://10.100.2.214:8080/familyopen
+    nationalReal: http://10.100.2.232:8089/familyopen
+    qName: http://national.server.webservice.family.cmcc.com/
+  interFace:
+    interfaceRoot: http://10.12.70.39:28129/v1
+    updateItems: ${envconfig.interFace.interfaceRoot}/items/
+    indicationList: ${envconfig.interFace.interfaceRoot}/items/pageList
+    indicationResult: ${envconfig.interFace.interfaceRoot}/items/getThemeCalcResult/
+    themeCalcItem: http://10.100.2.248:8999/v1/themeCalcItem/calcItem/
+    postThemeData: http://10.100.2.248:8132/v1/theme/createThemeData
+  alertAgent:
+    server: "vmhadoop12:9092,vmhadoop13:9092,vmhadoop14:9092"
+  nationalWeb:
+    autoSendTopic: "IndexExceptionWarning"
+    sendTopic: "IndexExceptionAlertForTest"
+  realNationalWeb:
+    autoSendTopic: "IndexExceptionAlertForTest"
+    sendTopic: "IndexExceptionAlertForTest"

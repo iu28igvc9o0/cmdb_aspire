@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.IpResource.mapper.CmdbAssetInfoMapper">
+
+    <resultMap id="baseMap" type="com.aspire.ums.cmdb.ipResource.payload.AssetInfoBaseResp">
+        <id column="id" property="assetId" jdbcType="VARCHAR"/>
+        <result column="device_ip" property="manageIp" jdbcType="VARCHAR"/>
+        <result column="idcType" property="idcVal" jdbcType="VARCHAR"/>
+        <result column="idcId" property="idcId" jdbcType="VARCHAR"/>
+        <result column="host_backup" property="hostBack" jdbcType="VARCHAR"/>
+        <result column="business_ip1" property="businessIp1" jdbcType="VARCHAR"/>
+        <result column="business_ip2" property="businessIp2" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--    资产管理流程-原IP、回收IP 弹窗实体-->
+    <resultMap id="assetIpMap" type="com.aspire.ums.cmdb.ipResource.payload.AssetInfoIpResp" extends="baseMap">
+        <result column="ipType" property="ipType" jdbcType="VARCHAR"/>
+        <result column="ip" property="ip" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--    资产管理流程-管理IP、关联资产 弹窗列表实体-->
+    <resultMap id="assetMap" type="com.aspire.ums.cmdb.ipResource.payload.AssetInfoResp" extends="baseMap">
+        <result column="mgr_by_pool" property="isPool" jdbcType="VARCHAR"/>
+        <result column="device_class" property="deviceClassName" jdbcType="VARCHAR"/>
+        <result column="device_type" property="deviceTypeName" jdbcType="VARCHAR"/>
+        <result column="deviceTypeId" property="deviceTypeId" jdbcType="VARCHAR"/>
+        <result column="bizSystem" property="aloneBusiness" jdbcType="VARCHAR"/>
+        <result column="business_level2" property="aloneBusiness2" jdbcType="VARCHAR"/>
+        <result column="server_rack_location" property="machineRoomName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--    资产管理流程-资源回收、IP变更 回填实体-->
+    <resultMap id="backfillAssetMap" type="com.aspire.ums.cmdb.ipResource.payload.AssetInfoBackfillResp"
+               extends="assetMap">
+        <result column="project_belong_to" property="projectBelongto" jdbcType="VARCHAR"/>
+        <result column="device_model" property="deviceModel" jdbcType="VARCHAR"/>
+        <result column="device_config" property="deviceConfig" jdbcType="VARCHAR"/>
+        <result column="device_os_type" property="deviceOsType" jdbcType="VARCHAR"/>
+        <result column="device_cell" property="deviceCell" jdbcType="VARCHAR"/>
+        <result column="device_sn" property="devicesn" jdbcType="VARCHAR"/>
+        <result column="asset_number" property="assetNum" jdbcType="VARCHAR"/>
+        <result column="recycle_ips" property="recycleIps" jdbcType="VARCHAR"/>
+        <result column="console_ip" property="consoleip" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--    资产基础字段-->
+    <sql id="baseColumn">
+        <bind name="pageNo" value="(pageNo -1) * pageSize"/>
+        ci.id,
+        ci.ip AS device_ip,
+        tcd.dict_note AS idcType,
+        tcd.id AS idcId,
+        tcd4.dict_note AS host_backup,
+        ci.business_ip1,
+        ci.business_ip2
+    </sql>
+    <!--    管理IP、关联资产 弹窗列表数据-->
+    <sql id="assetColumn">
+        <include refid="baseColumn"/>,
+        (CASE WHEN ci.mgr_by_pool = 'True' THEN '是' ELSE '否' END) AS mgr_by_pool,
+        tcd2.dict_note AS device_class,
+        tcd3.dict_note AS device_type,
+        tcd3.id AS deviceTypeId,
+        cbl.business_name AS bizSystem,
+        cbl1.business_name AS business_level2,
+        tcd7.dict_note AS server_rack_location
+    </sql>
+    <!--    回填数据-->
+    <sql id="backfillAssetColumn">
+        <include refid="assetColumn"/>,
+        tcd5.dict_note AS project_belong_to,
+        tcd6.dict_note AS device_model,
+        '' AS device_config,
+        tcd1.dict_note AS device_os_type,
+        ci.device_cell,
+        ci.device_sn,
+        ci.asset_number,
+        cic.console_ip,
+        <choose>
+            <when test='"2" == recoveryType'>
+                CONCAT_WS(',',ci.business_ip2,cic.console_ip,ci.other_ip) AS recycle_ips
+            </when>
+            <otherwise>
+                CONCAT_WS(',',ci.ip,ci.business_ip1,ci.business_ip2,cic.console_ip,ci.other_ip) AS recycle_ips
+            </otherwise>
+        </choose>
+    </sql>
+    <!--    根据IP类型选择字段-->
+    <sql id="chooseColumn">
+        <choose>
+            <when test="ipType == 1">
+                ci.business_ip1
+            </when>
+            <when test="ipType == 2">
+                ci.business_ip2
+            </when>
+            <when test="ipType == 3">
+                cic.console_ip
+            </when>
+            <when test="ipType == 4">
+                ci.IP_V6
+            </when>
+            <when test="ipType == 5">
+                ci.carrier_network
+            </when>
+            <when test="ipType == 6">
+                ci.other_ip
+            </when>
+            <otherwise>
+                ci.ip
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="queryWhere">
+        AND ci.is_delete = '0'
+        <if test="assetIdArr != null and assetIdArr.length > 0">
+            AND ci.id IN
+            <foreach collection="assetIdArr" item="assetId" index="index" open="(" separator="," close=")">
+                #{assetId}
+            </foreach>
+        </if>
+        <if test="manageIpArr != null and manageIpArr.length > 0">
+            AND (
+                ci.ip IN
+                <foreach collection="manageIpArr" item="ip" index="index" open="(" separator="," close=")">
+                    #{ip}
+                </foreach>
+                OR
+                ci.business_ip1 IN
+                <foreach collection="manageIpArr" item="ip" index="index" open="(" separator="," close=")">
+                    #{ip}
+                </foreach>
+                OR
+                ci.business_ip2 IN
+                <foreach collection="manageIpArr" item="ip" index="index" open="(" separator="," close=")">
+                    #{ip}
+                </foreach>
+                OR
+                cic.console_ip IN
+                <foreach collection="manageIpArr" item="ip" index="index" open="(" separator="," close=")">
+                    #{ip}
+                </foreach>
+            )
+        </if>
+        <if test="idcVal != null and idcVal != ''">
+            AND ci.idcType = #{idcVal}
+        </if>
+        <if test="hostBack != null and hostBack != ''">
+            AND ci.host_backup = #{hostBack}
+        </if>
+        <if test="isPool != null and isPool != ''">
+            AND ci.mgr_by_pool = #{isPool}
+        </if>
+        <if test="deviceClass != null and deviceClass != ''">
+            AND ci.device_class = #{deviceClass}
+        </if>
+        <if test="deviceType != null and deviceType != ''">
+            AND ci.device_type = #{deviceType}
+        </if>
+        <if test="aloneBusiness != null and aloneBusiness != ''">
+            AND ci.bizSystem = #{aloneBusiness}
+        </if>
+        <if test="aloneBusiness2 != null and aloneBusiness2 != ''">
+            AND ci.business_level2 = #{aloneBusiness2}
+        </if>
+        <if test="machineRoom != null and machineRoom != ''">
+            AND ci.idc_location = #{machineRoom}
+        </if>
+        <if test="aloneBusinessCode != null and aloneBusinessCode != ''">
+            AND cbl.business_code = #{aloneBusinessCode}
+        </if>
+        <if test="aloneBusinessCode2 != null and aloneBusinessCode2 != ''">
+            AND cbl1.business_code = #{aloneBusinessCode2}
+        </if>
+    </sql>
+
+    <!--关联查询字典表的joinSQL部分-->
+    <sql id="AssetJoinSql">
+        LEFT JOIN t_cfg_dict tcd ON (ci.idcType = tcd.id AND tcd.is_delete = '0' AND tcd.col_name = 'idcType2')
+        LEFT JOIN t_cfg_dict tcd1 ON (ci.device_os_type = tcd1.id AND tcd1.is_delete = '0' AND tcd1.col_name = 'deviceOsType')
+        LEFT JOIN t_cfg_dict tcd2 ON (ci.device_class = tcd2.id AND tcd2.is_delete = '0' AND tcd2.col_name = 'device_class')
+        LEFT JOIN t_cfg_dict tcd3 ON (ci.device_type = tcd3.id AND tcd3.is_delete = '0' AND tcd3.col_name = 'device_type')
+        LEFT JOIN t_cfg_dict tcd4 ON (ci.host_backup = tcd4.id AND tcd4.is_delete = '0' AND tcd4.col_name = 'hostBackup')
+        LEFT JOIN t_cfg_dict tcd5 ON (ci.project_belong_to = tcd5.id AND tcd5.is_delete = '0' AND tcd5.col_name = 'cmdbProjectBelongTo')
+        LEFT JOIN t_cfg_dict tcd6 ON (ci.device_model = tcd6.id AND tcd6.is_delete = '0' AND tcd6.col_name = 'device_model')
+        LEFT JOIN t_cfg_dict tcd7 ON (ci.idc_location = tcd7.id AND tcd7.is_delete = '0' AND tcd7.col_name = 'idcLocationType')
+        LEFT JOIN cmdb_business_line cbl ON (ci.bizSystem = cbl.id AND cbl.is_delete = '0' AND cbl.parentBusiness IS NULL)
+        LEFT JOIN cmdb_business_line cbl1 ON (ci.business_level2 = cbl1.id AND cbl1.is_delete = '0' AND cbl1.parentBusiness IS NOT NULL)
+    </sql>
+
+    <!--    资产管理流程-管理IP、关联资产 弹窗列表数据-->
+    <select id="getAssetList" resultMap="assetMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT
+        <include refid="assetColumn"/>
+        FROM
+        cmdb_instance ci
+        LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+        <include refid="AssetJoinSql" />
+        WHERE 1=1
+        <include refid="queryWhere"/>
+        <if test="pageNo >= 0 and pageSize > 0">
+            LIMIT #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="getAssetListCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT
+        count(*) AS total
+        FROM
+        cmdb_instance ci
+        LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+        <include refid="AssetJoinSql" />
+        WHERE 1=1
+        <include refid="queryWhere"/>
+    </select>
+
+    <!--    资产管理流程-资产回收 回填数据-->
+    <select id="getBackfillAsset" resultMap="backfillAssetMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT
+        <include refid="backfillAssetColumn"/>
+        FROM
+        cmdb_instance ci
+        LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+        <include refid="AssetJoinSql" />
+        WHERE 1=1
+        <include refid="queryWhere"/>
+        <if test="pageNo >= 0 and pageSize > 0">
+            LIMIT #{pageNo} ,#{pageSize}
+        </if>
+    </select>
+    <select id="getBackfillAssetCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT
+        count(*) AS total
+        FROM
+        cmdb_instance ci
+        LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+        <include refid="AssetJoinSql" />
+        WHERE 1=1
+        <include refid="queryWhere"/>
+    </select>
+
+    <!--    资产管理流程-原IP、回收IP 弹窗列表-->
+    <select id="getAssetIpList" resultMap="assetIpMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT a.* from
+        <foreach collection="ipTypeArr" index="index" item="ipType" open="(" separator="UNION ALL" close=")">
+            SELECT
+            <include refid="baseColumn"/>,
+            (SELECT dict_code from t_cfg_dict WHERE delete_flag = 0 AND col_name = 'ipTypeForAsset' AND dict_note =
+            #{ipType})
+            AS ipType,
+            <include refid="chooseColumn"/>
+            AS ip
+            FROM
+            cmdb_instance ci
+            LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+            <include refid="AssetJoinSql" />
+            WHERE 1=1
+            <include refid="queryWhere"/>
+        </foreach>
+        a
+        <where>
+            <if test="ips != null and ips.length > 0">
+                AND
+                <foreach collection="ips" index="index" item="ip" open="(" separator="OR" close=")">
+                    a.ip LIKE CONCAT('%',#{ip},'%')
+                </foreach>
+            </if>
+            AND a.ip IS NOT NULL AND a.ip != ''
+        </where>
+    </select>
+
+
+    <select id="getAssetIpList_bak" resultMap="assetIpMap"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT
+        <include refid="baseColumn"/>,
+        #{ipType} AS ipType,
+        <include refid="chooseColumn"/>
+        AS ip
+        FROM
+        cmdb_instance ci
+        LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+        WHERE 1=1
+        <include refid="queryWhere"/>
+        <if test="ips != null and ips.length > 0">
+            AND
+            <foreach collection="ips" index="index" item="ip" open="(" separator="OR" close=")">
+                <include refid="chooseColumn"/>
+                LIKE CONCAT('%',#{ip},'%')
+            </foreach>
+        </if>
+        <if test="pageNo >= 0 and pageSize > 0">
+            LIMIT #{pageNo} ,#{pageSize}
+        </if>
+    </select>
+    <select id="getAssetIpListCount" resultType="Integer"
+            parameterType="com.aspire.ums.cmdb.IpResource.entity.CmdbAssetInfoQuery">
+        SELECT
+        count(*) AS total
+        FROM
+        cmdb_instance ci
+        LEFT JOIN cmdb_instance_console cic ON ci.id = cic.id
+        <include refid="AssetJoinSql" />
+        WHERE 1=1
+        <include refid="queryWhere"/>
+        <if test="ips != null and ips.length > 0">
+            AND
+            <foreach collection="ips" index="index" item="ip" open="(" separator="OR" close=")">
+                <include refid="chooseColumn"/>
+                LIKE CONCAT('%',#{ip},'%')
+            </foreach>
+        </if>
+    </select>
+
+    <update id="updateIsDelete" parameterType="java.util.List">
+        UPDATE cmdb_instance SET is_delete = '1' WHERE id IN
+        <foreach collection="idArr" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--查询KVM的虚拟机模板 新增 20201130 fanwenhui-->
+    <select id="getKvmTemplateList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT instance_id AS vmid,sname AS vmTemplateName FROM cmdb_openstack_image
+		WHERE hname = #{idc}
+	</select>
+
+    <!--查询一级业务线ID和对应的独立业务 新增 20210125 fanwenhui-->
+    <select id="getOneBusinessAndAloneBusiness" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT DISTINCT
+		cbl.id AS businessId, cbl.business_code AS businessCode, cbl.business_name AS businessName,
+		cos.id AS onBusinessId,cos.orgName AS onBusinessName
+        FROM cmdb_business_system cbs
+        JOIN cmdb_org_system cos ON (cbs.department2 = cos.id AND cos.parent_id != '0' AND cos.is_delete = '0')
+        JOIN cmdb_business_line cbl ON cbl.id = cbs.bizSystem
+        WHERE cbs.is_delete='0' AND cbl.is_delete='0'
+        AND cbl.business_code = #{businessCode}
+	</select>
+
+</mapper>

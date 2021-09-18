@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: baiwenping 时间: 2020-02-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsHisV2Dao">
+
+
+    <sql id="baseColumnList">
+        alert_id,r_alert_id,biz_sys,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id,
+        remark,order_status,operate_status,source,idc_type,object_type,device_ip,order_id,
+        order_type,alert_start_time,alert_count, alert_end_time
+    </sql>
+    <!-- 修改 -->
+    <update id="updateByPrimaryKey" parameterType="java.util.Map">
+        update alert_alerts_his set
+        <foreach collection="map.keys" item="key" index="index"
+                 open="" separator="," close="">
+            ${key} = #{map[${key}]}
+        </foreach>
+        where alert_id = #{map.alert_id}
+    </update>
+    <insert id="insert" parameterType="java.util.Map">
+      insert into alert_alerts_his
+        <foreach collection="map.keys" item="key" open="(" close=")" separator="," >
+            ${key}
+        </foreach>
+        values
+        <foreach collection="map.keys"  item="key" open="(" close=")" separator=",">
+            #{map[${key}]}
+        </foreach>
+    </insert>
+    <select id="selectByIds" resultType="java.util.Map" parameterType="java.util.List">
+        select
+        t.*
+        from alert_alerts_his t
+        where alert_id IN
+        <foreach collection="list" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </select>
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="page_limit" >
+        limit #{begin}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </sql>
+    <!-- list查询 -->
+    <select id="listByEntity" resultType="java.util.Map"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria">
+        SELECT
+        CASE t.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else t.alert_level end alert_level,
+        CASE t.notify_status when '1' then '已通知' when '0' then '未通知' else t.notify_status end notify_status,
+        CASE t.object_type when '1' then '设备' when '2' then '业务' else t.object_type end object_type,
+        <choose>
+            <when test="example['exportField'] != null and example['exportField'] != ''">
+                ${example.exportField}
+            </when>
+            <otherwise>
+                t.*
+            </otherwise>
+        </choose>
+        FROM alert_alerts_his t
+        <include refid="Example_Where_Clause1"/>
+        <choose>
+            <when test="example['orderByClause'] != null and example['orderByClause'] != ''">
+                order by ${example['orderByClause']}
+            </when>
+            <otherwise>
+                order by cur_moni_time desc
+            </otherwise>
+        </choose>
+        limit 100000
+    </select>
+    <!-- 分页查询 -->
+    <select id="findPageWithResult"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria" resultType="java.util.Map">
+        select
+        t.*
+        from alert_alerts_his t
+        <include refid="Example_Where_Clause"/>
+        <choose>
+            <when test="orderByClause != null and orderByClause != ''">
+                order by ${orderByClause}
+            </when>
+            <otherwise>
+                order by cur_moni_time desc
+            </otherwise>
+        </choose>
+        <if test="begin != null">
+            <include refid="page_limit"/>
+        </if>
+
+    </select>
+     <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+             resultType="Integer">
+         select count(1)
+         from alert_alerts_his t
+         <include refid="Example_Where_Clause"/>
+     </select>
+
+    <select id="detailById"
+            parameterType="java.lang.String" resultType="java.util.Map">
+        select
+        t.*
+        from alert_alerts_his t
+        where t.alert_id = #{alertId}
+    </select>
+
+    <update id="updateAlertHisByOrderId" parameterType="java.lang.String" >
+        UPDATE alert_alerts_his
+        SET order_status = #{orderStatus}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <sql id="Example_Where_Clause1" >
+        <where >
+            <foreach collection="example['oredCriteria']" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+</mapper>

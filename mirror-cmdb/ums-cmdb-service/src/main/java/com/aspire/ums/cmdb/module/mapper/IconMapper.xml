@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.module.mapper.IconMapper" >
+  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.entity.Icon" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="iconUrl" property="iconurl" jdbcType="VARCHAR" />
+    <result column="iconCategory" property="iconcategory" jdbcType="INTEGER" />
+    <result column="sortIndex" property="sortindex" jdbcType="INTEGER" />
+    <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
+    <result column="isDelete" property="isdelete" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, iconUrl, iconCategory, sortIndex, insertTime, isDelete
+  </sql>
+  <select id="selectIconAll" resultType="java.util.HashMap" parameterType="com.aspire.ums.cmdb.module.entity.Icon">
+  	select <include refid="Base_Column_List" /> from cmdb_icon
+  	 WHERE isdelete=0
+  	 <if test="id != null and id !='' ">
+    	AND id = #{id}
+  	 </if>
+  	 <if test="iconurl != null and iconurl !='' ">
+    	AND iconurl = #{iconurl}
+  	 </if>
+  	 <if test="iconcategory != null">
+    	AND iconcategory = #{iconcategory}
+  	 </if>
+  	 <if test="sortindex != null">
+    	AND sortindex = #{sortindex}
+  	 </if>
+  	 <if test="inserttime != null and inserttime !='' ">
+    	AND inserttime like #{inserttime}
+  	 </if>
+  	order by sortIndex desc
+  </select>
+  <select id="selectMaxSortIndex" resultType="java.lang.Integer">
+  	select  max(sortIndex) from cmdb_icon
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from cmdb_icon
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cmdb_icon
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.ums.cmdb.module.entity.Icon" >
+    insert into cmdb_icon (id, iconUrl, iconCategory, 
+      sortIndex, insertTime, isDelete
+      )
+    values (#{id,jdbcType=VARCHAR}, #{iconurl,jdbcType=VARCHAR}, #{iconcategory,jdbcType=INTEGER}, 
+      #{sortindex,jdbcType=INTEGER}, #{inserttime,jdbcType=TIMESTAMP}, #{isdelete,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.entity.Icon" >
+    insert into cmdb_icon
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        id,
+      </if>
+      <if test="iconurl != null and iconurl !=''" >
+        iconUrl,
+      </if>
+      <if test="iconcategory != null" >
+        iconCategory,
+      </if>
+      <if test="sortindex != null">
+        sortIndex,
+      </if>
+        insertTime,
+      <if test="isdelete != null" >
+        isDelete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null and id !=''" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="iconurl != null and iconurl !=''" >
+        #{iconurl,jdbcType=VARCHAR},
+      </if>
+      <if test="iconcategory != null" >
+        #{iconcategory,jdbcType=INTEGER},
+      </if>
+      <if test="sortindex != null" >
+        #{sortindex,jdbcType=INTEGER},
+      </if>
+      	 now(),
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.entity.Icon" >
+    update cmdb_icon
+    <set >
+      <if test="iconurl != null" >
+        iconUrl = #{iconurl,jdbcType=VARCHAR},
+      </if>
+      <if test="iconcategory != null" >
+        iconCategory = #{iconcategory,jdbcType=INTEGER},
+      </if>
+      <if test="sortindex != null" >
+        sortIndex = #{sortindex,jdbcType=INTEGER},
+      </if>
+      <if test="inserttime != null" >
+        insertTime = #{inserttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isdelete != null" >
+        isDelete = #{isdelete,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.entity.Icon" >
+    update cmdb_icon
+    set iconUrl = #{iconurl,jdbcType=VARCHAR},
+      iconCategory = #{iconcategory,jdbcType=INTEGER},
+      sortIndex = #{sortindex,jdbcType=INTEGER},
+      insertTime = #{inserttime,jdbcType=TIMESTAMP},
+      isDelete = #{isdelete,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

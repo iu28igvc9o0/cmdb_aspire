@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.module.mapper.ModuleTagMapper" >
+    <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.module.payload.ModuleTag" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="module_id" property="moduleId" jdbcType="VARCHAR" />
+        <result column="tag" property="tag" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, module_id, tag
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from cmdb_module_tag
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="selectByModuleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from cmdb_module_tag
+        where module_id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="selectTagIdByModuleId" parameterType="java.lang.String" resultType="java.lang.String">
+        select id from cmdb_module_tag where module_id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from cmdb_module_tag
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteTagSelective" parameterType="com.aspire.ums.cmdb.module.payload.ModuleTag" >
+        delete from cmdb_module_tag
+        where 1=1
+        <if test="id != null and id !=''" >
+           AND id = #{id}
+        </if>
+        <if test="moduleId != null and moduleId !=''" >
+            AND module_id = #{moduleId}
+        </if>
+        <if test="id != null and id !=''" >
+            AND tag = #{tag}
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.module.payload.ModuleTag" >
+        insert into cmdb_module_tag (id, module_id, tag
+        )
+        values (#{id,jdbcType=VARCHAR}, #{moduleId,jdbcType=VARCHAR}, #{tag,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.aspire.ums.cmdb.module.payload.ModuleTag" >
+        insert into cmdb_module_tag
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null and id !=''" >
+                id,
+            </if>
+            <if test="moduleId != null and moduleId !=''" >
+                module_id,
+            </if>
+            <if test="tag != null and tag !=''" >
+                tag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null and id !=''" >
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="moduleId != null and moduleId !=''" >
+                #{moduleId,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null and tag !=''" >
+                #{tag,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.aspire.ums.cmdb.module.payload.ModuleTag" >
+        update cmdb_module_tag
+        <set >
+            <if test="moduleId != null" >
+                module_id = #{moduleId,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null" >
+                tag = #{tag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.aspire.ums.cmdb.module.payload.ModuleTag" >
+        update cmdb_module_tag
+        set module_id = #{moduleId,jdbcType=VARCHAR},
+        tag = #{tag,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+</mapper>

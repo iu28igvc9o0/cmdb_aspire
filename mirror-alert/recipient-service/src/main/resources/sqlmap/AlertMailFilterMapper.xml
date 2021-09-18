@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.mail.recipient.dao.AlertMailFilterDao">
+    <resultMap id="filterResultMap" type="com.aspire.mirror.mail.recipient.po.AlertMailFilter">
+        <result property="id" column="id" jdbcType="VARCHAR"></result>
+        <result property="receiver" column="receiver" jdbcType="VARCHAR"></result>
+        <result property="sender" column="sender" jdbcType="VARCHAR"></result>
+        <result property="titleInclude" column="title_incl" jdbcType="VARCHAR"></result>
+        <result property="contentInclude" column="content_incl" jdbcType="VARCHAR"></result>
+        <result property="active" column="status" jdbcType="INTEGER"></result>
+        <result property="times" column="times" jdbcType="INTEGER"></result>
+        <result property="lastSendTime" column="latest_send_time" jdbcType="TIMESTAMP"></result>
+    </resultMap>
+
+    <select id="selectFilterByReceiver" resultMap="filterResultMap" parameterType="string">
+        SELECT * FROM alert_mail_resolve_filter WHERE receiver = #{receiver}
+    </select>
+</mapper>

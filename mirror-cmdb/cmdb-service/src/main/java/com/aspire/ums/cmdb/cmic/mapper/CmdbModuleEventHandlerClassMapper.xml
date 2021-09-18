@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.cmic.mapper.CmdbModuleEventHandlerClassMapper" >
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEventHandlerClass" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="event_class" property="eventClass" jdbcType="VARCHAR" />
+        <result column="handler_name" property="handlerName" jdbcType="VARCHAR" />
+        <result column="handler_class" property="handlerClass" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="baseColumn">
+        `id`,
+        `event_class`,
+        `handler_name`,
+        `handler_class`,
+        `remark`
+    </sql>
+
+    <!-- list查询 -->
+    <select id="list" resultMap="resultMap">
+        SELECT
+       <include refid="baseColumn"/>
+        FROM cmdb_module_event_handler_class
+    </select>
+
+    <!-- list查询 -->
+    <select id="listByEntity" resultMap="resultMap" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEventHandlerClass">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_event_handler_class
+        WHERE 1=1
+        <if test="id != null and id != ''">
+        AND `id` = #{id}
+        </if>
+        <if test="eventClass != null and eventClass != ''">
+            AND `event_class` = #{eventClass}
+        </if>
+        <if test="handlerName != null and handlerName != ''">
+        AND `handler_name` = #{handlerName}
+        </if>
+        <if test="handlerClass != null and handlerClass != ''">
+        AND `handler_class` = #{handlerClass}
+        </if>
+        <if test="remark != null and remark != ''">
+        AND `remark` = #{remark}
+        </if>
+    </select>
+
+    <!-- Get one 查询 -->
+    <select id="get" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEventHandlerClass" resultMap="resultMap">
+        SELECT
+        <include refid="baseColumn"/>
+        FROM cmdb_module_event_handler_class
+        WHERE 1=1
+        AND `id` = #{id}
+    </select>
+
+    <!-- 新增记录 -->
+    <insert id="insert" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEventHandlerClass">
+        INSERT INTO cmdb_module_event_handler_class
+        (
+            `id`,
+            `event_class`,
+            `handler_name`,
+            `handler_class`,
+            `remark`
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{eventClass, jdbcType=VARCHAR},
+            #{handlerName, jdbcType=VARCHAR},
+            #{handlerClass, jdbcType=VARCHAR},
+            #{remark, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 修改记录 -->
+    <update id="update" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEventHandlerClass">
+        UPDATE cmdb_module_event_handler_class SET
+        `handler_name` = #{handlerName},
+        `handler_class` = #{handlerClass},
+        `remark` = #{remark}
+        WHERE
+        `id` = #{id}
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="com.aspire.ums.cmdb.cmic.payload.CmdbModuleEventHandlerClass">
+        DELETE FROM cmdb_module_event_handler_class
+        WHERE
+         `id` = #{id}
+    </delete>
+</mapper>

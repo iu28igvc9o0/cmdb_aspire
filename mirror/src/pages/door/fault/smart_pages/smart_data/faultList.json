@@ -1,0 +1,1257 @@
+{
+    "list": [
+      {
+        "type": "form",
+        "label": "表单容器",
+        "columnName": "form_fault",
+        "asideIcon": "iconfont iconshifouyunxuweiwanchengpandianrenwukaidan",
+        "width": "100%",
+        "list": [
+          {
+            "type": "input",
+            "label": "故障上报人",
+            "columnName": "faultReportUser",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请输入",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "clearableStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "reporter"
+          },
+          {
+            "type": "input",
+            "label": "报告提交人",
+            "columnName": "reportUser",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont icondanhangwenben",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "props": {
+              "placeholder": "请输入",
+              "maxlength": "",
+              "show-word-limit": false,
+              "clearable": true,
+              "disabled": false,
+              "readonly": false,
+              "clearableStatus": []
+            },
+            "operation": [],
+            "button": false,
+            "slot": "",
+            "button-name": "",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "submitter"
+          },
+          {
+            "label": "故障开始时间",
+            "type": "datePicker",
+            "columnName": "faultHappenTimeFrom",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "asideIcon": "iconfont iconriqi",
+            "customLabelWidth": false,
+            "required": false,
+            "rules": [],
+            "classify": "form",
+            "class": "",
+            "aspProps": {
+              "dateRange": 0
+            },
+            "props": {
+              "type": "datetime",
+              "placeholder": "请选择",
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "value-format": "yyyy-MM-dd HH:mm:ss",
+              "range-separator": "至",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": true,
+              "picker-options": {},
+              "clearableStatus": []
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "startTime"
+          },
+          {
+            "label": "故障结束时间",
+            "type": "datePicker",
+            "columnName": "faultHappenTimeTo",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "asideIcon": "iconfont iconriqi",
+            "customLabelWidth": false,
+            "required": false,
+            "rules": [],
+            "classify": "form",
+            "class": "",
+            "aspProps": {
+              "dateRange": 0
+            },
+            "props": {
+              "type": "datetime",
+              "placeholder": "请选择",
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "value-format": "yyyy-MM-dd HH:mm:ss",
+              "range-separator": "至",
+              "start-placeholder": "",
+              "end-placeholder": "",
+              "disabled": false,
+              "readonly": false,
+              "clearable": true,
+              "picker-options": {},
+              "clearableStatus": []
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "endTime"
+          },
+          {
+            "type": "button-group",
+            "label": "按钮容器",
+            "columnName": "button-group_1604630310152",
+            "asideIcon": "iconfont iconanniuzu",
+            "width": "100%",
+            "list": [
+              {
+                "type": "button",
+                "label": "查询",
+                "columnName": "button_1606444017165",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "dialogConfig": {
+                  "bindName": "",
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {
+                  "type": "primary"
+                },
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "event": "submit"
+              },
+              {
+                "type": "button",
+                "label": "重置",
+                "columnName": "btn-form-reset",
+                "icon": "icon-input",
+                "width": "100%",
+                "required": false,
+                "hidden": false,
+                "asideIcon": "iconfont iconanniu",
+                "eventName": "",
+                "dialogConfig": {
+                  "title": "",
+                  "subTitle": "",
+                  "width": "",
+                  "height": "",
+                  "toolList": []
+                },
+                "props": {},
+                "class": "",
+                "classify": "button",
+                "hasParentForm": true,
+                "labelWidth": 100,
+                "oldColumnName": "button_1604630332235",
+                "event": "reset-submit"
+              }
+            ],
+            "classify": "layout",
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100
+          }
+        ],
+        "classify": "layout",
+        "hidden": false
+      },
+      {
+        "type": "button-group",
+        "label": "按钮容器",
+        "columnName": "button-group_form_fault",
+        "asideIcon": "iconfont iconanniuzu",
+        "width": "100%",
+        "list": [
+          {
+            "type": "button",
+            "label": "数据导出",
+            "columnName": "btn-table-data-export",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "btn-table-export",
+            "event": ""
+          },
+          {
+            "type": "button",
+            "label": "报告导出",
+            "columnName": "btn-table-report-export",
+            "icon": "icon-input",
+            "width": "100%",
+            "required": false,
+            "hidden": false,
+            "asideIcon": "iconfont iconanniu",
+            "eventName": "",
+            "dialogConfig": {
+              "title": "",
+              "subTitle": "",
+              "width": "",
+              "height": "",
+              "toolList": []
+            },
+            "props": {},
+            "class": "",
+            "classify": "button",
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "button_1604630509836",
+            "event": ""
+          },
+          {
+            "label": "自定义组件",
+            "type": "customArea",
+            "columnName": "btn-table-column",
+            "defaultValue": "",
+            "icon": "",
+            "width": "100%",
+            "required": false,
+            "rules": [],
+            "asideIcon": "iconfont iconquyu",
+            "customLabelWidth": false,
+            "classify": "form",
+            "class": "",
+            "slotName": "btn-table-column",
+            "props": {
+              "placeholder": ""
+            },
+            "hidden": false,
+            "hasParentForm": true,
+            "labelWidth": 100,
+            "oldColumnName": "customArea_1604631225030"
+          }
+        ],
+        "classify": "layout",
+        "hidden": false,
+        "hasParentForm": true
+      },
+      {
+        "type": "table",
+        "label": "表格",
+        "columnName": "table_fault",
+        "asideIcon": "iconfont icondashujukeshihuaico-",
+        "width": "100%",
+        "classify": "layout",
+        "show-index": false,
+        "indexFixed": true,
+        "show-single-selection": false,
+        "singleSelectionFixed": true,
+        "show-multiple-selection": true,
+        "multipleSelectionFixed": true,
+        "cacheMultipleSelection": false,
+        "multipleSelectionColumnName": [],
+        "show-operation": true,
+        "operationFixed": true,
+        "show-pagination": true,
+        "defaultSelectAll": false,
+        "defaultSort": {
+          "prop": "",
+          "order": "",
+          "ascending": "asc",
+          "descending": "desc"
+        },
+        "props": {
+          "border": true,
+          "stripe": true,
+          "highlight-current-row": false,
+          "show-header": true,
+          "default-sort": ""
+        },
+        "btnGroupDynamic": [],
+        "list": [
+          {
+            "label": "内置可编辑参数",
+            "columnName": "$asp_isEdit",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [],
+            "show": false,
+            "tooltip": true,
+            "$_isBuiltInParams": true
+          },
+          {
+            "label": "故障上报",
+            "columnName": "columnName_1604887826600",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "故障ID",
+                "columnName": "faultId",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "260",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人姓名",
+                "columnName": "faultReportUser",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "100",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人电话",
+                "columnName": "faultReporMobile",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "120",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人邮箱",
+                "columnName": "faultReportEmail",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报人业务组",
+                "columnName": "faultReportBizsys",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报时间",
+                "columnName": "faultReportTime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "故障发生时间",
+                "columnName": "faultHappenTime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "上报及时",
+                "columnName": "faultReportTimely",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "80",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": true,
+                "convertProps": {
+                  "type": "select",
+                  "optionType": "0",
+                  "options": [
+                    {
+                      "label": "及时",
+                      "value": "1"
+                    },
+                    {
+                      "label": "超时",
+                      "value": "2"
+                    }
+                  ],
+                  "apiType": "post+json",
+                  "localProxy": "",
+                  "statusKey": "status",
+                  "statusValue": "200",
+                  "responseDataKey": "data",
+                  "option-value": "value",
+                  "option-label": "label",
+                  "separator": ","
+                },
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "资源池",
+                "columnName": "faultIdcType",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报工单ID",
+                "columnName": "reportOrderId",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "上报内容简述",
+                "columnName": "faultContent",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "接收报障时间",
+                "columnName": "faultRegtime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "故障报告",
+            "columnName": "columnName_1604903356511",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "故障报告名称",
+                "columnName": "reportTitle",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "报告编写人",
+                "columnName": "reportUser",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "100",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "编写人电话",
+                "columnName": "reportMobile",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "120",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "编写人邮箱",
+                "columnName": "reportEmail",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "编写人业务组",
+                "columnName": "reportBizsys",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "全网ID",
+                "columnName": "reportWnId",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "工单ID",
+                "columnName": "reportOrderId",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "事件单下发时间",
+                "columnName": "reportCreateTime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "事件单要求完成时间",
+                "columnName": "reportPlainFinish",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "实际提交故障报告时间",
+                "columnName": "reportFinishTime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "故障上报及时性",
+                "columnName": "reportTimely",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "120",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": true,
+                "convertProps": {
+                  "type": "select",
+                  "optionType": "0",
+                  "options": [
+                    {
+                      "label": "及时",
+                      "value": "1"
+                    },
+                    {
+                      "label": "超时",
+                      "value": "2"
+                    }
+                  ],
+                  "apiType": "post+json",
+                  "localProxy": "",
+                  "statusKey": "status",
+                  "statusValue": "200",
+                  "responseDataKey": "data",
+                  "option-value": "value",
+                  "option-label": "label",
+                  "separator": ","
+                },
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "平台恢复时间",
+                "columnName": "reportPlatformRecoverytime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "平台故障持续时长",
+                "columnName": "reportPlatformRecoveryhours",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "业务恢复时间",
+                "columnName": "reportBizsysRecoverytime",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "150",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true,
+                "formatter": "yyyymmddhhmmss"
+              },
+              {
+                "label": "影响业务系统数量",
+                "columnName": "reportAffectBizsyss",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障影响描述",
+                "columnName": "reportAffectDescribe",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障分类",
+                "columnName": "reportType",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障原因描述",
+                "columnName": "reportResson",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "厂家",
+                "columnName": "reportProducer",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "事件性质",
+                "columnName": "reportNature",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "扣分",
+                "columnName": "reportDeductPoints",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "故障报告附件",
+                "columnName": "reportEnclosure",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "后续计划",
+            "columnName": "columnName_1604903565131",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "后续计划",
+                "columnName": "reportFollowPlan",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              },
+              {
+                "label": "后续计划完成说明",
+                "columnName": "reportFollowPlanExplain",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          },
+          {
+            "label": "其他",
+            "columnName": "columnName_1604903597686",
+            "type": "text",
+            "sort": false,
+            "fixed": false,
+            "width": "",
+            "min-width": "200",
+            "canEdit": false,
+            "mergeRows": false,
+            "editProps": {
+              "type": ""
+            },
+            "needConvertData": false,
+            "convertProps": {},
+            "list": [
+              {
+                "label": "其他附注信息",
+                "columnName": "reportRemark",
+                "type": "text",
+                "sort": false,
+                "fixed": false,
+                "width": "",
+                "min-width": "200",
+                "canEdit": false,
+                "mergeRows": false,
+                "editProps": {
+                  "type": ""
+                },
+                "needConvertData": false,
+                "convertProps": {},
+                "list": [],
+                "show": true,
+                "tooltip": true
+              }
+            ],
+            "show": true,
+            "tooltip": true
+          }
+        ],
+        "operation": [],
+        "toolList": [
+          {
+            "type": "text",
+            "columnName": "btn-table-data-edit",
+            "label": "故障数据编辑",
+            "align": "left",
+            "class": "",
+            "icon": "",
+            "justShowIcon": false,
+            "defaultState": "show",
+            "state": "show",
+            "dataLinkage": []
+          },
+          {
+            "type": "text",
+            "columnName": "btn-table-plan-edit",
+            "label": "后续计划说明编辑",
+            "align": "left",
+            "class": "",
+            "icon": "",
+            "justShowIcon": false,
+            "defaultState": "show",
+            "state": "show",
+            "dataLinkage": []
+          }
+        ],
+        "operation-width": "210",
+        "pagination": {
+          "layout": "total, sizes, prev, pager, next, jumpe",
+          "pageSizes": [
+            10,
+            20,
+            30
+          ],
+          "currentPage": 1,
+          "pageSize": 10,
+          "total": 0,
+          "hide-on-single-page": false
+        },
+        "http": {
+          "initHttp": true,
+          "type": "get",
+          "methods": "/v1/alerts/fault_manage/list"
+        },
+        "hidden": false,
+        "fixed-pagination": false,
+        "show-operation-status": []
+      }
+    ],
+    "model": {
+      "btn-table-column": "",
+      "faultReportUser": "",
+      "reportUser": "",
+      "faultHappenTimeFrom": "",
+      "faultHappenTimeTo": ""
+    },
+    "tableModel": {},
+    "pagination": {},
+    "publicConfig": {
+      "exportName": "",
+      "project": "webbas",
+      "labelWidth": 100,
+      "labelPosition": "left",
+      "size": "mini",
+      "class": "",
+      "layoutType": "flex",
+      "statusList": [],
+      "advancedQuery": false,
+      "lineNumber": 0
+    }
+  }
+        
+  
+      
+  

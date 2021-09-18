@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.alert.server.dao.primarySecondary.AlertPrimarySecondaryAlertsV2Mapper">
+    <!-- 定义返回结果结果集 -->
+    <resultMap id="resultMap" type="com.aspire.mirror.alert.server.dao.primarySecondary.po.AlertPrimarySecondaryAlertsV2">
+        <result column="alert_id" property="alertId" jdbcType="VARCHAR"/>
+        <result column="primary_secondary_id" property="primarySecondaryId" jdbcType="BIGINT"/>
+        <result column="primary_secondary_name" property="primarySecondaryName" jdbcType="VARCHAR"/>
+        <result column="primary_secondary_alert_id" property="primarySecondaryAlertId" jdbcType="VARCHAR"/>
+        <result column="r_alert_id" property="rAlertId" jdbcType="VARCHAR"/>
+        <result column="biz_sys" property="bizSys" jdbcType="VARCHAR"/>
+        <result column="moni_index" property="moniIndex" jdbcType="VARCHAR"/>
+        <result column="moni_object" property="moniObject" jdbcType="VARCHAR"/>
+        <result column="cur_moni_value" property="curMoniValue" jdbcType="VARCHAR"/>
+        <result column="cur_moni_time" property="curMoniTime" jdbcType="TIMESTAMP"/>
+        <result column="alert_level" property="alertLevel" jdbcType="VARCHAR"/>
+        <result column="item_id" property="itemId" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="VARCHAR"/>
+        <result column="idc_type" property="idcType" jdbcType="VARCHAR"/>
+        <result column="object_type" property="objectType" jdbcType="VARCHAR"/>
+        <result column="device_ip" property="deviceIp" jdbcType="VARCHAR"/>
+        <result column="alert_start_time" property="alertStartTime" jdbcType="TIMESTAMP"/>
+        <result column="alert_count" property="alertCount" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="alert_type" property="alertType" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        a.alert_id, a.primary_secondary_id,a.primary_secondary_alert_id, a.r_alert_id, a.biz_sys,
+        a.moni_index, a.moni_object, a.cur_moni_value, a.cur_moni_time, a.alert_level, a.item_id, a.remark,
+        a.source, a.idc_type, a.object_type, a.device_ip, a.alert_start_time, a.alert_count,
+        a.create_time, alert_type
+    </sql>
+
+    <sql id="findPageWithWhere">
+        <where>
+            <if test="alertId != null and alertId != ''">
+                a.`alert_id` = #{alertId}
+            </if>
+            <if test="primarySecondaryId != null and primarySecondaryId != ''">
+                AND a.`primary_secondary_id` = #{primarySecondaryId}
+            </if>
+            <if test="primarySecondaryAlertId != null and primarySecondaryAlertId != ''">
+                AND a.`primary_secondary_alert_id` = #{primarySecondaryAlertId}
+            </if>
+            <if test="rAlertId != null and rAlertId != ''">
+                AND a.`r_alert_id` = #{rAlertId}
+            </if>
+            <if test="bizSyss != null">
+                AND a.`biz_sys` in
+                <foreach collection="bizSyss" index="index" item="obj"
+                         open="(" separator="," close=")">
+                    #{obj}
+                </foreach>
+            </if>
+            <if test="bizSys != null">
+                AND a.`biz_sys` = #{bizSys}
+            </if>
+            <if test="moniIndex != null and moniIndex != ''">
+                AND a.`moni_index` LIKE CONCAT('%',#{moniIndex,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="moniObject != null and moniObject != ''">
+                AND a.`moni_object` = #{moniObject}
+            </if>
+            <if test="curMoniValue != null and curMoniValue != ''">
+                AND a.`cur_moni_value` = #{curMoniValue}
+            </if>
+            <if test="curMoniTime != null and curMoniTime != ''">
+                AND a.`cur_moni_time` = #{curMoniTime}
+            </if>
+            <if test="alertLevel != null and alertLevel != ''">
+                AND a.`alert_level` = #{alertLevel}
+            </if>
+            <if test="itemId != null and itemId != ''">
+                AND a.`item_id` = #{itemId}
+            </if>
+            <if test="remark != null and remark != ''">
+                AND a.`remark` = #{remark}
+            </if>
+            <if test="sources != null">
+                AND a.`source` in
+                <foreach collection="sources" index="index" item="obj"
+                    open="(" separator="," close=")">
+                    #{obj}
+                </foreach>
+            </if>
+            <if test="source != null">
+                AND a.`source` = #{source}
+            </if>
+            <if test="idcType != null and idcType != ''">
+                AND a.`idc_type` = #{idcType}
+            </if>
+            <if test="objectType != null and objectType != ''">
+                AND a.`object_type` = #{objectType}
+            </if>
+            <if test="deviceIp != null and deviceIp != ''">
+                AND a.`device_ip` LIKE CONCAT('%',#{deviceIp,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="alertStartTime != null and alertStartTime != ''">
+                AND a.`alert_start_time` = #{alertStartTime}
+            </if>
+            <if test="alertType != null and alertType != ''">
+                AND a.`alert_type` = #{alertType}
+            </if>
+            <if test="alertCount != null and alertCount != ''">
+                AND a.`alert_count` = #{alertCount}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND a.`create_time` = #{createTime}
+            </if>
+            <if test="primarySecondaryTimeFrom != null and primarySecondaryTimeFrom != '' and primarySecondaryTimeTo != null and primarySecondaryTimeTo != ''">
+                AND a.`create_time` BETWEEN #{primarySecondaryTimeFrom} and date_add(#{primarySecondaryTimeTo}, interval 1 day)
+            </if>
+        </where>
+    </sql>
+
+    <select id="select" resultMap="resultMap"
+            parameterType="com.aspire.mirror.alert.server.vo.primarySecondary.AlertPrimarySecondaryAlertsVo">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM alert_primary_secondary_alerts a
+        <include refid="findPageWithWhere"/> order by a.cur_moni_time desc
+    </select>
+    <select id="queryNewestByprimarySecondaryId" parameterType="java.lang.Long" resultType="java.util.Map">
+      select primary_secondary_alert_id, count(1) as count from alert_primary_secondary_alerts where primary_secondary_id = #{primarySecondaryId} GROUP BY primary_secondary_alert_id order by create_time desc LIMIT 1
+    </select>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="java.util.Map">
+        update alert_primary_secondary_alerts set
+        <foreach collection="map.keys" item="key" index="index"
+                 open="" separator="," close="">
+            ${key} = #{map[${key}]}
+        </foreach>
+        where alert_id = #{map.alert_id}
+    </update>
+    <insert id="insert" parameterType="java.util.Map">
+        insert into alert_primary_secondary_alerts
+        <foreach collection="map.keys" item="key" open="(" close=")" separator="," >
+            ${key}
+        </foreach>
+        values
+        <foreach collection="map.keys"  item="key" open="(" close=")" separator=",">
+            #{map[${key}]}
+        </foreach>
+    </insert>
+    <update id="updateByEntity" parameterType="com.aspire.mirror.alert.server.dao.primarySecondary.po.AlertPrimarySecondaryAlertsV2">
+        UPDATE alert_primary_secondary_alerts SET
+        `primary_secondary_id` = #{primarySecondaryId},
+        `primary_secondary_alert_id` = #{primarySecondaryAlertId},
+        `r_alert_id` = #{rAlertId},
+        `biz_sys` = #{bizSys},
+        `moni_index` = #{moniIndex},
+        `moni_object` = #{moniObject},
+        `cur_moni_value` = #{curMoniValue},
+        `cur_moni_time` = #{curMoniTime},
+        `alert_level` = #{alertLevel},
+        `item_id` = #{itemId},
+        `remark` = #{remark},
+        `source` = #{source},
+        `idc_type` = #{idcType},
+        `object_type` = #{objectType},
+        `device_ip` = #{deviceIp},
+        `alert_start_time` = #{alertStartTime},
+        `alert_count` = #{alertCount},
+        `create_time` = #{createTime},
+        `alert_type` = #{alertType}
+        WHERE
+        `alert_id` = #{alertId}
+    </update>
+
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="page_limit" >
+        limit #{begin}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </sql>
+    <!-- list查询 -->
+    <select id="listByEntity" resultType="java.util.Map"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria">
+        SELECT
+        CASE t.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else t.alert_level end alert_level,
+        <choose>
+            <when test="exportField != null and exportField != ''">
+                ${exportField}
+            </when>
+            <otherwise>
+                t.*
+            </otherwise>
+        </choose>
+        , b.name primary_secondary_name
+        FROM alert_primary_secondary_alerts t INNER JOIN alert_primary_secondary b on t.primary_secondary_id=b.id
+        <include refid="Example_Where_Clause"/> order by t.cur_moni_time desc
+        limit 100000
+    </select>
+    <!-- 分页查询 -->
+    <select id="findPageWithResult"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria" resultType="java.util.Map">
+        select
+        a.*, b.name primary_secondary_name
+        from alert_primary_secondary_alerts a INNER JOIN alert_primary_secondary b on a.primary_secondary_id=b.id
+        <include refid="Example_Where_Clause"/> order by a.cur_moni_time desc
+        <if test="begin != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+            resultType="Integer">
+        select count(1)
+        from alert_primary_secondary_alerts a INNER JOIN alert_primary_secondary b on a.primary_secondary_id=b.id
+        <include refid="Example_Where_Clause"/>
+    </select>
+</mapper>

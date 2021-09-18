@@ -1,0 +1,57 @@
+{
+	"query": {
+		"bool": {
+			"must": [
+			    #foreach($paramMultiple in ${builder.paramsMultiple.keySet()}) 
+			    {
+					"terms": {
+						"$paramMultiple":[ #foreach($paramMultipleItem in ${builder.paramsMultiple.get($paramMultiple)})
+							#if($velocityCount!=1),#end"$paramMultipleItem"
+							#end
+						]
+					}
+				},
+				#end  
+				
+				#foreach($paramQuery in ${builder.paramsQuery.keySet()})  
+			  	{
+          			"match": {
+            			"biz_content": {
+              				"query": "${builder.paramsQuery.get($paramQuery)}",
+              				"operator": "and"
+            				}
+          			}
+        		},
+		    	#end
+		    	
+		    	#foreach($paramShould in ${builder.paramsShould.keySet()})  
+			  	{
+					"bool":{
+						"should": [
+							#foreach($paramShouldItem in ${builder.paramsShould.get($paramShould)})
+							#if($velocityCount!=1),#end
+							{
+								"prefix": {
+									"$paramShould": {
+										"value": "$paramShouldItem"
+									}
+								}
+							}
+							#end
+						]
+					}
+        		},
+		    	#end
+		    	
+				{
+					"range": {
+						"${builder.timeColsName}": {
+                       		 "lte": ${builder.endTime},
+                       		 "gte": ${builder.startTime}
+						}
+					}
+				}
+			]		
+		}
+	}
+}

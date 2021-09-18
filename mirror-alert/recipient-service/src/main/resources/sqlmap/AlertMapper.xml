@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aspire.mirror.mail.recipient.dao.AlertDao">
+    <insert id="insert" parameterType="com.aspire.mirror.mail.recipient.po.Alert">
+        INSERT INTO alert_alerts
+        (
+          r_alert_id,
+          event_id,
+          action_id,
+          device_id,
+          biz_sys,
+          moni_index,
+          moni_object,
+          cur_moni_value,
+          cur_moni_time,
+          alert_level,
+          item_id,
+          alert_end_time,
+          remark,
+          order_status,
+          source,
+          source_room,
+          object_id,
+          object_type,
+          region,
+          device_ip,
+          order_id,
+          order_type,
+          alert_start_time,
+          idc_type,
+          device_class
+        )VALUES (
+            #{rAlertId,jdbcType=VARCHAR} ,
+            #{eventId,jdbcType=VARCHAR} ,
+            #{actionId,jdbcType=VARCHAR} ,
+            #{deviceId,jdbcType=VARCHAR} ,
+            #{bizSys,jdbcType=VARCHAR} ,
+            #{moniIndex,jdbcType=VARCHAR} ,
+            #{moniObject,jdbcType=VARCHAR} ,
+            #{curMoniValue,jdbcType=VARCHAR} ,
+            #{curMoniTime,jdbcType=TIMESTAMP} ,
+            #{alertLevel,jdbcType=VARCHAR} ,
+            #{itemId,jdbcType=VARCHAR} ,
+            #{alertEndTime,jdbcType=TIMESTAMP} ,
+            #{remark,jdbcType=VARCHAR} ,
+            #{orderStatus,jdbcType=VARCHAR} ,
+            #{source,jdbcType=VARCHAR} ,
+            #{sourceRoom,jdbcType=VARCHAR},
+            #{objectId,jdbcType=VARCHAR},
+            #{objectType,jdbcType=VARCHAR},
+            #{region,jdbcType=VARCHAR},
+            #{deviceIp,jdbcType=VARCHAR},
+            #{orderId,jdbcType=VARCHAR},
+            #{orderType,jdbcType=VARCHAR},
+            #{alertStartTime,jdbcType=TIMESTAMP},
+            #{idcType,jdbcType=VARCHAR},
+            #{deviceClass,jdbcType=VARCHAR}
+        ) ON duplicate KEY UPDATE r_alert_id = r_alert_id
+    </insert>
+</mapper>

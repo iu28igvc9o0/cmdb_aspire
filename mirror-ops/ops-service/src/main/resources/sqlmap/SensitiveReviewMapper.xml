@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- Always ensure to use the correct XML header as above! -->
+<mapper namespace="com.aspire.mirror.ops.dao.SensitiveReviewDao">
+    <resultMap type="com.aspire.mirror.ops.api.domain.SensitiveReview" id="sensitiveReview">
+        <result property="reviewId" column="review_id" jdbcType="BIGINT"/>
+        <result property="pipelineInstanceId" column="pipeline_instance_id" jdbcType="VARCHAR"/>
+        <result property="sensitiveEnvHash" column="sensitive_env_hash" jdbcType="VARCHAR"/>
+        <result property="sensitiveCommandHash" column="sensitive_command_hash" jdbcType="INTEGER"/>
+        <result property="reviewStatus" column="review_status" jdbcType="VARCHAR"/>
+        <result property="applicant" column="applicant" jdbcType="VARCHAR"/>
+        <result property="applyTime" column="apply_time" jdbcType="TIMESTAMP"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="reviewContent" column="review_content" jdbcType="VARCHAR"/>
+        <result property="sensitiveConfigId" column="sensitive_config_id" jdbcType="BIGINT"/>
+        <result property="sensitiveRuleId" column="sensitive_rule_id" jdbcType="BIGINT"/>
+        <result property="ruleName" column="rule_name" jdbcType="VARCHAR"/>
+        <result property="command" column="command" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap type="com.aspire.mirror.ops.api.domain.SensitiveReview" id="sensitiveReviewDetail">
+        <result property="reviewId" column="review_id" jdbcType="BIGINT"/>
+        <result property="pipelineInstanceId" column="pipeline_instance_id" jdbcType="VARCHAR"/>
+        <result property="sensitiveEnvHash" column="sensitive_env_hash" jdbcType="VARCHAR"/>
+        <result property="sensitiveCommandHash" column="sensitive_command_hash" jdbcType="INTEGER"/>
+        <result property="reviewStatus" column="review_status" jdbcType="VARCHAR"/>
+        <result property="applicant" column="applicant" jdbcType="VARCHAR"/>
+        <result property="applyTime" column="apply_time" jdbcType="TIMESTAMP"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+        <result property="reviewContent" column="review_content" jdbcType="VARCHAR"/>
+        <result property="sensitiveConfigId" column="sensitive_config_id" jdbcType="BIGINT"/>
+        <result property="sensitiveRuleId" column="sensitive_rule_id" jdbcType="BIGINT"/>
+        <result property="ruleName" column="rule_name" jdbcType="VARCHAR"/>
+        <result property="command" column="command" jdbcType="VARCHAR"/>
+        <collection property="roleList" ofType="com.aspire.mirror.ops.api.domain.SensitiveReviewRole">
+            <result property="roleId" column="role_id" jdbcType="VARCHAR"/>
+            <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+            <result property="reviewId" column="role_review_id" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <sql id="sensitiveReviewAllColumns">
+		s.review_id, s.pipeline_instance_id, s.sensitive_env_hash, s.sensitive_command_hash, s.review_status,
+		s.applicant, s.apply_time, s.reviewer, s.review_time, s.review_content, s.sensitive_config_id, s.sensitive_rule_id, s.rule_name, s.command
+	</sql>
+    <select id="querySensitiveReviewListByIds" parameterType="java.lang.String" resultMap="sensitiveReview">
+        select <include refid="sensitiveReviewAllColumns"/>
+        from ops_sensitive_review s
+        where s.review_id in
+        (
+        <foreach collection="reviewIds.split(',')" item="item"  index="index" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+    <select id="querySensitiveReviewById" parameterType="java.lang.Long" resultMap="sensitiveReview">
+        select <include refid="sensitiveReviewAllColumns"/>
+        from ops_sensitive_review s
+        where s.review_id = #{reviewId}
+    </select>
+    <select id="querySensitiveReviewByPipelineInstanceId" parameterType="java.lang.Long" resultMap="sensitiveReviewDetail">
+        select <include refid="sensitiveReviewAllColumns"/>, role_id, role_name, rs.review_id role_review_id
+        from ops_sensitive_review s
+        left join ops_sensitive_review_role rs on s.review_id = rs.review_id
+        where s.pipeline_instance_id = #{pipelineInstanceId}
+    </select>
+    <insert id="saveSensitiveReview" useGeneratedKeys="true" keyColumn="review_id" keyProperty="reviewId"
+            parameterType="com.aspire.mirror.ops.api.domain.SensitiveReview">
+		insert into ops_sensitive_review (
+			pipeline_instance_id,
+			sensitive_env_hash,
+			sensitive_command_hash,
+			review_status,
+			applicant,
+			apply_time,
+			reviewer,
+			review_time,
+			review_content,
+			sensitive_config_id,
+			sensitive_rule_id,
+			rule_name,
+			command
+		) values (
+			#{pipelineInstanceId},
+			#{sensitiveEnvHash},
+			#{sensitiveCommandHash},
+			#{reviewStatus},
+			#{applicant},
+			#{applyTime},
+			#{reviewer},
+			#{reviewTime},
+			#{reviewContent},
+			#{sensitiveConfigId},
+			#{sensitiveRuleId},
+			#{ruleName},
+			#{command}
+		)
+	</insert>
+    <insert id="saveBatchSensitiveReview"
+            parameterType="com.aspire.mirror.ops.api.domain.SensitiveReview">
+		insert into ops_sensitive_review (
+			pipeline_instance_id,
+			sensitive_env_hash,
+			sensitive_command_hash,
+			review_status,
+			applicant,
+			apply_time,
+			reviewer,
+			review_time,
+			review_content,
+			sensitive_config_id,
+			sensitive_rule_id,
+			rule_name,
+			command
+		) values
+        <foreach collection="list" item="item"  index="index" separator=",">
+        (
+			#{item.pipelineInstanceId},
+			#{item.sensitiveEnvHash},
+			#{item.sensitiveCommandHash},
+			#{item.reviewStatus},
+			#{item.applicant},
+			#{item.applyTime},
+			#{item.reviewer},
+			#{item.reviewTime},
+			#{item.review_content},
+			#{item.sensitiveConfigId},
+			#{item.sensitiveRuleId},
+			#{item.ruleName},
+			#{item.command}
+		)
+        </foreach>
+	</insert>
+    <insert id="saveBatchSensitiveReviewRole"  parameterType="com.aspire.mirror.ops.api.domain.SensitiveReviewRole">
+        insert into ops_sensitive_review_role (
+        review_id,
+        role_id,
+        role_name) values
+        <foreach collection="list" item="item"  index="index" separator=",">
+            (
+            #{item.reviewId},
+            #{item.roleId},
+            #{item.roleName}
+            )
+        </foreach>
+    </insert>
+    <update id="modifySensitiveReviewStatus" parameterType="com.aspire.mirror.ops.api.domain.SensitiveReview">
+        update ops_sensitive_review
+        set review_status = #{reviewStatus}
+        <if test="reviewer != null and reviewer != ''">
+            , reviewer = #{reviewer}
+        </if>
+        <if test="reviewTime != null">
+            , review_time = #{reviewTime}
+        </if>
+        where  1=1
+        <if test="reviewIdsString != null and reviewIdsString != '' ">
+         and review_id in (
+            <foreach collection="reviewIdsString.split(',')" item="item"  index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="pipelineInstanceId != null">
+            and pipeline_instance_id = #{pipelineInstanceId}
+        </if>
+    </update>
+    <update id="modifyBySensitiveReviewApply" parameterType="java.lang.Long">
+        update ops_sensitive_review
+        set review_status = 1
+        where  1=1 and review_status = 0
+        and pipeline_instance_id = #{pipelineInstanceId}
+    </update>
+    <delete id="removeSensitiveReview" parameterType="java.lang.Long">
+      delete from ops_sensitive_review where review_id = #{reviewId}
+    </delete>
+    <delete id="removeSensitiveReviewByInstanceId" parameterType="java.lang.Long">
+      delete from ops_sensitive_review where pipeline_instance_id = #{pipelineInstanceId}
+    </delete>
+    <select id="querySensitiveReviewList" parameterType="com.aspire.mirror.ops.api.domain.SensitiveReviewQueryModel" resultType="com.aspire.mirror.ops.api.domain.SensitiveReviewPageResponse">
+      select
+        s.review_id reviewId,
+        s.pipeline_instance_id pipelineInstanceId,
+        s.sensitive_env_hash sensitiveEnvHash,
+        s.sensitive_command_hash sensitiveCommandHash,
+        s.review_status reviewStatus,
+		s.applicant applicant,
+		s.apply_time applyTime,
+		s.reviewer reviewer,
+		s.review_time reviewTime,
+		s.review_content reviewContent,
+		s.sensitive_config_id sensitiveConfigId,
+		s.sensitive_rule_id sensitiveRuleId,
+		s.rule_name ruleName,
+		s.command,
+		i.instance_classify instanceClassify,
+		i.name instanceName,
+        i.pipeline_id pipelineId,
+        c.content_type contentType
+		from ops_sensitive_review s
+		left join ops_pipeline_instance i on s.pipeline_instance_id = i.pipeline_instance_id
+		left join ops_sensitive_config c on s.sensitive_config_id = c.sensitive_config_id
+        where 1=1
+        <if test="roleIdList != null">
+        and s.review_id in (
+            select review_id from ops_sensitive_review_role where role_id in
+            <foreach item="item" index="index" collection="roleIdList"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="command != null and command != ''">
+            and s.command =  #{command}
+        </if>
+        <if test="pipelineInstanceId != null">
+            and s.pipeline_instance_id = #{pipelineInstanceId}
+        </if>
+        <if test="sensitiveConfigId != null and sensitiveConfigId != ''">
+            and s.sensitive_config_id =  #{sensitiveConfigId}
+        </if>
+        <if test="commandLike != null and commandLike != ''">
+            and s.command like CONCAT('%', #{commandLike}, '%')
+        </if>
+        <if test="ruleNameLike != null and ruleNameLike != ''">
+            and s.rule_name like CONCAT('%', #{ruleNameLike}, '%')
+        </if>
+        <if test="contentType != null">
+            and c.content_type = #{contentType}
+        </if>
+        <if test="reviewStatus != null">
+            and s.review_status = #{reviewStatus}
+        </if>
+        <if test="reviewStatusString != null and reviewStatusString != ''">
+            and s.review_status in
+            <foreach item="item" index="index" collection="reviewStatusString.split(',')"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="instanceClassify != null">
+            and i.instance_classify = #{instanceClassify}
+        </if>
+        <if test="instanceNameLike != null and instanceNameLike != ''">
+            and i.name like CONCAT('%', #{instanceNameLike}, '%')
+        </if>
+        <if test="applyTimeStart != null">
+            and s.apply_time &gt;= #{applyTimeStart}
+        </if>
+        <if test="applyTimeEnd != null">
+            and s.apply_time &lt;= #{applyTimeEnd}
+        </if>
+        <if test="pageSize != null and pageSize > 0 ">
+            order by s.apply_time desc
+            limit #{startIdx}, #{pageSize}
+        </if>
+    </select>
+    <select id="querySensitiveViewListTotalSize" resultType="java.lang.Integer"
+            parameterType="com.aspire.mirror.ops.api.domain.SensitiveReviewQueryModel">
+        select
+        count(s.review_id)
+        from ops_sensitive_review s
+        left join ops_pipeline_instance i on s.pipeline_instance_id = i.pipeline_instance_id
+        left join ops_sensitive_config c on s.sensitive_config_id = c.sensitive_config_id
+        where 1=1
+        <if test="roleIdList != null">
+            and s.review_id in (
+            select review_id from ops_sensitive_review_role where role_id in
+            <foreach item="item" index="index" collection="roleIdList"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="command != null and command != ''">
+            and s.command =  #{command}
+        </if>
+        <if test="pipelineInstanceId != null">
+            and s.pipeline_instance_id = #{pipelineInstanceId}
+        </if>
+        <if test="sensitiveConfigId != null and sensitiveConfigId != ''">
+            and s.sensitive_config_id =  #{sensitiveConfigId}
+        </if>
+        <if test="commandLike != null and commandLike != ''">
+            and s.command like CONCAT('%', #{commandLike}, '%')
+        </if>
+        <if test="ruleNameLike != null and ruleNameLike != ''">
+            and s.rule_name like CONCAT('%', #{ruleNameLike}, '%')
+        </if>
+        <if test="contentType != null">
+            and c.content_type = #{contentType}
+        </if>
+        <if test="reviewStatus != null">
+            and s.review_status = #{reviewStatus}
+        </if>
+        <if test="reviewStatusString != null and reviewStatusString != ''">
+            and s.review_status in
+            <foreach item="item" index="index" collection="reviewStatusString.split(',')"  open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="instanceClassify != null">
+            and i.instance_classify = #{instanceClassify}
+        </if>
+        <if test="instanceNameLike != null and instanceNameLike != ''">
+            and i.name like CONCAT('%', #{instanceNameLike}, '%')
+        </if>
+        <if test="applyTimeStart != null">
+            and s.apply_time &gt;= #{applyTimeStart}
+        </if>
+        <if test="applyTimeEnd != null">
+            and s.apply_time &lt;= #{applyTimeEnd}
+        </if>
+    </select>
+    <select id="queryCompleteAllReviewedInstance" parameterType="java.util.List" resultType="java.lang.Long">
+        SELECT pipeline_instance_id
+        FROM ops_sensitive_review
+        where pipeline_instance_id not in (
+        SELECT pipeline_instance_id
+        FROM ops_sensitive_review
+        WHERE pipeline_instance_id IN (
+        SELECT pipeline_instance_id
+        FROM ops_sensitive_review
+        where review_id in (
+        <foreach collection="reviewIdList" item="item"  index="index" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        )
+        ) and review_status != '2') and  review_id IN (
+        <foreach collection="reviewIdList" item="item"  index="index" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        )
+        group by pipeline_instance_id
+    </select>
+</mapper>

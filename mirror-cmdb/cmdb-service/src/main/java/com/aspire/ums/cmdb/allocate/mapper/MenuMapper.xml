@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="com.aspire.ums.cmdb.allocate.mapper.MenuMapper">
+	   
+	  <resultMap id="ModuleMap" type="com.aspire.ums.cmdb.allocate.payload.Menu" >
+	    <id column="dict_id" property="dictId" jdbcType="VARCHAR" />
+	    <result column="dict_code" property="dictCode" jdbcType="VARCHAR" />
+	    <result column="col_name" property="colName" jdbcType="VARCHAR" />
+	    <result column="dict_note" property="dictNote" jdbcType="VARCHAR" />
+	    <result column="up_dict" property="upDict" jdbcType="VARCHAR" />
+	    <collection column="parentId" property="childMenuList" resultMap="BaseResultMap"/>
+	  </resultMap> 
+	     
+	    
+	  <resultMap id="BaseResultMap" type="com.aspire.ums.cmdb.allocate.payload.Menu" >
+	    <id column="dict_id1" property="dictId" jdbcType="VARCHAR" />
+	    <result column="dict_code1" property="dictCode" jdbcType="VARCHAR" />
+	    <result column="col_name1" property="colName" jdbcType="VARCHAR" />
+	    <result column="dict_note1" property="dictNote" jdbcType="VARCHAR" />
+	    <result column="up_dict1" property="upDict" jdbcType="VARCHAR" />
+	   </resultMap>
+  
+	  
+	  
+      <sql id="Base_Column_List" >
+       dict_id, dict_code, col_name, dict_note, up_dict 
+        
+      </sql>
+ 
+       
+	 <select id="selectMenu" resultMap="ModuleMap">
+	   
+	   <!-- SELECT * FROM   ( SELECT dict_id, dict_code, col_name, dict_note, up_dict FROM  t_cfg_dict WHERE delete_flag=0 and col_name='idcType') AS dic1 
+	   LEFT JOIN (  SELECT dict_id AS  dict_id1 , dict_code AS dict_code1 , col_name AS col_name1  , dict_note AS  dict_note1,  up_dict  AS up_dict1  FROM  t_cfg_dict WHERE delete_flag=0 ) AS dic2
+       ON dic1.dict_id=dic2.up_dict1 -->
+       SELECT * FROM   ( SELECT  id dict_id, idc_code dict_code,'idcType' col_name, idc_name dict_note,'' up_dict FROM  cmdb_idc_manager WHERE is_delete='否'  ) AS dic1 
+	   LEFT JOIN (  SELECT dict_id AS  dict_id1 , dict_code AS dict_code1 , col_name AS col_name1  , dict_note AS  dict_note1,  up_dict  AS up_dict1  FROM  t_cfg_dict WHERE delete_flag=0 ) AS dic2
+       ON dic1.dict_id=dic2.up_dict1
+	   
+     </select>
+	 
+	 
+	  
+	 
+</mapper>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.mirror.scada.dao.ScadaCanvasDao" >
+  <resultMap id="BaseResultMap" type="com.aspire.mirror.scada.dao.po.ScadaCanvas" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="picture_type" property="pictureType" jdbcType="INTEGER" />
+    <!--<result column="precinct_id" property="precinctId" jdbcType="VARCHAR" />-->
+    <result column="page_type" property="pageType" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <!--<result column="picture_name" property="pictureName" jdbcType="VARCHAR" />-->
+    <result column="idc" property="idc" jdbcType="VARCHAR" />
+    <result column="pod" property="pod" jdbcType="VARCHAR" />
+    <result column="biz_system" property="bizSystem" jdbcType="VARCHAR" />
+    <result column="is_default" property="isDefault" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="bind_obj" property="bindObj" jdbcType="VARCHAR" />
+    <!--<result column="precinct_name" property="precinctName" jdbcType="VARCHAR" />-->
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_cfg_scada_canvas
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.aspire.mirror.scada.dao.po.ScadaCanvas" >
+    insert into t_cfg_scada_canvas (id, name,picture_type,page_type, content,idc, pod, biz_system, is_default,create_time, update_time,project_name, bind_obj
+      )
+    values (#{id,jdbcType=VARCHAR}
+      ,#{name,jdbcType=VARCHAR}
+      ,#{pictureType,jdbcType=LONGVARCHAR}
+      ,#{pageType,jdbcType=INTEGER}
+      ,#{content,jdbcType=LONGVARCHAR}
+      , #{idc,jdbcType=VARCHAR}
+      , #{pod,jdbcType=VARCHAR}
+      , #{bizSystem,jdbcType=VARCHAR}
+      , #{isDefault,jdbcType=VARCHAR}
+      , #{createTime,jdbcType=TIMESTAMP}
+      , #{updateTime,jdbcType=TIMESTAMP}
+      , #{projectName,jdbcType=VARCHAR}
+      , #{bindObj,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.aspire.mirror.scada.dao.po.ScadaCanvas" >
+    update t_cfg_scada_canvas
+    set name = #{name,jdbcType=VARCHAR},
+      picture_type = #{pictureType,jdbcType=INTEGER},
+      page_type = #{pageType,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR},
+      idc = #{idc,jdbcType=VARCHAR},
+      pod = #{pod,jdbcType=VARCHAR},
+      biz_system = #{bizSystem,jdbcType=VARCHAR},
+      is_default = #{isDefault,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      bind_obj = #{bindObj,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select id, name,
+    picture_type, page_type, content,idc, pod, biz_system, is_default, create_time, update_time,project_name, bind_obj
+    from t_cfg_scada_canvas
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKeyArrays" parameterType="java.util.List" resultMap="BaseResultMap">
+    select id, name,
+    page_type, content,idc, pod, biz_system, is_default, create_time, update_time,project_name, bind_obj
+    from t_cfg_scada_canvas canvas
+    WHERE id in
+    <foreach collection="array" index="index" item="id"
+             open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="findScadaCanvasList" resultMap="BaseResultMap" parameterType="com.aspire.mirror.scada.dao.po.ScadaCanvas" >
+    select id, name,
+    picture_type, page_type, idc, pod, biz_system, is_default, create_time, update_time,project_name, bind_obj
+    from t_cfg_scada_canvas where 1=1
+    <if test="pod != null and pod != ''">
+         and pod = #{pod}
+    </if>
+    <if test="idc != null and idc != ''">
+       and idc = #{idc}
+    </if>
+    <if test="bizSystem != null and bizSystem != ''">
+      and biz_system = #{bizSystem}
+    </if>
+    <if test="projectName != null and projectName != ''">
+      and project_name = #{projectName}
+    </if>
+    <if test="bizSystemList != null and bizSystemList.size > 0">
+      and biz_system in (
+      <foreach collection="bizSystemList" item="item" index="index" separator=",">
+        #{item, jdbcType=VARCHAR}
+      </foreach>
+      )
+    </if>    <if test="name != null and name != ''">
+      and name like CONCAT('%',#{name},'%')
+    </if>
+    <if test="pictureType != null and pictureType != ''">
+      and picture_type = #{pictureType}
+    </if>
+    order by update_time desc
+  </select>
+  <select id="findScadaCanvasByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select id, name,
+    picture_type, page_type, content,idc, pod, biz_system, is_default, create_time, update_time, project_name, bind_obj
+    from t_cfg_scada_canvas
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+  <select id="pageListCount" resultType="java.lang.Integer" parameterType="com.aspire.mirror.common.entity.Page">
+    SELECT COUNT(*) FROM t_cfg_scada_canvas t_cfg_scada_canvas
+    <include refid="Page_List_Params"/>
+  </select>
+  <select id="pageList" resultMap="BaseResultMap" parameterType="com.aspire.mirror.common.entity.Page">
+    select
+    id, name,
+    picture_type, page_type, pod, biz_system, is_default, create_time, update_time, project_name
+    from t_cfg_scada_canvas t_cfg_scada_canvas
+    <include refid="Page_List_Params"/>
+    order by update_time desc
+    limit #{begin},#{pageSize}
+  </select>
+  <sql id="Page_List_Params">
+    <where>
+      1=1
+      <if test="params['pod'] != null and params['pod'] != ''">
+        and pod = #{params.pod}
+      </if>
+      <if test="params['idc'] != null and params['idc'] != ''">
+        and idc = #{params.idc}
+      </if>
+      <if test="params['bizSystem'] != null and params['bizSystem'] != ''">
+        and biz_system = #{params.bizSystem}
+      </if>
+      <if test="params['projectName'] != null and params['projectName'] != ''">
+        and project_name = #{params.projectName}
+      </if>
+      <if test="params.bizSystemList != null and params.bizSystemList.size > 0">
+        and biz_system in (
+        <foreach collection="params.bizSystemList" item="item" index="index" separator=",">
+          #{item, jdbcType=VARCHAR}
+        </foreach>
+        )
+      </if>
+      <if test="params['name'] != null and params['name'] != ''">
+        and name like CONCAT('%',#{params.name},'%')
+      </if>
+      <if test="params['pictureType'] != null and params['pictureType'] != ''">
+        and picture_type = #{params.pictureType}
+      </if>
+    </where>
+  </sql>
+</mapper>

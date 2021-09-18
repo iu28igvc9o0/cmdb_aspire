@@ -1,0 +1,116 @@
+/* 复选框样式 */
+.checkBoxChecked {
+  height: 12px;
+  width: 12px;
+  margin: 0 !important;
+  position: relative;
+  top: 2px;
+  display: inline-block;
+  border: 1px solid rgba(64, 159, 255);
+  border-radius: 2px;
+  cursor: pointer;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAIAAADZF8uwAAAACXBIWXMAAAsTAAALEwEAmpwYAAAF5GlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIiB4bWxuczpwaG90b3Nob3A9Imh0dHA6Ly9ucy5hZG9iZS5jb20vcGhvdG9zaG9wLzEuMC8iIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wOkNyZWF0ZURhdGU9IjIwMTktMDgtMDJUMTU6MTk6MjArMDg6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDE5LTA4LTAyVDE2OjQ1OjA3KzA4OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDE5LTA4LTAyVDE2OjQ1OjA3KzA4OjAwIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmZhNGE3ZDc2LTU0YjEtNDY0OS05YWY4LTI0N2JhZmI0MjM1OSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBODU1NEE3QkI1MDAxMUU5OTU5NUFEMjlEOUFBODNCMCIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOkE4NTU0QTdCQjUwMDExRTk5NTk1QUQyOUQ5QUE4M0IwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QTg1NTRBNzhCNTAwMTFFOTk1OTVBRDI5RDlBQTgzQjAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QTg1NTRBNzlCNTAwMTFFOTk1OTVBRDI5RDlBQTgzQjAiLz4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6ZmE0YTdkNzYtNTRiMS00NjQ5LTlhZjgtMjQ3YmFmYjQyMzU5IiBzdEV2dDp3aGVuPSIyMDE5LTA4LTAyVDE2OjQ1OjA3KzA4OjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0b3J5PiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PmcXu28AAABDSURBVBjTY3Rb/P/XHwY8gBGIHOb/ZyAE6KBofwKIdFyAWxGyCoQiZFE0FSgmQeQgAFkFunWYZlA9CBzn/8evChgtAPS1JXefmI6YAAAAAElFTkSuQmCC);
+  background-size: 100% 100%;
+}
+.checkBoxUnChecked {
+  height: 12px;
+  width: 12px;
+  margin: 0 !important;
+  position: relative;
+  top: 3px;
+  border-radius: 2px;
+  display: inline-block;
+  border: 1px solid #dcdfe6;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.stepperDiv {
+  height: 24px;
+  width: 50px;
+  background: rgb(244, 244, 244)
+}
+.widthDiv{
+  position: absolute;
+  top: 10px;
+}
+.heightDiv {
+  position: absolute;
+  top: 50px;
+}
+/* 上下箭头样式 */
+.topButton {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozMzEwQkU2REI0RjUxMUU5OTYyQUJGMTMxRUE2NTNBNiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozMzEwQkU2RUI0RjUxMUU5OTYyQUJGMTMxRUE2NTNBNiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjMzMTBCRTZCQjRGNTExRTk5NjJBQkYxMzFFQTY1M0E2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjMzMTBCRTZDQjRGNTExRTk5NjJBQkYxMzFFQTY1M0E2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hmlLigAAAKZJREFUeNpi/PLlCwM1ABMDlcCoQaMG4QF/HhzaefrOHwoN+vNg57rzr3+/O7zuKEGzmPCYsm/z5S/Slv4+zs7SX45vPonfLBwG/Xl7fPuFl/y6/tYSLAwsctbOlvyvj2w//+oPaQZ9PLn90D0ug1AnBRaoCIuKk4cN19Ot2y++Jd6gW3sP3eHSC3aGmwIzy9nFkuvxrn3PsBrEOFqMjBo0mAwCCDAAoLlA9BgR9yMAAAAASUVORK5CYII=);
+  background-size: 100% 100%;
+  height: 24px;
+  width: 24px;
+  border-right: 1px solid rgb(224, 224, 224);
+  position: relative;
+  left: -1px;
+  border-radius: 0 !important;
+}
+.dowmButton {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0NkMzMzFGQ0I0RjUxMUU5OUFBRkM4ODBBMTZBOEZBQyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0NkMzMzFGREI0RjUxMUU5OUFBRkM4ODBBMTZBOEZBQyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ2QzMzMUZBQjRGNTExRTk5QUFGQzg4MEExNkE4RkFDIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ2QzMzMUZCQjRGNTExRTk5QUFGQzg4MEExNkE4RkFDIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+IqaneAAAALJJREFUeNpi/PLlCwM1ABMDlcCoQaMGoYJbezcv3Xv3BxbFP27s3bJ83zNiDVJztlP5dmnt3gd/UIT/3Nm75/g3WTcnKeK9xm/uaaf07cLqfXCz/tzZt+PIN2lvT31h0sKIRdjS00D84+WNR1/8Yfjz6Oje4x9FbTwNxVhwhhEjvkz758HOdee/cHF9+sZjG2StwoIvsBkJ5P4/Dw7tfS3lbIrfFCIMGk3ZowbR1SCAAAMA7epHPotu1XIAAAAASUVORK5CYII=);
+  background-color: #f4f4f4;
+  background-size: 100% 100%;
+  height: 24px;
+  width: 24px;
+  position: relative;
+  left: -2px;
+  border-radius: 0px 4px 4px 0 !important;
+}
+/* 单选框样式 */
+.radioChecked {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border: 5px solid #409eff;
+  border-radius: 50%;
+  position: relative;
+  top: 2px;
+  margin: 0px 6px 0px 6px;
+}
+.radioUnChecked {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 50%;
+  position: relative;
+  top: 2px;
+  margin: 0px 6px 0px 6px;
+}
+.radioUnChecked:hover {
+  border: 1px solid #409eff;
+}
+
+/* 删除按钮样式 */
+.deleteBtn{
+  width: 24px;
+  height: 24px;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyBYNyAtLT4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMi4wMzE4bW0iIGhlaWdodD0iMi4wMzE4bW0iIHZlcnNpb249IjEuMSIgc3R5bGU9InNoYXBlLXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IHRleHQtcmVuZGVyaW5nOmdlb21ldHJpY1ByZWNpc2lvbjsgaW1hZ2UtcmVuZGVyaW5nOm9wdGltaXplUXVhbGl0eTsgZmlsbC1ydWxlOmV2ZW5vZGQ7IGNsaXAtcnVsZTpldmVub2RkIg0Kdmlld0JveD0iMCAwIDIwMyAyMDMiDQogeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPg0KIDxkZWZzPg0KICA8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KICAgPCFbQ0RBVEFbDQogICAgLnN0cjAge3N0cm9rZTojNEQ0RDREO3N0cm9rZS13aWR0aDoyMH0NCiAgICAuZmlsMCB7ZmlsbDpub25lfQ0KICAgXV0+DQogIDwvc3R5bGU+DQogPC9kZWZzPg0KIDxnIGlkPSLlm77lsYJfeDAwMjBfMSI+DQogIDxtZXRhZGF0YSBpZD0iQ29yZWxDb3JwSURfMENvcmVsLUxheWVyIi8+DQogIDxsaW5lIGNsYXNzPSJmaWwwIHN0cjAiIHgxPSI3MCIgeTE9IjEzNiIgeDI9IjE0NSIgeTI9ICI2MSIgLz4NCiAgPGxpbmUgY2xhc3M9ImZpbDAgc3RyMCIgeDE9IjE0NSIgeTE9IjEzNiIgeDI9IjcwIiB5Mj0gIjYxIiAvPg0KIDwvZz4NCjwvc3ZnPg0K);
+  background-size: 100% 100%;
+}
+
+@media (max-width: 1400px) {
+  .geToolbar .geButton {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 8px 1px;
+  }
+  .geToolbar .geButton > div {
+    width: 16px;
+    height: 16px;
+  }
+
+  .geToolbar > .geLabel > .geSprite {
+    width: 16px;
+    height: 16px;
+    margin: 3px 0;
+  }
+}

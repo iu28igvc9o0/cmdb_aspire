@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.aspire.ums.cmdb.v2.module.mapper.ModuleTableMapper" >
+    <select id="findTableByName" resultType="java.lang.Integer">
+        select count(1) from information_schema.TABLES where lower(table_schema)=lower(#{schemaName})
+                                                         and lower(table_name)=lower(#{tableName})
+    </select>
+
+    <select id="findTableColumnByColumnName" resultType="java.lang.Integer">
+        select count(1) from information_schema.`columns`
+        where lower(`table_schema`)=lower(#{schemaName})
+          and lower(`table_name`)=lower(#{tableName})
+          and lower(`column_name`)=LOWER(#{columnName});
+    </select>
+    <update id="createTable" parameterType="String">
+            CREATE TABLE `${tableName}` (
+            `id` varchar(40) NOT NULL COMMENT '设备ID',
+            PRIMARY KEY (`id`),
+            KEY `IDX_${tableName}_id` (`id`) USING BTREE
+            ) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8 COMMENT='分布式存储模型实例表'
+    </update>
+    <update id="alterAddTable" parameterType="String">
+        ALTER TABLE `${tableName}`
+            ADD COLUMN
+        <foreach collection="columns" item="column" index="index" open="(" close=")" separator=",">
+          ${column}
+        </foreach>
+    </update>
+    <update id="alterModifyTable" parameterType="String">
+        ALTER TABLE `${tableName}`
+        <foreach collection="columns" item="column" index="index"  separator=",">
+        MODIFY  ${column}
+        </foreach>
+    </update>
+    <update id="alterDropTable" parameterType="String">
+            ALTER TABLE `${tableName}`
+        <foreach collection="columns" item="column" index="index" separator=",">
+            DROP COLUMN `${column}`
+        </foreach>
+    </update>
+
+    <insert id="copyColumnData" parameterType="String">
+        INSERT INTO `${tableHisName}`(id,
+        <foreach collection="columns" item="column" index="index" separator=",">
+            `${column}`
+        </foreach>)
+        SELECT id,
+         <foreach collection="columns" item="column" index="index" separator=",">
+          `${column}`
+        </foreach>
+        FROM `${tableName}`
+        WHERE id NOT IN (SELECT id FROM `${tableHisName}`);
+        <!--<foreach collection="columns" item="column" index="index">-->
+            <!--UPDATE `${tableHisName}` a SET a.`${column}` = (SELECT `${column}` FROM `${tableName}` b WHERE a.instance_id = b.instance_id);-->
+            <!--ALTER TABLE `${tableName}` DROP COLUMN `${column}`;-->
+        <!--</foreach>-->
+
+    </insert>
+    <update id="copyOtherColumnData">
+        UPDATE `${tableHisName}` a SET
+        <foreach collection="columns" item="column" index="index" separator=",">
+         a.`${column}` = (SELECT `${column}` FROM `${tableName}` b WHERE a.id = b.id)
+        </foreach>
+    </update>
+
+    <update id="createAndCopyTable" parameterType="String">
+        CREATE TABLE `${tableHisName}` AS SELECT * FROM `${tableName}`;
+    </update>
+
+    <delete id="deleteTableByName" parameterType="String">
+        DROP TABLE `${tableName}`
+    </delete>
+
+
+    <select id="getColumnListByTableName" resultType="java.lang.String">
+
+        SELECT A.COLUMN_NAME
+
+        FROM
+            ( SELECT
+                COLUMN_NAME
+            FROM
+                information_schema.COLUMNS
+            WHERE
+                TABLE_NAME = #{tableName} AND TABLE_SCHEMA = #{schemaName}
+            GROUP BY
+                COLUMN_NAME)
+                A
+    </select>
+
+    <select id="getDataBySql" resultType="java.util.Map">
+        ${sql}
+    </select>
+    <!--获取表里数据量-->
+    <select id="getTableDataCount" resultType="java.lang.Integer">
+        select count(1) from `${tableName}`
+    </select>
+
+</mapper>

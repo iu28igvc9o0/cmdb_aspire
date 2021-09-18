@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 类名: AlertsSql 描述: 数据访问语句 作者: baiwenping 时间: 2020-02-14 15:15:48 -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.alert.AlertsV2Dao">
+    <resultMap type="com.aspire.mirror.alert.server.dao.alert.po.AlertsV2"
+               id="baseResultMap">
+        <result property="alertId" column="alert_id" jdbcType="VARCHAR" />
+        <result property="rAlertId" column="r_alert_id" jdbcType="VARCHAR" />
+        <result property="bizSys" column="biz_sys" jdbcType="VARCHAR" />
+        <result property="moniIndex" column="moni_index" jdbcType="VARCHAR" />
+        <result property="moniObject" column="moni_object" jdbcType="VARCHAR" />
+        <result property="curMoniValue" column="cur_moni_value"
+                jdbcType="VARCHAR" />
+        <result property="curMoniTime" column="cur_moni_time" jdbcType="TIMESTAMP" />
+        <result property="alertLevel" column="alert_level" jdbcType="VARCHAR" />
+        <result property="itemId" column="item_id" jdbcType="VARCHAR" />
+        <result property="remark" column="remark" jdbcType="VARCHAR" />
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR" />
+        <result property="operateStatus" column="operate_status" jdbcType="INTEGER" />
+        <result property="source" column="source" jdbcType="VARCHAR" />
+        <result property="idcType" column="idc_type" jdbcType="VARCHAR" />
+        <result property="objectType" column="object_type" jdbcType="VARCHAR" />
+        <result property="deviceIp" column="device_ip" jdbcType="VARCHAR" />
+        <result property="orderId" column="order_id" jdbcType="VARCHAR" />
+        <result property="orderType" column="order_type" jdbcType="VARCHAR" />
+        <result property="alertStartTime" column="alert_start_time"
+                jdbcType="TIMESTAMP" />
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" />
+        <result property="alertCount" column="alert_count" jdbcType="INTEGER" />
+        <result property="itemKey" column="item_key" jdbcType="VARCHAR" />
+        <result property="keyComment" column="key_comment" jdbcType="VARCHAR" />
+        <result property="notifyStatus" column="notify_status" jdbcType="VARCHAR" />
+         <result property="deviceId" column="device_id" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumnList">
+        alert_id,r_alert_id,biz_sys,moni_index,moni_object,cur_moni_value,cur_moni_time,alert_level,item_id,
+        remark,order_status,operate_status,source,idc_type,object_type,device_ip,order_id,
+        order_type,alert_start_time,alert_count,item_key,key_comment,notify_status,device_id
+    </sql>
+    <select id="select" parameterType="com.aspire.mirror.alert.server.dao.alert.po.AlertsV2"
+            resultMap="baseResultMap">
+
+        select
+        <include refid="baseColumnList" />
+        from alert_alerts
+        <where>
+            <if test="deviceIp != null and  deviceIp != ''">
+                device_ip = #{deviceIp}
+            </if>
+            <if test="bizSys != null and  bizSys != ''">
+                and biz_sys = #{bizSys}
+            </if>
+            <if test="itemId != null and  itemId != ''">
+                and item_id = #{itemId}
+            </if>
+            <if test="alertLevel != null and alertLevel != ''">
+                and alert_level = #{alertLevel}
+            </if>
+            <if test="moniObject != null and  moniObject != ''">
+                and moni_object = #{moniObject}
+            </if>
+            <if test="moniIndex != null and  moniIndex != ''">
+                and moni_index = #{moniIndex}
+            </if>
+            <if test="orderStatus != null and  orderStatus != ''">
+                and order_status = #{orderStatus}
+            </if>
+            <if test="objectType != null and  objectType != ''">
+                and object_type = #{objectType}
+            </if>
+            <if test="rAlertId != null and  rAlertId != ''">
+                and r_alert_id = #{rAlertId}
+            </if>
+            <if test="orderId != null and  orderId != ''">
+                and order_id = #{orderId}
+            </if>
+            <if test="source != null and  source != ''">
+                and source = #{source}
+            </if>
+             <if test="idcType != null and  idcType != ''">
+                and idc_type = #{idcType}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+    <!-- 修改 -->
+    <update id="updateByPrimaryKey" parameterType="java.util.Map">
+        update alert_alerts set
+        <foreach collection="map.keys" item="key" index="index"
+                 open="" separator="," close="">
+            ${key} = #{map[${key}]}
+        </foreach>
+        where alert_id = #{map.alert_id}
+    </update>
+    <insert id="insert" parameterType="java.util.Map">
+      insert into alert_alerts
+        <foreach collection="map.keys" item="key" open="(" close=")" separator="," >
+            ${key}
+        </foreach>
+        values
+        <foreach collection="map.keys"  item="key" open="(" close=")" separator=",">
+            #{map[${key}]}
+        </foreach>
+    </insert>
+    <sql id="Foreach_PrimaryKeyArrays_Sql">
+        <foreach collection="array" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </sql>
+    <!-- 删除 -->
+    <update id="deleteByPrimaryKeyArrays" parameterType="java.util.List">
+        delete from alert_alerts where alert_id in
+        <include refid="Foreach_PrimaryKeyArrays_Sql" />
+    </update>
+
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="String"
+            resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList" />
+        from alert_alerts t where alert_id = #{alertId}
+    </select>
+    <select id="selectByOrderId" parameterType="String"
+            resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList" />
+        from alert_alerts t where order_id = #{orderId}
+    </select>
+
+    <select id="updateCurMoniTime" parameterType="java.util.Map">
+        update alert_alerts set cur_moni_time = #{curMoniTime} where alert_id=#{alertId}
+    </select>
+    <select id="selectByPrimaryKeyArrays" parameterType="java.util.List"
+            resultMap="baseResultMap">
+        SELECT
+        *
+        FROM alert_alerts
+        WHERE alert_id in
+        <include refid="Foreach_PrimaryKeyArrays_Sql" />
+    </select>
+    <select id="selectByIds" resultType="java.util.Map" parameterType="java.util.List">
+        select
+        t.*
+        from alert_alerts t
+        where alert_id IN
+        <foreach collection="list" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </select>
+    <select id="selectDetailByIds" resultType="java.util.Map" parameterType="java.util.List">
+        select
+        t.*
+        from alert_alerts t
+        where alert_id IN
+        <foreach collection="list" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </select>
+    <select id="selectOrderParam1" parameterType="java.util.HashMap"
+            resultType="java.util.HashMap">
+        select *
+        from alert_alerts t1
+        where 1=1
+        <if test="alertLevel != null and alertLevel != ''">
+            and t1.alert_level = #{alertLevel}
+        </if>
+        <if test="orderStatus != null and orderStatus != ''">
+            and t1.order_status = #{orderStatus}
+        </if>
+        <if test="alertIdArrays != null">
+            and t1.alert_id in
+            <foreach collection="alertIdArrays" index="index" item="alertId"
+                     open="(" separator="," close=")">
+                #{alertId}
+            </foreach>
+        </if>
+    </select>
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="page_limit" >
+        limit #{begin}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </sql>
+    <!-- list查询 -->
+    <select id="listByEntity" resultType="java.util.Map"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria">
+
+        SELECT
+        CASE t.alert_level when '5' then '重大' when '4' then '高' when '3' then '中' when '2' then '低' else t.alert_level end alert_level,
+        CASE t.notify_status when '1' then '已通知' when '0' then '未通知' else t.notify_status end notify_status,
+        CASE t.object_type when '1' then '设备' when '2' then '业务' else t.object_type end object_type,
+        <choose>
+            <when test="example['exportField'] != null and example['exportField'] != ''">
+                ${example['exportField']}
+            </when>
+            <otherwise>
+                 t.*
+            </otherwise>
+        </choose>
+        FROM alert_alerts t
+        <include refid="Example_Where_ClauseList"/>
+        <choose>
+            <when test="example['orderByClause'] != null and example['orderByClause'] != ''">
+                order by ${example['orderByClause']}
+            </when>
+            <otherwise>
+                order by cur_moni_time desc
+            </otherwise>
+        </choose>
+        limit 100000
+    </select>
+    <!-- 分页查询 -->
+    <select id="findPageWithResult"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria" resultType="java.util.Map">
+        select
+        t.*
+        from alert_alerts t
+        <include refid="Example_Where_Clause"/>
+        <choose>
+            <when test="orderByClause != null and orderByClause != ''">
+                order by ${orderByClause}
+            </when>
+            <otherwise>
+                order by cur_moni_time desc
+            </otherwise>
+        </choose>
+        <if test="begin != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+    <select id="findPageWithCount" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+            resultType="Integer">
+       select count(1)
+        from alert_alerts t
+        <include refid="Example_Where_Clause"/>
+    </select>
+
+    <select id="detailById"
+            parameterType="java.lang.String" resultType="java.util.Map">
+        select
+        t.*
+        from alert_alerts t
+        where t.alert_id = #{alertId}
+    </select>
+
+    <select id="getMonitObjectList" resultType="com.aspire.mirror.alert.server.vo.alert.AlertMonitorObjectVo">
+        SELECT DISTINCT
+			moni_object name,
+			moni_object value
+		FROM
+			alert_alerts a
+		WHERE
+			a.moni_object IS NOT NULL OR a.moni_object != ''
+    </select>
+    <update id="updateNotifyStatus" >
+        update alert_alerts set notify_status = #{status}
+        where alert_id IN
+        <foreach collection="list" index="index" item="alertId" open="("
+                 separator="," close=")">
+            #{alertId}
+        </foreach>
+    </update>
+
+    <update id="updateOrderByOrderId" parameterType="java.lang.String">
+        update alert_alerts set order_id = #{oldOrderId},order_type = '4'
+        WHERE order_id=#{newOrderId}
+    </update>
+
+    <select id="deviceCountByDeviceClass" parameterType="map" resultType="map">
+        SELECT
+        device_class,
+        SUM(IF(alert_level = '5',d_count,0)) s_count,
+        SUM(IF(alert_level = '4',d_count,0)) h_count,
+        SUM(IF(alert_level = '3',d_count,0)) m_count,
+        SUM(IF(alert_level = '2',d_count,0)) l_count
+        FROM (
+            SELECT device_class,alert_level,COUNT(1) d_count
+            FROM alert_alerts
+            WHERE 1=1
+            <if test="deviceClass != null and deviceClass != ''">
+                AND FIND_IN_SET(device_class,#{deviceClass})
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND cur_moni_time BETWEEN #{startDate} AND #{endDate}
+            </if>
+            GROUP BY device_class,alert_level
+            UNION ALL
+            SELECT device_class,alert_level,COUNT(1) d_count
+            FROM alert_alerts_his
+            WHERE 1=1
+            <if test="deviceClass != null and deviceClass != ''">
+                AND FIND_IN_SET(device_class,#{deviceClass})
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND cur_moni_time BETWEEN #{startDate} AND #{endDate}
+            </if>
+            GROUP BY device_class,alert_level
+        ) aah
+        GROUP BY device_class
+    </select>
+
+    <sql id="Example_Where_ClauseList" >
+        <where >
+            <foreach collection="example['oredCriteria']" item="condition" separator="or" >
+                <if test="condition.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="condition.criterions" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                                <when test="criterion.dateValue" >
+                                    and ${criterion.condition} #{criterion.value,jdbcType=TIMESTAMP}
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <select id="getDeviceNewestAlertLevelList" resultType="java.util.Map">
+        select device_id, MAX(alert_level) alert_level from alert_alerts where device_id in
+        <foreach collection="deviceIds" item="listItem" open="(" close=")" separator="," >
+            #{listItem}
+        </foreach>
+        group by device_id
+    </select>
+
+    <select id="getItemNewestAlertLevelList" resultType="java.util.Map">
+        select item_id, MAX(alert_level) alert_level from alert_alerts
+        <where> item_id in
+        <foreach collection="itemIds" item="listItem" open="(" close=")" separator="," >
+            #{listItem}
+        </foreach>
+            and r_alert_id like concat(#{prefix}, '%')
+        </where>
+        group by item_id;
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="queryDeviceAlertList"
+            parameterType="com.aspire.mirror.alert.server.util.Criteria" resultType="java.util.Map">
+        SELECT a.* FROM alert_alerts a JOIN
+        (SELECT device_id device_id_tmp, alert_level alert_level_tmp, MAX(cur_moni_time) cur_moni_time_tmp FROM alert_alerts
+        <include refid="Example_Where_Clause"/> GROUP BY device_id, alert_level) b
+        ON a.device_id=b.device_id_tmp AND a.alert_level=b.alert_level_tmp AND a.cur_moni_time=b.cur_moni_time_tmp
+        <choose>
+            <when test="orderByClause != null and orderByClause != ''">
+                order by ${orderByClause}
+            </when>
+            <otherwise>
+                order by cur_moni_time desc
+            </otherwise>
+        </choose>
+        <if test="begin != null">
+            <include refid="page_limit"/>
+        </if>
+    </select>
+    <select id="queryDeviceAlertCount" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+            resultType="Integer">
+        SELECT count(1) FROM alert_alerts a JOIN
+        (SELECT device_id device_id_tmp, alert_level alert_level_tmp, MAX(cur_moni_time) cur_moni_time_tmp FROM alert_alerts
+        <include refid="Example_Where_Clause"/> GROUP BY device_id, alert_level) b
+        ON a.device_id=b.device_id_tmp AND a.alert_level=b.alert_level_tmp AND a.cur_moni_time=b.cur_moni_time_tmp
+    </select>
+    <select id="summaryDeviceAlertsByLevel" parameterType="com.aspire.mirror.alert.server.util.Criteria"
+            resultType="java.util.Map">
+        SELECT alert_level, COUNT(1) count FROM
+        (SELECT device_id, alert_level FROM alert_alerts
+        <include refid="Example_Where_Clause"/>
+        GROUP BY device_id, alert_level) a
+        GROUP BY a.alert_level;
+    </select>
+    <select id="checkOrderStatus" resultType="java.util.Map">
+        select order_id from alert_alerts
+        where order_id in
+        <foreach collection="list" item="listItem" open="(" close=")" separator="," >
+            #{listItem}
+        </foreach>
+    </select>
+</mapper>

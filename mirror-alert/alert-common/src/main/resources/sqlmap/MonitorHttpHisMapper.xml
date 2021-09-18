@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+	类名:     AlertsSql
+	描述:     数据访问语句
+	作者:     longfeng
+	时间:     2018-09-14 15:15:48
+ -->
+<mapper namespace="com.aspire.mirror.alert.server.dao.monitorHttp.MonitorHttpHisDao">
+
+    <resultMap type="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpHis" id="baseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="http_config_id" column="http_config_id" jdbcType="VARCHAR"/>
+        <result property="request_method" column="request_method" jdbcType="VARCHAR"/>
+        <result property="http_content_type" column="http_content_type" jdbcType="VARCHAR"/>
+        <result property="request_parm" column="request_parm" jdbcType="VARCHAR"/>
+        <result property="request_http_addr" column="request_http_addr" jdbcType="VARCHAR"/>
+        <result property="time_out" column="time_out" jdbcType="INTEGER"/>
+        <result property="start_time" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="end_time" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="time_con" column="time_con" jdbcType="VARCHAR"/>
+        <result property="response_type" column="response_type" jdbcType="VARCHAR"/>
+         <result property="response_code" column="response_code" jdbcType="INTEGER"/>
+        <result property="json_attribute" column="json_attribute" jdbcType="VARCHAR"/>
+        <result property="json_value" column="json_value" jdbcType="VARCHAR"/>
+        <result property="json_operator" column="json_operator" jdbcType="VARCHAR"/>
+        <result property="regular_check" column="regular_check" jdbcType="VARCHAR"/>
+        <result property="html_format" column="html_format" jdbcType="VARCHAR"/>
+         <result property="request_result" column="request_result" jdbcType="VARCHAR"/>
+        <result property="conclusion" column="conclusion" jdbcType="VARCHAR"/>
+        <result property="normal" column="normal" jdbcType="INTEGER"/>
+        <result property="head_response" column="head_response" jdbcType="VARCHAR"/>
+        <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="result" column="result" jdbcType="INTEGER"/>
+        <result property="response_status_code" column="response_status_code" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <sql id="baseColumnList">
+    	id,http_config_id,request_method,http_content_type,request_parm,request_http_addr,
+    	time_out,start_time,end_time,time_con,response_type,response_code,
+    	json_attribute,json_value,json_operator,regular_check,html_format
+    	,request_result,conclusion,normal,head_response,create_time,result,response_status_code
+	</sql>
+	<select id="getByConfigId"  resultMap="baseResultMap">
+    select  <include refid="baseColumnList" /> 
+    from monitor_http_his s where s.http_config_id = #{configId}
+        order by create_time desc
+    </select>
+
+    <!-- 新增 -->
+    <insert id="batchInsert" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpHis">
+		insert into
+			monitor_http_his(http_config_id,request_method,http_content_type,request_parm,request_http_addr,
+    	time_out,start_time,end_time,time_con,response_type,response_code,
+    	json_attribute,json_value,json_operator,regular_check,html_format
+    	,request_result,conclusion,normal,head_response,result,response_status_code)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">  
+          (
+			#{http_config_id,jdbcType=VARCHAR} ,
+			#{request_method,jdbcType=VARCHAR} ,
+			#{http_content_type,jdbcType=VARCHAR} ,
+			#{request_parm,jdbcType=VARCHAR} ,
+			#{request_http_addr,jdbcType=VARCHAR},
+			#{time_out,jdbcType=INTEGER},
+			#{start_time,jdbcType=TIMESTAMP},
+			#{end_time,jdbcType=TIMESTAMP},
+			#{time_con,jdbcType=VARCHAR} ,
+			#{response_type,jdbcType=VARCHAR} ,
+			#{response_code,jdbcType=INTEGER} ,
+			#{json_attribute,jdbcType=VARCHAR},
+			#{json_value,jdbcType=VARCHAR},
+			#{json_operator,jdbcType=VARCHAR},
+			#{regular_check,jdbcType=VARCHAR},
+			#{html_format,jdbcType=INTEGER} ,
+			#{request_result,jdbcType=VARCHAR} ,
+			#{conclusion,jdbcType=VARCHAR} ,
+			#{normal,jdbcType=VARCHAR} ,
+			#{head_response,jdbcType=TIMESTAMP},
+			#{result,jdbcType=INTEGER},
+			#{response_status_code,jdbcType=VARCHAR}
+		)
+      </foreach> 
+	</insert>
+	
+	<insert id="insert" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpHis">
+		insert into
+			monitor_http_his(http_config_id,request_method,http_content_type,request_parm,request_http_addr,
+    	time_out,start_time,end_time,time_con,response_type,response_code,
+    	json_attribute,json_value,json_operator,regular_check,html_format
+    	,request_result,conclusion,normal,head_response,result)
+		values(
+			#{http_config_id,jdbcType=VARCHAR} ,
+			#{request_method,jdbcType=VARCHAR} ,
+			#{http_content_type,jdbcType=VARCHAR} ,
+			#{request_parm,jdbcType=VARCHAR} ,
+			#{request_http_addr,jdbcType=VARCHAR},
+			#{time_out,jdbcType=INTEGER},
+			#{start_time,jdbcType=TIMESTAMP},
+			#{end_time,jdbcType=TIMESTAMP},
+			#{time_con,jdbcType=VARCHAR} ,
+			#{response_type,jdbcType=VARCHAR} ,
+			#{response_code,jdbcType=INTEGER} ,
+			#{json_attribute,jdbcType=VARCHAR},
+			#{json_value,jdbcType=VARCHAR},
+			#{json_operator,jdbcType=VARCHAR},
+			#{regular_check,jdbcType=VARCHAR},
+			#{html_format,jdbcType=INTEGER} ,
+			#{request_result,jdbcType=VARCHAR} ,
+			#{conclusion,jdbcType=VARCHAR} ,
+			#{normal,jdbcType=VARCHAR} ,
+			#{head_response,jdbcType=TIMESTAMP},
+			#{result,jdbcType=INTEGER}
+		)
+	</insert>
+	<sql id="baseWhereClause">
+        <where>
+            1=1
+            <if test="configId != null ">
+                and http_config_id = #{configId}
+            </if>
+            <if test="runStatus != null ">
+                and result = #{runStatus}
+            </if>
+        </where>
+    </sql>
+    <!-- 列表 -->
+    <select id="pageList" resultMap="baseResultMap" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpReq">
+    select <include refid="baseColumnList" />  from monitor_http_his
+    	 <include refid="baseWhereClause" />
+        order by create_time desc
+        <if test="pageNo != null and pageSize != null">
+        limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="pageListCount" parameterType="com.aspire.mirror.alert.server.dao.monitorHttp.po.MonitorHttpReq" resultType="java.lang.Integer">
+        select count(*) from monitor_http_his
+        <include refid="baseWhereClause" />
+    </select>
+    <!-- 详情 -->
+    <select id="selectByPrimaryKey" parameterType="Integer" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from monitor_http_his  where id = #{id}
+    </select>
+    
+    <select id="getLatestHis" parameterType="Integer" resultMap="baseResultMap">
+        select
+        <include refid="baseColumnList"/>
+        from monitor_http_his  where http_config_id = #{id}
+        order by create_time desc
+        limit 1
+    </select>
+   
+</mapper>
